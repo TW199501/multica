@@ -1,3 +1,17 @@
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.png binary
+*.jpg binary
+*.ico binary
+*.icns binary
+*.woff2 binary
+*.ttf binary
+*.pdf binary
+*.zip binary
+*.xlsx binary
+*.docx binary
+
 # Ensure shell scripts always use LF line endings (needed for Docker on Windows)
 *.sh text eol=lf
 docker/entrypoint.sh text eol=lf
