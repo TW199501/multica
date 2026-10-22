@@ -1,0 +1,46 @@
+apps/ui-lab/src/locales/zh-Hant.json
+  s_960b3b5d07c9b0::t_b6e453d29d71ed 1-553
+apps/ui-lab/src/app.tsx
+  s_155da54c92280f::t_6a8f387dd8a88b 6-11,92-97,453,459,462
+apps/ui-lab/src/component-rules.tsx
+  s_155da54c92280f::t_9510891b0f05db 20-21
+apps/ui-lab/src/lab-i18n.tsx
+  s_155da54c92280f::t_9c47aef15ac098 5,8,20
+apps/ui-lab/src/locale.test.ts
+  s_155da54c92280f::t_9234685b262503 14,19,27,41,60,68,79
+apps/ui-lab/src/locale.ts
+  s_155da54c92280f::t_d5a58628b55714 1,4,15
+apps/ui-lab/src/product-fixtures.ts
+  s_155da54c92280f::t_d73aaff9d0f766 3,100-101
+apps/ui-lab/src/product-preview.tsx
+  s_155da54c92280f::t_91870b0031c6e2 45-49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1351ea572ed5d885d8a29034d6c0317de58641ea",
+  "prompts": {},
+  "humans": {
+    "h_be8240d2cfaa4b": {
+      "author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_155da54c92280f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "597fa3f2-b7a9-4412-b55f-38bdf69741cd",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    },
+    "s_960b3b5d07c9b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d4dab6de-0779-466b-b936-0b2a3db688cd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
