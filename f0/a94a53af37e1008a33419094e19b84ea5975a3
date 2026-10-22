@@ -1,0 +1,23 @@
+pnpm-workspace.yaml
+  s_e6eb75c69f54af::t_129ccd76f8ac4c 26
+apps/docs/package.json
+  s_e6eb75c69f54af::t_129ccd76f8ac4c 21
+pnpm-lock.yaml
+  s_e6eb75c69f54af::t_c3549bd7b4e23a 64-65,307-308,659,662,668,708,723,940,1081,8281-8282,15320-15326,17902,17925,17958,17965,17978,19310,19327,20188,20207,20216,22241
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f0a94a53af37e1008a33419094e19b84ea5975a3",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
