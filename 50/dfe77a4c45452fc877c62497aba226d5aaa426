@@ -1,0 +1,26 @@
+server/internal/handler/auth.go
+  s_155da54c92280f::t_7aa97f60946093 59
+server/internal/handler/user_language_test.go
+  s_155da54c92280f::t_89bbb006e48975 35-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "50dfe77a4c45452fc877c62497aba226d5aaa426",
+  "prompts": {},
+  "humans": {
+    "h_be8240d2cfaa4b": {
+      "author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_155da54c92280f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "597fa3f2-b7a9-4412-b55f-38bdf69741cd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
