@@ -1,7 +1,6 @@
 {
   "page": {
     "title": "執行時",
-    "tagline": "智慧體在這些機器和雲服務上執行任務。",
     "learn_more": "瞭解更多 →",
     "connect_remote": "新增機器",
     "search_placeholder": "搜尋...",
@@ -510,7 +509,7 @@
   },
   "qoder": {
     "title": "QCA 執行時",
-    "description": "連線 Qoder Cloud Agent，由 Multica 管理執行並加密儲存憑證。工作區管理員可修改配置。",
+    "description": "連線 Qoder Cloud Agents，由 Multica 管理執行並加密儲存憑證。工作區管理員可修改配置。",
     "loading": "載入中...",
     "unavailable": "請先在服務端配置 MULTICA_VCS_SECRET_KEY。",
     "online": "線上",
@@ -524,7 +523,7 @@
     "region_hint": "選擇建立 PAT 的站點，PAT 只能在對應區域使用。",
     "keep_secret": "留空保留已儲存的憑證",
     "repositories": "GitHub 倉庫授權",
-    "repositories_hint": "為每個倉庫繫結憑證，在專案中選擇倉庫和起始分支。服務端不會返回憑證明文。",
+    "repositories_hint": "為每個倉庫繫結憑證，在專案中選擇倉庫和起始分支。",
     "remove": "移除",
     "add_repository": "新增倉庫",
     "saved": "已儲存，服務端將自動啟動執行時。",
@@ -548,7 +547,7 @@
     "save_agent": "儲存關聯",
     "agent_saved": "已儲存 QCA 智慧體關聯",
     "agent_save_failed": "無法儲存 QCA 智慧體關聯",
-    "cloud_title": "Qoder Cloud Agent",
+    "cloud_title": "Qoder Cloud Agents",
     "managed": "託管服務",
     "cloud_description": "使用共享連線在 Qoder 雲端執行智慧體，無需維護本地主機。",
     "configure_credentials": "配置憑證",
@@ -589,27 +588,26 @@
       "execution_summary": "最多同時 {{concurrency}} 個 · 單次超時 {{timeout}} 分鐘"
     },
     "stop_confirm": {
-      "title": "暫停 Qoder Cloud Agent？",
+      "title": "暫停 Qoder Cloud Agents？",
       "description": "恢復之前，新任務不會再發給 Qoder。",
       "cancel": "取消",
       "description_agents_other": "下面 {{count}} 個智慧體會保留指令和歷史，但在恢復 Qoder 或更換執行時之前無法接新任務。"
     },
-    "connect_title": "連線 Qoder Cloud Agent",
-    "connect_description": "用 Qoder PAT 連線一次。Multica 會在 Qoder 的沙箱裡執行任務，憑證加密儲存。",
+    "connect_title": "連線 Qoder Cloud Agents",
+    "connect_description": "Multica 會在 Qoder 的沙箱裡執行任務。",
     "page": {
       "configuration": "配置",
       "agents_title": "智慧體",
       "pause_title": "暫停 Qoder",
       "pause_hint": "不再向 Qoder 派發新任務。憑證和智慧體都會保留，可以隨時恢復。",
       "resume_title": "恢復 Qoder",
-      "resume_hint": "使用已儲存的配置重新開始接任務。",
       "resume": "恢復",
       "resumed": "Qoder 正在啟動。",
       "disconnect_title": "斷開 Qoder",
       "disconnect_hint": "刪除已儲存的 PAT 和倉庫令牌，並移除這個執行時。使用它的智慧體會被解綁，歷史保留。",
       "disconnect": "斷開連線",
       "not_connected_title": "Qoder 尚未連線",
-      "not_connected_hint": "請工作區管理員連線 Qoder Cloud Agent。",
+      "not_connected_hint": "請工作區管理員連線 Qoder Cloud Agents。",
       "workload_idle": "空閒",
       "connection_title": "連線",
       "edit": "編輯",
@@ -632,7 +630,7 @@
       "minutes_other": "{{count}} 分鐘"
     },
     "disconnect_confirm": {
-      "title": "斷開 Qoder Cloud Agent？",
+      "title": "中斷連線 Qoder Cloud Agents？",
       "description": "已儲存的 PAT 和倉庫令牌會被刪除，Qoder 執行時會被移除。之後要再用 Qoder，需要重新連線。",
       "description_agents_other": "下面 {{count}} 個智慧體會被解綁，保留指令和歷史，之後可以換到其他執行時。",
       "plan_changed": "Qoder 上的智慧體有變化，請確認最新列表後再操作。",

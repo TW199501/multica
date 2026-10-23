@@ -202,6 +202,8 @@
     "grouping_section": "分組",
     "ordering_section": "排序",
     "card_properties_section": "卡片屬性",
+    "columns_section": "欄",
+    "columns_locked_by_filter": "清除狀態篩選後才能顯示或隱藏欄。",
     "ascending_title": "升序",
     "descending_title": "降序",
     "newest_first": "最新優先",
@@ -359,18 +361,13 @@
     "toggle_collapse": "切換泳道"
   },
   "board": {
-    "hidden_columns_label": "隱藏的列",
     "hide_column": "隱藏列",
-    "show_column": "顯示列",
     "add_issue_tooltip": "新建任務",
     "empty_column": "無任務",
     "empty_grouping": "沒有匹配的任務",
     "no_value": "未設定",
     "ordered_by": "按{{field}}排序",
-    "manual_reorder_hint": "切換到“手動”排序後，才能調整同一列內的順序。",
-    "filter_to_status": "按此狀態篩選",
-    "outside_workflow": "不在當前看板的工作流裡",
-    "workflow_columns_note": "看板的列由工作流決定，專案外的檢視使用 Default 工作流。"
+    "manual_reorder_hint": "切換到“手動”排序後，才能調整同一列內的順序。"
   },
   "peek": {
     "panel_label": "任務預覽",
@@ -700,6 +697,7 @@
     "retry_failed": "重試執行失敗",
     "retry_blocked": "未重試——你沒有該智慧體的使用許可權",
     "transcript_tooltip": "檢視記錄",
+    "jump_to_run": "跳到執行",
     "cancel_failed": "取消執行失敗",
     "trigger_retry": "重試",
     "trigger_retry_attempt": "重試 #{{attempt}}",
@@ -1494,7 +1492,7 @@
       "instructions": "交接說明",
       "instructions_placeholder": "這一步要做什麼？",
       "next": "完成後進入",
-      "back": "需要修改時退回",
+      "back": "打回時退回到",
       "none_option": "不指定",
       "save": "儲存",
       "create": "建立",
@@ -1522,7 +1520,7 @@
       "target_squad": "小隊 · 由 leader 分派",
       "target_member": "成員",
       "instructions_hint": "作為這次執行的說明發給處理人，和任務描述、評論一起作為上下文。",
-      "next_hint": "寫進處理人收到的說明裡，告訴它下一步該把狀態改成什麼。系統不會在執行結束後自動推進狀態。",
+      "next_hint": "由處理人自己改狀態，只有需要返工時才退回，受阻不用退回。執行結束不會自動改狀態。",
       "preview_brief": "預覽智慧體收到的說明",
       "preview_title": "「{{status}}」這一步的說明",
       "preview_description": "任務進入這一步時，處理人的執行會收到這段說明。預覽不需要先儲存。",
@@ -1613,8 +1611,7 @@
     },
     "detail": {
       "follows_project": "（跟隨專案）",
-      "card_title": "「{{workflow}}」· 跟隨專案「{{project}}」",
-      "card_hint": "這些列和交接由專案的工作流決定。"
+      "card_title": "「{{workflow}}」· 跟隨專案「{{project}}」"
     },
     "list_separator": "、",
     "handoff": {
