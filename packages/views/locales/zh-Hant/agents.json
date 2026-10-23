@@ -1,7 +1,6 @@
 {
   "page": {
     "title": "智慧體",
-    "tagline": "能領取任務、留下評論、推進狀態的 AI 隊友。",
     "learn_more": "瞭解更多 →",
     "new_agent": "新建智慧體",
     "search_placeholder": "搜尋智慧體...",
@@ -367,7 +366,6 @@
       "aria": "建立智慧體步驟"
     },
     "configure_title": "配置智慧體",
-    "configure_description": "給它起個名字，寫下指令。之後都可以再改。",
     "ask_ai": "讓 AI 幫我寫",
     "change_runtime": "更換",
     "runtime_label": "執行時",
@@ -381,13 +379,9 @@
       "joined_squad": "已加入小隊：{{squad}}",
       "next": "接下來",
       "assign_title": "指派第一個任務",
-      "assign_description": "新建一個任務，負責人設為這個智慧體。",
       "mention_title": "在任務裡 @ 它",
-      "mention_description": "在任何任務的評論裡 @{{name}}，它會接手處理。",
       "squad_title": "加入小隊",
-      "squad_description": "和其他智慧體一起，由小隊負責人分派。",
       "open_squad_title": "開啟 {{squad}}",
-      "open_squad_description": "檢視它剛加入的小隊。",
       "open_agent": "開啟智慧體",
       "back_to_list": "返回智慧體列表"
     },
@@ -426,7 +420,6 @@
       "member_connect": "需要管理員連線",
       "member_fix": "需要管理員處理",
       "footer_selected": "已選：",
-      "footer_hint": "選擇一個執行時以繼續",
       "cancel": "取消",
       "next": "下一步"
     }
@@ -497,7 +490,7 @@
   },
   "conversation_starters": {
     "label": "對話開場建議",
-    "hint": "最多三條。點選後填入輸入框，不會傳送。",
+    "hint": "新建對話時顯示。點選後填入輸入框，不會傳送。",
     "add": "新增建議",
     "item_label": "建議 {{number}} 的標題",
     "prompt_label": "建議 {{number}} 的提示詞",
@@ -506,13 +499,21 @@
     "incomplete": "請填寫完整或移除每條建議後再儲存。",
     "remove": "移除建議 {{number}}",
     "preview_label": "新對話預覽",
-    "preview_defaults": "以上是內建的預設值。在上方新增一條建議即可整組替換。"
+    "preview_defaults": "以上是內建建議。新增你自己的建議即可整組替換。",
+    "create_hint": "選填。新建與這個智慧體的對話時顯示。",
+    "edit": "編輯建議 {{number}}",
+    "remove_short": "移除",
+    "done": "完成",
+    "untitled": "未命名建議",
+    "customize": "自訂",
+    "defaults_summary_other": "正在使用 {{count}} 條內建建議"
   },
   "tab_body": {
     "common": {
       "save": "儲存",
       "add": "新增",
-      "unsaved_changes": "未儲存的修改"
+      "unsaved_changes": "未儲存的修改",
+      "discard": "放棄修改"
     },
     "instructions": {
       "intro": "設定每次執行都會使用的 System Prompt，支援 Markdown。",
@@ -524,7 +525,12 @@
       "system_layer_hide": "收起",
       "workspace_notes_label": "工作區補充",
       "workspace_notes_intro": "在下面補充你們團隊的上下文和偏好，它們會疊加在 Multica 為這個智慧體維護的指令之上。支援 Markdown。",
-      "workspace_notes_placeholder": "寫下這個智慧體應該始終知道的上下文。\n\n# 示例\n我們的主倉庫是 github.com/acme/platform。\n即使聊天用中文，任務也一律用英文寫。\n週五不部署。"
+      "workspace_notes_placeholder": "寫下這個智慧體應該始終知道的上下文。\n\n# 示例\n我們的主倉庫是 github.com/acme/platform。\n即使聊天用中文，任務也一律用英文寫。\n週五不部署。",
+      "mode_aria": "編輯模式",
+      "mode_write": "編輯",
+      "mode_preview": "預覽",
+      "preview_empty": "還沒有可預覽的內容。",
+      "char_count_other": "{{count}} 個字元"
     },
     "env": {
       "intro_readonly": "在智慧體程序啟動時注入。只有工作區所有者 / 管理員可以檢視或編輯值；每次解鎖和編輯都會寫入工作區審計日誌。",
