@@ -678,8 +678,7 @@
     },
     "system": {
       "title": "系統通知",
-      "description": "Multica 在後臺時顯示系統通知。",
-      "label": "顯示系統通知"
+      "label": "Multica 在背景時顯示系統通知"
     },
     "browser": {
       "label": "瀏覽器通知",
