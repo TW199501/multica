@@ -1,0 +1,25 @@
+packages/views/locales/zh-Hant/agents.json
+  s_e6eb75c69f54af::t_128b1cee29525e 493,502-509,515-516,528-533
+packages/views/locales/zh-Hant/issues.json
+  s_e6eb75c69f54af::t_128b1cee29525e 205-206,370,700,1495,1523,1614
+packages/views/locales/zh-Hant/runtimes.json
+  s_e6eb75c69f54af::t_128b1cee29525e 512,526,550,591,596-597,610,633
+packages/views/locales/zh-Hant/settings.json
+  s_e6eb75c69f54af::t_128b1cee29525e 681
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3a97dfc7e0bbf7568925f735c00fc69b6d94313d",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
