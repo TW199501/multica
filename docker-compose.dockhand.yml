@@ -1,15 +1,22 @@
 # Dockhand stack for the TW199501/multica fork (zh-Hant build).
 #
 # Same services as docker-compose.selfhost.yml, but backend and frontend are
-# built from this repository instead of pulled from upstream's GHCR images, so
-# the deployed app carries the fork's changes. The build context is the Git
-# URL, so this file works on its own: paste it into Dockhand, or point a Git
-# stack at it. MULTICA_GIT_REF picks the branch or tag to build (default
-# `release`). Set the variables in deploy/dockhand/.env.example in Dockhand.
-# Services bind to 127.0.0.1 only — put a reverse proxy in front.
+# built from source instead of pulled from upstream's GHCR images, so the
+# deployed app carries the fork's changes.
 #
-# Local equivalent (no checkout needed):
-#   docker compose -f compose.yaml --env-file .env up -d --build
+# Dockhand Git stack: compose file path `docker-compose.dockhand.yml`, context
+# directory left empty — the branch Dockhand checks out is the one built.
+# Without a checkout (compose pasted on its own), set MULTICA_BUILD_CONTEXT to
+# https://github.com/TW199501/multica.git#<branch-or-tag>.
+#
+# Variables: deploy/dockhand/.env.example. Services bind to 127.0.0.1 only —
+# put a reverse proxy in front.
+#
+# Kept out of the default `compose.yaml` name on purpose: dev scripts run
+# `docker compose` without -f and must keep resolving docker-compose.yml.
+#
+# Local equivalent:
+#   docker compose -f docker-compose.dockhand.yml --env-file deploy/dockhand/.env up -d --build
 
 services:
   postgres:
@@ -34,7 +41,7 @@ services:
   backend:
     image: multica-backend:${MULTICA_BUILD_VERSION:-local}
     build:
-      context: https://github.com/TW199501/multica.git#${MULTICA_GIT_REF:-release}
+      context: ${MULTICA_BUILD_CONTEXT:-.}
       dockerfile: Dockerfile
       args:
         VERSION: ${MULTICA_BUILD_VERSION:-local}
@@ -209,7 +216,7 @@ services:
   frontend:
     image: multica-web:${MULTICA_BUILD_VERSION:-local}
     build:
-      context: https://github.com/TW199501/multica.git#${MULTICA_GIT_REF:-release}
+      context: ${MULTICA_BUILD_CONTEXT:-.}
       dockerfile: Dockerfile.web
       args:
         NEXT_PUBLIC_APP_VERSION: ${MULTICA_BUILD_VERSION:-local}
