@@ -1,13 +1,15 @@
-# Dockhand Git stack for the TW199501/multica fork (zh-Hant build).
+# Dockhand stack for the TW199501/multica fork (zh-Hant build).
 #
 # Same services as docker-compose.selfhost.yml, but backend and frontend are
-# built from this checkout instead of pulled from upstream's GHCR images, so the
-# deployed app carries the fork's changes. Point the Dockhand stack at branch
-# `release` and this file; set the variables in deploy/dockhand/.env.example in
-# Dockhand. Services bind to 127.0.0.1 only — put a reverse proxy in front.
+# built from this repository instead of pulled from upstream's GHCR images, so
+# the deployed app carries the fork's changes. The build context is the Git
+# URL, so this file works on its own: paste it into Dockhand, or point a Git
+# stack at it. MULTICA_GIT_REF picks the branch or tag to build (default
+# `release`). Set the variables in deploy/dockhand/.env.example in Dockhand.
+# Services bind to 127.0.0.1 only — put a reverse proxy in front.
 #
-# Local equivalent:
-#   docker compose -f deploy/dockhand/compose.yaml --env-file deploy/dockhand/.env up -d --build
+# Local equivalent (no checkout needed):
+#   docker compose -f compose.yaml --env-file .env up -d --build
 
 services:
   postgres:
@@ -32,7 +34,7 @@ services:
   backend:
     image: multica-backend:${MULTICA_BUILD_VERSION:-local}
     build:
-      context: ../..
+      context: https://github.com/TW199501/multica.git#${MULTICA_GIT_REF:-release}
       dockerfile: Dockerfile
       args:
         VERSION: ${MULTICA_BUILD_VERSION:-local}
@@ -207,7 +209,7 @@ services:
   frontend:
     image: multica-web:${MULTICA_BUILD_VERSION:-local}
     build:
-      context: ../..
+      context: https://github.com/TW199501/multica.git#${MULTICA_GIT_REF:-release}
       dockerfile: Dockerfile.web
       args:
         NEXT_PUBLIC_APP_VERSION: ${MULTICA_BUILD_VERSION:-local}
