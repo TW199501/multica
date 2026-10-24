@@ -169,28 +169,42 @@
     "diagnostics_visibility": "可見性",
     "visibility_label": {
       "private": "私有",
-      "public": "公開"
+      "public": "公開",
+      "members": "指定成員"
+    },
+    "visibility_choice": {
+      "private": "私有",
+      "public": "公開",
+      "members": "指定成員"
     },
     "visibility_hint": {
       "private": "僅你可以在此執行時上建立智慧體。",
-      "public": "工作區內任何成員都可以在此執行時上建立智慧體。"
+      "public": "工作區內任何成員都可以在此執行時上建立智慧體。",
+      "members": "僅你和所選成員可以在此執行時上建立智慧體。"
     },
     "visibility_hint_readonly": {
       "private": "僅執行時所有者可以在此執行時上建立智慧體，也只有他們能切換為「公開」。",
-      "public": "工作區內任何成員都可以在此執行時上建立智慧體。只有執行時所有者能切回「私有」。"
+      "public": "工作區內任何成員都可以在此執行時上建立智慧體。只有執行時所有者能切回「私有」。",
+      "members": "僅所有者和所選成員可以在此執行時上建立智慧體。"
     },
+    "visibility_members_title": "分享給成員",
+    "visibility_members_search": "搜尋成員",
+    "visibility_members_none": "工作區還沒有其他成員。",
+    "visibility_members_no_match": "沒有符合的成員。",
+    "visibility_members_edit": "編輯",
+    "visibility_members_count_other": "{{count}} 位成員",
     "visibility_toast_updated": "可見性已設為\"{{visibility}}\"",
     "visibility_toast_failed": "更新可見性失敗",
     "visibility_revoke_dialog": {
-      "title": "將此執行時設為私有？",
-      "description": "將 \"{{name}}\" 設為私有後，會解綁 {{count}} 個其他成員的智慧體、取消此機器上的 {{taskCount}} 次活動執行，並暫停分配給這些智慧體的已啟用自動化。你自己的智慧體和執行不受影響。",
+      "title": "限制執行時的存取權限？",
+      "description": "限制「{{name}}」的存取權限會解除 {{count}} 個受影響智慧體的繫結、取消 {{taskCount}} 次執行，並暫停指派給這些智慧體的自動化。仍有權限的智慧體和執行不受影響。",
       "warning": "服務端會立即撤銷訪問。已連線的守護程序會在常規取消檢查時停止執行。離線機器需重新連線才能收到停止請求，本地程序在此期間可能繼續執行。",
       "plan_changed": "彈窗開啟期間，訪問方案發生了變化。請重新確認。",
       "checkbox": "我已瞭解：列表中的其他成員智慧體會被解綁，其活動執行會被取消，已啟用的自動化會被暫停。",
       "cancel": "取消",
-      "confirm": "設為私有",
+      "confirm": "限制存取",
       "submitting": "正在撤銷訪問...",
-      "toast_success": "執行時已設為私有，其他成員的訪問已撤銷",
+      "toast_success": "已更新執行時的存取權限",
       "toast_failed": "撤銷執行時訪問失敗"
     },
     "delete_dialog": {
