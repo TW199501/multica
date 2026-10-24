@@ -9,8 +9,9 @@
 # Without a checkout (compose pasted on its own), set MULTICA_BUILD_CONTEXT to
 # https://github.com/TW199501/multica.git#<branch-or-tag>.
 #
-# Variables: deploy/dockhand/.env.example. Services bind to 127.0.0.1 only —
-# put a reverse proxy in front.
+# Variables: deploy/dockhand/.env.example. Services bind to 127.0.0.1 unless
+# MULTICA_BIND_ADDRESS says otherwise (a LAN IP for a private test host); for
+# public access keep the default and put a reverse proxy in front.
 #
 # Kept out of the default `compose.yaml` name on purpose: dev scripts run
 # `docker compose` without -f and must keep resolving docker-compose.yml.
@@ -52,7 +53,7 @@ services:
       postgres:
         condition: service_healthy
     ports:
-      - "127.0.0.1:${BACKEND_PORT:-${API_PORT:-${SERVER_PORT:-${PORT:-8080}}}}:8080"
+      - "${MULTICA_BIND_ADDRESS:-127.0.0.1}:${BACKEND_PORT:-${API_PORT:-${SERVER_PORT:-${PORT:-8080}}}}:8080"
     volumes:
       - backend_uploads:/app/data/uploads
     environment:
@@ -224,7 +225,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "127.0.0.1:${FRONTEND_PORT:-3000}:3000"
+      - "${MULTICA_BIND_ADDRESS:-127.0.0.1}:${FRONTEND_PORT:-3000}:3000"
     environment:
       HOSTNAME: "0.0.0.0"
       REMOTE_API_URL: ${REMOTE_API_URL:-http://backend:8080}
