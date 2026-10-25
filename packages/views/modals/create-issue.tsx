@@ -1063,6 +1063,7 @@ export function ManualCreatePanel({
                   triggerRender={<PillButton />}
                   tooltip={tIssues(($) => $.detail.prop_status)}
                   align="start"
+                  side="top"
                   open={fieldPickerOpen === "status" ? true : undefined}
                   onOpenChange={(open) => setFieldPickerOpen(open ? "status" : null)}
                 />
@@ -1076,6 +1077,7 @@ export function ManualCreatePanel({
                   triggerRender={<PillButton />}
                   tooltip={tIssues(($) => $.detail.prop_priority)}
                   align="start"
+                  side="top"
                   open={fieldPickerOpen === "priority" ? true : undefined}
                   onOpenChange={(open) => setFieldPickerOpen(open ? "priority" : null)}
                 />
@@ -1093,6 +1095,7 @@ export function ManualCreatePanel({
                   triggerRender={<PillButton />}
                   tooltip={tIssues(($) => $.detail.prop_assignee)}
                   align="start"
+                  side="top"
                   open={fieldPickerOpen === "assignee" ? true : undefined}
                   onOpenChange={(open) => setFieldPickerOpen(open ? "assignee" : null)}
                 />
@@ -1109,6 +1112,7 @@ export function ManualCreatePanel({
                   triggerRender={<PillButton />}
                   tooltip={tIssues(($) => $.detail.prop_labels)}
                   align="start"
+                  side="top"
                   open={fieldPickerOpen === "labels" ? true : undefined}
                   onOpenChange={(open) => setFieldPickerOpen(open ? "labels" : null)}
                 />
@@ -1127,6 +1131,7 @@ export function ManualCreatePanel({
                   }
                   tooltip={tIssues(($) => $.detail.prop_project)}
                   align="start"
+                  side="top"
                   open={fieldPickerOpen === "project" ? true : undefined}
                   onOpenChange={(open) => setFieldPickerOpen(open ? "project" : null)}
                 />
@@ -1141,6 +1146,7 @@ export function ManualCreatePanel({
                   triggerRender={<PillButton />}
                   tooltip={tIssues(($) => $.detail.prop_stage)}
                   align="start"
+                  side="top"
                 />
               )}
 
@@ -1157,6 +1163,7 @@ export function ManualCreatePanel({
                   triggerRender={<PillButton />}
                   tooltip={tIssues(($) => $.detail.prop_start_date)}
                   align="start"
+                  side="top"
                   open={startDatePickerOpen}
                   onOpenChange={setStartDatePickerOpen}
                 />
@@ -1172,6 +1179,7 @@ export function ManualCreatePanel({
                   triggerRender={<PillButton />}
                   tooltip={tIssues(($) => $.detail.prop_due_date)}
                   align="start"
+                  side="top"
                   open={dueDatePickerOpen}
                   onOpenChange={setDueDatePickerOpen}
                 />
@@ -1298,7 +1306,7 @@ export function ManualCreatePanel({
                     }
                   />
                 </TooltipHint>
-                <DropdownMenuContent align="start" className="w-auto">
+                <DropdownMenuContent align="start" side="top" className="w-auto">
                   {/* Re-entry points for toolbar fields hidden via
                       Settings → Preferences → Issue creation. Listed in toolbar order; each opens
                       the picker inline (mounting the pill as its anchor). */}

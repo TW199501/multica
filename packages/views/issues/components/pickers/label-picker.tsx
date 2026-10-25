@@ -39,6 +39,7 @@ interface LabelPickerProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   align?: "start" | "center" | "end";
+  side?: "top" | "bottom";
   /** Open the picker on first mount. Used by progressive-disclosure
    *  sidebars so a newly-added field immediately enters edit state. */
   defaultOpen?: boolean;
@@ -96,6 +97,7 @@ export function LabelPicker({
   open: controlledOpen,
   onOpenChange,
   align = "start",
+  side,
   defaultOpen = false,
   triggerRender,
   tooltip,
@@ -225,6 +227,7 @@ export function LabelPicker({
         }}
         width="w-80"
         align={align}
+        side={side}
         searchable
         searchPlaceholder={t(($) => $.pickers.label.search_placeholder)}
         onSearchChange={setFilter}

@@ -22,6 +22,7 @@ export function ProjectPicker({
   triggerRender,
   tooltip,
   align = "start",
+  side,
   defaultOpen = false,
   open: controlledOpen,
   onOpenChange,
@@ -33,6 +34,7 @@ export function ProjectPicker({
   /** Hover tooltip naming the property; hidden while the picker is open. */
   tooltip?: React.ReactNode;
   align?: "start" | "center" | "end";
+  side?: "top" | "bottom";
   /** Open the dropdown on first mount. Used by progressive-disclosure
    *  sidebars so a newly-added field immediately enters edit state. */
   defaultOpen?: boolean;
@@ -80,6 +82,7 @@ export function ProjectPicker({
         onOpenChange={setOpen}
         width="w-52"
         align={align}
+        side={side}
         searchable
         searchPlaceholder={t(($) => $.picker.search_placeholder)}
         onSearchChange={setFilter}

@@ -29,6 +29,7 @@ export function StatusPicker({
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
   align,
+  side,
   onMarkDuplicate,
   isDuplicate,
   projectId,
@@ -50,6 +51,7 @@ export function StatusPicker({
   open?: boolean;
   onOpenChange?: (v: boolean) => void;
   align?: "start" | "center" | "end";
+  side?: "top" | "bottom";
   /**
    * Adds the "Mark as duplicate" action. It is an action, not a status: it
    * opens a picker for the original and only writes once one is chosen. Pass
@@ -147,6 +149,7 @@ export function StatusPicker({
       }}
       width={workflow || defaultScope ? "w-60" : "w-52"}
       align={align}
+      side={side}
       triggerRender={triggerRender}
       tooltip={tooltip}
       searchable={searchable}
