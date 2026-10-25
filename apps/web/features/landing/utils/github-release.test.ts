@@ -157,6 +157,7 @@ describe("fetchLatestRelease", () => {
       version: null,
       publishedAt: null,
       htmlUrl: null,
+      allReleasesUrl: "https://github.com/multica-ai/multica/releases",
       assets: {},
     });
     expect(warnSpy).toHaveBeenCalled();
@@ -171,5 +172,49 @@ describe("fetchLatestRelease", () => {
     const result = await fetchLatestRelease();
     expect(result.version).toBeNull();
     expect(result.assets).toEqual({});
+  });
+});
+
+describe("fetchLatestRelease release repository", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("reads upstream releases by default", async () => {
+    vi.stubEnv("MULTICA_RELEASE_REPOSITORY", "");
+    const fetchMock = mockFetchWithReleases([]);
+
+    const result = await fetchLatestRelease();
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      "https://api.github.com/repos/multica-ai/multica/releases?per_page=5",
+    );
+    expect(result.allReleasesUrl).toBe("https://github.com/multica-ai/multica/releases");
+  });
+
+  it("reads the configured repository's releases", async () => {
+    vi.stubEnv("MULTICA_RELEASE_REPOSITORY", "TW199501/multica");
+    const fetchMock = mockFetchWithReleases([
+      releasePayload({ tag: "v0.7.0-tw.2", assets: completeAssets("0.7.0-tw.2") }),
+    ]);
+
+    const result = await fetchLatestRelease();
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      "https://api.github.com/repos/TW199501/multica/releases?per_page=5",
+    );
+    expect(result.version).toBe("v0.7.0-tw.2");
+    expect(result.allReleasesUrl).toBe("https://github.com/TW199501/multica/releases");
+  });
+
+  it("falls back to upstream for a malformed override", async () => {
+    vi.stubEnv("MULTICA_RELEASE_REPOSITORY", "not a repo");
+    const fetchMock = mockFetchWithReleases([]);
+
+    await fetchLatestRelease();
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      "https://api.github.com/repos/multica-ai/multica/releases?per_page=5",
+    );
   });
 });

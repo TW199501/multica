@@ -107,7 +107,14 @@ if (hasGo()) {
   const commit = git("rev-parse", "--short", "HEAD") || "unknown";
   const buildCommit = git("rev-parse", "HEAD") || "unknown";
   const date = new Date().toISOString().replace(/\.\d+Z$/, "Z");
-  const ldflags = `-X main.version=${version} -X main.commit=${commit} -X main.buildCommit=${buildCommit} -X main.date=${date}`;
+  // A fork build points the bundled CLI's self-update at its own releases.
+  const releaseRepository = process.env.MULTICA_RELEASE_REPOSITORY?.trim();
+  const ldflags = [
+    `-X main.version=${version} -X main.commit=${commit} -X main.buildCommit=${buildCommit} -X main.date=${date}`,
+    releaseRepository
+      ? `-X github.com/multica-ai/multica/server/internal/cli.DefaultReleaseRepository=${releaseRepository}`
+      : "",
+  ].join(" ").trim();
 
   console.log(
     `[bundle-cli] go build → ${srcBinary} (${goos}/${goarch}, version=${version} commit=${commit})`,

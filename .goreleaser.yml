@@ -19,6 +19,7 @@ builds:
       - -X main.commit={{.ShortCommit}}
       - -X main.buildCommit={{.FullCommit}}
       - -X main.date={{.Date}}
+      - -X github.com/multica-ai/multica/server/internal/cli.DefaultReleaseRepository={{ envOrDefault "MULTICA_RELEASE_REPOSITORY" "multica-ai/multica" }}
     env:
       - CGO_ENABLED=0
     goos:

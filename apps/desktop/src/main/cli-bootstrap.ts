@@ -14,8 +14,19 @@ import { selectPlatformReleaseAssetName } from "./cli-release-asset";
 // same-repo builds, but it can also repair or bootstrap a managed copy in
 // userData on first launch when the bundled binary is missing or unusable.
 
-const GITHUB_LATEST_BASE =
-  "https://github.com/multica-ai/multica/releases/latest/download";
+// The repository whose releases carry the CLI, baked in at build time with
+// VITE_RELEASE_REPOSITORY ("owner/name"); upstream when unset or malformed.
+const RELEASE_REPOSITORY = (() => {
+  const configured = (
+    (import.meta.env as ImportMetaEnv & { readonly VITE_RELEASE_REPOSITORY?: string })
+      .VITE_RELEASE_REPOSITORY ?? ""
+  ).trim();
+  return /^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/.test(configured)
+    ? configured
+    : "multica-ai/multica";
+})();
+
+const GITHUB_LATEST_BASE = `https://github.com/${RELEASE_REPOSITORY}/releases/latest/download`;
 
 function binaryName(): string {
   return process.platform === "win32" ? "multica.exe" : "multica";

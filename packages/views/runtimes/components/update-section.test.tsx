@@ -3,9 +3,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { I18nProvider } from "@multica/core/i18n/react";
+import { configStore } from "@multica/core/config";
 import enCommon from "../../locales/en/common.json";
 import enRuntimes from "../../locales/en/runtimes.json";
-import { UpdateSection } from "./update-section";
+import { UpdateSection, isNewer, parseReleaseVersion } from "./update-section";
 
 const TEST_RESOURCES = { en: { common: enCommon, runtimes: enRuntimes } };
 
@@ -168,5 +169,82 @@ describe("UpdateSection non-release versions", () => {
       screen.queryByRole("button", { name: "Update" }),
     ).not.toBeInTheDocument();
     expect(screen.queryByText("Local build")).not.toBeInTheDocument();
+  });
+});
+
+describe("UpdateSection release repository and fork releases", () => {
+  let clock = Date.now() + 365 * 24 * 60 * 60 * 1000;
+
+  beforeEach(() => {
+    clock += 60 * 60 * 1000;
+    vi.spyOn(Date, "now").mockReturnValue(clock);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    configStore.getState().setReleaseRepository(undefined);
+  });
+
+  function stubLatest(tag: string) {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ tag_name: tag }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    return fetchMock;
+  }
+
+  it("checks the upstream repository by default", async () => {
+    const fetchMock = stubLatest("v0.4.0");
+
+    renderSection({ runtimeId: "runtime-1", currentVersion: "v0.4.0" });
+
+    expect(await screen.findByText("Latest")).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api.github.com/repos/multica-ai/multica/releases/latest",
+      expect.anything(),
+    );
+  });
+
+  it("checks the repository the server configures", async () => {
+    configStore.getState().setReleaseRepository("TW199501/multica");
+    const fetchMock = stubLatest("v0.7.0-tw.2");
+
+    renderSection({ runtimeId: "runtime-1", currentVersion: "v0.7.0-tw.1" });
+
+    expect(
+      await screen.findByRole("button", { name: "Update" }),
+    ).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api.github.com/repos/TW199501/multica/releases/latest",
+      expect.anything(),
+    );
+  });
+
+  it("reports a fork release on the latest fork tag as Latest", async () => {
+    configStore.getState().setReleaseRepository("TW199501/multica");
+    stubLatest("v0.7.0-tw.2");
+
+    renderSection({ runtimeId: "runtime-1", currentVersion: "v0.7.0-tw.2" });
+
+    expect(await screen.findByText("Latest")).toBeInTheDocument();
+    expect(screen.queryByText("Local build")).not.toBeInTheDocument();
+  });
+});
+
+describe("parseReleaseVersion / isNewer", () => {
+  it("orders fork revisions after their upstream base", () => {
+    expect(parseReleaseVersion("v0.7.0-tw.2")).toEqual([0, 7, 0, 2]);
+    expect(parseReleaseVersion("0.7.0")).toEqual([0, 7, 0, 0]);
+    expect(isNewer("v0.7.0-tw.2", "v0.7.0-tw.1")).toBe(true);
+    expect(isNewer("v0.7.0-tw.1", "v0.7.0")).toBe(true);
+    expect(isNewer("v0.7.0", "v0.7.0-tw.1")).toBe(false);
+    expect(isNewer("v0.7.1", "v0.7.0-tw.9")).toBe(true);
+  });
+
+  it("rejects tails that are not a fork revision", () => {
+    for (const v of ["v0.7.0-tw.0", "v0.7.0-tw.", "v0.7.0-rc.1", "v0.7.0-tw.1-3-gabc1234"]) {
+      expect(parseReleaseVersion(v)).toBeNull();
+    }
   });
 });

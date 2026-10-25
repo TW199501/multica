@@ -39,7 +39,50 @@ const defaultReleaseAPIBaseURL = "https://api.github.com"
 const releaseAPIBaseURLEnv = "MULTICA_RELEASE_API_BASE_URL"
 const releaseDownloadBaseURLEnv = "MULTICA_RELEASE_DOWNLOAD_BASE_URL"
 
+// ReleaseRepositoryEnv names the "owner/name" GitHub repository whose
+// releases carry the CLI, desktop and checksum assets.
+const ReleaseRepositoryEnv = "MULTICA_RELEASE_REPOSITORY"
+
+// DefaultReleaseRepository is where releases are published. A fork sets it at
+// build time with
+// -ldflags "-X github.com/multica-ai/multica/server/internal/cli.DefaultReleaseRepository=owner/name".
+var DefaultReleaseRepository = "multica-ai/multica"
+
 const DefaultUpdateDownloadTimeout = 120 * time.Second
+
+// ReleaseRepository returns the repository to read releases from: the
+// MULTICA_RELEASE_REPOSITORY override when it is a well-formed "owner/name",
+// otherwise DefaultReleaseRepository.
+func ReleaseRepository() string {
+	if value := strings.TrimSpace(os.Getenv(ReleaseRepositoryEnv)); IsValidReleaseRepository(value) {
+		return value
+	}
+	return DefaultReleaseRepository
+}
+
+// IsValidReleaseRepository reports whether s is a GitHub "owner/name" pair.
+func IsValidReleaseRepository(s string) bool {
+	owner, name, ok := strings.Cut(s, "/")
+	return ok && isRepoNamePart(owner) && isRepoNamePart(name)
+}
+
+func isRepoNamePart(s string) bool {
+	if s == "" || s == "." || s == ".." {
+		return false
+	}
+	for _, r := range s {
+		switch {
+		case r >= 'a' && r <= 'z', r >= 'A' && r <= 'Z', r >= '0' && r <= '9', r == '-', r == '_', r == '.':
+		default:
+			return false
+		}
+	}
+	return true
+}
+
+func releaseRepositoryAPIPath() string {
+	return "/repos/" + ReleaseRepository() + "/releases"
+}
 
 func releaseAPIBaseURL() string {
 	if value := strings.TrimRight(strings.TrimSpace(os.Getenv(releaseAPIBaseURLEnv)), "/"); value != "" {
@@ -68,36 +111,21 @@ type GitHubRelease struct {
 }
 
 // IsReleaseVersion reports whether v looks like a tagged release version
-// (e.g. "0.1.13", "v0.1.13") rather than a dev build (e.g. an empty version
-// or a `git describe`–style "v0.2.15-235-gdaf0e935"). The auto-update poller
-// uses this to skip self-update for source builds, where downgrading to a
-// public release would clobber unreleased changes.
+// (e.g. "0.1.13", "v0.1.13", or a fork release "v0.1.13-tw.2") rather than a
+// dev build (e.g. an empty version or a `git describe`–style
+// "v0.2.15-235-gdaf0e935"). The auto-update poller uses this to skip
+// self-update for source builds, where downgrading to a public release would
+// clobber unreleased changes.
 func IsReleaseVersion(v string) bool {
-	s := strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(v), "v"))
-	if s == "" {
-		return false
-	}
-	parts := strings.Split(s, ".")
-	if len(parts) != 3 {
-		return false
-	}
-	for _, p := range parts {
-		if p == "" {
-			return false
-		}
-		for _, r := range p {
-			if r < '0' || r > '9' {
-				return false
-			}
-		}
-	}
-	return true
+	_, ok := parseReleaseVersion(v)
+	return ok
 }
 
 // IsNewerVersion reports whether latest is strictly newer than current. Both
-// arguments may carry an optional "v" prefix; non-numeric tails are ignored
-// (a 4th component, pre-release tag, etc.). Returns false if either side
-// cannot be parsed — the caller treats that as "stay on current".
+// arguments may carry an optional "v" prefix. Versions compare by major,
+// minor, patch, then fork revision ("-tw.N"; a plain release counts as 0).
+// Returns false if either side cannot be parsed — the caller treats that as
+// "stay on current".
 func IsNewerVersion(latest, current string) bool {
 	l, ok := parseReleaseVersion(latest)
 	if !ok {
@@ -107,7 +135,7 @@ func IsNewerVersion(latest, current string) bool {
 	if !ok {
 		return false
 	}
-	for i := 0; i < 3; i++ {
+	for i := range l {
 		if l[i] != c[i] {
 			return l[i] > c[i]
 		}
@@ -115,39 +143,60 @@ func IsNewerVersion(latest, current string) bool {
 	return false
 }
 
-// parseReleaseVersion extracts the three numeric components of v. Returns
-// (parts, true) on success; (_, false) when v is missing, malformed, or
-// carries any non-numeric tail (a dev-describe suffix, a 4th component, a
-// pre-release tag, etc.). The strict shape is intentional: this is the only
-// parser used by IsNewerVersion, and the autoUpdateLoop must never silently
-// downgrade a developer build to a public release just because the
-// dev-describe patch happened to look numeric after trimming.
-func parseReleaseVersion(v string) ([3]int, bool) {
+// forkRevisionPrefix marks a fork release built on top of an upstream version:
+// "0.7.0-tw.2" is the second fork release of upstream 0.7.0.
+const forkRevisionPrefix = "-tw."
+
+// parseReleaseVersion extracts major, minor, patch and fork revision from v.
+// Accepted shapes are "X.Y.Z" (revision 0) and "X.Y.Z-tw.N" with N ≥ 1.
+// Returns (_, false) when v is missing, malformed, or carries any other tail
+// (a dev-describe suffix, a 4th component, another pre-release tag, etc.).
+// The strict shape is intentional: this is the only parser used by
+// IsNewerVersion, and the autoUpdateLoop must never silently downgrade a
+// developer build to a public release just because the dev-describe patch
+// happened to look numeric after trimming.
+func parseReleaseVersion(v string) ([4]int, bool) {
 	s := strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(v), "v"))
 	if s == "" {
-		return [3]int{}, false
+		return [4]int{}, false
+	}
+	var out [4]int
+	if base, rev, ok := strings.Cut(s, forkRevisionPrefix); ok {
+		n, ok := parseVersionNumber(rev)
+		if !ok || n < 1 {
+			return [4]int{}, false
+		}
+		out[3] = n
+		s = base
 	}
 	parts := strings.Split(s, ".")
 	if len(parts) != 3 {
-		return [3]int{}, false
+		return [4]int{}, false
 	}
-	var out [3]int
 	for i, p := range parts {
-		if p == "" {
-			return [3]int{}, false
-		}
-		for _, r := range p {
-			if r < '0' || r > '9' {
-				return [3]int{}, false
-			}
-		}
-		n, err := strconv.Atoi(p)
-		if err != nil {
-			return [3]int{}, false
+		n, ok := parseVersionNumber(p)
+		if !ok {
+			return [4]int{}, false
 		}
 		out[i] = n
 	}
 	return out, true
+}
+
+func parseVersionNumber(p string) (int, bool) {
+	if p == "" {
+		return 0, false
+	}
+	for _, r := range p {
+		if r < '0' || r > '9' {
+			return 0, false
+		}
+	}
+	n, err := strconv.Atoi(p)
+	if err != nil {
+		return 0, false
+	}
+	return n, true
 }
 
 type GitHubReleaseAsset struct {
@@ -254,7 +303,7 @@ func verifyAssetSHA256(data []byte, expectedHex, assetName string) error {
 
 func fetchReleaseByTag(tag string) (*GitHubRelease, error) {
 	client := &http.Client{Timeout: 10 * time.Second}
-	req, err := http.NewRequest(http.MethodGet, releaseAPIBaseURL()+"/repos/multica-ai/multica/releases/tags/"+url.PathEscape(tag), nil)
+	req, err := http.NewRequest(http.MethodGet, releaseAPIBaseURL()+releaseRepositoryAPIPath()+"/tags/"+url.PathEscape(tag), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -277,10 +326,10 @@ func fetchReleaseByTag(tag string) (*GitHubRelease, error) {
 	return &release, nil
 }
 
-// FetchLatestRelease fetches the latest release tag from the multica GitHub repo.
+// FetchLatestRelease fetches the latest release from ReleaseRepository().
 func FetchLatestRelease() (*GitHubRelease, error) {
 	client := &http.Client{Timeout: 10 * time.Second}
-	req, err := http.NewRequest(http.MethodGet, releaseAPIBaseURL()+"/repos/multica-ai/multica/releases/latest", nil)
+	req, err := http.NewRequest(http.MethodGet, releaseAPIBaseURL()+releaseRepositoryAPIPath()+"/latest", nil)
 	if err != nil {
 		return nil, err
 	}

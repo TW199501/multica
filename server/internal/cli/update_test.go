@@ -116,6 +116,13 @@ func TestIsReleaseVersion(t *testing.T) {
 		{"two components", "0.1", false},
 		{"four components", "0.1.2.3", false},
 		{"non-numeric", "1.0.x", false},
+		{"fork release", "v0.7.0-tw.2", true},
+		{"fork release without v", "0.7.0-tw.1", true},
+		{"fork revision zero", "v0.7.0-tw.0", false},
+		{"fork revision missing", "v0.7.0-tw.", false},
+		{"fork revision non-numeric", "v0.7.0-tw.x", false},
+		{"other pre-release tag", "v0.7.0-rc.1", false},
+		{"fork release with dev describe", "v0.7.0-tw.1-3-gabc1234", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -144,6 +151,11 @@ func TestIsNewerVersion(t *testing.T) {
 		{"current unparseable → false", "v0.1.14", "garbage", false},
 		{"empty latest", "", "v0.1.13", false},
 		{"empty current", "v0.1.14", "", false},
+		{"fork revision bump", "v0.7.0-tw.2", "v0.7.0-tw.1", true},
+		{"fork release over its upstream base", "v0.7.0-tw.1", "v0.7.0", true},
+		{"upstream base is not newer than fork release", "v0.7.0", "v0.7.0-tw.1", false},
+		{"next upstream version beats fork revision", "v0.7.1", "v0.7.0-tw.9", true},
+		{"same fork release", "v0.7.0-tw.2", "v0.7.0-tw.2", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

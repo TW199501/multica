@@ -9,37 +9,38 @@ import {
 } from "lucide-react";
 import { Button } from "@multica/ui/components/ui/button";
 import { api } from "@multica/core/api";
+import { useConfigStore } from "@multica/core/config";
 import type { RuntimeUpdateStatus } from "@multica/core/types";
 import { useT } from "../../i18n";
 
-const GITHUB_RELEASES_URL =
-  "https://api.github.com/repos/multica-ai/multica/releases/latest";
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
-let cachedLatestVersion: string | null = null;
-let cachedAt = 0;
+const latestVersionCache = new Map<string, { version: string; at: number }>();
 
-async function fetchLatestVersion(): Promise<string | null> {
-  if (cachedLatestVersion && Date.now() - cachedAt < CACHE_TTL_MS) {
-    return cachedLatestVersion;
+async function fetchLatestVersion(repository: string): Promise<string | null> {
+  const cached = latestVersionCache.get(repository);
+  if (cached && Date.now() - cached.at < CACHE_TTL_MS) {
+    return cached.version;
   }
   try {
-    const resp = await fetch(GITHUB_RELEASES_URL, {
-      headers: { Accept: "application/vnd.github+json" },
-    });
+    const resp = await fetch(
+      `https://api.github.com/repos/${repository}/releases/latest`,
+      { headers: { Accept: "application/vnd.github+json" } },
+    );
     if (!resp.ok) return null;
     const data = await resp.json();
-    cachedLatestVersion = data.tag_name ?? null;
-    cachedAt = Date.now();
-    return cachedLatestVersion;
+    const version: string | null = data.tag_name ?? null;
+    if (version) latestVersionCache.set(repository, { version, at: Date.now() });
+    return version;
   } catch {
     return null;
   }
 }
 
 /**
- * Parses a released CLI version ("v0.4.17" / "0.4.17") into comparable parts,
- * or null when the string is not a release version.
+ * Parses a released CLI version ("v0.4.17" / "0.4.17", or a fork release
+ * "v0.4.17-tw.2") into comparable parts — major, minor, patch, fork revision
+ * (0 for a plain release) — or null when the string is not a release version.
  *
  * A daemon built from source reports a `git describe` string
  * ("v0.4.17-12-gabc1234") or the ldflags default ("dev"), and neither can be
@@ -47,15 +48,12 @@ async function fetchLatestVersion(): Promise<string | null> {
  * server/internal/cli/update.go, which is how the daemon's own auto-update
  * loop decides the same question.
  */
-function parseReleaseVersion(v: string): number[] | null {
-  const parts = v.trim().replace(/^v/, "").split(".");
-  if (parts.length !== 3) return null;
-  const parsed: number[] = [];
-  for (const part of parts) {
-    if (!/^\d+$/.test(part)) return null;
-    parsed.push(Number(part));
-  }
-  return parsed;
+export function parseReleaseVersion(v: string): number[] | null {
+  const match = /^(\d+)\.(\d+)\.(\d+)(?:-tw\.([1-9]\d*))?$/.exec(
+    v.trim().replace(/^v/, ""),
+  );
+  if (!match) return null;
+  return [match[1], match[2], match[3], match[4] ?? "0"].map(Number);
 }
 
 /**
@@ -68,7 +66,7 @@ function parseReleaseVersion(v: string): number[] | null {
  * operator to replace a locally built binary on the strength of a claim we
  * could not make.
  */
-function isNewer(latest: string, current: string): boolean {
+export function isNewer(latest: string, current: string): boolean {
   const l = parseReleaseVersion(latest);
   const c = parseReleaseVersion(current);
   if (!l || !c) return false;
@@ -113,6 +111,7 @@ export function UpdateSection({
 }: UpdateSectionProps) {
   const { t } = useT("runtimes");
   const isManaged = launchedBy === "desktop";
+  const releaseRepository = useConfigStore((s) => s.releaseRepository);
   const [latestVersion, setLatestVersion] = useState<string | null>(null);
   const [status, setStatus] = useState<RuntimeUpdateStatus | null>(null);
   const [error, setError] = useState("");
@@ -130,10 +129,16 @@ export function UpdateSection({
 
   useEffect(() => cleanup, [cleanup]);
 
-  // Fetch latest version on mount.
+  // Fetch the latest version from the configured release repository.
   useEffect(() => {
-    fetchLatestVersion().then(setLatestVersion);
-  }, []);
+    let cancelled = false;
+    fetchLatestVersion(releaseRepository).then((version) => {
+      if (!cancelled) setLatestVersion(version);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [releaseRepository]);
 
   const markCompleted = useCallback(
     (message: string) => {
