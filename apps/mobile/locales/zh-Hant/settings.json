@@ -1,7 +1,7 @@
 {
   "title": "設定",
   "account": {
-    "title": "賬號",
+    "title": "帳號",
     "sign_out": "退出登入",
     "sign_out_message": "你需要重新登入才能在此裝置上使用 Multica。",
     "workspace": "工作區",
@@ -12,7 +12,7 @@
   "profile": {
     "title": "個人資料",
     "name": "姓名",
-    "email": "郵箱",
+    "email": "信箱",
     "save": "儲存個人資料",
     "saving": "儲存中..."
   },
@@ -64,7 +64,7 @@
     "save_failed": "個人資料儲存失敗。",
     "save_failed_default": "無法儲存你的個人資料。"
   },
-  "email_fixed": "郵箱在註冊時設定，無法在這裡修改。",
+  "email_fixed": "信箱在註冊時設定，無法在這裡修改。",
   "groups": {
     "assignments": "分配給我的",
     "assignments_description": "任務分配給我或取消分配給我時。",
@@ -80,7 +80,7 @@
     "inbox_notifications": "收件箱通知",
     "system": "系統",
     "system_notifications": "系統通知",
-    "system_description": "賬號變更、安全提醒和產品更新。"
+    "system_description": "帳號變更、安全提醒和產品更新。"
   },
   "groups.assignments_description": "任務分配給我或取消分配給我時。",
   "groups.mentions_description": "有人用 @ 提到你時，包括 @all 和 @squad。"

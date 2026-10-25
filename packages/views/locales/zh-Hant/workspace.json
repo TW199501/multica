@@ -29,6 +29,6 @@
     "title": "工作區不可用",
     "description": "該工作區不存在，或你沒有訪問許可權。",
     "go_to_workspaces": "前往我的工作區",
-    "sign_in_different": "使用其他賬號登入"
+    "sign_in_different": "使用其他帳號登入"
   }
 }
