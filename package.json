@@ -84,7 +84,8 @@
       "undici@>=7.0.0 <7.30.1": "7.30.1",
       "ws@>=7.0.0 <7.5.11": "7.5.11",
       "ws@>=8.0.0 <8.21.0": "8.21.0",
-      "zod@>=4.0.0 <4.6.6": "4.6.6"
+      "zod@>=4.0.0 <4.6.6": "4.6.6",
+      "http-cache-semantics@>=4.0.0 <4.3.0": "4.3.0"
     },
     "patchedDependencies": {
       "expo-modules-core@57.0.21": "apps/mobile/patches/expo-modules-core@57.0.21.patch"

@@ -71,6 +71,7 @@
     "@vitejs/plugin-react": "^5.1.1",
     "electron": "^45.0.0",
     "electron-builder": "^26.15.0",
+    "electron-builder-squirrel-windows": "^26.18.0",
     "electron-vite": "^5.0.0",
     "globals": "^16.0.0",
     "jsdom": "catalog:",
