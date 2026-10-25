@@ -5,7 +5,7 @@
   },
   "not_found": {
     "title": "未找到邀請",
-    "description": "此邀請可能已過期、已被撤銷，或不屬於你的賬號。",
+    "description": "此邀請可能已過期、已被撤銷，或不屬於你的帳號。",
     "go_to_dashboard": "前往主頁"
   },
   "accepted": {

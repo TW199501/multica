@@ -171,7 +171,7 @@
       "korean": "한국어",
       "japanese": "日本語",
       "french": "Français",
-      "sync_failed": "語言已在本裝置儲存，但同步到賬號失敗。其他裝置可能仍顯示舊語言。"
+      "sync_failed": "語言已在本裝置儲存，但同步到帳號失敗。其他裝置可能仍顯示舊語言。"
     },
     "timezone": {
       "title": "時區",
@@ -387,7 +387,7 @@
   },
   "page": {
     "title": "設定",
-    "my_account": "我的賬號",
+    "my_account": "我的帳號",
     "workspace_fallback": "工作區",
     "tabs": {
       "profile": "個人資料",
@@ -407,7 +407,7 @@
       "quick_actions": "快捷操作",
       "plugins": "外掛",
       "mcp": "MCP 伺服器",
-      "billing": "賬單與套餐",
+      "billing": "帳單與套餐",
       "code": "程式碼",
       "channels": "訊息渠道",
       "apps": "已連線應用",
@@ -691,8 +691,8 @@
   },
   "tokens": {
     "title": "API Token",
-    "description": "個人訪問 token 讓 CLI 和外部整合可以代表你的賬號進行身份驗證。可透過 multica login --token 使用，或在呼叫 API 時作為 Bearer token 傳送。",
-    "security_note": "Token 擁有你賬號的完整訪問許可權，請像密碼一樣妥善保管。",
+    "description": "個人訪問 token 讓 CLI 和外部整合可以代表你的帳號進行身份驗證。可透過 multica login --token 使用，或在呼叫 API 時作為 Bearer token 傳送。",
+    "security_note": "Token 擁有你帳號的完整訪問許可權，請像密碼一樣妥善保管。",
     "empty": "暫無 API token。",
     "load_failed": "無法載入 API token，請重新整理頁面重試。",
     "name_placeholder": "Token 名稱（例如：我的 CLI）",
@@ -962,7 +962,7 @@
     "disconnect_failed": "無法斷開連線，請重試。",
     "toast_disconnected": "已斷開",
     "disconnect_confirm_title": "斷開這個應用？",
-    "disconnect_confirm_description": "你的已連線賬號將在 Composio 側被撤銷，你的智慧體將失去對該 toolkit 的訪問許可權。你可以稍後重新連線。",
+    "disconnect_confirm_description": "你的已連線帳號將在 Composio 側被撤銷，你的智慧體將失去對該 toolkit 的訪問許可權。你可以稍後重新連線。",
     "disconnect_confirm_cancel": "取消",
     "connections_load_failed": "無法載入你已有的連線，連線狀態可能不完整。",
     "toast_connected": "已連線",
@@ -1020,7 +1020,7 @@
     "page_description": "在釘釘中與智慧體對話，或用 /issue 建立任務。",
     "agent_page_description": "在釘釘中與此智慧體對話，或用 /issue 建立任務。",
     "groups_title": "近期釘群",
-    "groups_description": "工作區成員關聯釘釘賬號並在群內 @ 該機器人後，群會顯示在這裡。預設展示最近 90 天活躍的群。",
+    "groups_description": "工作區成員關聯釘釘帳號並在群內 @ 該機器人後，群會顯示在這裡。預設展示最近 90 天活躍的群。",
     "groups_loading": "正在載入釘群…",
     "groups_empty": "尚未觀察到群訊息。",
     "groups_no_recent": "最近 90 天沒有活躍群。",
@@ -1182,7 +1182,7 @@
     "github_connect_failed": "無法連線 GitHub，請重試。",
     "github_picker_title": "選擇 GitHub 倉庫",
     "github_picker_description": "已有手動配置不受影響。",
-    "github_account": "GitHub 賬號",
+    "github_account": "GitHub 帳號",
     "github_search_placeholder": "搜尋已載入的倉庫",
     "github_loading": "正在載入倉庫…",
     "github_load_failed": "無法從 GitHub 載入倉庫，請檢查安裝許可權後重試。",
@@ -1328,7 +1328,7 @@
     "purchase_seat_and_invite": "購買 1 個席位並邀請",
     "retry_seat_purchase": "重試購買",
     "seat_purchase_waiting": "正在等待 Stripe 確認新席位。請保持當前頁面開啟，以便確認後自動傳送邀請；如果離開頁面，已購席位仍會保留，之後可重新邀請。",
-    "seat_purchase_timeout": "席位購買已提交，但確認時間超出預期。邀請尚未傳送；請在“賬單”顯示有可用席位後重新邀請。",
+    "seat_purchase_timeout": "席位購買已提交，但確認時間超出預期。邀請尚未傳送；請在“帳單”顯示有可用席位後重新邀請。",
     "seat_purchase_capacity_taken": "新購買的席位已不可用，因此沒有傳送邀請。請檢查當前席位後重試。",
     "no_members": "未找到成員。",
     "revoke_invitation_title": "撤銷邀請",
@@ -1382,11 +1382,11 @@
     "pending_label": "待接受邀請",
     "share_links_label": "分享連結",
     "share_links_description": "拿到連結的人都可以以所選角色加入，直到連結過期或被撤銷。",
-    "search_placeholder": "搜尋姓名或郵箱",
+    "search_placeholder": "搜尋姓名或信箱",
     "no_results": "沒有匹配的成員。",
     "no_invitations": "沒有待接受的邀請。",
     "no_share_links": "還沒有分享連結。",
-    "email_label": "郵箱",
+    "email_label": "信箱",
     "role_label": "角色",
     "expiry_label": "有效期",
     "you": "你",
@@ -1410,7 +1410,7 @@
   },
   "layout": {
     "scope": {
-      "account": "賬號 · 所有裝置同步",
+      "account": "帳號 · 所有裝置同步",
       "device": "僅本裝置",
       "device_workspace": "僅本裝置 · {{name}}",
       "workspace": "{{name}} 工作區",
@@ -1439,7 +1439,7 @@
     "title": "為智慧體接入工具的方式",
     "current": "當前頁面",
     "mcp": "由管理員新增、在工作區內共享，再按智慧體分配。",
-    "apps": "用你自己的賬號透過 Composio 授權，在你擁有的智慧體上啟用。",
+    "apps": "用你自己的帳號透過 Composio 授權，在你擁有的智慧體上啟用。",
     "plugins": "安裝後可提供工具、定時 hook 和儲存，每個外掛單獨授權。"
   }
 }

@@ -119,16 +119,16 @@
     "step2_label": "啟動守護程序"
   },
   "cloud_waitlist": {
-    "intro_main": "雲執行時尚未上線。留下郵箱，上線時透過郵件通知你。",
+    "intro_main": "雲執行時尚未上線。留下信箱，上線時透過信件通知你。",
     "intro_warning": "提示：未配置執行時，智慧體就無法工作——如果現在跳過，在你回來安裝之前不會啟動任何執行。",
-    "email_label": "郵箱",
+    "email_label": "信箱",
     "email_placeholder": "you@work.com",
     "reason_label": "為什麼選擇雲？",
     "optional": "選填",
     "reason_placeholder": "例如：希望智慧體 24/7 執行，或團隊在不同裝置協作。",
     "join": "加入候補名單",
     "on_list": "已在候補名單",
-    "success_toast": "已加入候補名單。雲執行時上線時會透過郵件通知你。",
+    "success_toast": "已加入候補名單。雲執行時上線時會透過信件通知你。",
     "failed_toast": "加入候補名單失敗"
   },
   "step_workspace": {

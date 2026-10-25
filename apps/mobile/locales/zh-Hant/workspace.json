@@ -22,7 +22,7 @@
     "sign_out": "退出登入"
   },
   "auth": {
-    "signed_in_as": "當前登入賬號"
+    "signed_in_as": "當前登入帳號"
   },
   "errors": {
     "load_failed": "工作區載入失敗：{{message}}"
