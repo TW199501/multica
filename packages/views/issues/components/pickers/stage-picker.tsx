@@ -35,6 +35,7 @@ export function StagePicker({
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
   align,
+  side,
   defaultOpen = false,
 }: {
   stage: number | null;
@@ -48,6 +49,7 @@ export function StagePicker({
   open?: boolean;
   onOpenChange?: (v: boolean) => void;
   align?: "start" | "center" | "end";
+  side?: "top" | "bottom";
   /** Open the picker on first mount (progressive-disclosure sidebars). */
   defaultOpen?: boolean;
 }) {
@@ -64,6 +66,7 @@ export function StagePicker({
       onOpenChange={setOpen}
       width="w-44"
       align={align}
+      side={side}
       triggerRender={triggerRender}
       tooltip={tooltip}
       trigger={

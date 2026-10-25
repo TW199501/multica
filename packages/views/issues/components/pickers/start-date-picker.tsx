@@ -14,6 +14,7 @@ export function StartDatePicker({
   open,
   onOpenChange,
   align = "start",
+  side,
   defaultOpen = false,
 }: {
   startDate: string | null;
@@ -25,6 +26,7 @@ export function StartDatePicker({
   open?: boolean;
   onOpenChange?: (v: boolean) => void;
   align?: "start" | "center" | "end";
+  side?: "top" | "bottom";
   /** Open the popover on first mount. Used by progressive-disclosure
    *  sidebars so a newly-added field immediately enters edit state. */
   defaultOpen?: boolean;
@@ -43,6 +45,7 @@ export function StartDatePicker({
       open={open}
       onOpenChange={onOpenChange}
       align={align}
+      side={side}
       defaultOpen={defaultOpen}
     />
   );

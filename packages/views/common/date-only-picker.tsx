@@ -48,6 +48,7 @@ interface DateOnlyPickerProps {
   open?: boolean;
   onOpenChange?: (v: boolean) => void;
   align?: "start" | "center" | "end";
+  side?: "top" | "bottom";
   /** Open the popover on first mount (progressive-disclosure sidebars). */
   defaultOpen?: boolean;
 }
@@ -125,6 +126,7 @@ function DateOnlyPickerImpl({
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
   align = "start",
+  side,
   defaultOpen = false,
 }: DateOnlyPickerProps) {
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
@@ -155,7 +157,7 @@ function DateOnlyPickerImpl({
       ) : (
         <DeferredTooltip trigger={popoverTrigger} content={tooltip} />
       )}
-      <PopoverContent className="w-auto p-0" align={align}>
+      <PopoverContent className="w-auto p-0" align={align} side={side}>
         {/* Empty value first, above the calendar — the same position every
             list-backed picker puts it in, so clearing a field is always the
             top row no matter which pill was opened. Unlike a footer button it

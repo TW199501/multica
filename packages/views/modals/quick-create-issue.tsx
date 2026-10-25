@@ -738,7 +738,7 @@ export function AgentCreatePanel({
             editor unbounded and pushed the modal past the viewport. */}
         <div
           {...dropZoneProps}
-          className="relative px-5 pb-3 flex flex-1 min-h-[140px] overflow-y-auto"
+          className="relative px-5 pb-3 flex flex-1 min-h-[140px] xl:min-h-[220px] 2xl:min-h-[280px] overflow-y-auto"
         >
           <ContentEditor
             ref={editorRef}
@@ -801,6 +801,7 @@ export function AgentCreatePanel({
               }
               tooltip={tIssues(($) => $.detail.prop_project)}
               align="start"
+              side="top"
               open={fieldPickerOpen === "project" ? true : undefined}
               onOpenChange={(open) => setFieldPickerOpen(open ? "project" : null)}
             />
@@ -819,6 +820,7 @@ export function AgentCreatePanel({
               triggerRender={<PillButton />}
               tooltip={tIssues(($) => $.detail.prop_priority)}
               align="start"
+              side="top"
               open={fieldPickerOpen === "priority" ? true : undefined}
               onOpenChange={(open) => setFieldPickerOpen(open ? "priority" : null)}
             />
@@ -836,6 +838,7 @@ export function AgentCreatePanel({
               triggerRender={<PillButton />}
               tooltip={tIssues(($) => $.detail.prop_due_date)}
               align="start"
+              side="top"
               open={fieldPickerOpen === "due_date" ? true : undefined}
               onOpenChange={(open) => setFieldPickerOpen(open ? "due_date" : null)}
             />
@@ -850,7 +853,7 @@ export function AgentCreatePanel({
                 }
               />
             </TooltipHint>
-            <DropdownMenuContent align="start" className="w-52">
+            <DropdownMenuContent align="start" side="top" className="w-52">
               {!visibleFields.includes("project") && projectId === null && (
                 <DropdownMenuItem onClick={() => setFieldPickerOpen("project")}>
                   <FolderKanban className="size-3.5 text-muted-foreground" />

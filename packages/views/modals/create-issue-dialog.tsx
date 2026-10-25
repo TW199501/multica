@@ -151,12 +151,12 @@ function CreateIssueDialogBody({
           // quick create has no expanding preview and keeps its original
           // content-driven height, capped for mobile browser chrome.
           isExpanded
-            ? "!h-5/6 sm:!max-w-4xl"
+            ? "!h-5/6 sm:!max-w-4xl xl:!max-w-5xl 2xl:!max-w-6xl"
             : sourceContextData
               ? sourceContextExpanded
-                ? "!h-5/6 sm:!max-w-2xl"
-                : "!h-96 sm:!max-w-xl"
-              : "!max-h-[80dvh] sm:!max-w-xl",
+                ? "!h-5/6 sm:!max-w-2xl xl:!max-w-3xl 2xl:!max-w-4xl"
+                : "!h-96 sm:!max-w-xl xl:!max-w-3xl 2xl:!max-w-4xl"
+              : "!max-h-[80dvh] sm:!max-w-xl xl:!max-w-3xl 2xl:!max-w-4xl",
         )
       : cn(
           manualDialogContentClass(isExpanded),

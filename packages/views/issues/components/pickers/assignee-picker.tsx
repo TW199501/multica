@@ -58,6 +58,7 @@ interface AssigneePickerProps {
   open?: boolean;
   onOpenChange?: (v: boolean) => void;
   align?: "start" | "center" | "end";
+  side?: "top" | "bottom";
 }
 
 /**
@@ -103,6 +104,7 @@ function AssigneePickerImpl({
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
   align,
+  side,
 }: AssigneePickerProps) {
   const { t } = useT("issues");
   const [internalOpen, setInternalOpen] = useState(false);
@@ -164,6 +166,7 @@ function AssigneePickerImpl({
       }}
       width="w-64"
       align={align}
+      side={side}
       searchable
       searchPlaceholder={t(($) => $.pickers.assignee.search_placeholder)}
       onSearchChange={setFilter}
