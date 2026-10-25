@@ -85,12 +85,10 @@ jobs:
 
   release:
     needs: verify
-    # Only run on the canonical upstream repo. Forks don't have the
-    # HOMEBREW_TAP_GITHUB_TOKEN secret and should not be publishing to
-    # `multica-ai/homebrew-tap` anyway. Without this guard, every fork's
-    # tag push fails this job (401 against the upstream tap), which makes
-    # downstream CI go red without affecting the actual artifact pipeline.
-    if: github.repository_owner == 'multica-ai'
+    # Forks publish their own CLI release but never the Homebrew formula:
+    # they lack HOMEBREW_TAP_GITHUB_TOKEN and must not write to
+    # `multica-ai/homebrew-tap`, so the brew step is skipped outside the
+    # canonical repo.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -114,10 +112,12 @@ jobs:
         uses: goreleaser/goreleaser-action@v6
         with:
           version: "~> v2"
-          args: release --clean
+          args: release --clean ${{ github.repository_owner != 'multica-ai' && '--skip=homebrew' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
+          # The CLI's self-update reads releases from the repository that built it.
+          MULTICA_RELEASE_REPOSITORY: ${{ github.repository }}
 
   # Multi-arch images are built natively per platform on dedicated runners
   # (amd64 on ubuntu-latest, arm64 on ubuntu-24.04-arm) and merged into a
@@ -413,6 +413,8 @@ jobs:
             target: linux
           - os: windows-latest
             target: win
+          - os: macos-latest
+            target: mac
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -457,9 +459,17 @@ jobs:
           # Same-tag reruns must also replace Desktop assets after the
           # publisher's default two-hour safety window has elapsed.
           EP_GH_IGNORE_TIME: "true"
-          # Disable code signing on Linux/Windows for now — the public
-          # release is unsigned for these platforms, the CLI carries the
-          # trust boundary. Set CSC_LINK in repo secrets to enable
-          # Windows signing later.
-          CSC_IDENTITY_AUTO_DISCOVERY: "false"
-        run: node scripts/package.mjs --${{ matrix.target }} --x64 --arm64 --publish always
+          # Linux/Windows stay unsigned — the CLI carries the trust boundary.
+          # macOS signs with the Developer ID certificate and notarizes; the
+          # package script skips notarization when APPLE_TEAM_ID is unset.
+          CSC_IDENTITY_AUTO_DISCOVERY: ${{ matrix.target == 'mac' && 'true' || 'false' }}
+          CSC_LINK: ${{ matrix.target == 'mac' && secrets.APPLE_CERTIFICATE || '' }}
+          CSC_KEY_PASSWORD: ${{ matrix.target == 'mac' && secrets.APPLE_CERTIFICATE_PASSWORD || '' }}
+          APPLE_ID: ${{ matrix.target == 'mac' && secrets.APPLE_ID || '' }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ matrix.target == 'mac' && secrets.APPLE_PASSWORD || '' }}
+          APPLE_TEAM_ID: ${{ matrix.target == 'mac' && secrets.APPLE_TEAM_ID || '' }}
+          # Bundled CLI and the app's CLI bootstrap follow this repository's
+          # releases; publishing (and electron-updater) target its owner.
+          MULTICA_RELEASE_REPOSITORY: ${{ github.repository }}
+          VITE_RELEASE_REPOSITORY: ${{ github.repository }}
+        run: node scripts/package.mjs --${{ matrix.target }} --x64 --arm64 --publish always -c.publish.owner=${{ github.repository_owner }}
