@@ -413,6 +413,8 @@ jobs:
             target: linux
           - os: windows-latest
             target: win
+          - os: macos-latest
+            target: mac
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -457,11 +459,15 @@ jobs:
           # Same-tag reruns must also replace Desktop assets after the
           # publisher's default two-hour safety window has elapsed.
           EP_GH_IGNORE_TIME: "true"
-          # Disable code signing on Linux/Windows for now — the public
-          # release is unsigned for these platforms, the CLI carries the
-          # trust boundary. Set CSC_LINK in repo secrets to enable
-          # Windows signing later.
-          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+          # Linux/Windows stay unsigned — the CLI carries the trust boundary.
+          # macOS signs with the Developer ID certificate and notarizes; the
+          # package script skips notarization when APPLE_TEAM_ID is unset.
+          CSC_IDENTITY_AUTO_DISCOVERY: ${{ matrix.target == 'mac' && 'true' || 'false' }}
+          CSC_LINK: ${{ matrix.target == 'mac' && secrets.APPLE_CERTIFICATE || '' }}
+          CSC_KEY_PASSWORD: ${{ matrix.target == 'mac' && secrets.APPLE_CERTIFICATE_PASSWORD || '' }}
+          APPLE_ID: ${{ matrix.target == 'mac' && secrets.APPLE_ID || '' }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ matrix.target == 'mac' && secrets.APPLE_PASSWORD || '' }}
+          APPLE_TEAM_ID: ${{ matrix.target == 'mac' && secrets.APPLE_TEAM_ID || '' }}
           # Bundled CLI and the app's CLI bootstrap follow this repository's
           # releases; publishing (and electron-updater) target its owner.
           MULTICA_RELEASE_REPOSITORY: ${{ github.repository }}
