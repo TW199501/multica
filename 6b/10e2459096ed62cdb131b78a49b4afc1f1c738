@@ -1,0 +1,39 @@
+packages/views/common/date-only-picker.tsx
+  s_e6eb75c69f54af::t_80a69c5b2be8b5 51,129,160
+packages/views/issues/components/pickers/assignee-picker.tsx
+  s_e6eb75c69f54af::t_dd733d30c6cf4d 61,107,169
+packages/views/issues/components/pickers/due-date-picker.tsx
+  s_e6eb75c69f54af::t_bf3278682b82cd 17,29,49
+packages/views/issues/components/pickers/label-picker.tsx
+  s_e6eb75c69f54af::t_ba05c8dad405e3 42,100,230
+packages/views/issues/components/pickers/priority-picker.tsx
+  s_e6eb75c69f54af::t_4960428ee17d4c 27,72,86
+packages/views/issues/components/pickers/stage-picker.tsx
+  s_e6eb75c69f54af::t_a0af32df668737 38,52,69
+packages/views/issues/components/pickers/start-date-picker.tsx
+  s_e6eb75c69f54af::t_4425ba6fc097d3 17,29,48
+packages/views/issues/components/pickers/status-picker.tsx
+  s_e6eb75c69f54af::t_e9480ed19badc7 32,54,152
+packages/views/modals/create-issue.tsx
+  s_e6eb75c69f54af::t_508b9db6b2673d 1066,1080,1098,1115,1134,1149,1166,1182,1309
+packages/views/modals/quick-create-issue.tsx
+  s_e6eb75c69f54af::t_74aaa7c27be479 804,823,841,856
+packages/views/projects/components/project-picker.tsx
+  s_e6eb75c69f54af::t_9866ffae7b42f7 25,37,85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6b10e2459096ed62cdb131b78a49b4afc1f1c738",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
