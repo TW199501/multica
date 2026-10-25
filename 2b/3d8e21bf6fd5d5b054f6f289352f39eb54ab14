@@ -1,0 +1,44 @@
+apps/mobile/locales/zh-Hant/settings.json
+  h_be8240d2cfaa4b 4,15,67,83
+apps/mobile/locales/zh-Hant/navigation.json
+  h_be8240d2cfaa4b 13
+packages/views/locales/zh-Hant/agents.json
+  h_be8240d2cfaa4b 407
+packages/views/locales/zh-Hant/auth.json
+  h_be8240d2cfaa4b 4,10,20,24,26,52,54-55
+packages/views/locales/zh-Hant/chat.json
+  h_be8240d2cfaa4b 68-69
+packages/views/locales/zh-Hant/modals.json
+  h_be8240d2cfaa4b 171,173,175-176,179-180,184,186,188-189,192-193
+apps/mobile/locales/zh-Hant/workspace.json
+  h_be8240d2cfaa4b 25
+packages/views/locales/zh-Hant/workspace.json
+  h_be8240d2cfaa4b 32
+apps/mobile/locales/zh-Hant/common.json
+  h_be8240d2cfaa4b 30
+packages/views/locales/zh-Hant/invite.json
+  h_be8240d2cfaa4b 8
+packages/views/locales/zh-Hant/common.json
+  h_be8240d2cfaa4b 47,49,57-58,62-64,72-73,77-79,87-88,92,94,102-103,111-112,121-122
+packages/views/locales/zh-Hant/billing.json
+  h_be8240d2cfaa4b 2,17,70-72,91,98,104-105,118,127,135,139,141,227,249-251,253
+packages/views/locales/zh-Hant/onboarding.json
+  h_be8240d2cfaa4b 122,124,131
+apps/mobile/locales/zh-Hant/auth.json
+  h_be8240d2cfaa4b 4-5,10,30,35
+apps/mobile/locales/zh-Hant/inbox.json
+  h_be8240d2cfaa4b 41-44
+packages/views/locales/zh-Hant/settings.json
+  h_be8240d2cfaa4b 174,390,410,694-695,965,1023,1185,1331,1385,1389,1413,1442
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2b3d8e21bf6fd5d5b054f6f289352f39eb54ab14",
+  "prompts": {},
+  "humans": {
+    "h_be8240d2cfaa4b": {
+      "author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
