@@ -1,0 +1,30 @@
+apps/desktop/src/renderer/src/components/update-notification.test.tsx
+  s_e6eb75c69f54af::t_9be79b2beac6a3 51-65
+apps/desktop/src/renderer/src/components/update-notification.tsx
+  s_e6eb75c69f54af::t_6f035bd799ec5f 3
+  s_e6eb75c69f54af::t_9f1a9914240108 13-21
+packages/views/layout/help-launcher.test.tsx
+  s_e6eb75c69f54af::t_2c019bf8d1b2df 87
+  s_e6eb75c69f54af::t_566ba8575aa2ba 111-131
+packages/views/layout/help-launcher.tsx
+  s_e6eb75c69f54af::t_3c5cee600fc3f5 22
+  s_e6eb75c69f54af::t_d73f71b2d13f54 29-31,37-44
+  s_e6eb75c69f54af::t_9d2e90fc415806 105
+  s_e6eb75c69f54af::t_0074235a399a9a 76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "46d134d2545f06e7a1d21aff36dda9aa72369f6f",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
