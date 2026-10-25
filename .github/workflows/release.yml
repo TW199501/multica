@@ -472,4 +472,4 @@ jobs:
           # releases; publishing (and electron-updater) target its owner.
           MULTICA_RELEASE_REPOSITORY: ${{ github.repository }}
           VITE_RELEASE_REPOSITORY: ${{ github.repository }}
-        run: node scripts/package.mjs --${{ matrix.target }} --x64 --arm64 --publish always -c.publish.owner=${{ github.repository_owner }}
+        run: node scripts/package.mjs --${{ matrix.target }} --x64 --arm64 --publish always "-c.publish.owner=${{ github.repository_owner }}"
