@@ -163,6 +163,12 @@
       "dark": "ダーク",
       "system": "システム"
     },
+    "accent": {
+      "title": "アクセントカラー",
+      "terracotta": "テラコッタ",
+      "ocean": "オーシャン",
+      "neutral": "モノクロ"
+    },
     "language": {
       "title": "言語",
       "english": "English",
