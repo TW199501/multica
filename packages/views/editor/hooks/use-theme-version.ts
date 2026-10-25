@@ -12,6 +12,7 @@ function readThemeSignature(): string {
   return [
     root.className,
     root.getAttribute("data-theme"),
+    root.getAttribute("data-accent"),
     document.body?.className,
     document.body?.getAttribute("data-theme"),
     styles.colorScheme,
@@ -47,7 +48,7 @@ export function useThemeVersion(): number {
     const observer = new MutationObserver(bumpIfThemeChanged);
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["class", "style", "data-theme"],
+      attributeFilter: ["class", "style", "data-theme", "data-accent"],
     });
     if (document.body) {
       observer.observe(document.body, {
