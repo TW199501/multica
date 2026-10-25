@@ -165,6 +165,12 @@
       "dark": "Sombre",
       "system": "Système"
     },
+    "accent": {
+      "title": "Couleur d’accent",
+      "terracotta": "Terre cuite",
+      "ocean": "Océan",
+      "neutral": "Monochrome"
+    },
     "language": {
       "title": "Langue",
       "english": "English",

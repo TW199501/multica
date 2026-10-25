@@ -33,6 +33,7 @@ import {
 import { useLocaleAdapter } from "@multica/core/i18n/react";
 import { useAuthStore } from "@multica/core/auth";
 import { useChatStore } from "@multica/core/chat";
+import { ACCENT_COLORS, useAccentStore, type AccentColor } from "@multica/core/appearance";
 import {
   useCommentComposerStore,
   type RunningAgentReply,
@@ -88,6 +89,7 @@ export function PreferencesTab() {
       >
         <SettingsCard>
           <ThemeRow />
+          <AccentRow />
         </SettingsCard>
       </SettingsSection>
 
@@ -141,6 +143,42 @@ function ThemeRow() {
             ["dark", t(($) => $.preferences.theme.dark)],
             ["system", t(($) => $.preferences.theme.system)],
           ]}
+        />
+      </div>
+    </SettingsRow>
+  );
+}
+
+function AccentRow() {
+  const { t } = useT("settings");
+  const accent = useAccentStore((s) => s.accent);
+  const setAccent = useAccentStore((s) => s.setAccent);
+  const labels: Record<AccentColor, string> = {
+    terracotta: t(($) => $.preferences.accent.terracotta),
+    ocean: t(($) => $.preferences.accent.ocean),
+    neutral: t(($) => $.preferences.accent.neutral),
+  };
+  return (
+    <SettingsRow anchor="accent" label={t(($) => $.preferences.accent.title)}>
+      <div role="group" aria-label={t(($) => $.preferences.accent.title)}>
+        <SegmentedToggle
+          value={accent}
+          onChange={setAccent}
+          buttonClassName="px-3 py-1 text-label"
+          options={ACCENT_COLORS.map(
+            (key) =>
+              [
+                key,
+                <span key={key} className="flex items-center gap-1.5">
+                  <span
+                    aria-hidden="true"
+                    data-accent={key}
+                    className="size-2.5 shrink-0 rounded-full bg-primary"
+                  />
+                  {labels[key]}
+                </span>,
+              ] as const,
+          )}
         />
       </div>
     </SettingsRow>

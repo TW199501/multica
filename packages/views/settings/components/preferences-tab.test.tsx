@@ -104,6 +104,7 @@ vi.mock("@multica/core/auth", async () => {
 });
 
 import { PreferencesTab } from "./preferences-tab";
+import { accentStore } from "@multica/core/appearance";
 import { useCommentComposerStore } from "@multica/core/issues/stores";
 import { useIssueOpeningStore } from "@multica/core/issues/stores/issue-opening-store";
 import {
@@ -172,6 +173,26 @@ describe("PreferencesTab — Language switcher", () => {
     await user.click(within(group).getByRole("button", { name: "Dark" }));
 
     expect(mockSetTheme).toHaveBeenCalledWith("dark");
+    expect(mockToastSuccess).not.toHaveBeenCalled();
+  });
+
+  it("switches the accent color on this device with a swatch per option", async () => {
+    accentStore.setState({ accent: "terracotta" });
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    render(<PreferencesTab />, { wrapper: I18nWrapper });
+
+    const group = screen.getByRole("group", { name: "Accent color" });
+    expect(within(group).getByRole("button", { name: "Terracotta" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    for (const key of ["terracotta", "ocean", "neutral"]) {
+      expect(group.querySelector(`[data-accent="${key}"]`)).not.toBeNull();
+    }
+
+    await user.click(within(group).getByRole("button", { name: "Ocean" }));
+
+    expect(accentStore.getState().accent).toBe("ocean");
     expect(mockToastSuccess).not.toHaveBeenCalled();
   });
 

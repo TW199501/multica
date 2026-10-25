@@ -163,6 +163,12 @@
       "dark": "深色",
       "system": "跟随系统"
     },
+    "accent": {
+      "title": "主题色",
+      "terracotta": "陶土橙",
+      "ocean": "海蓝",
+      "neutral": "黑白"
+    },
     "language": {
       "title": "语言",
       "english": "English",

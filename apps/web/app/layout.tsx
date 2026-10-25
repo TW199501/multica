@@ -6,6 +6,8 @@ import { Toaster } from "@multica/ui/components/ui/sonner";
 import { cn } from "@multica/ui/lib/utils";
 import { WebProviders } from "@/components/web-providers";
 import { RESOURCES } from "@multica/views/locales";
+import { AccentSync } from "@multica/views/layout";
+import { ACCENT_PREPAINT_SCRIPT } from "@multica/core/appearance";
 import { getRequestLocale } from "@/lib/request-locale";
 import { HTML_LANG } from "@/lib/html-lang";
 import { SITE_TITLE, TITLE_TEMPLATE } from "@/platform/document-title";
@@ -136,6 +138,7 @@ export default async function RootLayout({
       className={cn("antialiased font-sans h-full", inter.variable, geistMono.variable, sourceSerif.variable)}
     >
       <body className="h-full overflow-hidden">
+        <script dangerouslySetInnerHTML={{ __html: ACCENT_PREPAINT_SCRIPT }} />
         {/*
           react-grab: dev-only element inspector. Hold ⌘C (Mac) / Ctrl+C and click
           any element to copy its source path + line + component stack for pasting
@@ -155,6 +158,7 @@ export default async function RootLayout({
           />
         )}
         <ThemeProvider>
+          <AccentSync />
           <WebProviders
             locale={locale}
             resources={resources}

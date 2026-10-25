@@ -165,6 +165,12 @@
       "dark": "Dark",
       "system": "System"
     },
+    "accent": {
+      "title": "Accent color",
+      "terracotta": "Terracotta",
+      "ocean": "Ocean",
+      "neutral": "Monochrome"
+    },
     "language": {
       "title": "Language",
       "english": "English",

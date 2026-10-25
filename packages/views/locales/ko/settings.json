@@ -163,6 +163,12 @@
       "dark": "다크",
       "system": "시스템"
     },
+    "accent": {
+      "title": "강조 색상",
+      "terracotta": "테라코타",
+      "ocean": "오션",
+      "neutral": "모노크롬"
+    },
     "language": {
       "title": "언어",
       "english": "English",

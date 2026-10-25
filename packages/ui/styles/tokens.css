@@ -325,3 +325,73 @@
     --find-match-active: oklch(0.76 0.18 60);
     --find-match-foreground: oklch(0.18 0.02 92);
 }
+
+/* Accent palettes, chosen per device (Preferences → Appearance). The choice
+   lands on <html data-accent="…">; terracotta is also the default before any
+   choice exists, so it applies without the attribute. A nested element may
+   carry its own data-accent to preview a palette (the setting's swatches).
+   "neutral" keeps the monochrome primary of the base tokens above. */
+:root:not([data-accent]),
+[data-accent="terracotta"] {
+    --primary: oklch(0.57 0.14 40);
+    --primary-foreground: oklch(0.985 0 0);
+    --ring: oklch(0.57 0.14 40);
+    --brand: oklch(0.57 0.14 40);
+    --brand-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.57 0.14 40);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --chart-1: oklch(0.55 0.15 38);
+    --chart-2: oklch(0.65 0.13 45);
+    --chart-3: oklch(0.74 0.10 55);
+    --chart-4: oklch(0.83 0.07 65);
+    --chart-5: oklch(0.91 0.04 70);
+}
+
+[data-accent="ocean"] {
+    --primary: oklch(0.53 0.15 250);
+    --primary-foreground: oklch(0.985 0 0);
+    --ring: oklch(0.53 0.15 250);
+    --brand: oklch(0.53 0.15 250);
+    --brand-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.53 0.15 250);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+}
+
+[data-accent="neutral"] {
+    --primary: oklch(0.21 0.006 285.885);
+    --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark:not([data-accent]),
+.dark[data-accent="terracotta"],
+.dark [data-accent="terracotta"] {
+    --primary: oklch(0.685 0.131 40);
+    --primary-foreground: oklch(0.21 0.006 285.885);
+    --ring: oklch(0.685 0.131 40);
+    --brand: oklch(0.685 0.131 40);
+    --brand-foreground: oklch(0.21 0.006 285.885);
+    --sidebar-primary: oklch(0.685 0.131 40);
+    --sidebar-primary-foreground: oklch(0.21 0.006 285.885);
+    --chart-1: oklch(0.72 0.13 45);
+    --chart-2: oklch(0.62 0.13 40);
+    --chart-3: oklch(0.52 0.11 38);
+    --chart-4: oklch(0.42 0.08 35);
+    --chart-5: oklch(0.32 0.05 35);
+}
+
+.dark[data-accent="ocean"],
+.dark [data-accent="ocean"] {
+    --primary: oklch(0.70 0.13 245);
+    --primary-foreground: oklch(0.21 0.006 285.885);
+    --ring: oklch(0.70 0.13 245);
+    --brand: oklch(0.70 0.13 245);
+    --brand-foreground: oklch(0.21 0.006 285.885);
+    --sidebar-primary: oklch(0.70 0.13 245);
+    --sidebar-primary-foreground: oklch(0.21 0.006 285.885);
+}
+
+.dark[data-accent="neutral"],
+.dark [data-accent="neutral"] {
+    --primary: oklch(0.92 0.004 286.32);
+    --primary-foreground: oklch(0.21 0.006 285.885);
+}
