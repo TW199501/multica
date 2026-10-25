@@ -1,0 +1,23 @@
+packages/views/modals/create-issue.tsx
+  s_e6eb75c69f54af::t_87769ed47c59bd 1538-1539
+packages/views/modals/create-issue-dialog.tsx
+  s_e6eb75c69f54af::t_25e8cc73abb8f7 154,157-159
+packages/views/modals/quick-create-issue.tsx
+  s_e6eb75c69f54af::t_ea72e8cfd662db 741
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "73d26aa1331811b9fc9b0f2f938147cff385bff0",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
