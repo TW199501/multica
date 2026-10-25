@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/multica-ai/multica/server/internal/analytics"
+	"github.com/multica-ai/multica/server/internal/cli"
 	"github.com/multica-ai/multica/server/internal/featureflags"
 )
 
@@ -39,6 +40,11 @@ type AppConfig struct {
 	// with the operator's own domains instead of Multica Cloud defaults.
 	DaemonServerURL string `json:"daemon_server_url,omitempty"`
 	DaemonAppURL    string `json:"daemon_app_url,omitempty"`
+	// ReleaseRepository is the "owner/name" GitHub repository whose releases
+	// the web app offers for download and checks for daemon updates. Set by
+	// MULTICA_RELEASE_REPOSITORY on deployments that ship their own builds;
+	// omitted otherwise so clients keep the upstream default.
+	ReleaseRepository string `json:"release_repository,omitempty"`
 
 	// VCSIntegrationAvailable mirrors the MULTICA_VCS_INTEGRATION_ENABLED
 	// deployment switch so the Settings UI can hide the whole self-hosted Git
@@ -127,6 +133,9 @@ func (h *Handler) GetConfig(w http.ResponseWriter, r *http.Request) {
 	config.AttachmentPublicURL = h.cfg.PublicURL
 	config.CdnSigned = h.CFSigner != nil
 	config.DaemonServerURL, config.DaemonAppURL = daemonSetupURLsFromEnv()
+	if repo := strings.TrimSpace(os.Getenv(cli.ReleaseRepositoryEnv)); cli.IsValidReleaseRepository(repo) {
+		config.ReleaseRepository = repo
+	}
 	config.VCSIntegrationAvailable = h.cfg.VCSIntegrationEnabled
 	config.FeatureFlags = featureflags.EvaluateFrontendPublicFlags(r.Context(), h.FeatureFlags)
 	// Only surface the build version on self-hosted deployments. The managed

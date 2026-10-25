@@ -130,6 +130,27 @@ func TestGetConfigUsesDaemonServerURLOverride(t *testing.T) {
 	}
 }
 
+func TestGetConfigReportsReleaseRepository(t *testing.T) {
+	cases := []struct {
+		name, env, want string
+	}{
+		{"unset", "", ""},
+		{"fork repository", " TW199501/multica ", "TW199501/multica"},
+		{"malformed", "not-a-repo", ""},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Setenv("MULTICA_RELEASE_REPOSITORY", tc.env)
+			req := httptest.NewRequest(http.MethodGet, "/api/config", nil)
+			var cfg AppConfig
+			testutil.Call(t, testHandler.GetConfig, req).Want(http.StatusOK).JSON(&cfg)
+			if cfg.ReleaseRepository != tc.want {
+				t.Fatalf("release_repository: want %q, got %q", tc.want, cfg.ReleaseRepository)
+			}
+		})
+	}
+}
+
 func TestGetConfigHonorsVCSIntegrationSwitch(t *testing.T) {
 	origCfg := testHandler.cfg
 	t.Cleanup(func() { testHandler.cfg = origCfg })

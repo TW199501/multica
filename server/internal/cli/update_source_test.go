@@ -51,3 +51,42 @@ func TestFetchLatestReleaseUsesConfiguredAPI(t *testing.T) {
 		t.Fatalf("release tag = %q, want v9.8.7", got.TagName)
 	}
 }
+
+func TestReleaseRepository(t *testing.T) {
+	t.Setenv(ReleaseRepositoryEnv, "")
+	if got := ReleaseRepository(); got != DefaultReleaseRepository {
+		t.Fatalf("default ReleaseRepository() = %q, want %q", got, DefaultReleaseRepository)
+	}
+	t.Setenv(ReleaseRepositoryEnv, "  TW199501/multica  ")
+	if got := ReleaseRepository(); got != "TW199501/multica" {
+		t.Fatalf("override ReleaseRepository() = %q", got)
+	}
+	for _, bad := range []string{"multica", "a/b/c", "../x", "a/", "/b", "a b/c", "a/.."} {
+		t.Setenv(ReleaseRepositoryEnv, bad)
+		if got := ReleaseRepository(); got != DefaultReleaseRepository {
+			t.Fatalf("ReleaseRepository() with %q = %q, want default", bad, got)
+		}
+	}
+}
+
+func TestFetchLatestReleaseUsesConfiguredRepository(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/repos/TW199501/multica/releases/latest" {
+			http.NotFound(w, r)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(GitHubRelease{TagName: "v0.7.0-tw.2"})
+	}))
+	defer server.Close()
+	t.Setenv(releaseAPIBaseURLEnv, server.URL)
+	t.Setenv(ReleaseRepositoryEnv, "TW199501/multica")
+
+	got, err := FetchLatestRelease()
+	if err != nil {
+		t.Fatalf("FetchLatestRelease() error = %v", err)
+	}
+	if got.TagName != "v0.7.0-tw.2" {
+		t.Fatalf("release tag = %q, want v0.7.0-tw.2", got.TagName)
+	}
+}
