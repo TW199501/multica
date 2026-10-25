@@ -1,6 +1,26 @@
 import { createStore } from "zustand/vanilla";
 import { useStore } from "zustand";
 
+/** Upstream "owner/name" repository whose GitHub releases ship Multica builds. */
+export const DEFAULT_RELEASE_REPOSITORY = "multica-ai/multica";
+
+const RELEASE_REPOSITORY_PART = /^[A-Za-z0-9._-]+$/;
+
+/** True for a GitHub "owner/name" pair. */
+export function isValidReleaseRepository(value: string): boolean {
+  const parts = value.split("/");
+  return (
+    parts.length === 2 &&
+    parts.every((p) => RELEASE_REPOSITORY_PART.test(p) && p !== "." && p !== "..")
+  );
+}
+
+/** The given repository when well-formed, otherwise the upstream default. */
+export function resolveReleaseRepository(value?: string | null): string {
+  const trimmed = value?.trim() ?? "";
+  return isValidReleaseRepository(trimmed) ? trimmed : DEFAULT_RELEASE_REPOSITORY;
+}
+
 interface ConfigState {
   cdnDomain: string;
   attachmentPublicUrl: string;
@@ -12,6 +32,9 @@ interface ConfigState {
   googleClientId: string;
   daemonServerUrl: string;
   daemonAppUrl: string;
+  // "owner/name" repository whose releases the UI checks for daemon updates.
+  // Older servers omit it, which keeps the upstream default.
+  releaseRepository: string;
   // Self-host gate (#3433): when true, every "Create workspace" affordance
   // must be hidden. Defaults to false so unknown / older servers behave like
   // the managed-cloud case.
@@ -56,6 +79,7 @@ interface ConfigState {
     daemonServerUrl?: string;
     daemonAppUrl?: string;
   }) => void;
+  setReleaseRepository: (repository?: string) => void;
   setFeatureFlags: (flags?: Record<string, boolean>) => void;
   setServerVersion: (version?: string) => void;
   setLocalWorktreeSupported: (supported?: boolean) => void;
@@ -72,6 +96,7 @@ export const configStore = createStore<ConfigState>((set) => ({
   googleClientId: "",
   daemonServerUrl: "",
   daemonAppUrl: "",
+  releaseRepository: DEFAULT_RELEASE_REPOSITORY,
   workspaceCreationDisabled: false,
   vcsIntegrationAvailable: false,
   featureFlags: {},
@@ -90,6 +115,8 @@ export const configStore = createStore<ConfigState>((set) => ({
   }) => set({ allowSignup, googleClientId, workspaceCreationDisabled, vcsIntegrationAvailable }),
   setDaemonConfig: ({ daemonServerUrl = "", daemonAppUrl = "" }) =>
     set({ daemonServerUrl, daemonAppUrl }),
+  setReleaseRepository: (repository) =>
+    set({ releaseRepository: resolveReleaseRepository(repository) }),
   setFeatureFlags: (flags = {}) => set({ featureFlags: { ...flags } }),
   setServerVersion: (version = "") => set({ serverVersion: version }),
   setLocalWorktreeSupported: (supported = false) =>

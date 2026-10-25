@@ -1,3 +1,4 @@
+import { resolveReleaseRepository } from "@multica/core/config";
 import {
   hasCompleteAssetSet,
   parseReleaseAssets,
@@ -29,15 +30,27 @@ export interface LatestRelease {
   version: string | null;
   publishedAt: string | null;
   htmlUrl: string | null;
+  /** The repository's release list, for the "all releases" links. */
+  allReleasesUrl: string;
   assets: DownloadAssets;
+}
+
+/**
+ * The "owner/name" repository whose releases /download offers: the
+ * MULTICA_RELEASE_REPOSITORY override on deployments that ship their own
+ * builds, otherwise upstream. Same variable the backend reports to the app.
+ */
+export function releaseRepository(): string {
+  return resolveReleaseRepository(process.env.MULTICA_RELEASE_REPOSITORY);
 }
 
 // Five candidates tolerates four consecutive incomplete releases before
 // the page has to fall back to showing the newest one as-is. Releases
 // ship roughly daily, so that is days of head room — while staying one
 // cheap request.
-const GITHUB_RELEASES_URL =
-  "https://api.github.com/repos/multica-ai/multica/releases?per_page=5";
+function releasesApiUrl(repository: string): string {
+  return `https://api.github.com/repos/${repository}/releases?per_page=5`;
+}
 
 const REVALIDATE_SECONDS = 300;
 
@@ -66,8 +79,11 @@ export async function fetchLatestRelease(): Promise<LatestRelease> {
     headers.Authorization = `Bearer ${token}`;
   }
 
+  const repository = releaseRepository();
+  const allReleasesUrl = `https://github.com/${repository}/releases`;
+
   try {
-    const res = await fetch(GITHUB_RELEASES_URL, {
+    const res = await fetch(releasesApiUrl(repository), {
       next: { revalidate: REVALIDATE_SECONDS },
       headers,
     });
@@ -83,18 +99,19 @@ export async function fetchLatestRelease(): Promise<LatestRelease> {
     const stable = data.filter((r) => !r.prerelease && !r.draft);
     const chosen = pickRelease(stable);
     if (!chosen) {
-      return emptyRelease();
+      return emptyRelease(allReleasesUrl);
     }
 
     return {
       version: chosen.release.tag_name ?? null,
       publishedAt: chosen.release.published_at ?? null,
       htmlUrl: chosen.release.html_url ?? null,
+      allReleasesUrl,
       assets: chosen.assets,
     };
   } catch (err) {
     console.warn("[download] fetchLatestRelease failed:", err);
-    return emptyRelease();
+    return emptyRelease(allReleasesUrl);
   }
 }
 
@@ -132,11 +149,12 @@ function pickRelease(
   return parsed[0];
 }
 
-function emptyRelease(): LatestRelease {
+function emptyRelease(allReleasesUrl: string): LatestRelease {
   return {
     version: null,
     publishedAt: null,
     htmlUrl: null,
+    allReleasesUrl,
     assets: {},
   };
 }
