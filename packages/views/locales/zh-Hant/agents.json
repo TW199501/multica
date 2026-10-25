@@ -404,7 +404,7 @@
       "more_harnesses_other": "其餘 {{count}} 個：{{names}}",
       "add_remote": "連線機器",
       "hidden_remote_other": "另有 {{count}} 臺機器僅所有者可用，不在這裡顯示",
-      "remote_warning": "任務會在 {{owner}} 的機器上執行，讀寫那臺機器上的檔案，用量計入 {{owner}} 的賬號。",
+      "remote_warning": "任務會在 {{owner}} 的機器上執行，讀寫那臺機器上的檔案，用量計入 {{owner}} 的帳號。",
       "no_match": "沒有與「{{query}}」匹配的結果",
       "hosted_by": "由 {{vendor}} 提供",
       "coming_soon": "即將推出",
