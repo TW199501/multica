@@ -738,7 +738,7 @@ export function AgentCreatePanel({
             editor unbounded and pushed the modal past the viewport. */}
         <div
           {...dropZoneProps}
-          className="relative px-5 pb-3 flex flex-1 min-h-[140px] overflow-y-auto"
+          className="relative px-5 pb-3 flex flex-1 min-h-[140px] xl:min-h-[220px] 2xl:min-h-[280px] overflow-y-auto"
         >
           <ContentEditor
             ref={editorRef}

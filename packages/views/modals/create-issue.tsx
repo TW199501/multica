@@ -1535,8 +1535,8 @@ export function manualDialogContentClass(isExpanded: boolean) {
     // phone we support.
     "!w-full !max-w-[calc(100vw-1.5rem)]",
     isExpanded
-      ? "!h-5/6 !-translate-y-1/2 sm:!max-w-4xl"
-      : "!h-96 !-translate-y-1/2 sm:!max-w-2xl",
+      ? "!h-5/6 !-translate-y-1/2 sm:!max-w-4xl xl:!max-w-5xl 2xl:!max-w-6xl"
+      : "!h-96 !-translate-y-1/2 sm:!max-w-2xl xl:!h-[28rem] xl:!max-w-3xl 2xl:!h-[32rem] 2xl:!max-w-4xl",
   );
 }
 
