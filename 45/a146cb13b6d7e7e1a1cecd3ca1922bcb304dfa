@@ -1,0 +1,27 @@
+apps/desktop/src/main/cli-bootstrap.ts
+  s_e6eb75c69f54af::t_3fa40ca8819090 17-29
+.goreleaser.yml
+  s_e6eb75c69f54af::t_e3074e35fa0247 22
+apps/desktop/scripts/bundle-cli.mjs
+  s_e6eb75c69f54af::t_c26ec4a9867353 110-117
+deploy/dockhand/.env.example
+  s_e6eb75c69f54af::t_ddbd9a6c1dd0c9 42-46
+docker-compose.dockhand.yml
+  s_e6eb75c69f54af::t_96ad23ee19a0fe 101,234
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "45a146cb13b6d7e7e1a1cecd3ca1922bcb304dfa",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
