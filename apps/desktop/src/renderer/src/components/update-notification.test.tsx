@@ -48,6 +48,21 @@ describe("UpdateNotification", () => {
     );
   });
 
+  it("opens the fork's release page when the build targets a fork", () => {
+    vi.stubEnv("VITE_RELEASE_REPOSITORY", "TW199501/multica");
+    try {
+      render(<UpdateNotification />);
+      act(() => updateDownloaded({ version: "0.7.0-tw.3" }));
+      fireEvent.click(screen.getByRole("button", { name: "See changelog" }));
+
+      expect(mocks.openExternal).toHaveBeenCalledWith(
+        "https://github.com/TW199501/multica/releases/tag/v0.7.0-tw.3",
+      );
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
   it("still installs the update immediately from the primary action", () => {
     render(<UpdateNotification />);
     act(() => updateDownloaded({ version: "0.4.27" }));
