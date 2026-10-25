@@ -1,0 +1,21 @@
+deploy/dockhand/README.md
+  s_e6eb75c69f54af::t_c0e54110a74c2f 37
+deploy/dockhand/.env.example
+  s_e6eb75c69f54af::t_3ef642256e360a 56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0351452452b157ec773d8ff48c5e9de174299904",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
