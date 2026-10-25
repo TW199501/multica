@@ -69,4 +69,13 @@ describe("hasCompleteAssetSet", () => {
   it("rejects an empty asset set", () => {
     expect(hasCompleteAssetSet({})).toBe(false);
   });
+
+  it("accepts a fork release whose version carries a pre-release suffix", () => {
+    const names = ALL_ARTIFACT_NAMES.map((n) => n.replace("0.4.27", "0.7.0-tw.3"));
+    const assets = parseReleaseAssets(names.map(asset));
+    expect(hasCompleteAssetSet(assets)).toBe(true);
+    expect(assets.winX64Exe).toBe(
+      "https://github.test/releases/multica-desktop-0.7.0-tw.3-windows-x64.exe",
+    );
+  });
 });
