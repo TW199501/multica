@@ -43,7 +43,7 @@
       "fallback": "拉取 skill 列表時出錯。",
       "retry": "重試"
     },
-    "supporting_data_warning": "部分工作區資料載入失敗。建立者歸屬、執行時名稱、編輯許可權可能顯示不完整。"
+    "supporting_data_warning": "部分工作區資料載入失敗。建立者歸屬、執行時名稱、編輯權限可能顯示不完整。"
   },
   "table": {
     "name": "名稱",
@@ -120,7 +120,7 @@
     "read_only": "只讀",
     "delete_aria": "刪除 skill",
     "delete_tooltip": "刪除 skill",
-    "supporting_data_warning": "部分工作區資料載入失敗。建立者歸屬、執行時名稱、編輯許可權可能要等下次重新整理才完整。",
+    "supporting_data_warning": "部分工作區資料載入失敗。建立者歸屬、執行時名稱、編輯權限可能要等下次重新整理才完整。",
     "delete_file": "刪除檔案",
     "name_placeholder": "skill-name",
     "description_placeholder": "用一句話描述智慧體什麼時候應該使用這個 skill...",
@@ -146,7 +146,7 @@
     },
     "not_found": {
       "title": "未找到該 skill",
-      "fallback": "這個 skill 可能已被刪除，或你沒有訪問許可權。",
+      "fallback": "這個 skill 可能已被刪除，或你沒有訪問權限。",
       "back": "返回 Skills"
     },
     "toast_saved": "已儲存 skill",
@@ -200,7 +200,7 @@
       "updated_by": "{{name}} 於{{when}}更新"
     },
     "tabs": {
-      "aria": "技能分割槽",
+      "aria": "技能分區",
       "overview": "概覽",
       "files_other": "檔案 {{count}}"
     },

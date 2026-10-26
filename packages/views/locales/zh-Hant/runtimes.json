@@ -253,7 +253,7 @@
   },
   "detail_page": {
     "not_found_title": "未找到執行時",
-    "not_found_hint": "它可能已被刪除，或你沒有訪問許可權。"
+    "not_found_hint": "它可能已被刪除，或你沒有訪問權限。"
   },
   "running_other": "{{count}} 個執行中",
   "queued_other": "{{count}} 個排隊中",
