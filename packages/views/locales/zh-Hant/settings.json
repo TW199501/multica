@@ -445,7 +445,7 @@
     "enabled_label": "啟用 Plugin",
     "uninstall": "解除安裝",
     "uninstalled": "Plugin 已解除安裝，其儲存資料與金鑰一併刪除",
-    "granted_scopes": "已授予的訪問許可權",
+    "granted_scopes": "已授予的訪問權限",
     "contributes": "提供的能力",
     "version": "v{{version}}",
     "byline": "{{author}} · v{{version}}",
@@ -456,8 +456,8 @@
       "title": "已安裝"
     },
     "consent": {
-      "title": "該 Plugin 請求以下訪問許可權",
-      "description": "授權僅適用於此版本，不超過下列範圍及使用者本人的許可權。",
+      "title": "該 Plugin 請求以下訪問權限",
+      "description": "授權僅適用於此版本，不超過下列範圍及使用者本人的權限。",
       "cancel": "取消",
       "confirm": "授權並安裝",
       "confirm_upgrade": "授權並升級",
@@ -496,7 +496,7 @@
       "storage_user": "為每位成員單獨儲存資料",
       "storage_workspace": "儲存工作區共享資料",
       "net": "向 {{domain}} 傳送資料",
-      "unknown": "無法識別的許可權 — 請勿安裝"
+      "unknown": "無法識別的權限 — 請勿安裝"
     },
     "hook_circuit_open": "連續失敗後已停止投遞該 hook。",
     "hook_recent_failures": "最近有 {{count}} 次 hook 呼叫失敗。",
@@ -691,14 +691,14 @@
       "hint": "允許當前瀏覽器為新的收件箱條目彈出通知橫幅。",
       "enable": "啟用",
       "granted": "當前瀏覽器可以彈出通知橫幅。",
-      "denied": "已被瀏覽器攔截。請在瀏覽器設定中為本站點開啟通知許可權。",
+      "denied": "已被瀏覽器攔截。請在瀏覽器設定中為本站點開啟通知權限。",
       "enabled_badge": "已啟用"
     }
   },
   "tokens": {
     "title": "API Token",
     "description": "個人訪問 token 讓 CLI 和外部整合可以代表你的帳號進行身份驗證。可透過 multica login --token 使用，或在呼叫 API 時作為 Bearer token 傳送。",
-    "security_note": "Token 擁有你帳號的完整訪問許可權，請像密碼一樣妥善保管。",
+    "security_note": "Token 擁有你帳號的完整訪問權限，請像密碼一樣妥善保管。",
     "empty": "暫無 API token。",
     "load_failed": "無法載入 API token，請重新整理頁面重試。",
     "name_placeholder": "Token 名稱（例如：我的 CLI）",
@@ -840,7 +840,7 @@
     "form_instance_url_label": "例項地址",
     "form_token_label": "訪問令牌",
     "form_token_placeholder": "訪問令牌",
-    "form_token_hint": "建立具備倉庫讀取許可權的訪問令牌。Forgejo/Gitea：設定 - 應用；GitLab：具備 read_api 許可權的個人訪問令牌。",
+    "form_token_hint": "建立具備倉庫讀取權限的訪問令牌。Forgejo/Gitea：設定 - 應用；GitLab：具備 read_api 權限的個人訪問令牌。",
     "connect": "連線",
     "connecting": "連線中…",
     "disconnect": "斷開",
@@ -908,15 +908,15 @@
     "bind_button_lark_title": "將 {{agent}} 繫結到 Lark（海外版）Bot",
     "agent_bot_connected_label": "已連線到飛書",
     "agent_bot_manage_link": "在飛書中管理",
-    "agent_bot_manage_tooltip": "開啟飛書開發者控制檯中該 Bot 的應用頁面——管理許可權、修改名稱、申請新的許可權範圍。",
+    "agent_bot_manage_tooltip": "開啟飛書開發者控制檯中該 Bot 的應用頁面——管理權限、修改名稱、申請新的權限範圍。",
     "agent_bot_connected_label_feishu": "已連線到飛書",
     "agent_bot_connected_label_lark": "已連線到 Lark",
     "agent_bot_manage_link_feishu": "在飛書中管理",
     "agent_bot_manage_link_lark": "在 Lark 中管理",
     "agent_bot_silent_hint": "Bot 已連線但不回覆？確認應用的事件訂閱方式是長連線。",
     "agent_bot_silent_hint_link": "排查指南",
-    "agent_bot_manage_tooltip_feishu": "開啟飛書開發者控制檯中該 Bot 的應用頁面——管理許可權、修改名稱、申請新的許可權範圍。",
-    "agent_bot_manage_tooltip_lark": "開啟 Lark 開發者控制檯中該 Bot 的應用頁面——管理許可權、修改名稱、申請新的許可權範圍。",
+    "agent_bot_manage_tooltip_feishu": "開啟飛書開發者控制檯中該 Bot 的應用頁面——管理權限、修改名稱、申請新的權限範圍。",
+    "agent_bot_manage_tooltip_lark": "開啟 Lark 開發者控制檯中該 Bot 的應用頁面——管理權限、修改名稱、申請新的權限範圍。",
     "agent_bot_disconnect_tooltip": "將該飛書 Bot 與智慧體解綁，Bot 將停止接收飛書訊息。",
     "install_dialog_title": "繫結到飛書",
     "install_dialog_description": "用飛書掃描下方二維碼，建立一個 PersonalAgent Bot。",
@@ -946,7 +946,7 @@
     "install_error_conflict": "未能儲存安裝資訊：該智慧體可能已繫結其他 Bot。",
     "install_error_installer_bind": "已安裝 Bot，但未能繫結你的飛書身份。請重試或聯絡管理員。",
     "install_error_session_lost": "安裝會話已失效或丟失，請重新掃碼。",
-    "install_error_forbidden": "你已沒有在此工作區安裝飛書 Bot 的許可權，請聯絡工作區管理員。",
+    "install_error_forbidden": "你已沒有在此工作區安裝飛書 Bot 的權限，請聯絡工作區管理員。",
     "install_error_generic": "安裝失敗，請重試。"
   },
   "composio": {
@@ -968,7 +968,7 @@
     "disconnect_failed": "無法斷開連線，請重試。",
     "toast_disconnected": "已斷開",
     "disconnect_confirm_title": "斷開這個應用？",
-    "disconnect_confirm_description": "你的已連線帳號將在 Composio 側被撤銷，你的智慧體將失去對該 toolkit 的訪問許可權。你可以稍後重新連線。",
+    "disconnect_confirm_description": "你的已連線帳號將在 Composio 側被撤銷，你的智慧體將失去對該 toolkit 的訪問權限。你可以稍後重新連線。",
     "disconnect_confirm_cancel": "取消",
     "connections_load_failed": "無法載入你已有的連線，連線狀態可能不完整。",
     "toast_connected": "已連線",
@@ -1048,7 +1048,7 @@
     "group_forget_failed": "無法移除該群",
     "bot_identity_unavailable": "身份暫不可用",
     "bot_permission_tooltip_prefix": "請在釘釘開放平臺為此機器人的應用開通",
-    "bot_permission_tooltip_suffix": "許可權，然後在任一已新增該機器人的釘群中重新 @ 它。",
+    "bot_permission_tooltip_suffix": "權限，然後在任一已新增該機器人的釘群中重新 @ 它。",
     "not_enabled_title": "釘釘整合未啟用",
     "not_enabled_description_prefix": "在伺服器上設定",
     "not_enabled_description_suffix": "以啟用釘釘機器人安裝。",
@@ -1191,7 +1191,7 @@
     "github_account": "GitHub 帳號",
     "github_search_placeholder": "搜尋已載入的倉庫",
     "github_loading": "正在載入倉庫…",
-    "github_load_failed": "無法從 GitHub 載入倉庫，請檢查安裝許可權後重試。",
+    "github_load_failed": "無法從 GitHub 載入倉庫，請檢查安裝權限後重試。",
     "github_empty": "該安裝下沒有可訪問的倉庫。",
     "github_no_search_results": "已載入的倉庫中沒有匹配項。",
     "github_private": "私有",
@@ -1346,7 +1346,7 @@
     "toast_member_removed": "已移除成員",
     "toast_member_remove_failed": "移除成員失敗",
     "remove_member_title": "移除 {{name}}",
-    "remove_member_description": "從 {{workspace}} 中移除 {{name}}？該成員將失去對該工作區的訪問許可權。",
+    "remove_member_description": "從 {{workspace}} 中移除 {{name}}？該成員將失去對該工作區的訪問權限。",
     "confirm_cancel": "取消",
     "confirm_action": "確認",
     "change_role": "更改角色",
@@ -1356,7 +1356,7 @@
     "roles": {
       "owner": {
         "label": "所有者",
-        "description": "完全訪問許可權，可管理所有設定"
+        "description": "完全訪問權限，可管理所有設定"
       },
       "admin": {
         "label": "管理員",

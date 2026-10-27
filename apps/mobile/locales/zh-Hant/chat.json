@@ -64,7 +64,7 @@
   },
   "alerts": {
     "no_permission_title": "無權執行該智慧體",
-    "no_permission_message": "你已無權執行該智慧體，訊息未傳送。請聯絡該智慧體的所有者申請許可權。",
+    "no_permission_message": "你已無權執行該智慧體，訊息未傳送。請聯絡該智慧體的所有者申請權限。",
     "runtime_title": "需要執行時",
     "runtime_message": "傳送訊息前，請先在網頁端或桌面端為該智慧體繫結執行時。",
     "not_sent": "訊息未傳送",
@@ -120,7 +120,7 @@
     "runtime_cli_timeout": "本地執行時 CLI 超時",
     "environment_prepare_failed": "無法準備執行環境",
     "runtime_access_denied": "該智慧體無法在其私有執行時上執行，暫時無法回覆。請將該執行時設為公開，或將智慧體重新繫結/複製到其所有者可用的執行時。",
-    "runtime_access_revoked": "執行時訪問許可權已被撤銷。再次執行前，請為智慧體繫結可用的執行時。",
+    "runtime_access_revoked": "執行時訪問權限已被撤銷。再次執行前，請為智慧體繫結可用的執行時。",
     "invalid_task_identity": "執行身份不匹配",
     "agent_error_provider_auth_or_access": "提供商認證失敗",
     "agent_error_provider_quota_limit": "提供商配額已用盡",
@@ -164,7 +164,7 @@
   "elapsed.replied": "用時 {{time}} 回覆",
   "elapsed.finished": "用時 {{time}} 完成",
   "elapsed.failed": "執行 {{time}} 後失敗",
-  "alerts.no_permission_message": "你已無權執行該智慧體，訊息未傳送。請聯絡該智慧體的所有者申請許可權。",
+  "alerts.no_permission_message": "你已無權執行該智慧體，訊息未傳送。請聯絡該智慧體的所有者申請權限。",
   "failure.runtime_access_denied": "訊息未傳送：{{detail}}",
   "banners.no_agent_action": "在 \"更多 → 智慧體\" 中新增或啟用智慧體即可開始聊天。"
 }

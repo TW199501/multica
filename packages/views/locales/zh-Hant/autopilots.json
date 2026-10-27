@@ -77,7 +77,7 @@
     "running": "執行中...",
     "toast_triggered": "已觸發自動化",
     "toast_trigger_failed": "觸發自動化失敗",
-    "run_blocked_invocation_not_allowed": "未觸發——你沒有該自動化所用智慧體的使用許可權",
+    "run_blocked_invocation_not_allowed": "未觸發——你沒有該自動化所用智慧體的使用權限",
     "run_blocked_runtime_offline": "未觸發——該智慧體的執行時已離線",
     "run_blocked_agent_runtime_required": "未觸發——該智慧體未繫結執行時，繫結後才能執行",
     "run_blocked_runtime_access_denied": "未觸發——該智慧體無法在其私有執行時上執行。請將該執行時設為公開，或重新繫結/複製智慧體",
@@ -121,12 +121,12 @@
     "add": "新增成員",
     "search_placeholder": "搜尋成員…",
     "no_results": "未找到成員",
-    "remove_tooltip": "移除訪問許可權",
+    "remove_tooltip": "移除訪問權限",
     "empty": "還沒有授權任何人。",
-    "toast_granted": "已授予訪問許可權",
-    "toast_revoked": "已移除訪問許可權",
-    "toast_failed": "更新訪問許可權失敗",
-    "owner_note": "建立者和工作區管理員始終擁有訪問許可權。"
+    "toast_granted": "已授予訪問權限",
+    "toast_revoked": "已移除訪問權限",
+    "toast_failed": "更新訪問權限失敗",
+    "owner_note": "建立者和工作區管理員始終擁有訪問權限。"
   },
   "run_status": {
     "issue_created": "已建立任務",

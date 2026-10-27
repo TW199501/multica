@@ -104,7 +104,7 @@
       "action_title": "帳單操作失敗",
       "temporarily_unavailable": "帳單服務暫時不可用，請稍後重試。",
       "not_enabled": "此部署未啟用工作區訂閱，請聯絡管理員。",
-      "permission_changed": "你的工作區角色已不允許執行此操作。重新整理頁面可檢視當前許可權。",
+      "permission_changed": "你的工作區角色已不允許執行此操作。重新整理頁面可檢視當前權限。",
       "checkout_response": "服務端響應無法讀取，無法開啟 Checkout。請保留當前週期並重試。",
       "already_subscribed": "這個工作區已經有訂閱，當前套餐已重新整理。",
       "checkout_failed": "無法建立 Checkout，請稍後重試。",
@@ -250,7 +250,7 @@
     "load_failed_title": "無法開啟工作區帳單頁",
     "load_failed_description": "你已從 Stripe 返回，但我們無法載入工作區列表來開啟對應的帳單頁。請到「工作區設定 → 帳單」確認當前狀態。",
     "workspace_missing_title": "找不到該工作區",
-    "workspace_missing_description": "你已從 Stripe 返回，但該工作區對你已不可用——可能已被刪除，或你的訪問許可權發生了變化。請到你預期的那個工作區的帳單頁確認當前狀態。",
+    "workspace_missing_description": "你已從 Stripe 返回，但該工作區對你已不可用——可能已被刪除，或你的訪問權限發生了變化。請到你預期的那個工作區的帳單頁確認當前狀態。",
     "retry": "重試",
     "go_to_app": "前往 Multica"
   }

@@ -45,6 +45,9 @@ type AppConfig struct {
 	// MULTICA_RELEASE_REPOSITORY on deployments that ship their own builds;
 	// omitted otherwise so clients keep the upstream default.
 	ReleaseRepository string `json:"release_repository,omitempty"`
+	// Explicit even when URLs are omitted, so clients never infer Cloud from
+	// missing self-host configuration. Older clients ignore this additive field.
+	DaemonSetupTarget string `json:"daemon_setup_target"`
 
 	// VCSIntegrationAvailable mirrors the MULTICA_VCS_INTEGRATION_ENABLED
 	// deployment switch so the Settings UI can hide the whole self-hosted Git
@@ -136,6 +139,7 @@ func (h *Handler) GetConfig(w http.ResponseWriter, r *http.Request) {
 	if repo := strings.TrimSpace(os.Getenv(cli.ReleaseRepositoryEnv)); cli.IsValidReleaseRepository(repo) {
 		config.ReleaseRepository = repo
 	}
+	config.DaemonSetupTarget = "self_host"
 	config.VCSIntegrationAvailable = h.cfg.VCSIntegrationEnabled
 	config.FeatureFlags = featureflags.EvaluateFrontendPublicFlags(r.Context(), h.FeatureFlags)
 	// Only surface the build version on self-hosted deployments. The managed
@@ -143,6 +147,8 @@ func (h *Handler) GetConfig(w http.ResponseWriter, r *http.Request) {
 	// the Help popover's version row would just be noise there (MUL-4108).
 	if !isOfficialCloudDeployment() {
 		config.ServerVersion = h.cfg.ServerVersion
+	} else {
+		config.DaemonSetupTarget = "cloud"
 	}
 
 	// Re-read from env on every request so operators can rotate keys via

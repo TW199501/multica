@@ -74,7 +74,7 @@
     "model": "模型",
     "created": "建立時間",
     "owner": "owner",
-    "access": "訪問許可權"
+    "access": "訪問權限"
   },
   "row": {
     "you": "你",
@@ -133,7 +133,7 @@
     "not_found_default": "該智慧體可能已被歸檔或刪除。",
     "load_failed_title": "無法載入該智慧體",
     "load_failed_default": "獲取該智慧體時出錯。",
-    "no_access_title": "你沒有訪問該智慧體的許可權",
+    "no_access_title": "你沒有訪問該智慧體的權限",
     "no_access_hint": "只有該私密智慧體的擁有者或工作區管理員可以檢視。",
     "try_again": "重試",
     "archived_banner": "該智慧體已歸檔，無法被分配或提及。",
@@ -152,7 +152,7 @@
     "agent_restored_toast": "已恢復智慧體",
     "restore_failed_toast": "恢復智慧體失敗",
     "dm": "私信",
-    "dm_no_permission_toast": "你沒有許可權與該智慧體聊天。",
+    "dm_no_permission_toast": "你沒有權限與該智慧體聊天。",
     "runtime_required_toast": "請先繫結執行時，再執行該智慧體。",
     "assign_work": "分配工作",
     "more_actions_aria": "智慧體操作",
@@ -161,8 +161,8 @@
   "inspector": {
     "section_profile": "資料",
     "section_execution": "執行配置",
-    "qoder_execution_note": "模型、工具和 skill 在 Qoder 的 QCA 智慧體上設定。",
-    "section_access": "訪問許可權",
+    "qoder_execution_note": "模型、工具和 skill 在 Qoder Cloud Agents 中的智慧體上設定。",
+    "section_access": "訪問權限",
     "section_properties": "屬性",
     "section_details": "詳情",
     "section_details_hint": "只讀的所有權和生命週期資訊。",
@@ -194,7 +194,7 @@
   },
   "overview": {
     "agent_context": "智慧體",
-    "access": "訪問許可權",
+    "access": "訪問權限",
     "attention_title": "需要處理的執行",
     "attention_queued_other": "執行時不可用，當前有 {{count}} 次執行正在排隊。"
   },
@@ -256,9 +256,9 @@
     "capabilities": "能力",
     "settings": "設定",
     "general": "通用",
-    "access": "訪問許可權",
+    "access": "訪問權限",
     "page_navigation_aria": "智慧體頁面",
-    "section_navigation_aria": "智慧體分割槽",
+    "section_navigation_aria": "智慧體分區",
     "activity": "動態",
     "tasks": "執行",
     "instructions": "指令",
@@ -269,7 +269,7 @@
     "composio_mcp": "MCP 應用",
     "integrations": "整合",
     "runtime_config": "路由",
-    "qoder_agent": "QCA 智慧體",
+    "qoder_agent": "Qoder Cloud Agents",
     "discard_dialog_title": "放棄未儲存的修改？",
     "discard_dialog_description": "當前 tab 有未儲存的修改，離開會丟棄這些修改。",
     "discard_keep": "繼續編輯",
@@ -296,7 +296,7 @@
       "behavior": "行為與能力",
       "execution": "執行配置",
       "execution_hint": "未指定的選項沿用執行時預設值。",
-      "access": "訪問許可權"
+      "access": "訪問權限"
     },
     "thinking_label": "思考",
     "speed_label": "速度",
@@ -434,7 +434,7 @@
     "description_placeholder": "這個智慧體做什麼？",
     "visibility_label": "可見性",
     "access": {
-      "label": "訪問許可權",
+      "label": "訪問權限",
       "private_title": "私有",
       "private_desc": "只有你可以執行該智慧體",
       "public_title": "公開",
@@ -608,7 +608,7 @@
       "runtime_offline": "本地執行時已離線。重新連線後，可重新整理繼承的 MCP Server。",
       "runtime_discovering": "正在從本地執行時發現 MCP Server…",
       "runtime_failed": "無法獲取執行時中的 MCP Server，請重試。",
-      "runtime_forbidden": "你沒有許可權檢視該執行時中的 MCP Server。",
+      "runtime_forbidden": "你沒有權限檢視該執行時中的 MCP Server。",
       "runtime_unsupported": "當前執行時版本暫不支援上報 MCP Server 清單。",
       "runtime_empty": "執行時的使用者配置中暫無 MCP Server。",
       "rename_server": "重新命名 MCP Server",
@@ -699,6 +699,9 @@
       "mode_label": "路由模式",
       "mode_local": "Local",
       "mode_gateway": "Gateway",
+      "model_override_label": "底層模型覆寫",
+      "model_override_hint": "套用於此智慧體此後領取的所有執行，直到修改或清除。清除後使用所選 OpenClaw 智慧體綁定的模型，其身分保持不變。",
+      "model_override_placeholder": "openrouter/@preset/agent-reasoning",
       "mode_local_hint": "在本機執行。",
       "mode_gateway_hint": "守護程序連線 OpenClaw Gateway。端點欄位留空則繼承守護程序宿主 `~/.openclaw/openclaw.json` 裡的配置。",
       "gateway_legend": "Gateway 端點",
@@ -732,7 +735,7 @@
       "runtime_offline": "本地執行時處於離線狀態，重新連線後即可重新整理繼承的 skill。",
       "runtime_discovering": "正在從本地執行時發現 skill…",
       "runtime_failed": "無法發現執行時 skill，請重試。",
-      "runtime_forbidden": "沒有許可權檢視該執行時的 skill。",
+      "runtime_forbidden": "沒有權限檢視該執行時的 skill。",
       "runtime_unsupported": "該執行時不支援本地 skill 發現。",
       "runtime_empty": "該執行時中沒有發現本地 skill。",
       "detail_title": "Skill 詳情",
@@ -832,7 +835,7 @@
   },
   "access": {
     "section_title": "誰可以執行該智慧體",
-    "tooltip": "訪問許可權 · 誰可以執行該智慧體",
+    "tooltip": "訪問權限 · 誰可以執行該智慧體",
     "trigger_private": "僅自己",
     "trigger_workspace": "工作區",
     "scope_labels": {
@@ -853,13 +856,13 @@
     "members_title": "指定成員",
     "members_desc": "只有你選擇的人可以執行該智慧體",
     "team_title": "公開給團隊",
-    "team_desc": "向整個團隊授予訪問許可權",
+    "team_desc": "向整個團隊授予訪問權限",
     "team_coming_soon": "即將推出",
     "members_group": "成員",
     "public_group": "公開訪問",
     "owner_only_readonly": "只有該智慧體的所有者可以更改誰能呼叫它。",
     "members_empty": "沒有可選擇的工作區成員",
-    "composio_switch_hint": "提示——該智慧體已啟用 Composio 應用。共享後，所有獲得訪問許可權的人都可以透過該智慧體使用這些應用。"
+    "composio_switch_hint": "提示——該智慧體已啟用 Composio 應用。共享後，所有獲得訪問權限的人都可以透過該智慧體使用這些應用。"
   },
   "profile_card": {
     "unavailable": "智慧體不可用",
@@ -1019,7 +1022,7 @@
     "filter_active_count_other": "{{count}} 項篩選",
     "clear_filters": "清除篩選",
     "section_availability": "可用性",
-    "section_access": "訪問許可權",
+    "section_access": "訪問權限",
     "section_runtime": "執行時",
     "display": "顯示",
     "sort_by": "排序",
