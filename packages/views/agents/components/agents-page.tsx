@@ -62,6 +62,7 @@ import {
 import { useNavigation, useRowLink } from "../../navigation";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { docsLocalePrefix } from "../../common/docs-locale";
+import { useDocsUrl } from "../../common/docs-url";
 import { ProviderLogo } from "../../runtimes/components/provider-logo";
 import {
   CollectionPageHeader,
@@ -256,13 +257,14 @@ function PageHeaderBar({
   onCreate: () => void;
 }) {
   const { t, i18n } = useT("agents");
+  const docsUrl = useDocsUrl();
   return (
     <CollectionPageHeader
       icon={Bot}
       title={t(($) => $.page.title)}
       count={totalCount}
       learnMore={{
-        href: `https://multica.ai/docs${docsLocalePrefix(i18n.language)}/agents`,
+        href: `${docsUrl}${docsLocalePrefix(i18n.language)}/agents`,
         label: t(($) => $.page.learn_more),
       }}
       actions={

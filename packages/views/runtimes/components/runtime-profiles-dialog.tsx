@@ -56,6 +56,7 @@ import {
 } from "./runtime-profile-catalog";
 import { useT } from "../../i18n";
 import { customRuntimeDocsHref } from "./runtime-docs";
+import { useDocsUrl } from "../../common/docs-url";
 
 // The dialog runs in two surfaces that swap inside one Popup:
 //   - "browse": custom-first master list + adaptive detail
@@ -81,6 +82,7 @@ export function RuntimeProfilesDialog({
   onClose: () => void;
 }) {
   const { t, i18n } = useT("runtimes");
+  const docsUrl = useDocsUrl();
   const { data: profiles = [], isLoading } = useQuery(
     runtimeProfileListOptions(wsId),
   );
@@ -108,7 +110,7 @@ export function RuntimeProfilesDialog({
     entries.find((entry) => entry.id === selectedId) ?? null;
   const openCreateForm = () =>
     setState({ surface: "form", mode: "create", step: "family" });
-  const docsHref = customRuntimeDocsHref(i18n.language);
+  const docsHref = customRuntimeDocsHref(docsUrl, i18n.language);
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>

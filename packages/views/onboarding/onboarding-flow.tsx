@@ -10,6 +10,7 @@ import {
   parseWithFallback,
 } from "@multica/core/api";
 import { useAuthStore } from "@multica/core/auth";
+import { configStore } from "@multica/core/config";
 import {
   completeOnboarding,
   ONBOARDING_STEP_ORDER,
@@ -34,6 +35,7 @@ import {
   pickContentLang,
 } from "./templates";
 import { useT } from "../i18n";
+import { UPSTREAM_DOCS_URL, resolveDocsUrl } from "../common/docs-url";
 
 const EMPTY_QUESTIONNAIRE: QuestionnaireAnswers = {
   source: [],
@@ -310,7 +312,10 @@ export function OnboardingFlow({
           const issue = await api.createIssue(
             {
               title: INSTALL_RUNTIME_ISSUE_TITLE[contentLang],
-              description: INSTALL_RUNTIME_ISSUE_BODY[contentLang],
+              description: INSTALL_RUNTIME_ISSUE_BODY[contentLang].replaceAll(
+                UPSTREAM_DOCS_URL,
+                resolveDocsUrl(configStore.getState()),
+              ),
               status: "in_progress",
               priority: "high",
               assignee_type: "member",

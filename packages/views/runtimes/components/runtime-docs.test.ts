@@ -4,6 +4,7 @@ import {
   customRuntimeDocsHref,
   daemonRuntimesDocsHref,
 } from "./runtime-docs";
+import { UPSTREAM_DOCS_URL } from "../../common/docs-url";
 
 describe("runtime docs links", () => {
   it.each([
@@ -13,14 +14,14 @@ describe("runtime docs links", () => {
     ["ko", "https://multica.ai/docs/ko/daemon-runtimes"],
     ["fr", "https://multica.ai/docs/fr/daemon-runtimes"],
   ])("localizes the daemon guide for %s", (language, expected) => {
-    expect(daemonRuntimesDocsHref(language)).toBe(expected);
+    expect(daemonRuntimesDocsHref(UPSTREAM_DOCS_URL, language)).toBe(expected);
   });
 
   it("adds the localized custom runtime section", () => {
-    expect(customRuntimeDocsHref("zh-Hans")).toBe(
+    expect(customRuntimeDocsHref(UPSTREAM_DOCS_URL, "zh-Hans")).toBe(
       `https://multica.ai/docs/zh/daemon-runtimes#${encodeURIComponent("自定义运行时配置")}`,
     );
-    expect(customRuntimeDocsHref("fr")).toBe(
+    expect(customRuntimeDocsHref(UPSTREAM_DOCS_URL, "fr")).toBe(
       `https://multica.ai/docs/fr/daemon-runtimes#${encodeURIComponent("profils-de-runtime-personnalisés")}`,
     );
   });

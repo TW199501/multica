@@ -36,6 +36,7 @@ import { api } from "@multica/core/api";
 import type { TelegramInstallation } from "@multica/core/types";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { docsLocalePrefix } from "../../common/docs-locale";
+import { useDocsUrl } from "../../common/docs-url";
 import { openExternal } from "../../platform";
 import { useLocale, useT } from "../../i18n";
 import { TooltipHint } from "@multica/ui/components/common/tooltip-hint";
@@ -235,8 +236,8 @@ function InstallationRow({
 
 // telegramDocsUrl points at the Telegram integration guide on the docs site,
 // localized like the Slack docs link.
-function telegramDocsUrl(lang: string | undefined): string {
-  return `https://multica.ai/docs${docsLocalePrefix(lang)}/telegram-bot-integration`;
+function telegramDocsUrl(docsUrl: string, lang: string | undefined): string {
+  return `${docsUrl}${docsLocalePrefix(lang)}/telegram-bot-integration`;
 }
 
 // TelegramAgentBindButton is the per-agent CTA on the agent detail page.
@@ -258,6 +259,7 @@ export function TelegramAgentBindButton({
   onShowConnectedDetails?: () => void;
 }) {
   const { t, i18n } = useT("settings");
+  const docsUrl = useDocsUrl();
   const wsId = useWorkspaceId();
   const qc = useQueryClient();
   const user = useAuthStore((s) => s.user);
@@ -369,7 +371,7 @@ export function TelegramAgentBindButton({
 
           <button
             type="button"
-            onClick={() => openExternal(telegramDocsUrl(i18n.language))}
+            onClick={() => openExternal(telegramDocsUrl(docsUrl, i18n.language))}
             className="inline-flex w-fit items-center gap-2 text-body font-medium text-primary underline-offset-2 hover:underline"
             data-testid="telegram-docs-link"
           >

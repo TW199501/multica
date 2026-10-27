@@ -85,6 +85,7 @@ beforeEach(() => {
 afterEach(() => {
   configStore.getState().setServerVersion("");
   configStore.getState().setReleaseRepository("");
+  configStore.setState({ daemonAppUrl: "" });
 });
 
 describe("HelpLauncher", () => {
@@ -118,7 +119,12 @@ describe("HelpLauncher", () => {
 
   it("follows a deployment's own release repository", () => {
     configStore.getState().setReleaseRepository("TW199501/multica");
+    configStore.getState().setDaemonConfig({ daemonAppUrl: "http://192.168.25.100:13300" });
     render(<HelpLauncher />);
+    expect(screen.getByRole("link", { name: /Docs/ })).toHaveAttribute(
+      "href",
+      "http://192.168.25.100:13300/docs",
+    );
     expect(screen.getByRole("link", { name: /Desktop app/ })).toHaveAttribute(
       "href",
       "/download",
