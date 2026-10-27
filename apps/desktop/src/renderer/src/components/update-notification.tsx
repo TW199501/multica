@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { RefreshCw, X } from "lucide-react";
+import { DEFAULT_RELEASE_REPOSITORY, resolveReleaseRepository } from "@multica/core/config";
 
 // Downloads run silently in the background (main process has
 // autoDownload=true). The renderer only renders UI once the package is fully
@@ -9,6 +10,15 @@ type UpdateState =
   | { status: "ready"; version: string };
 
 function changelogUrl(version: string): string {
+  // The update feed is the build's release repository; a fork's notes live on
+  // its own GitHub release for that tag.
+  const repository = resolveReleaseRepository(
+    (import.meta.env as ImportMetaEnv & { readonly VITE_RELEASE_REPOSITORY?: string })
+      .VITE_RELEASE_REPOSITORY,
+  );
+  if (repository !== DEFAULT_RELEASE_REPOSITORY) {
+    return `https://github.com/${repository}/releases/tag/v${version}`;
+  }
   return `https://multica.ai/changelog#release-${version.replace(/\./g, "-")}`;
 }
 

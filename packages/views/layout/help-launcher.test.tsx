@@ -84,6 +84,7 @@ beforeEach(() => {
 
 afterEach(() => {
   configStore.getState().setServerVersion("");
+  configStore.getState().setReleaseRepository("");
 });
 
 describe("HelpLauncher", () => {
@@ -105,6 +106,27 @@ describe("HelpLauncher", () => {
     render(<HelpLauncher />);
     const link = screen.getByRole("link", { name: /Desktop app/ });
     expect(link).toHaveAttribute("href", "https://multica.ai/download");
+  });
+
+  it("links the change log to the upstream changelog by default", () => {
+    render(<HelpLauncher />);
+    expect(screen.getByRole("link", { name: /Change log/ })).toHaveAttribute(
+      "href",
+      "https://multica.ai/changelog",
+    );
+  });
+
+  it("follows a deployment's own release repository", () => {
+    configStore.getState().setReleaseRepository("TW199501/multica");
+    render(<HelpLauncher />);
+    expect(screen.getByRole("link", { name: /Desktop app/ })).toHaveAttribute(
+      "href",
+      "/download",
+    );
+    expect(screen.getByRole("link", { name: /Change log/ })).toHaveAttribute(
+      "href",
+      "https://github.com/TW199501/multica/releases",
+    );
   });
 
   it.each([
