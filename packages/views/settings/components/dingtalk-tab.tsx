@@ -52,6 +52,7 @@ import type {
 } from "@multica/core/types";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { docsLocalePrefix } from "../../common/docs-locale";
+import { useDocsUrl } from "../../common/docs-url";
 import { openExternal } from "../../platform";
 import { useT, useTimeAgo } from "../../i18n";
 import { TooltipHint } from "@multica/ui/components/common/tooltip-hint";
@@ -799,8 +800,8 @@ function InstallationRow({
 // localized to the viewer's language. The docs site uses /<lang>/ path
 // prefixes (English has none), matching the convention used elsewhere in the
 // app for doc links.
-function dingtalkDocsUrl(lang: string | undefined): string {
-  return `https://multica.ai/docs${docsLocalePrefix(lang)}/dingtalk-bot-integration`;
+function dingtalkDocsUrl(docsUrl: string, lang: string | undefined): string {
+  return `${docsUrl}${docsLocalePrefix(lang)}/dingtalk-bot-integration`;
 }
 
 // DingTalkAgentBindButton is the per-agent CTA exposed from the agent detail
@@ -837,6 +838,7 @@ export function DingTalkAgentBindButton({
   onShowConnectedDetails?: () => void;
 }) {
   const { t, i18n } = useT("settings");
+  const docsUrl = useDocsUrl();
   const wsId = useWorkspaceId();
   const qc = useQueryClient();
   const user = useAuthStore((s) => s.user);
@@ -960,7 +962,7 @@ export function DingTalkAgentBindButton({
 
             <button
               type="button"
-              onClick={() => openExternal(dingtalkDocsUrl(i18n.language))}
+              onClick={() => openExternal(dingtalkDocsUrl(docsUrl, i18n.language))}
               className="inline-flex w-fit items-center gap-1.5 text-caption text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline"
               data-testid="dingtalk-byo-docs-link"
             >

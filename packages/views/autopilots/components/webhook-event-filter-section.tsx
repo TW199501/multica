@@ -6,6 +6,7 @@ import { cn } from "@multica/ui/lib/utils";
 import { TooltipHint } from "@multica/ui/components/common/tooltip-hint";
 import type { WebhookEventFilter } from "@multica/core/types";
 import { useT } from "../../i18n";
+import { useDocsUrl } from "../../common/docs-url";
 
 interface WebhookEventFilterSectionProps {
   filters: WebhookEventFilter[];
@@ -19,11 +20,12 @@ export function WebhookEventFilterSection({
   const { t, i18n } = useT("autopilots");
   const [newEvent, setNewEvent] = useState("");
   const [newActions, setNewActions] = useState("");
+  const docsUrl = useDocsUrl();
   const docsHref = i18n.language?.startsWith("zh")
-    ? `https://multica.ai/docs/zh/autopilots#${encodeURIComponent("事件过滤")}`
+    ? `${docsUrl}/zh/autopilots#${encodeURIComponent("事件过滤")}`
     : i18n.language?.startsWith("fr")
-      ? `https://multica.ai/docs/fr/autopilots#${encodeURIComponent("filtres-dévénements")}`
-      : "https://multica.ai/docs/autopilots#event-filters";
+      ? `${docsUrl}/fr/autopilots#${encodeURIComponent("filtres-dévénements")}`
+      : `${docsUrl}/autopilots#event-filters`;
 
   const addFilter = () => {
     const event = newEvent.trim();

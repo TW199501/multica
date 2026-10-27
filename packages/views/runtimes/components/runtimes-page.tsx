@@ -95,6 +95,7 @@ import { buildRuntimeMachines, type RuntimeMachine } from "./runtime-machines";
 import { HealthDot, HealthIcon, useHealthLabel } from "./shared";
 import { useT, useTimeAgo } from "../../i18n";
 import { daemonRuntimesDocsHref } from "./runtime-docs";
+import { useDocsUrl } from "../../common/docs-url";
 
 export interface RuntimesPageProps {
   /** Desktop-only daemon id used to identify this device. */
@@ -152,6 +153,7 @@ export function RuntimesPage({
   cloudRuntimeEnabled = false,
 }: RuntimesPageProps = {}) {
   const { t, i18n } = useT("runtimes");
+  const docsUrl = useDocsUrl();
   const isAuthLoading = useAuthStore((state) => state.isLoading);
   const currentUserId = useAuthStore((state) => state.user?.id);
   const wsId = useWorkspaceId();
@@ -312,7 +314,7 @@ export function RuntimesPage({
         title={t(($) => $.page.title)}
         count={totalCount}
         learnMore={{
-          href: daemonRuntimesDocsHref(i18n.language),
+          href: daemonRuntimesDocsHref(docsUrl, i18n.language),
           label: t(($) => $.page.learn_more),
         }}
         actions={

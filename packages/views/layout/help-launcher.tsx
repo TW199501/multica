@@ -23,8 +23,8 @@ import { DEFAULT_RELEASE_REPOSITORY, useConfigStore } from "@multica/core/config
 import { isDesktopShell } from "../platform/local-directory";
 import { useT } from "../i18n";
 import { docsLocalePrefix } from "../common/docs-locale";
+import { useDocsUrl } from "../common/docs-url";
 
-const DOCS_URL = "https://multica.ai/docs";
 const CHANGELOG_URL = "https://multica.ai/changelog";
 // Absolute for deployments on upstream releases: the installers are the same
 // binaries either way, and the desktop client can point at a self-hosted
@@ -34,6 +34,7 @@ const DOWNLOAD_URL = "https://multica.ai/download";
 export function HelpLauncher() {
   const { t, i18n } = useT("layout");
   const serverVersion = useConfigStore((state) => state.serverVersion);
+  const docsUrl = useDocsUrl();
   // A deployment that ships its own builds (MULTICA_RELEASE_REPOSITORY) serves
   // them from its own /download page and publishes notes on its GitHub releases.
   const releaseRepository = useConfigStore((state) => state.releaseRepository);
@@ -89,7 +90,7 @@ export function HelpLauncher() {
         <DropdownMenuItem
           render={
             <a
-              href={`${DOCS_URL}${docsLocalePrefix(i18n.language)}`}
+              href={`${docsUrl}${docsLocalePrefix(i18n.language)}`}
               target="_blank"
               rel="noopener noreferrer"
             />

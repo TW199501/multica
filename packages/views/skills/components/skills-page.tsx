@@ -78,6 +78,7 @@ import {
 } from "./skill-list-actions";
 import { useT, useTimeAgo } from "../../i18n";
 import { docsLocalePrefix } from "../../common/docs-locale";
+import { useDocsUrl } from "../../common/docs-url";
 
 // Column template — single source of truth for header, rows, and skeletons.
 // Tracks: [edge 0.75rem] [checkbox 1rem] [name, only fr track]
@@ -167,13 +168,14 @@ function PageHeaderBar({
   onCreate: () => void;
 }) {
   const { t, i18n } = useT("skills");
+  const docsUrl = useDocsUrl();
   return (
     <CollectionPageHeader
       icon={SkillIcon}
       title={t(($) => $.page.title)}
       count={totalCount}
       learnMore={{
-        href: `https://multica.ai/docs${docsLocalePrefix(i18n.language)}/skills`,
+        href: `${docsUrl}${docsLocalePrefix(i18n.language)}/skills`,
         label: t(($) => $.page.learn_more),
       }}
       actions={
