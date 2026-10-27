@@ -1,0 +1,19 @@
+packages/views/runtimes/utils.test.ts
+  s_e6eb75c69f54af::t_f7fc1e578b8deb 2052-2072
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9fe7787bccc2a0ef99fb518618ca01be4552686a",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
