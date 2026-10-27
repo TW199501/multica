@@ -942,25 +942,6 @@ describe("estimateCost", () => {
     }
   });
 
-  it("strips Bedrock profile versions exactly like the suffix pattern it replaces", () => {
-    const pattern = /-v\d+:\d+(\[[^\]]+\])?$/;
-    const tokens = ["-v", "-", "v", "1", "12", ":", "[", "]", "1m", "x"];
-    let seed = 1;
-    const next = () => (seed = (seed * 48271) % 2147483647);
-    for (let n = 0; n < 20_000; n++) {
-      let s = "";
-      for (let i = next() % 8; i > 0; i--) s += tokens[next() % tokens.length];
-      expect(stripBedrockProfileVersion(s), s).toBe(s.replace(pattern, "$1"));
-    }
-  });
-
-  it("strips Bedrock profile versions in linear time", () => {
-    const model = `claude-x${"-v1:0[".repeat(50_000)}`;
-    const start = performance.now();
-    expect(stripBedrockProfileVersion(model)).toBe(model);
-    expect(performance.now() - start).toBeLessThan(250);
-  });
-
   it("prices kimi-k2.6 at the official $0.95 / $4.00 tier (not the K2 tier)", () => {
     // Moonshot's K2.6 page is the only authoritative source today; K2.6 is
     // explicitly NOT priced like K2. 1M input × $0.95 + 1M output × $4.00 = $4.95.
@@ -2066,5 +2047,26 @@ describe("formatTokens", () => {
     expect(formatTokens(999_949)).toBe("999.9K");
     expect(formatTokens(999_950)).toBe("1M");
     expect(formatTokens(999_999_999)).toBe("1B");
+  });
+});
+
+describe("stripBedrockProfileVersion", () => {
+  it("strips Bedrock profile versions exactly like the suffix pattern it replaces", () => {
+    const pattern = /-v\d+:\d+(\[[^\]]+\])?$/;
+    const tokens = ["-v", "-", "v", "1", "12", ":", "[", "]", "1m", "x"];
+    let seed = 1;
+    const next = () => (seed = (seed * 48271) % 2147483647);
+    for (let n = 0; n < 20_000; n++) {
+      let s = "";
+      for (let i = next() % 8; i > 0; i--) s += tokens[next() % tokens.length];
+      expect(stripBedrockProfileVersion(s), s).toBe(s.replace(pattern, "$1"));
+    }
+  });
+
+  it("strips Bedrock profile versions in linear time", () => {
+    const model = `claude-x${"-v1:0[".repeat(50_000)}`;
+    const start = performance.now();
+    expect(stripBedrockProfileVersion(model)).toBe(model);
+    expect(performance.now() - start).toBeLessThan(250);
   });
 });
