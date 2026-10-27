@@ -2,7 +2,12 @@ export const CLOUD_SERVER_URL = "https://api.multica.ai";
 export const CLOUD_APP_URL = "https://multica.ai";
 
 export function normalizeCommandURL(url: string | undefined): string {
-  return url?.trim().replace(/\/+$/, "") ?? "";
+  const trimmed = url?.trim() ?? "";
+  // A loop instead of /\/+$/, which backtracks quadratically on long runs of
+  // slashes that are not at the end.
+  let end = trimmed.length;
+  while (end > 0 && trimmed[end - 1] === "/") end--;
+  return trimmed.slice(0, end);
 }
 
 export type DaemonSetupTarget = "cloud" | "self_host" | "unknown";
