@@ -41,8 +41,8 @@ git remote -v
 
 ## 本 repo 注意事項
 
-* 上游的 `ci.yml`、`mobile-verify.yml` 只在 `main` 的 push 與 pull_request 觸發，fork 的 `dev`、`release`、`hotfix/**` 目前不會有 check run。快轉 `release` 前依 elf-team-rule 規則 28 處理；補上觸發方式要另開 `chore/` 分支（規則 29）。
-* 上游的 `release.yml` 由 `v*.*.*` tag 觸發並發佈套件，fork 不推 tag。
+* 上游的 `ci.yml`、`mobile-verify.yml` 只在 `main` 的 push 與 pull_request 觸發，開到 `dev` 的 PR 不會自動跑；開發分支用 `gh workflow run ci.yml --repo TW199501/multica --ref <分支>` 手動觸發。`dev` 的提交有 CodeQL 的 3 個 Analyze 檢查，快轉 `release` 前依 elf-team-rule 規則 28 確認全部通過。
+* fork 會發自己的正式版，版號 `v<上游版號>-tw.N`（例如 `v0.7.0-tw.3`）。`release.yml` 由 tag 觸發，產出 GHCR 映像（`ghcr.io/tw199501/multica-backend`、`multica-web`）、`multica` CLI 和 Windows／macOS／Linux 桌面版；fork 不發 Homebrew。發版步驟見下方「發版」。
 
 ## 常用指令
 
@@ -81,6 +81,19 @@ git merge --ff-only origin/release   # 先把本機 release 更新到最新
 git merge --ff-only origin/dev
 git push origin release
 ```
+
+發版（`release` 快轉後；快轉由 Eddie 執行）：
+
+```
+git ls-remote origin refs/heads/release   # 確認 release 已經是要發的提交，再建 Release
+gh release create v<上游版號>-tw.<N> --repo TW199501/multica --target release --title "v<上游版號>-tw.<N>（繁體中文版）" --notes-file <發版說明.md>
+gh run list --repo TW199501/multica --workflow release.yml --limit 1   # 盯到 desktop 三個平台都 success
+```
+
+* 不加 `--prerelease`：`/download` 頁只列正式版，預發布版不會出現在下載頁。
+* macOS 簽章與公證用 repo secrets `APPLE_CERTIFICATE`（Developer ID 的 .p12，base64）、`APPLE_CERTIFICATE_PASSWORD`（.p12 匯出時設的密碼，不是 Apple 的 App 專用密碼）、`APPLE_ID`、`APPLE_PASSWORD`（App 專用密碼）、`APPLE_TEAM_ID`。
+* Windows 安裝檔目前沒有程式碼簽章，第一次執行會被 SmartScreen 擋（E-440 處理）。
+* 某個平台建置失敗時，修正後發下一個 `tw.N`，不重用已發出的 tag。
 
 緊急修正（hotfix，`dev` 有未測完的內容時；完整步驟見 elf-team-rule `references/01-contribution-fork.md`）：
 
