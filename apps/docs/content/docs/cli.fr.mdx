@@ -279,6 +279,7 @@ multica autopilot trigger-add <autopilot-id> --cron "0 9 * * 1" --timezone Europ
 | --- | --- |
 | `issue` | Créer, mettre à jour, assigner et rechercher des tâches ; gérer les commentaires, les abonnés, les étiquettes, les propriétés, les réveils, la chronologie et les exécutions |
 | `project` | Gérer les projets et leurs ressources |
+| `workflow` | Gérer les workflows de projet et leurs passations |
 | `label`, `property` | Gérer les étiquettes et les propriétés personnalisées de l'espace de travail |
 | `agent`, `skill`, `squad` | Gérer les agents, les skills et les squads |
 | `autopilot` | Gérer les automatisations, les déclencheurs et l'historique des exécutions |
@@ -372,6 +373,9 @@ Les tableaux ci-dessous couvrent toutes les commandes de premier niveau actuelle
 | `project` | `list/get/create/update/delete` | Gérer les projets | `create` : `--title` (obligatoire), `--lead`, `--status`, `--icon`, `--start-date`, `--due-date`, `--repo` (répétable) |
 | | `status <id> <status>` | Changer le statut d'un projet | |
 | | `resource list/add/update/remove` | Gérer les ressources d'un projet | `--type`, `--url`, `--default-branch-hint`, `--ref`, `--local-path`, `--daemon-id`, `--execution-mode` (`in_place` / `worktree` pour un répertoire local) |
+| | `workflow <project-id> <workflow-id|default>` | Changer le workflow d'un projet | `--map <ancien-statut>=<nouveau-statut>` (répétable ; obligatoire pour chaque statut absent du nouveau workflow), `--dry-run` |
+| `workflow` | `list/get/create/update/delete` | Gérer les workflows de projet | `<id>` accepte un UUID complet, un préfixe court ou un nom ; `create` / `update` : `--name`, `--description`, `--steps` / `--steps-stdin` / `--steps-file` (tableau JSON d'étapes) ; `update` : `--map`, `--dry-run` ; `delete` n'aboutit que si aucun projet n'utilise le workflow |
+| | `handoff <id> <status>` | Définir ce qui se passe quand un ticket entre dans un statut | `--handler-type` (`none`, `agent`, `squad`, `member`, `project_lead`, `creator`), `--handler-id`, `--instructions` / `--instructions-stdin` / `--instructions-file`, `--next`, `--back`, `--copy-for-project` ; les champs omis gardent leur valeur |
 | `label` | `list/get/create/update/delete` | Gérer les étiquettes de l'espace de travail | `list` : `--resource-type` (`issue` ou `skill`), `--full-id` ; `create` : `--name`, `--color`, `--resource-type` (`issue` ou `skill`), `--description` |
 | `property` | `list/get/create/update/archive/unarchive` | Gérer les propriétés personnalisées de l'espace de travail | `create` : `--name`, `--type` (`text`, `number`, `select`, `multi_select`, `date`, `checkbox`, `url`, `actor`, `multi_actor`), `--option` (répétable, types select uniquement) ; `list` : `--include-archived` ; le type ne peut plus être modifié après la création |
 | `agent` | `list/get/create/update/archive/restore` | Gérer les agents | `--name`, `--runtime-id` (obligatoire pour `create`), `--instructions`, `--conversation-starters`, `--model`, `--thinking-level`, `--custom-env` / `--custom-env-file` / `--custom-env-stdin` (`create` uniquement), `--custom-args`, `--mcp-config` / `--mcp-config-file` / `--mcp-config-stdin`, `--permission-mode`, `--visibility` (ancienne forme), `--max-concurrent-tasks` |

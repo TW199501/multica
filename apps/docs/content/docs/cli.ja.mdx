@@ -279,6 +279,7 @@ multica autopilot trigger-add <autopilot-id> --cron "0 9 * * 1" --timezone Asia/
 | --- | --- |
 | `issue` | タスクの作成、更新、割り当て、検索。コメント、購読者、ラベル、プロパティ、ウェイクアップ、タイムライン、実行履歴の管理 |
 | `project` | プロジェクトとそのリソースを管理 |
+| `workflow` | プロジェクトのワークフローと引き継ぎを管理 |
 | `label`、`property` | ワークスペースのラベルとカスタムプロパティを管理 |
 | `agent`、`skill`、`squad` | エージェント、スキル、スクワッドを管理 |
 | `autopilot` | オートパイロット、トリガー、実行履歴を管理 |
@@ -364,6 +365,9 @@ CLI の設定ファイルには、あなたとして Multica にアクセスで�
 | `project` | `list/get/create/update/delete` | プロジェクトを管理 | `create`: `--title`（必須）、`--lead`、`--status`、`--icon`、`--start-date`、`--due-date`、`--repo`（繰り返し可） |
 | | `status <id> <status>` | プロジェクトのステータスを変更 | |
 | | `resource list/add/update/remove` | プロジェクトの追加リソースを管理 | `--type`、`--url`、`--default-branch-hint`、`--ref`、`--local-path`、`--daemon-id`、`--execution-mode`（ローカルディレクトリの `in_place` / `worktree`） |
+| | `workflow <project-id> <workflow-id|default>` | プロジェクトが使うワークフローを切り替え | `--map <旧ステータス>=<新ステータス>`（繰り返し可。新しいワークフローにないステータスごとに必須）、`--dry-run` |
+| `workflow` | `list/get/create/update/delete` | プロジェクトのワークフローを管理 | `<id>` は完全な UUID、短いプレフィックス、名前を受け付けます。`create` / `update`: `--name`、`--description`、`--steps` / `--steps-stdin` / `--steps-file`（ステップの JSON 配列）。`update`: `--map`、`--dry-run`。`delete` はどのプロジェクトも使っていない場合のみ |
+| | `handoff <id> <status>` | 課題があるステータスに入ったときの処理を設定 | `--handler-type`（`none`、`agent`、`squad`、`member`、`project_lead`、`creator`）、`--handler-id`、`--instructions` / `--instructions-stdin` / `--instructions-file`、`--next`、`--back`、`--copy-for-project`。指定しない項目は現在の値を維持 |
 | `label` | `list/get/create/update/delete` | ワークスペースのラベルを管理 | `list`: `--resource-type`（`issue` または `skill`）、`--full-id`；`create`: `--name`、`--color`、`--resource-type`（`issue` または `skill`）、`--description` |
 | `property` | `list/get/create/update/archive/unarchive` | ワークスペースのカスタムプロパティを管理 | `create`: `--name`、`--type`（`text`、`number`、`select`、`multi_select`、`date`、`checkbox`、`url`、`actor`、`multi_actor`、`multi_text`、`multi_url`）、`--option`（繰り返し可、select 系のみ）；`list`: `--include-archived`；タイプは作成後に変更できません |
 | `agent` | `list/get/create/update/archive/restore` | エージェントを管理 | `--name`、`--runtime-id`（`create` では必須）、`--instructions`、`--conversation-starters`、`--model`、`--thinking-level`、`--custom-env` / `--custom-env-file` / `--custom-env-stdin`（`create` のみ）、`--custom-args`、`--mcp-config` / `--mcp-config-file` / `--mcp-config-stdin`、`--permission-mode`、`--visibility`（古い書き方）、`--max-concurrent-tasks` |
