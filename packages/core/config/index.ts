@@ -1,5 +1,6 @@
 import { createStore } from "zustand/vanilla";
 import { useStore } from "zustand";
+import type { DaemonConfigStatus, DaemonSetupTarget } from "../runtimes/commands";
 
 /** Upstream "owner/name" repository whose GitHub releases ship Multica builds. */
 export const DEFAULT_RELEASE_REPOSITORY = "multica-ai/multica";
@@ -35,6 +36,8 @@ interface ConfigState {
   // "owner/name" repository whose releases the UI checks for daemon updates.
   // Older servers omit it, which keeps the upstream default.
   releaseRepository: string;
+  daemonConfigStatus: DaemonConfigStatus;
+  daemonSetupTarget: DaemonSetupTarget;
   // Self-host gate (#3433): when true, every "Create workspace" affordance
   // must be hidden. Defaults to false so unknown / older servers behave like
   // the managed-cloud case.
@@ -78,8 +81,10 @@ interface ConfigState {
   setDaemonConfig: (config: {
     daemonServerUrl?: string;
     daemonAppUrl?: string;
+    daemonSetupTarget?: DaemonSetupTarget;
   }) => void;
   setReleaseRepository: (repository?: string) => void;
+  setDaemonConfigStatus: (status: DaemonConfigStatus) => void;
   setFeatureFlags: (flags?: Record<string, boolean>) => void;
   setServerVersion: (version?: string) => void;
   setLocalWorktreeSupported: (supported?: boolean) => void;
@@ -97,6 +102,8 @@ export const configStore = createStore<ConfigState>((set) => ({
   daemonServerUrl: "",
   daemonAppUrl: "",
   releaseRepository: DEFAULT_RELEASE_REPOSITORY,
+  daemonConfigStatus: "loading",
+  daemonSetupTarget: "unknown",
   workspaceCreationDisabled: false,
   vcsIntegrationAvailable: false,
   featureFlags: {},
@@ -113,8 +120,17 @@ export const configStore = createStore<ConfigState>((set) => ({
     workspaceCreationDisabled = false,
     vcsIntegrationAvailable = false,
   }) => set({ allowSignup, googleClientId, workspaceCreationDisabled, vcsIntegrationAvailable }),
-  setDaemonConfig: ({ daemonServerUrl = "", daemonAppUrl = "" }) =>
-    set({ daemonServerUrl, daemonAppUrl }),
+  setDaemonConfig: ({
+    daemonServerUrl = "",
+    daemonAppUrl = "",
+    daemonSetupTarget = "unknown",
+  }) => set({
+    daemonServerUrl,
+    daemonAppUrl,
+    daemonSetupTarget,
+    daemonConfigStatus: "ready",
+  }),
+  setDaemonConfigStatus: (daemonConfigStatus) => set({ daemonConfigStatus }),
   setReleaseRepository: (repository) =>
     set({ releaseRepository: resolveReleaseRepository(repository) }),
   setFeatureFlags: (flags = {}) => set({ featureFlags: { ...flags } }),
