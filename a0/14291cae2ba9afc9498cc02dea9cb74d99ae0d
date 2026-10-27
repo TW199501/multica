@@ -1,0 +1,26 @@
+packages/views/runtimes/utils.ts
+  s_e6eb75c69f54af::t_47f3b591cef6e7 655-691
+  s_e6eb75c69f54af::t_843212a37f0f15 750
+packages/core/runtimes/commands.ts
+  s_e6eb75c69f54af::t_b86f9dff833396 5-10
+packages/core/runtimes/commands.test.ts
+  s_e6eb75c69f54af::t_6cbbc9a1b9eedf 17-23
+packages/views/runtimes/utils.test.ts
+  s_e6eb75c69f54af::t_e8b6095c936c52 20,945-963
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a014291cae2ba9afc9498cc02dea9cb74d99ae0d",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
