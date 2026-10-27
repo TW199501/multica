@@ -14,6 +14,13 @@ describe("normalizeCommandURL", () => {
     expect(normalizeCommandURL("")).toBe("");
     expect(normalizeCommandURL(undefined)).toBe("");
   });
+
+  it("strips trailing slashes in linear time", () => {
+    const url = `https://a${"/".repeat(200_000)}b`;
+    const start = performance.now();
+    expect(normalizeCommandURL(`${url}///`)).toBe(url);
+    expect(performance.now() - start).toBeLessThan(250);
+  });
 });
 
 describe("daemonCommands", () => {
