@@ -17,6 +17,7 @@ import {
   isModelPriced,
   isSelfHealingRuntime,
   sliceWindow,
+  stripBedrockProfileVersion,
   summarizeTaskUsage,
   summarizeTaskUsageAcross,
   todayIso,
@@ -939,6 +940,25 @@ describe("estimateCost", () => {
     ]) {
       expect(isModelPriced(model), model).toBe(false);
     }
+  });
+
+  it("strips Bedrock profile versions exactly like the suffix pattern it replaces", () => {
+    const pattern = /-v\d+:\d+(\[[^\]]+\])?$/;
+    const tokens = ["-v", "-", "v", "1", "12", ":", "[", "]", "1m", "x"];
+    let seed = 1;
+    const next = () => (seed = (seed * 48271) % 2147483647);
+    for (let n = 0; n < 20_000; n++) {
+      let s = "";
+      for (let i = next() % 8; i > 0; i--) s += tokens[next() % tokens.length];
+      expect(stripBedrockProfileVersion(s), s).toBe(s.replace(pattern, "$1"));
+    }
+  });
+
+  it("strips Bedrock profile versions in linear time", () => {
+    const model = `claude-x${"-v1:0[".repeat(50_000)}`;
+    const start = performance.now();
+    expect(stripBedrockProfileVersion(model)).toBe(model);
+    expect(performance.now() - start).toBeLessThan(250);
   });
 
   it("prices kimi-k2.6 at the official $0.95 / $4.00 tier (not the K2 tier)", () => {

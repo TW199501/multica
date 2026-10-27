@@ -652,6 +652,43 @@ function isSelfResolvingId(model: string): boolean {
   return isModelPriced(model);
 }
 
+const isAsciiDigit = (c: string | undefined) => c !== undefined && c >= "0" && c <= "9";
+
+// Start of a `-v<digits>:<digits>` that ends exactly at `end`, or -1.
+function profileVersionStart(s: string, end: number): number {
+  let i = end;
+  while (isAsciiDigit(s[i - 1])) i--;
+  if (i === end || s[i - 1] !== ":") return -1;
+  const colon = i - 1;
+  i = colon;
+  while (isAsciiDigit(s[i - 1])) i--;
+  if (i === colon || s[i - 1] !== "v" || s[i - 2] !== "-") return -1;
+  return i - 2;
+}
+
+// Same result as s.replace(/-v\d+:\d+(\[[^\]]+\])?$/, "$1") in linear time;
+// that pattern backtracks quadratically on long ids. Drops a Bedrock
+// inference-profile version (`-v1:0`) and keeps a trailing `[...]` tag.
+export function stripBedrockProfileVersion(s: string): string {
+  if (!s.endsWith("]")) {
+    const start = profileVersionStart(s, s.length);
+    return start === -1 ? s : s.slice(0, start);
+  }
+  // The tag may contain `[` but no `]` before its closing one, so it opens at
+  // a `[` after the previous `]`; the leftmost version that fits wins.
+  const lastClose = s.length - 1;
+  const tagFloor = s.lastIndexOf("]", lastClose - 1) + 1;
+  for (
+    let open = s.indexOf("[", tagFloor);
+    open !== -1 && open < lastClose - 1;
+    open = s.indexOf("[", open + 1)
+  ) {
+    const start = profileVersionStart(s, open);
+    if (start !== -1) return s.slice(0, start) + s.slice(open);
+  }
+  return s;
+}
+
 // Generate the lookup candidates for a model string, in priority order:
 // the raw string first (preserves explicit user / catalog spellings),
 // then the canonicalized forms. Deduped so we don't repeat lookups.
@@ -710,9 +747,7 @@ function canonicalCandidates(model: string): string[] {
   const stripBedrock = (s: string) => {
     const prefix = /^(?:(?:us|eu|apac|global)\.)?anthropic\.(claude-)/;
     if (!prefix.test(s)) return s;
-    return s
-      .replace(prefix, "$1")
-      .replace(/-v\d+:\d+(\[[^\]]+\])?$/, "$1");
+    return stripBedrockProfileVersion(s.replace(prefix, "$1"));
   };
   // Trailing context-window tag (`claude-opus-4-7[1m]`). Same family,
   // same price tier — see resolver comment above for the 1M-context
