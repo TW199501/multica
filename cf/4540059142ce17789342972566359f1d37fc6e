@@ -1,0 +1,23 @@
+apps/mobile/locales/zh-Hant/inbox.json
+  s_50939cd01c2a98::t_63664072661fbb 57
+packages/views/locales/zh-Hant/issues.json
+  s_50939cd01c2a98::t_985766a1e46e32 126,1273,1327,1351
+packages/views/locales/zh-Hant/settings.json
+  s_50939cd01c2a98::t_c85e7c30c45113 68,76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cf4540059142ce17789342972566359f1d37fc6e",
+  "prompts": {},
+  "sessions": {
+    "s_50939cd01c2a98": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-ad0d634e028beedc6",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
