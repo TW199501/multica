@@ -1,0 +1,125 @@
+# Fork-only file: TW199501/multica runs this; it is not sent upstream.
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# Added: one review per PR at a time. A new push cancels the review still
+# running on the previous commit, which would otherwise spend quota commenting
+# on code that is already outdated.
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: review
+    # DECIDED EXCEPTION to "every PR is AI-reviewed": bot-authored pull requests
+    # are skipped rather than failed (a human reviews their diff). Dependabot's
+    # PRs cannot read repository secrets by design, so the token would always
+    # arrive empty and every dependency bump would carry a red check for a
+    # review that never could have run. A skipped job still satisfies a
+    # required status check.
+    # Added: draft PRs are skipped too; `ready_for_review` above triggers the
+    # review once the author marks the PR ready, so no review is spent on
+    # work in progress.
+    # Note: PRs opened from another fork cannot read repository secrets either,
+    # so the review step fails for them; review those by hand.
+    if: ${{ !endsWith(github.actor, '[bot]') && !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    # Added: a stuck review is cancelled after 30 minutes instead of running to
+    # GitHub's 6-hour job limit on subscription quota.
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          fetch-depth: 1
+
+      # Draws on the Claude subscription. Swap to `anthropic_api_key` with an
+      # ANTHROPIC_API_KEY secret to bill an API account instead — pass exactly
+      # one of the two; passing both only earns a warning for whichever secret
+      # does not exist.
+      - uses: anthropics/claude-code-action@f27be6b65a4652f08a2ba3cff79114829b588967 # v1.0.252
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            Review this pull request. Reply in Traditional Chinese (Taiwan).
+            Multica is a task management platform where people and agents
+            collaborate on issues. This repo is a contribution fork; AGENTS.md
+            at the root holds the binding rules. Weigh these first:
+
+            - server/          Go backend (Chi, sqlc, WebSocket). SQL changes
+                               need `make sqlc` and the regenerated code.
+            - packages/core/   Headless logic, API client, Query hooks, shared
+                               Zustand stores. No UI libraries, react-dom,
+                               localStorage or process.env.
+            - packages/ui/     UI primitives and styles. No business logic and
+                               no @multica/core imports.
+            - packages/views/  Shared web/desktop pages. No store definitions,
+                               next/* or react-router-dom; navigation goes
+                               through NavigationAdapter / <AppLink>.
+            - apps/web/        Next.js routes and web-only UI.
+            - apps/desktop/    Electron and desktop-only UI/state.
+            - apps/mobile/     Independent Expo client; see
+                               apps/mobile/AGENTS.md.
+            - apps/docs/       Fumadocs site.
+            - e2e/             Playwright end-to-end tests.
+            - .github/         CI. Flag any change that weakens a gate:
+                               added `continue-on-error`, `paths:` filters,
+                               renamed required jobs, or removed
+                               `--frozen-lockfile`.
+
+            Known pitfalls in this repo — check every PR against them:
+            - UI-consumed JSON goes through a zod schema and parseWithFallback,
+              never an `as T` cast; installed desktop clients talk to newer
+              backends, so unknown enums and missing fields need fallbacks.
+            - Migrations add no foreign keys or cascades, and every index uses
+              `CREATE [UNIQUE] INDEX CONCURRENTLY` in its own single-statement
+              migration file.
+            - In server/internal/handler/, UUID-or-identifier params are
+              resolved through loaders (loadIssueForUser, …) and writes use the
+              resolved entity.ID; pure UUID input uses parseUUIDOrBadRequest.
+            - Workspace-scoped queries filter by workspace_id, and workspace-
+              scoped Query keys include wsId.
+            - TanStack Query owns server data; Zustand only client state.
+              WebSocket events patch or invalidate Query caches.
+            - Shared web/desktop logic lives in packages/, not in one app;
+              features must be wired into both web routes and the desktop
+              router.
+            - Chinese UI copy follows apps/docs/content/docs/developers/
+              conventions.zh.mdx; zh-Hant locale edits must keep every key.
+
+            Then the usual: correctness, security, performance, and whether
+            tests cover behaviour that would otherwise regress silently.
+            Flag any endpoint change that does not update its schema and its
+            malformed-response tests.
+
+            Note: The PR branch is already checked out in the current working
+            directory.
+
+            Use `gh pr comment` for top-level feedback.
+            Use `mcp__github_inline_comment__create_inline_comment` (with
+            `confirmed: true`) to highlight specific code issues.
+            Only post GitHub comments - don't submit review text as messages.
+
+          # Added: `--model` pins the reviewer to Opus. Without it the action
+          # uses its own default model, which is not guaranteed to be Opus.
+          # `--allowedTools` is unchanged from the team template.
+          claude_args: |
+            --model claude-opus-5-5
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
+
+      # The action reports only `is_error: true` and swallows the reason. The
+      # full result is written to a file, so print it when something fails —
+      # otherwise diagnosing an auth or quota problem is guesswork.
+      - name: Show the raw result when the review fails
+        if: failure()
+        run: cat "$RUNNER_TEMP/claude-execution-output.json" || echo 'no output file'
