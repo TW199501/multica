@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { RefreshCw, X } from "lucide-react";
+import { RefreshCw, X } from "@multica/ui/icons";
 import { DEFAULT_RELEASE_REPOSITORY, resolveReleaseRepository } from "@multica/core/config";
 
 // Downloads run silently in the background (main process has
