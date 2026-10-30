@@ -8,6 +8,9 @@ export default defineConfig({
     alias: {
       "@": resolve(__dirname, "src/renderer/src"),
     },
+    // The linked orca-browser package resolves outside the repo; keep a single
+    // React/Query instance when its renderer is imported by tests.
+    dedupe: ["react", "react-dom", "@tanstack/react-query", "zustand"],
   },
   test: {
     globals: true,
