@@ -12,6 +12,7 @@ import {
 } from "./daemon-manager";
 import { setupLocalDirectory } from "./local-directory";
 import { installBrowserPlugin, type BrowserPluginHandle } from "@elf-express/orca-browser/main";
+import { disposeWithTimeout } from "./browser-plugin/dispose-with-timeout";
 import {
   createBrowserHost,
   resolveDevAgentBrowserBinDir,
@@ -144,6 +145,7 @@ function freezeBreadcrumbPath(): string {
 }
 
 let mainWindow: BrowserWindow | null = null;
+const BROWSER_PLUGIN_DISPOSE_TIMEOUT_MS = 10_000;
 let browserPlugin: BrowserPluginHandle | null = null;
 const issueWindows = new Set<BrowserWindow>();
 const authSessionCoordinator = new AuthSessionCoordinator<BrowserWindow>(
@@ -870,6 +872,14 @@ if (!gotTheLock) {
     });
     setupDaemonManager(() => mainWindow);
     setupLocalDirectory(() => mainWindow);
+    let devAgentBrowserBinDir = "";
+    if (!app.isPackaged) {
+      try {
+        devAgentBrowserBinDir = resolveDevAgentBrowserBinDir();
+      } catch (err) {
+        console.warn("[orca-browser] agent-browser not resolvable in dev", err);
+      }
+    }
     try {
       browserPlugin = installBrowserPlugin({
         host: createBrowserHost({
@@ -877,7 +887,7 @@ if (!gotTheLock) {
           userDataDir: app.getPath("userData"),
           isPackaged: app.isPackaged,
           processResourcesPath: process.resourcesPath,
-          devAgentBrowserBinDir: app.isPackaged ? "" : resolveDevAgentBrowserBinDir(),
+          devAgentBrowserBinDir,
           openExternal: openExternalSafely,
         }),
       });
@@ -896,7 +906,15 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
-app.on("will-quit", () => {
-  void browserPlugin?.dispose();
+app.on("will-quit", (event) => {
+  const plugin = browserPlugin;
+  if (!plugin) return;
+  // Electron does not await will-quit handlers; hold the quit until the
+  // plugin has closed its agent-browser sessions, then quit again. The plugin
+  // handle is cleared first, so the second pass falls straight through.
+  event.preventDefault();
   browserPlugin = null;
+  void disposeWithTimeout(() => plugin.dispose(), BROWSER_PLUGIN_DISPOSE_TIMEOUT_MS).finally(
+    () => app.quit(),
+  );
 });
