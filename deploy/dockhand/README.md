@@ -36,6 +36,10 @@ MULTICA_RELEASE_REPOSITORY=TW199501/multica
 
 下載頁只看最近 5 個正式版（不含預發布版），從中選最新一個「每個平台的各架構、各格式安裝檔都齊全」的版本；某一版的桌面建置失敗時，下載頁會停在上一個齊全的版本。最近 5 個都不齊全時，改顯示最新那一版，缺少的安裝檔不會有下載按鈕。
 
+## 插件
+
+上游的插件功能（`plugins_v1`）預設關閉。`docker-compose.dockhand.yml` 預設 `FF_PLUGINS_V1=on` 打開，工作區的擁有者與管理員可以在「設定 → Plugins」發佈與安裝插件，安裝前會列出插件要求的權限。要關掉，把 `FF_PLUGINS_V1` 設成 `off`。
+
 ## 回傳統計
 
 上游的自架版預設每天把匿名統計（工作區、成員、智慧體數量的區間值與 24 小時任務數）送到 `telemetry.multica.ai`。`docker-compose.dockhand.yml` 預設 `DO_NOT_TRACK=1` 關閉；要開回去，把 `DO_NOT_TRACK` 設成空字串。PostHog 分析要有 `POSTHOG_API_KEY` 才會啟用，而這份 compose 不會把它傳進容器，所以不會啟用。
