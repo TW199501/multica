@@ -40,7 +40,7 @@ export function createBrowserT(
     const template = dictionaries[locale]?.[key] ?? dictionaries.en?.[key] ?? fallback;
     if (!vars) return template;
     return template.replace(PLACEHOLDER, (match, name: string) =>
-      name in vars ? String(vars[name]) : match,
+      Object.hasOwn(vars, name) ? String(vars[name]) : match,
     );
   };
 }

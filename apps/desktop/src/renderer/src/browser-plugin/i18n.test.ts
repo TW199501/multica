@@ -45,6 +45,11 @@ describe("browser plugin i18n", () => {
     expect(t("k", "", { value0: 1 })).toBe("1 of {{value1}}");
   });
 
+  it("does not read inherited properties as vars", () => {
+    const t = createBrowserT("en", dictionaries({ en: { k: "{{toString}}" } }));
+    expect(t("k", "", {})).toBe("{{toString}}");
+  });
+
   it("resolves supported locales only", () => {
     expect(resolveBrowserLocale("zh-Hant")).toBe("zh-Hant");
     expect(resolveBrowserLocale("de")).toBe("en");
