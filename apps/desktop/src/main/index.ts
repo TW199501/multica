@@ -11,6 +11,11 @@ import {
   setupDaemonManager,
 } from "./daemon-manager";
 import { setupLocalDirectory } from "./local-directory";
+import { installBrowserPlugin, type BrowserPluginHandle } from "@elf-express/orca-browser/main";
+import {
+  createBrowserHost,
+  resolveDevAgentBrowserBinDir,
+} from "./browser-plugin/browser-plugin-host";
 import { configureLinuxFileDialogs } from "./linux-file-dialog";
 import { openExternalSafely, downloadURLSafely } from "./external-url";
 import { installContextMenu } from "./context-menu";
@@ -139,6 +144,7 @@ function freezeBreadcrumbPath(): string {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let browserPlugin: BrowserPluginHandle | null = null;
 const issueWindows = new Set<BrowserWindow>();
 const authSessionCoordinator = new AuthSessionCoordinator<BrowserWindow>(
   (window) => {
@@ -864,6 +870,20 @@ if (!gotTheLock) {
     });
     setupDaemonManager(() => mainWindow);
     setupLocalDirectory(() => mainWindow);
+    try {
+      browserPlugin = installBrowserPlugin({
+        host: createBrowserHost({
+          getMainWindow: () => mainWindow,
+          userDataDir: app.getPath("userData"),
+          isPackaged: app.isPackaged,
+          processResourcesPath: process.resourcesPath,
+          devAgentBrowserBinDir: app.isPackaged ? "" : resolveDevAgentBrowserBinDir(),
+          openExternal: openExternalSafely,
+        }),
+      });
+    } catch (err) {
+      console.error("[orca-browser] install failed", err);
+    }
 
     app.on("activate", () => {
       const window = ensureMainWindow();
@@ -874,4 +894,9 @@ if (!gotTheLock) {
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
+});
+
+app.on("will-quit", () => {
+  void browserPlugin?.dispose();
+  browserPlugin = null;
 });

@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { electronAPI } from "@electron-toolkit/preload";
+import { exposeBrowserApi } from "@elf-express/orca-browser/preload";
 import type { RuntimeConfigResult } from "../shared/runtime-config";
 import type { FreezeBreadcrumb } from "../shared/freeze-breadcrumb";
 import type {
@@ -344,3 +345,5 @@ if (process.contextIsolated) {
   // @ts-expect-error - fallback for non-isolated context
   window.updater = updaterAPI;
 }
+
+exposeBrowserApi();
