@@ -1,0 +1,375 @@
+.env.example
+  s_d61ba40585d785::t_3f708b83e8eff4 304-318,369
+apps/desktop/package.json
+  s_d61ba40585d785::t_336dade2d0c581 4
+apps/docs/content/docs/cli.mdx
+  s_d61ba40585d785::t_39d507587ad4b9 303-304,398-400
+apps/docs/content/docs/cli.zh.mdx
+  s_d61ba40585d785::t_a991debca1be97 288-289,375-377
+apps/docs/content/docs/daemon-runtimes.fr.mdx
+  s_d61ba40585d785::t_187f0e700b211a 167-170
+apps/docs/content/docs/daemon-runtimes.ja.mdx
+  s_d61ba40585d785::t_ddaf264bcd3288 167-170
+apps/docs/content/docs/daemon-runtimes.ko.mdx
+  s_d61ba40585d785::t_7321d4f600ad5b 167-170
+apps/docs/content/docs/daemon-runtimes.mdx
+  s_d61ba40585d785::t_0c9214940ce02b 167-170
+apps/docs/content/docs/daemon-runtimes.zh.mdx
+  s_d61ba40585d785::t_7bd26c098b0131 168-171
+apps/docs/content/docs/install-agent-runtime.fr.mdx
+  s_d61ba40585d785::t_047290db393a8a 93-94
+apps/docs/content/docs/install-agent-runtime.ja.mdx
+  s_d61ba40585d785::t_b66ffff2af913f 93-94
+apps/docs/content/docs/install-agent-runtime.ko.mdx
+  s_d61ba40585d785::t_ec7688e3061af9 93-94
+apps/docs/content/docs/install-agent-runtime.mdx
+  s_d61ba40585d785::t_fd57b82c5f473e 94-95
+apps/docs/content/docs/install-agent-runtime.zh.mdx
+  s_d61ba40585d785::t_6398dab002ec4d 93-94
+apps/docs/content/docs/skills.mdx
+  s_d61ba40585d785::t_a6133da7301c94 101-102
+apps/docs/content/docs/skills.zh.mdx
+  s_d61ba40585d785::t_cd97351fcc8e89 101-102
+apps/mobile/components/issue/run-cancel-button.test.ts
+  s_d61ba40585d785::t_b80d741e48ae71 1-94
+apps/mobile/components/issue/run-cancel-button.tsx
+  s_d61ba40585d785::t_a1ad78f9fcf9d6 1-52
+apps/mobile/components/issue/run-row.tsx
+  s_d61ba40585d785::t_9ccdc965d2d8b4 11,18,71
+apps/mobile/components/project/project-resources-section.tsx
+  s_d61ba40585d785::t_d50900a164938e 88-104,109-110,114-122
+apps/mobile/data/mutations/issues.test.ts
+  s_d61ba40585d785::t_e22f9c22e53123 1-2,5-6,11,15-18,31-36,43-46,54,135-242
+apps/mobile/data/mutations/issues.ts
+  s_d61ba40585d785::t_3b84fbcd38c00a 767-775
+apps/mobile/data/mutations/projects.test.ts
+  s_d61ba40585d785::t_cc0562709a81a8 3,7-11,13-17,37-43,113-232
+apps/mobile/data/mutations/projects.ts
+  s_d61ba40585d785::t_8a3ddd550eb927 172-173,193-196
+apps/mobile/data/realtime/use-issue-realtime.ts
+  s_d61ba40585d785::t_e95771688e123c 13-16,233
+apps/mobile/locales/en/issues.json
+  s_d61ba40585d785::t_cf5ea93e3f3521 151-154
+apps/mobile/locales/zh-Hans/issues.json
+  s_d61ba40585d785::t_4854a54b688a8d 149-152
+apps/mobile/locales/zh-Hant/issues.json
+  s_d61ba40585d785::t_9b0a3f9f2697d1 149-152
+apps/mobile/vitest.config.ts
+  s_d61ba40585d785::t_ada924bbc85f24 16-17,29-34
+apps/web/features/landing/i18n/en.ts
+  s_d61ba40585d785::t_33ef6f9e61ee6b 525-576
+apps/web/features/landing/i18n/ja.ts
+  s_d61ba40585d785::t_e7cce25dc2f9bc 282-333
+apps/web/features/landing/i18n/ko.ts
+  s_d61ba40585d785::t_e734a14fc1e5c5 281-332
+apps/web/features/landing/i18n/zh.ts
+  s_d61ba40585d785::t_72bde2c15afb8d 510-561
+apps/web/package.json
+  s_d61ba40585d785::t_b2f1d09c01bb22 3
+docker-compose.selfhost.yml
+  s_d61ba40585d785::t_570897d5a7b542 214-219
+e2e/fixtures.ts
+  s_d61ba40585d785::t_5e95d3f0477674 204,207,214
+e2e/property-select-options.spec.ts
+  s_d61ba40585d785::t_fb299e99256ab1 1-68
+e2e/property-settings-overflow.spec.ts
+  s_d61ba40585d785::t_ad616a32bd9596 1-67
+packages/core/projects/resource-queries.test.tsx
+  s_d61ba40585d785::t_bfc81079ef6ef0 1-336
+packages/core/projects/resource-queries.ts
+  s_d61ba40585d785::t_4da96bfda6c2d2 86-87,94,97
+packages/core/realtime/use-realtime-sync-ws-instance.test.tsx
+  s_d61ba40585d785::t_196ddd5bf16889 398-421
+packages/core/types/events.ts
+  s_d61ba40585d785::t_23ee79271d9e9b 27,332-342,613
+packages/core/types/index.ts
+  s_d61ba40585d785::t_5d461fcd708460 142
+packages/core/types/property.ts
+  s_d61ba40585d785::t_1f54396e84e6c9 60-68
+packages/views/issues/components/comment-composers.test.tsx
+  s_d61ba40585d785::t_84a25f44594dc8 61
+packages/views/issues/components/comment-trigger-chips.test.tsx
+  s_d61ba40585d785::t_05c15a1522b5e4 18-21,70-88
+packages/views/issues/components/comment-trigger-chips.tsx
+  s_d61ba40585d785::t_8480bd9f0bfc34 9,452
+packages/views/issues/components/issues-header.property-filter.test.tsx
+  s_d61ba40585d785::t_89368d49b7b30b 47,70,99-137
+packages/views/issues/components/issues-header.tsx
+  s_d61ba40585d785::t_be109638b44d12 79,995,1005
+packages/views/issues/components/pickers/custom-property-picker.select.test.tsx
+  s_d61ba40585d785::t_47f2d5cb3b379e 1-82
+packages/views/issues/components/pickers/custom-property-picker.tsx
+  s_d61ba40585d785::t_50f1335303ce7c 7,26-27,160,164-168,227,232,245,251,265,270,274,281
+packages/views/locales/en/issues.json
+  s_d61ba40585d785::t_238ffa58205d59 1542-1547
+packages/views/locales/fr/issues.json
+  s_d61ba40585d785::t_3576623cf1bb3f 1541-1546
+packages/views/locales/ja/issues.json
+  s_d61ba40585d785::t_1fa5332b869644 1488-1492
+packages/views/locales/ko/issues.json
+  s_d61ba40585d785::t_9b95547bb92fb1 1488-1492
+packages/views/locales/zh-Hans/issues.json
+  s_d61ba40585d785::t_ed5d7cd2cd89cd 1488-1492
+packages/views/locales/zh-Hant/issues.json
+  s_d61ba40585d785::t_151956898f68af 1487-1491
+packages/views/projects/components/project-resources-github-ref.test.tsx
+  s_d61ba40585d785::t_735a6b0038e280 4-7,12,60-61,74,109-155
+packages/views/projects/components/project-resources-section.tsx
+  s_d61ba40585d785::t_a2ed25509b695f 37,637-654,703-705,708-712,753,768-769,773-777,788,798,877-879,882-886
+packages/views/runtimes/components/connect-remote-dialog.test.tsx
+  s_d61ba40585d785::t_07c6f23f4d78f5 1,9-10,17-42,54,61,64,69,79,82,84,87-116,134,138,143,145-153,158-163,253-255,258-260,269-493
+packages/views/runtimes/components/connect-remote-dialog.tsx
+  s_d61ba40585d785::t_b246adbc13c087 12-13,15,17,45-61,67-73,75-85,87-126
+packages/views/runtimes/utils.test.ts
+  s_d61ba40585d785::t_49308d196b90ee 383,390,531-534,567-568
+packages/views/runtimes/utils.ts
+  s_d61ba40585d785::t_1bca725424e4cf 189,261,263
+packages/views/settings/components/properties-tab.tsx
+  s_d61ba40585d785::t_63b9a8b8c1bc6a 30,188-189,221,232,257,630
+packages/views/workflows/workflows-tab.test.tsx
+  s_d61ba40585d785::t_6e6e05e780b327 1-142
+packages/views/workflows/workflows-tab.tsx
+  s_d61ba40585d785::t_7b50329302a652 3,5-14,17,34-40,42,45-46,50,94-96,177,187,207-235,239-251,253-256,258-280,282-307,309-314,316-363,366-373,386,392-396,398-402,411-421,424
+server/cmd/multica/cmd_workflow.go
+  s_d61ba40585d785::t_7b24d967e912bc 11,19-22,26,36-37,45-59,63,65-71,75-76,82-84,86-93,95,99-100,103-108,110-120,129-130,132-136,139-273,276-284,287-296,299-312,315-346,349-357,360-379,382-383,392,396,402-405,407,411-413,428,432-436,445-446,449-453,468-472,477-478,485-489,493,495-496,500,515,517,520-524,526-533,535,546,548,550-551,555,557,561,563-564,574,576,578-583,585-586,589-601,603,605-607,609-614,633,637-641,644,646,658-660,662-665,667-669,672-674,676,679-683,686-688,690,692,694-696,698-699,701-703,705-710,712,714-715,717-718,721-724,726,728-732,734,737
+server/cmd/multica/cmd_workflow_test.go
+  s_d61ba40585d785::t_05abe2539e6c7c 5,9,17-19,22-92,96,98,100-101,103,105,108-110,113-129,131-132,134-138,140-147,149-154,156-157,159-161,165-170,172-181,185-196,198-207,209-210,212-213,215-216,220-233,235-260,262-263,265-267,269-270,274-284,286-288,292-308,310-312,314-316,318,320,322-328,330-337,339-341,343-349,353-371,373-379,381,383-388,390-391,395-412,414-417,420,422,425-438
+server/cmd/server/autopilot_listeners_test.go
+  s_d61ba40585d785::t_f46342a3bcd704 120,122,242-243
+server/cmd/server/chat_realtime_privacy_test.go
+  s_d61ba40585d785::t_40cc6a401a02aa 1-273
+server/cmd/server/listeners.go
+  s_d61ba40585d785::t_cdd5ef2b4939cc 70-83,86-87,252-275,298-303
+server/cmd/server/listeners_scope_test.go
+  s_d61ba40585d785::t_0d98d453e52a8e 9,30,37,41,56,62-75,77-79,81,119,121-125,132-138,167-276
+server/cmd/server/quick_create_subscriber_test.go
+  s_d61ba40585d785::t_59f527f47eea90 72-73,142-143,214-215,295-296,364-365
+server/cmd/server/router.go
+  s_d61ba40585d785::t_823d3665e4d918 1015-1019,1072
+server/cmd/server/wecom_env_documented_test.go
+  s_d61ba40585d785::t_e89c75871bb4fb 1-126
+server/cmd/server/wecom_media_wiring_test.go
+  s_d61ba40585d785::t_15d2c0b8c5eefb 1-69
+server/cmd/server/wecom_replier_wiring_test.go
+  s_d61ba40585d785::t_3adcfdc6416f42 18-19,27-29,35,63-65
+server/internal/cli/client.go
+  s_d61ba40585d785::t_4504c893d1a026 95-100,107
+server/internal/cli/client_test.go
+  s_d61ba40585d785::t_ca2b610777f332 628-672
+server/internal/daemon/agents_probe.go
+  s_d61ba40585d785::t_ecb9c72374d227 395-396,399,453-455
+server/internal/daemon/agents_probe_dsh_test.go
+  s_d61ba40585d785::t_f0749c73374be7 514-515,527,551-590
+server/internal/daemon/daemon.go
+  s_d61ba40585d785::t_6d8c133d0c51d4 2371-2372,2403,2414,2424-2425,2486,2497,2647-2649,2656-2659,4823,4850,8127,8698-8709
+server/internal/daemon/daemon_test.go
+  s_d61ba40585d785::t_dbe7d7434d0e49 166-168
+server/internal/daemon/dsh_profile.go
+  s_d61ba40585d785::t_a58bcd45761131 59,64-65,69-70,86,134,136-139,149-171,351-353
+server/internal/daemon/dsh_profile_test.go
+  s_d61ba40585d785::t_3ac699f09a30c2 31-32,565-566,796-807
+server/internal/daemon/execenv/execenv.go
+  s_d61ba40585d785::t_541e64e52b9e35 106,320,322-323,331-332,672,984
+server/internal/daemon/execenv/hermes_acp_integration_test.go
+  s_d61ba40585d785::t_e3dd6496c701df 1-277
+server/internal/daemon/execenv/hermes_gateway.go
+  s_d61ba40585d785::t_c08a95200f0a8a 1-132
+server/internal/daemon/execenv/hermes_gateway_home_test.go
+  s_d61ba40585d785::t_33f5dca0cf619d 1-137
+server/internal/daemon/execenv/hermes_home.go
+  s_d61ba40585d785::t_7851b814265cee 18-20,72-75,88,318,336-339,352-359,371-372,434,596-597,634-636,642,646,652-654,859
+server/internal/daemon/execenv/hermes_home_test.go
+  s_d61ba40585d785::t_0d672793b5d4fe 971-972
+server/internal/daemon/execenv/hermes_sessions.go
+  s_d61ba40585d785::t_0c36c49343c0f3 19-21,73-74,80,85-86,89-93,95,97-108,111-113,117
+server/internal/daemon/execenv/hermes_sessions_test.go
+  s_d61ba40585d785::t_5b2f10d7b9ec24 87,90-91,94,102-104,108-109,128,135,294,377-381,383-385,387,389-390,392-393,395-399,476,787
+server/internal/daemon/local_skills_omp.go
+  s_d61ba40585d785::t_9e12d9a2c8109a 1-95
+server/internal/daemon/local_skills_omp_test.go
+  s_d61ba40585d785::t_080ef2d40a359e 1-113
+server/internal/daemon/runtime_mcp.go
+  s_d61ba40585d785::t_583782a45de337 318,320-324,472,553-586
+server/internal/daemon/runtime_mcp_test.go
+  s_d61ba40585d785::t_5d8aee976b109b 605-878
+server/internal/events/bus.go
+  s_d61ba40585d785::t_1a612387f8b462 31-36
+server/internal/handler/agent.go
+  s_d61ba40585d785::t_5ce13cc524ca92 2970-2974,3264,3270-3275
+server/internal/handler/chat_task_privacy.go
+  s_d61ba40585d785::t_b99c5b628ae301 1-49
+server/internal/handler/chat_task_privacy_test.go
+  s_d61ba40585d785::t_d2016d641f21ea 1-129
+server/internal/handler/comment.go
+  s_d61ba40585d785::t_2ef0993ed63878 356,359-360,489-490,2453-2455
+server/internal/handler/comment_list_test.go
+  s_d61ba40585d785::t_2d39f691d80fe0 232-262
+server/internal/handler/comment_thread_queue_test.go
+  s_d61ba40585d785::t_f56f315767169d 10,13,117-173
+server/internal/handler/daemon.go
+  s_d61ba40585d785::t_0a27eb31346e89 26,214-220,223,232,236,245,249,251,254,258,262,268,272,276,278,5699,5709,5822-5825,5831-5839,6449,6457,6462-6467
+server/internal/handler/handler.go
+  s_d61ba40585d785::t_5927bb004e9d96 824-827,830-836
+server/internal/handler/property.go
+  s_d61ba40585d785::t_f707d36e849080 43,237
+server/internal/handler/property_test.go
+  s_d61ba40585d785::t_a7dfb4033bc0be 222-329
+server/internal/handler/task_message_batch_test.go
+  s_d61ba40585d785::t_95cea3787e1610 239-298
+server/internal/integrations/channel/engine/resolvers.go
+  s_d61ba40585d785::t_9458dda9fc07bc 322-371
+server/internal/integrations/channel/engine/router.go
+  s_d61ba40585d785::t_ea23d3b462ab20 158-161,168-176,183-187,835-841,847,855,864,871-880,934-959
+server/internal/integrations/channel/engine/router_media_abandon_test.go
+  s_d61ba40585d785::t_82b73bf6e1dad8 1-340
+server/internal/integrations/lark/ws_connector.go
+  s_d61ba40585d785::t_5d8cfca58f4ff7 5,78,87-89,232-233,250,290,292-293,297-325,448-465,469,471-478,480-484,489-496,499-501
+server/internal/integrations/lark/ws_connector_test.go
+  s_d61ba40585d785::t_e2bcc7f54e7882 17,883-1026
+server/internal/integrations/wecom/language_lint_test.go
+  s_d61ba40585d785::t_bb8903d9896133 74-79
+server/internal/integrations/wecom/locale_wiring_test.go
+  s_d61ba40585d785::t_2d5f4cd0225b6d 16-17,418-505
+server/internal/integrations/wecom/long_reply_test.go
+  s_d61ba40585d785::t_47db5264a03a8e 22,33,830-1126
+server/internal/integrations/wecom/media_failure_metric_test.go
+  s_d61ba40585d785::t_b332a8631b7eba 1-221
+server/internal/integrations/wecom/media_guard_allow_test.go
+  s_d61ba40585d785::t_f15a1da07d6a16 297,304,318
+server/internal/integrations/wecom/media_ingest.go
+  s_d61ba40585d785::t_9d2284e1ee3af2 33-34,43-64,89-99,105-109,113-115,122-147,187-206,231-258,457-482,495-573,582,605-612,615-620,624-627
+server/internal/integrations/wecom/media_ingest_test.go
+  s_d61ba40585d785::t_1a657fd04581e6 187,218,236,270,322,358,388,445-446,460-461,476,492,525,552,589,612,637,713,720
+server/internal/integrations/wecom/media_notice_locale_test.go
+  s_d61ba40585d785::t_34912681f21040 1-359
+server/internal/integrations/wecom/media_reconnect_test.go
+  s_d61ba40585d785::t_40ce16f98b8ff3 1-352
+server/internal/integrations/wecom/media_stream_test.go
+  s_d61ba40585d785::t_b38bd41640c95a 315,366
+server/internal/integrations/wecom/media_temp_test.go
+  s_d61ba40585d785::t_6d88ff29e50277 177
+server/internal/integrations/wecom/metrics.go
+  s_d61ba40585d785::t_eb49bcc7da533a 94-97,165-190,202
+server/internal/integrations/wecom/metrics_test.go
+  s_d61ba40585d785::t_50dc395bb3785d 47-55
+server/internal/integrations/wecom/outbound.go
+  s_d61ba40585d785::t_d47d2c8f433646 410-416,419,423,538,646-653,747,751-757,764-819,1030,1183-1195,1199,1215-1258
+server/internal/integrations/wecom/outbound_media.go
+  s_d61ba40585d785::t_68078484e16c92 331-336,479,483-484,489-508,523-546
+server/internal/integrations/wecom/outbound_test.go
+  s_d61ba40585d785::t_1b4d3bc42d6abd 227,234-273
+server/internal/integrations/wecom/outbound_two_replica_db_test.go
+  s_d61ba40585d785::t_0c9aa6c7b42eeb 310-315
+server/internal/integrations/wecom/regression_media_budget_silence_test.go
+  s_d61ba40585d785::t_5122856a3d691a 1-217
+server/internal/integrations/wecom/relay_outbound.go
+  s_d61ba40585d785::t_edaca74fc51146 294-304,860-864,1006,1014-1026,1038-1044,1567-1571,1574,1577,1597-1608
+server/internal/integrations/wecom/relay_relayed_send_test.go
+  s_d61ba40585d785::t_3f686d50673ce8 30,181-184
+server/internal/integrations/wecom/relay_seal_test.go
+  s_d61ba40585d785::t_6822bb1d3d2cfb 5-8,168-298
+server/internal/integrations/wecom/reply_revocation_test.go
+  s_d61ba40585d785::t_6fd700d49830d4 1-433
+server/internal/integrations/wecom/resolvers_test.go
+  s_d61ba40585d785::t_574ed2f009343a 192
+server/internal/integrations/wecom/senders_registry.go
+  s_d61ba40585d785::t_e30643d945e01d 66-72,212-222
+server/internal/integrations/wecom/stream_bubble_test.go
+  s_d61ba40585d785::t_d15d7fcd12e71c 61-70,88-90,101-108,119-120
+server/internal/integrations/wecom/stream_store.go
+  s_d61ba40585d785::t_24af88cae39873 951-959
+server/internal/integrations/wecom/strings.go
+  s_d61ba40585d785::t_65e85036118ff9 202-207,228-234,306-307,311,351-352,356
+server/internal/integrations/wecom/typing_indicator.go
+  s_d61ba40585d785::t_46ae3290a8136c 727,764-770,906-908,910-914
+server/internal/integrations/wecom/wecom_channel.go
+  s_d61ba40585d785::t_126f9a51aea908 96-99,447-455,483,624-627,663-665,669-670,694-695,722-725,734-737,767
+server/internal/integrations/wecom/ws_sender.go
+  s_d61ba40585d785::t_644764bd8a7597 988-990,1022-1028,1149-1157
+server/internal/issueproperty/value.go
+  s_d61ba40585d785::t_9071ff40a344ba 25-28,164-170,321-323
+server/internal/issueproperty/value_test.go
+  s_d61ba40585d785::t_15d026597b1c09 1-100
+server/internal/metrics/pricing.go
+  s_d61ba40585d785::t_d66e227940ae2c 34,36,197
+server/internal/metrics/pricing_test.go
+  s_d61ba40585d785::t_e39da1a3c6b50c 84-91,129-130
+server/internal/metrics/wecom.go
+  s_d61ba40585d785::t_95f19cc8a3cf45 22,58-61,100,140-142
+server/internal/metrics/wecom_test.go
+  s_d61ba40585d785::t_63dc11a8423f15 197-234
+server/internal/realtime/broadcaster.go
+  s_d61ba40585d785::t_0e96206eecf1a8 11-18,40-45
+server/internal/realtime/hub_test.go
+  s_d61ba40585d785::t_7fd1be5fc81462 186-218
+server/internal/realtime/membership.go
+  s_d61ba40585d785::t_3b7f1ac81a74b4 58-60
+server/internal/realtime/sharded_stream_relay_test.go
+  s_d61ba40585d785::t_68de0ef68a29e8 114-142
+server/internal/service/agent_ready.go
+  s_d61ba40585d785::t_b172a5fb13fb3c 296,307-309
+server/internal/service/autopilot.go
+  s_d61ba40585d785::t_560627f4923158 1169,1180,1212,1224,1314,1339,1528
+server/internal/service/autopilot_quota.go
+  s_d61ba40585d785::t_d505c43e8d6abe 248-262,272
+server/internal/service/autopilot_quota_test.go
+  s_d61ba40585d785::t_5ebf6f8e8cdece 710,741,780,801,864-866
+server/internal/service/builtin_skills/multica-platform/SKILL.md
+  s_d61ba40585d785::t_4faefb66481eb1 27
+server/internal/service/builtin_skills/multica-platform/references/projects.md
+  s_d61ba40585d785::t_adedd65f421d4f 15,204-234
+server/internal/service/chat_quick_actions.go
+  s_d61ba40585d785::t_fb006d1af2df56 272-273,286-292
+server/internal/service/reason_code_test.go
+  s_d61ba40585d785::t_e6f209a8d179ed 235-257
+server/internal/service/task.go
+  s_d61ba40585d785::t_4ab695548d2328 2814-2820,3585-3586,3591-3597,6865,7587-7608,7622,7629-7632,7641,7653,7656,7658,7662-7663,7687-7693
+server/internal/service/task_cancel_finalize_test.go
+  s_d61ba40585d785::t_eeb4b88e98447e 25,137,386-388
+server/pkg/agent/hermes_gateway.go
+  s_d61ba40585d785::t_bd47103a5aa822 1-65
+server/pkg/agent/hermes_gateway_unix_test.go
+  s_d61ba40585d785::t_d23f4cd824f234 1-93
+server/pkg/agent/models.go
+  s_d61ba40585d785::t_d1799f00b44d60 617-619,664
+server/pkg/agent/omp_skills.go
+  s_d61ba40585d785::t_2b8704476faf63 1-112
+server/pkg/agent/omp_skills_integration_test.go
+  s_d61ba40585d785::t_751159972f2ebb 1-105
+server/pkg/agent/omp_skills_test.go
+  s_d61ba40585d785::t_8ed472ada66e84 1-116
+server/pkg/agent/openclaw.go
+  s_d61ba40585d785::t_c9ed41a066e3ca 32-35,115-116,197-208,238-284
+server/pkg/agent/openclaw_test.go
+  s_d61ba40585d785::t_902eab1751d787 1609-1812
+server/pkg/agent/thinking.go
+  s_d61ba40585d785::t_06fcee59556e3e 435-436
+server/pkg/agent/thinking_test.go
+  s_d61ba40585d785::t_e18d75c6e858cc 365,367,375-379
+server/pkg/db/generated/agent.sql.go
+  s_d61ba40585d785::t_756eeb9ef3eef1 6920-6922,7114,7176,7193-7255
+server/pkg/db/generated/chat.sql.go
+  s_d61ba40585d785::t_c70e105d1f269a 2298-2329
+server/pkg/db/queries/agent.sql
+  s_d61ba40585d785::t_6da64883cd4e82 982-984,1828
+server/pkg/db/queries/chat.sql
+  s_d61ba40585d785::t_d07baf752dc3ec 22-27
+server/pkg/protocol/events.go
+  s_d61ba40585d785::t_ab0ef48ef22937 35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "08a2c8d581155757ea2e22429c40c014281b48d1",
+  "prompts": {},
+  "sessions": {
+    "s_d61ba40585d785": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a12c4ce-7aab-4ad6-97b5-b743f19b21f5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
