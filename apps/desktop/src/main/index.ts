@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, nativeImage, Notification, screen } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, nativeImage, Notification, screen, webContents } from "electron";
 import { homedir } from "os";
 import { join } from "path";
 import { pathToFileURL } from "url";
@@ -12,6 +12,7 @@ import {
 } from "./daemon-manager";
 import { setupLocalDirectory } from "./local-directory";
 import { installBrowserPlugin, type BrowserPluginHandle } from "@elf-express/orca-browser/main";
+import { blockAllWebviews } from "./browser-plugin/block-webviews";
 import { disposeWithTimeout } from "./browser-plugin/dispose-with-timeout";
 import {
   createBrowserHost,
@@ -893,6 +894,11 @@ if (!gotTheLock) {
       });
     } catch (err) {
       console.error("[orca-browser] install failed", err);
+      blockAllWebviews({
+        onWebContentsCreated: (listener) =>
+          app.on("web-contents-created", (_event, contents) => listener(contents)),
+        getAllWebContents: () => webContents.getAllWebContents(),
+      });
     }
 
     app.on("activate", () => {
