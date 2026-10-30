@@ -38,7 +38,7 @@ MULTICA_RELEASE_REPOSITORY=TW199501/multica
 
 ## 回傳統計
 
-上游的自架版預設每天把匿名統計（工作區、成員、智慧體數量的區間值與 24 小時任務數）送到 `telemetry.multica.ai`。`docker-compose.dockhand.yml` 預設 `DO_NOT_TRACK=1` 關閉；要開回去，把 `DO_NOT_TRACK` 設成空字串。PostHog 分析要有 `POSTHOG_API_KEY` 才會啟用，而這份 compose 不會把它傳進容器，所以不會啟用。
+上游的自架版預設每天把匿名統計（工作區、成員、AI 代理數量的區間值與 24 小時任務數）送到 `telemetry.multica.ai`。`docker-compose.dockhand.yml` 預設 `DO_NOT_TRACK=1` 關閉；要開回去，把 `DO_NOT_TRACK` 設成空字串。PostHog 分析要有 `POSTHOG_API_KEY` 才會啟用，而這份 compose 不會把它傳進容器，所以不會啟用。
 
 ## 確認部署成功
 
