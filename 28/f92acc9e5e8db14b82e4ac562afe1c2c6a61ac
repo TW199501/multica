@@ -1,0 +1,31 @@
+apps/desktop/src/renderer/src/browser-plugin/i18n.test.ts
+  s_aa47a447e01641::t_63526bbd496c32 48-52
+apps/desktop/src/renderer/src/browser-plugin/i18n.ts
+  s_aa47a447e01641::t_95d25c0393f647 43
+apps/desktop/src/renderer/src/browser-plugin/locales/fr.json
+  s_aa47a447e01641::t_42b2415b96201d 57,63,130-131,200
+apps/desktop/src/renderer/src/browser-plugin/locales/ja.json
+  s_aa47a447e01641::t_d05dd0f10f27f9 10,13,18,62,66,69,85,123,133,177,179,196
+apps/desktop/src/renderer/src/browser-plugin/locales/ko.json
+  s_aa47a447e01641::t_4a5f5a61d22c67 62,69,123,133,174-175,177-179,196,201
+apps/desktop/src/renderer/src/browser-plugin/locales/zh-Hans.json
+  s_aa47a447e01641::t_55a2b97519580a 39,53-54,85,94,98-99,107,112,114,117,123,125-126,133,152,154,156,161,196,201
+apps/desktop/src/renderer/src/browser-plugin/locales/zh-Hant.json
+  s_aa47a447e01641::t_3b710d1583381b 25,62,70,85,109,123,133,173,176-181
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "28f92acc9e5e8db14b82e4ac562afe1c2c6a61ac",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
