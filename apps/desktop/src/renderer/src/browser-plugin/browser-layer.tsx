@@ -18,9 +18,7 @@ export function BrowserLayer() {
   }
 
   const known = workspaces ? new Set(workspaces.map((w) => w.slug)) : null;
-  const scopes = (
-    activeScope && !visited.includes(activeScope) ? [...visited, activeScope] : visited
-  ).filter((scope) => !known || known.has(scope));
+  const scopes = visited.filter((scope) => !known || known.has(scope));
 
   if (scopes.length === 0) return null;
 
@@ -31,10 +29,7 @@ export function BrowserLayer() {
         return (
           <div
             key={scope}
-            className={cn(
-              "absolute inset-0 z-10 bg-page-canvas",
-              !active && "invisible pointer-events-none",
-            )}
+            className={cn("absolute inset-0", !active && "invisible pointer-events-none")}
             aria-hidden={!active}
           >
             <BrowserPane scopeId={scope} active={active} />

@@ -10,7 +10,14 @@ export default defineConfig({
     },
     // The linked orca-browser package resolves outside the repo; keep a single
     // React/Query instance when its renderer is imported by tests.
-    dedupe: ["react", "react-dom", "@tanstack/react-query", "zustand"],
+    dedupe: [
+      "react",
+      "react-dom",
+      "@tanstack/react-query",
+      "sonner",
+      "zustand",
+      "lucide-react",
+    ],
   },
   test: {
     globals: true,

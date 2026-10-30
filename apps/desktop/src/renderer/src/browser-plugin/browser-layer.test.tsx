@@ -50,6 +50,9 @@ describe("BrowserLayer", () => {
     const { rerender } = render(view("/acme/browser"));
     const pane = screen.getByTestId("pane-acme");
     expect(pane.dataset.active).toBe("true");
+    // The package overlay shares the root stacking context; an active wrapper
+    // with z-index or a background would paint over the webview.
+    expect(pane.parentElement!.className).not.toMatch(/(^|\s)(z-|bg-)/);
 
     rerender(view("/acme/issues"));
     const after = screen.getByTestId("pane-acme");
