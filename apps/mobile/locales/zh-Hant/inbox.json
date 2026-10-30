@@ -2,7 +2,7 @@
   "title": "收件箱",
   "empty": {
     "title": "已處理全部通知",
-    "body": "通知和AI 代理更新會顯示在這裡。"
+    "body": "通知和 AI 代理更新會顯示在這裡。"
   },
   "actions": {
     "mark_read": "標記已讀",
@@ -73,7 +73,7 @@
     "set_due_date": "截止日期設為 {{date}}",
     "removed_due_date": "移除了截止日期",
     "reacted_with": "回應了 {{emoji}}",
-    "created_with_agent": "由AI 代理建立：{{identifier}}",
+    "created_with_agent": "由 AI 代理建立：{{identifier}}",
     "failed_with_detail": "失敗：{{detail}}",
     "run_limit_blocked": "已達到上限，本次執行被阻止"
   },
