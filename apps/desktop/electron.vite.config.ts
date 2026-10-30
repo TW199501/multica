@@ -1,8 +1,16 @@
-import { realpathSync } from "fs";
+import { existsSync, realpathSync } from "fs";
 import { resolve } from "path";
 import { defineConfig, externalizeDepsPlugin } from "electron-vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+
+const orcaBrowserLink = resolve(
+  __dirname,
+  "node_modules/@elf-express/orca-browser",
+);
+const linkedOrcaBrowser = existsSync(orcaBrowserLink)
+  ? realpathSync(orcaBrowserLink)
+  : orcaBrowserLink;
 
 export default defineConfig({
   main: {
@@ -28,9 +36,7 @@ export default defineConfig({
       fs: {
         allow: [
           resolve(__dirname, "../.."),
-          realpathSync(
-            resolve(__dirname, "node_modules/@elf-express/orca-browser"),
-          ),
+          linkedOrcaBrowser,
         ],
       },
       // Allow parallel worktrees to run `pnpm dev:desktop` side-by-side
@@ -44,7 +50,14 @@ export default defineConfig({
       alias: {
         "@": resolve("src/renderer/src"),
       },
-      dedupe: ["react", "react-dom", "@tanstack/react-query"],
+      dedupe: [
+        "react",
+        "react-dom",
+        "@tanstack/react-query",
+        "sonner",
+        "zustand",
+        "lucide-react",
+      ],
     },
   },
 });
