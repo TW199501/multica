@@ -1,0 +1,23 @@
+apps/desktop/src/main/browser-plugin/block-webviews.test.ts
+  s_aa47a447e01641::t_8bb6bcbf1420d2 1-49
+apps/desktop/src/main/browser-plugin/block-webviews.ts
+  s_aa47a447e01641::t_295c2aee5bdf0d 1-20
+apps/desktop/src/main/index.ts
+  s_aa47a447e01641::t_b895ac766a1fd2 1,15,897-901
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cc8b4e705570ac93f90dda2822033660488213b7",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
