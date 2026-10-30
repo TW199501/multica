@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- electron-builder loads this hook as CommonJS */
 // electron-builder `afterPack` hook: verify the agent-browser native binary and
 // the orca-browser NOTICE landed in the packaged resources directory, and mark
 // the binary executable on POSIX platforms.
