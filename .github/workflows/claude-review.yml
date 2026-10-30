@@ -122,11 +122,11 @@ jobs:
             `confirmed: true`) to highlight specific code issues.
             Only post GitHub comments - don't submit review text as messages.
 
-          # Added: `--model` pins the reviewer to Opus. Without it the action
-          # uses its own default model, which is not guaranteed to be Opus.
+          # Added: `--model` pins the reviewer to Sonnet. Without it the action
+          # uses its own default model, which is not guaranteed to be Sonnet.
           # `--allowedTools` is unchanged from the team template.
           claude_args: |
-            --model claude-opus-5-5
+            --model claude-sonnet-5-5
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
 
       # The action reports only `is_error: true` and swallows the reason. The
