@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -16,12 +16,14 @@ import (
 	"github.com/multica-ai/multica/server/internal/cli"
 )
 
-// Workflow commands — workspace-scoped project workflows: the statuses a
-// project's board uses and what happens when an issue enters each one.
+// Workflow commands wrap /api/issue-workflows and the project workflow
+// switch. Permission checks stay on the server: edits and deletes are limited
+// to the workflow owner and workspace admins, switching a project's workflow
+// to admins and the project lead. The CLI reports the server's error as is.
 
 var workflowCmd = &cobra.Command{
 	Use:   "workflow",
-	Short: "Work with project workflows",
+	Short: "Work with issue workflows (statuses and their handoffs)",
 }
 
 var workflowListCmd = &cobra.Command{
@@ -31,8 +33,8 @@ var workflowListCmd = &cobra.Command{
 }
 
 var workflowGetCmd = &cobra.Command{
-	Use:   "get <id>",
-	Short: "Get workflow details, including its steps",
+	Use:   "get <workflow>",
+	Short: "Get a workflow and its steps (accepts an ID, ID prefix, exact name, or \"default\")",
 	Args:  exactArgs(1),
 	RunE:  runWorkflowGet,
 }
@@ -40,49 +42,82 @@ var workflowGetCmd = &cobra.Command{
 var workflowCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a workflow",
-	RunE:  runWorkflowCreate,
+	Long: `Create a workflow.
+
+--steps-file takes a JSON array of steps in board order, the same shape the
+API accepts, e.g.:
+
+  [
+    {"status_key": "todo"},
+    {"status_key": "in_review", "handler": {"type": "agent", "id": "<agent-id>"},
+     "instructions": "Review the PR", "next_status_key": "done"},
+    {"new_status": {"name": "QA", "category": "started"}},
+    {"status_key": "done"}
+  ]
+
+Todo, done and cancelled are added when missing.`,
+	RunE: runWorkflowCreate,
 }
 
 var workflowUpdateCmd = &cobra.Command{
-	Use:   "update <id>",
+	Use:   "update <workflow>",
 	Short: "Update a workflow's name, description, or steps",
-	Args:  exactArgs(1),
-	RunE:  runWorkflowUpdate,
+	Long: `Update a workflow's name, description, or steps.
+
+--steps-file replaces all steps (same JSON shape as "workflow create"). When
+the new steps drop a status that issues still use, map each dropped status
+with --map old=new. Use --dry-run to print the migration plan without writing.`,
+	Args: exactArgs(1),
+	RunE: runWorkflowUpdate,
 }
 
 var workflowDeleteCmd = &cobra.Command{
-	Use:   "delete <id>",
-	Short: "Delete a workflow no project uses",
+	Use:   "delete <workflow>",
+	Short: "Delete a workflow (rejected while a project still uses it)",
 	Args:  exactArgs(1),
 	RunE:  runWorkflowDelete,
 }
 
 var workflowHandoffCmd = &cobra.Command{
-	Use:   "handoff <id> <status>",
-	Short: "Set what happens when an issue enters one of a workflow's statuses",
-	Long: `Set the handoff for one status of a workflow: who the issue is handed to,
-the instructions their run gets, and where the handler moves it next.
+	Use:   "handoff",
+	Short: "Manage what happens when an issue enters a workflow status",
+}
 
-Fields you do not pass keep their current value.`,
+var workflowHandoffSetCmd = &cobra.Command{
+	Use:   "set <workflow> <status-key>",
+	Short: "Set the handler, instructions, and next/back status for one step",
+	Long: `Set the handoff of one step. Only the flags you pass change; the rest of
+the step is kept.
+
+--handler accepts none, project_lead, creator, or a member, agent, or squad
+name or UUID.`,
 	Args: exactArgs(2),
-	RunE: runWorkflowHandoff,
+	RunE: runWorkflowHandoffSet,
 }
 
 var projectWorkflowCmd = &cobra.Command{
-	Use:   "workflow <project-id> <workflow-id|default>",
-	Short: "Switch the workflow a project uses",
-	Long: `Switch the workflow a project uses. Issues on statuses the new workflow
-does not list must move: pass --map <old-status>=<new-status> for each one.
-Use --dry-run to see which statuses need a mapping.`,
-	Args: exactArgs(2),
-	RunE: runProjectWorkflow,
+	Use:   "workflow",
+	Short: "Show or switch the workflow a project uses",
 }
 
-var workflowHandlerTypes = []string{"none", "agent", "squad", "member", "project_lead", "creator"}
+var projectWorkflowGetCmd = &cobra.Command{
+	Use:   "get <project-id>",
+	Short: "Show the project's effective workflow (Default when none is set)",
+	Args:  exactArgs(1),
+	RunE:  runProjectWorkflowGet,
+}
 
-const workflowStepsHelp = `JSON array of steps, in board order. Each step names an existing status by
-"status_key" or a status to create by "new_status": {"name","category","color"}, and may set
-"handler": {"type","id"}, "instructions", "next_status_key" and "back_status_key".`
+var projectWorkflowSetCmd = &cobra.Command{
+	Use:   "set <project-id> <workflow|default>",
+	Short: "Switch the project to another workflow",
+	Long: `Switch the project to another workflow, or back to the workspace Default.
+
+Issues on statuses the new workflow does not list must be mapped with
+--map old=new. Use --dry-run to print the migration plan first. Moving issues
+this way neither reassigns them nor starts runs.`,
+	Args: exactArgs(2),
+	RunE: runProjectWorkflowSet,
+}
 
 func init() {
 	workflowCmd.AddCommand(workflowListCmd)
@@ -91,63 +126,260 @@ func init() {
 	workflowCmd.AddCommand(workflowUpdateCmd)
 	workflowCmd.AddCommand(workflowDeleteCmd)
 	workflowCmd.AddCommand(workflowHandoffCmd)
+	workflowHandoffCmd.AddCommand(workflowHandoffSetCmd)
+
 	projectCmd.AddCommand(projectWorkflowCmd)
+	projectWorkflowCmd.AddCommand(projectWorkflowGetCmd)
+	projectWorkflowCmd.AddCommand(projectWorkflowSetCmd)
 
-	addWorkflowListFlags(workflowListCmd)
+	workflowListCmd.Flags().String("output", "table", "Output format: table or json")
+	workflowListCmd.Flags().Bool("full-id", false, "Show full UUIDs in table output")
+
 	workflowGetCmd.Flags().String("output", "json", "Output format: table or json")
-	addWorkflowCreateFlags(workflowCreateCmd)
-	addWorkflowUpdateFlags(workflowUpdateCmd)
-	workflowDeleteCmd.Flags().String("output", "json", "Output format: table or json")
-	addWorkflowHandoffFlags(workflowHandoffCmd)
-	addProjectWorkflowFlags(projectWorkflowCmd)
+
+	workflowCreateCmd.Flags().String("name", "", "Workflow name (required)")
+	workflowCreateCmd.Flags().String("description", "", "Workflow description")
+	workflowCreateCmd.Flags().String("steps-file", "", "Path to a JSON array of steps")
+	workflowCreateCmd.Flags().String("output", "json", "Output format: table or json")
+
+	workflowUpdateCmd.Flags().String("name", "", "New name")
+	workflowUpdateCmd.Flags().String("description", "", "New description")
+	workflowUpdateCmd.Flags().String("steps-file", "", "Path to a JSON array of steps; replaces all steps")
+	workflowUpdateCmd.Flags().StringArray("map", nil, "Move issues off a dropped status: old=new (repeatable)")
+	workflowUpdateCmd.Flags().Bool("dry-run", false, "Print the migration plan without writing")
+	workflowUpdateCmd.Flags().String("output", "json", "Output format: table or json")
+
+	workflowDeleteCmd.Flags().String("output", "table", "Output format: table or json")
+
+	workflowHandoffSetCmd.Flags().String("handler", "", "none, project_lead, creator, or a member/agent/squad name or UUID")
+	workflowHandoffSetCmd.Flags().String("instructions", "", "Instructions the handler's run gets")
+	workflowHandoffSetCmd.Flags().String("instructions-file", "", "Read instructions from a file")
+	workflowHandoffSetCmd.Flags().String("next", "", "Status the handler moves the issue to when done (empty to clear)")
+	workflowHandoffSetCmd.Flags().String("back", "", "Status the handler sends the issue back to (empty to clear)")
+	workflowHandoffSetCmd.Flags().String("copy-for-project", "", "Save on a copy of the workflow used only by this project")
+	workflowHandoffSetCmd.Flags().String("output", "json", "Output format: table or json")
+
+	projectWorkflowGetCmd.Flags().String("output", "json", "Output format: table or json")
+
+	projectWorkflowSetCmd.Flags().StringArray("map", nil, "Move issues off a status the new workflow lacks: old=new (repeatable)")
+	projectWorkflowSetCmd.Flags().Bool("dry-run", false, "Print the migration plan without writing")
+	projectWorkflowSetCmd.Flags().String("output", "json", "Output format: table or json")
 }
 
-func addWorkflowListFlags(cmd *cobra.Command) {
-	cmd.Flags().String("output", "table", "Output format: table or json")
-	cmd.Flags().Bool("full-id", false, "Show full UUIDs in table output")
+// --- helpers ---
+
+func listWorkflows(ctx context.Context, client *cli.APIClient) ([]map[string]any, error) {
+	path := "/api/issue-workflows"
+	if client.WorkspaceID != "" {
+		path += "?" + url.Values{"workspace_id": {client.WorkspaceID}}.Encode()
+	}
+	var result struct {
+		Workflows []map[string]any `json:"workflows"`
+	}
+	if err := client.GetJSON(ctx, path, &result); err != nil {
+		return nil, err
+	}
+	return result.Workflows, nil
 }
 
-func addWorkflowStepsFlags(cmd *cobra.Command) {
-	cmd.Flags().String("steps", "", workflowStepsHelp)
-	cmd.Flags().Bool("steps-stdin", false, "Read the --steps JSON from stdin")
-	cmd.Flags().String("steps-file", "", "Read the --steps JSON from a UTF-8 file. The path must be inside the current working directory unless --allow-external-file is set.")
-	cmd.Flags().Bool("allow-external-file", false, "Allow --steps-file to read a path outside the current working directory")
+// resolveWorkflow accepts "default", a full UUID, an exact name
+// (case-insensitive), or a unique ID prefix.
+func resolveWorkflow(ctx context.Context, client *cli.APIClient, input string) (map[string]any, error) {
+	ref := strings.TrimSpace(input)
+	if ref == "" {
+		return nil, fmt.Errorf("workflow is required")
+	}
+	if uuidRegexp.MatchString(ref) {
+		var wf map[string]any
+		if err := client.GetJSON(ctx, "/api/issue-workflows/"+ref, &wf); err != nil {
+			return nil, err
+		}
+		return wf, nil
+	}
+	workflows, err := listWorkflows(ctx, client)
+	if err != nil {
+		return nil, err
+	}
+	if strings.EqualFold(ref, "default") {
+		for _, wf := range workflows {
+			if b, _ := wf["is_default"].(bool); b {
+				return wf, nil
+			}
+		}
+	}
+	var byName []map[string]any
+	for _, wf := range workflows {
+		if strings.EqualFold(strVal(wf, "name"), ref) {
+			byName = append(byName, wf)
+		}
+	}
+	if len(byName) == 1 {
+		return byName[0], nil
+	}
+	if len(byName) > 1 {
+		return nil, fmt.Errorf("more than one workflow is named %q; pass its ID", ref)
+	}
+	prefix, err := normalizeUUIDPrefix(ref)
+	if err != nil {
+		return nil, fmt.Errorf("no workflow named %q", ref)
+	}
+	var matches []idCandidate
+	var found map[string]any
+	for _, wf := range workflows {
+		if strings.HasPrefix(compactUUID(strVal(wf, "id")), prefix) {
+			matches = append(matches, idCandidate{ID: strVal(wf, "id")})
+			found = wf
+		}
+	}
+	switch len(matches) {
+	case 0:
+		return nil, fmt.Errorf("no workflow found matching %q; run `multica workflow list --full-id`", ref)
+	case 1:
+		return found, nil
+	default:
+		return nil, ambiguousIDPrefixError("workflow", ref, matches)
+	}
 }
 
-func addWorkflowCreateFlags(cmd *cobra.Command) {
-	cmd.Flags().String("name", "", "Workflow name (required)")
-	cmd.Flags().String("description", "", "Workflow description")
-	addWorkflowStepsFlags(cmd)
-	cmd.Flags().String("output", "json", "Output format: table or json")
+// parseStatusMapping turns repeated old=new flags into a mapping.
+func parseStatusMapping(pairs []string) (map[string]string, error) {
+	if len(pairs) == 0 {
+		return nil, nil
+	}
+	out := make(map[string]string, len(pairs))
+	for _, p := range pairs {
+		from, to, ok := strings.Cut(p, "=")
+		from, to = strings.TrimSpace(from), strings.TrimSpace(to)
+		if !ok || from == "" || to == "" {
+			return nil, fmt.Errorf("invalid --map %q; expected old=new", p)
+		}
+		if prev, dup := out[from]; dup && prev != to {
+			return nil, fmt.Errorf("--map maps %q twice (%q and %q)", from, prev, to)
+		}
+		out[from] = to
+	}
+	return out, nil
 }
 
-func addWorkflowUpdateFlags(cmd *cobra.Command) {
-	cmd.Flags().String("name", "", "New name")
-	cmd.Flags().String("description", "", "New description")
-	addWorkflowStepsFlags(cmd)
-	cmd.Flags().StringArray("map", nil, "Move issues off a status the edit removes: <old-status>=<new-status> (repeatable)")
-	cmd.Flags().Bool("dry-run", false, "Validate the edit and show which statuses need --map, without saving")
-	cmd.Flags().String("output", "json", "Output format: table or json")
+func readStepsFile(path string) ([]any, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("read --steps-file: %w", err)
+	}
+	var steps []any
+	if err := json.Unmarshal(data, &steps); err != nil {
+		return nil, fmt.Errorf("--steps-file must be a JSON array of steps: %w", err)
+	}
+	return steps, nil
 }
 
-func addWorkflowHandoffFlags(cmd *cobra.Command) {
-	cmd.Flags().String("handler-type", "", "Who the issue is handed to: "+strings.Join(workflowHandlerTypes, ", "))
-	cmd.Flags().String("handler-id", "", "Agent, squad, or member ID for --handler-type agent, squad, or member")
-	cmd.Flags().String("instructions", "", "Instructions the handler's run gets")
-	cmd.Flags().Bool("instructions-stdin", false, "Read --instructions from stdin")
-	cmd.Flags().String("instructions-file", "", "Read --instructions from a UTF-8 file. The path must be inside the current working directory unless --allow-external-file is set.")
-	cmd.Flags().Bool("allow-external-file", false, "Allow --instructions-file to read a path outside the current working directory")
-	cmd.Flags().String("next", "", "Status the handler moves the issue to when done")
-	cmd.Flags().String("back", "", "Status the handler moves the issue back to")
-	cmd.Flags().String("copy-for-project", "", "Save the handoff on a copy of the workflow that only this project uses")
-	cmd.Flags().String("output", "json", "Output format: table or json")
+func workflowSteps(wf map[string]any) []map[string]any {
+	raw, _ := wf["steps"].([]any)
+	out := make([]map[string]any, 0, len(raw))
+	for _, s := range raw {
+		if m, ok := s.(map[string]any); ok {
+			out = append(out, m)
+		}
+	}
+	return out
 }
 
-func addProjectWorkflowFlags(cmd *cobra.Command) {
-	cmd.Flags().StringArray("map", nil, "Move issues off a status the new workflow does not list: <old-status>=<new-status> (repeatable)")
-	cmd.Flags().Bool("dry-run", false, "Show which statuses need --map, without switching")
-	cmd.Flags().String("output", "json", "Output format: table or json")
+func formatStepHandler(step map[string]any) string {
+	h, _ := step["handler"].(map[string]any)
+	typ := strVal(h, "type")
+	if typ == "" {
+		typ = "none"
+	}
+	if id := strVal(h, "id"); id != "" {
+		return typ + ":" + id
+	}
+	return typ
 }
+
+func printWorkflowTable(wf map[string]any) {
+	fmt.Fprintf(os.Stdout, "%s (%s)\n", strVal(wf, "name"), strVal(wf, "id"))
+	headers := []string{"STATUS", "HANDLER", "NEXT", "BACK"}
+	steps := workflowSteps(wf)
+	rows := make([][]string, 0, len(steps))
+	for _, s := range steps {
+		rows = append(rows, []string{
+			strVal(s, "status_key"),
+			formatStepHandler(s),
+			strVal(s, "next_status_key"),
+			strVal(s, "back_status_key"),
+		})
+	}
+	cli.PrintTable(os.Stdout, headers, rows)
+}
+
+func printMappingPlan(plan map[string]any) {
+	fmt.Fprintf(os.Stdout, "Dry run: %v of %v issue(s) would move.\n", plan["affected_issues"], plan["total_issues"])
+	if required, _ := plan["required"].([]any); len(required) > 0 {
+		printMappingRequired(plan)
+	}
+}
+
+// reportMappingRequired handles the server's 409
+// workflow_status_mapping_required. The default error formatter keeps only
+// the first message line, which drops the plan a script needs to supply every
+// mapping at once. This prints the full body (JSON) or the plan (table) to
+// stdout, the server message to stderr, and returns errSilent so the command
+// still exits non-zero (1, as for any other conflict) without printing twice. Any other error returns nil and is left to the
+// caller.
+func reportMappingRequired(cmd *cobra.Command, err error) error {
+	var httpErr *cli.HTTPError
+	if !errors.As(err, &httpErr) || httpErr.StatusCode != http.StatusConflict {
+		return nil
+	}
+	var body map[string]any
+	if json.Unmarshal([]byte(httpErr.Body), &body) != nil || strVal(body, "code") != "workflow_status_mapping_required" {
+		return nil
+	}
+	if output, _ := cmd.Flags().GetString("output"); output == "table" {
+		if plan, ok := body["plan"].(map[string]any); ok {
+			printMappingRequired(plan)
+		}
+	} else if perr := cli.PrintJSON(os.Stdout, body); perr != nil {
+		return perr
+	}
+	fmt.Fprintf(os.Stderr, "Error: %s; pass --map old=new for each status listed\n", strVal(body, "error"))
+	return errSilent
+}
+
+func printMappingRequired(plan map[string]any) {
+	required, _ := plan["required"].([]any)
+	headers := []string{"FROM STATUS", "ISSUES", "SUGGESTED"}
+	rows := make([][]string, 0, len(required))
+	for _, raw := range required {
+		r, _ := raw.(map[string]any)
+		rows = append(rows, []string{strVal(r, "status_key"), fmt.Sprint(r["issue_count"]), strVal(r, "suggested_status_key")})
+	}
+	cli.PrintTable(os.Stdout, headers, rows)
+}
+
+// resolveHandoffHandler maps the --handler value to a handler payload.
+func resolveHandoffHandler(ctx context.Context, client *cli.APIClient, value string) (map[string]any, error) {
+	v := strings.TrimSpace(value)
+	switch strings.ToLower(v) {
+	case "", "none":
+		return map[string]any{"type": "none"}, nil
+	case "project_lead", "creator":
+		return map[string]any{"type": strings.ToLower(v)}, nil
+	}
+	var typ, id string
+	var err error
+	if uuidRegexp.MatchString(v) {
+		typ, id, err = resolveAssigneeByID(ctx, client, v, issueAssigneeKinds)
+	} else {
+		typ, id, err = resolveAssignee(ctx, client, v, issueAssigneeKinds)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("resolve handler: %w", err)
+	}
+	return map[string]any{"type": typ, "id": id}, nil
+}
+
+// --- workflow commands ---
 
 func runWorkflowList(cmd *cobra.Command, _ []string) error {
 	client, err := newAPIClient(cmd)
@@ -157,30 +389,28 @@ func runWorkflowList(cmd *cobra.Command, _ []string) error {
 	ctx, cancel := cli.APIContext(context.Background())
 	defer cancel()
 
-	workflows, err := fetchWorkflows(ctx, client)
+	workflows, err := listWorkflows(ctx, client)
 	if err != nil {
 		return fmt.Errorf("list workflows: %w", err)
 	}
-
-	output, _ := cmd.Flags().GetString("output")
-	if output == "json" {
+	if output, _ := cmd.Flags().GetString("output"); output == "json" {
 		return cli.PrintJSON(os.Stdout, workflows)
 	}
-
 	fullID, _ := cmd.Flags().GetBool("full-id")
 	headers := []string{"ID", "NAME", "DEFAULT", "STEPS", "PROJECTS"}
 	rows := make([][]string, 0, len(workflows))
-	for _, raw := range workflows {
-		wf, ok := raw.(map[string]any)
-		if !ok {
-			continue
+	for _, wf := range workflows {
+		isDefault := ""
+		if b, _ := wf["is_default"].(bool); b {
+			isDefault = "yes"
 		}
+		projects, _ := wf["project_ids"].([]any)
 		rows = append(rows, []string{
 			displayID(strVal(wf, "id"), fullID),
 			strVal(wf, "name"),
-			yesNo(wf["is_default"] == true),
-			fmt.Sprintf("%d", len(anySlice(wf["steps"]))),
-			fmt.Sprintf("%d", len(anySlice(wf["project_ids"]))),
+			isDefault,
+			strconv.Itoa(len(workflowSteps(wf))),
+			strconv.Itoa(len(projects)),
 		})
 	}
 	cli.PrintTable(os.Stdout, headers, rows)
@@ -195,15 +425,15 @@ func runWorkflowGet(cmd *cobra.Command, args []string) error {
 	ctx, cancel := cli.APIContext(context.Background())
 	defer cancel()
 
-	ref, err := resolveWorkflowID(ctx, client, args[0])
+	wf, err := resolveWorkflow(ctx, client, args[0])
 	if err != nil {
-		return err
-	}
-	var workflow map[string]any
-	if err := client.GetJSON(ctx, workflowPath(ref.ID), &workflow); err != nil {
 		return fmt.Errorf("get workflow: %w", err)
 	}
-	return printWorkflow(cmd, workflow)
+	if output, _ := cmd.Flags().GetString("output"); output == "table" {
+		printWorkflowTable(wf)
+		return nil
+	}
+	return cli.PrintJSON(os.Stdout, wf)
 }
 
 func runWorkflowCreate(cmd *cobra.Command, _ []string) error {
@@ -212,14 +442,15 @@ func runWorkflowCreate(cmd *cobra.Command, _ []string) error {
 		return fmt.Errorf("--name is required")
 	}
 	body := map[string]any{"name": name}
-	if v, _ := cmd.Flags().GetString("description"); v != "" {
+	if cmd.Flags().Changed("description") {
+		v, _ := cmd.Flags().GetString("description")
 		body["description"] = v
 	}
-	steps, ok, err := resolveWorkflowSteps(cmd)
-	if err != nil {
-		return err
-	}
-	if ok {
+	if path, _ := cmd.Flags().GetString("steps-file"); path != "" {
+		steps, err := readStepsFile(path)
+		if err != nil {
+			return err
+		}
 		body["steps"] = steps
 	}
 
@@ -234,33 +465,39 @@ func runWorkflowCreate(cmd *cobra.Command, _ []string) error {
 	if err := client.PostJSON(ctx, "/api/issue-workflows", body, &result); err != nil {
 		return fmt.Errorf("create workflow: %w", err)
 	}
-	return printWorkflow(cmd, result)
+	if output, _ := cmd.Flags().GetString("output"); output == "table" {
+		printWorkflowTable(result)
+		return nil
+	}
+	return cli.PrintJSON(os.Stdout, result)
 }
 
 func runWorkflowUpdate(cmd *cobra.Command, args []string) error {
 	body := map[string]any{}
-	if v, _ := cmd.Flags().GetString("name"); v != "" {
+	if cmd.Flags().Changed("name") {
+		v, _ := cmd.Flags().GetString("name")
 		body["name"] = v
 	}
 	if cmd.Flags().Changed("description") {
 		v, _ := cmd.Flags().GetString("description")
 		body["description"] = v
 	}
-	steps, ok, err := resolveWorkflowSteps(cmd)
-	if err != nil {
-		return err
-	}
-	if ok {
+	if path, _ := cmd.Flags().GetString("steps-file"); path != "" {
+		steps, err := readStepsFile(path)
+		if err != nil {
+			return err
+		}
 		body["steps"] = steps
 	}
 	if len(body) == 0 {
-		return fmt.Errorf("nothing to update — provide --name, --description, and/or --steps")
+		return fmt.Errorf("nothing to update; provide --name, --description, and/or --steps-file")
 	}
-	mapping, err := statusMappingFlag(cmd)
+	pairs, _ := cmd.Flags().GetStringArray("map")
+	mapping, err := parseStatusMapping(pairs)
 	if err != nil {
 		return err
 	}
-	if len(mapping) > 0 {
+	if mapping != nil {
 		body["status_mapping"] = mapping
 	}
 	dryRun, _ := cmd.Flags().GetBool("dry-run")
@@ -275,18 +512,27 @@ func runWorkflowUpdate(cmd *cobra.Command, args []string) error {
 	ctx, cancel := cli.APIContext(context.Background())
 	defer cancel()
 
-	ref, err := resolveWorkflowID(ctx, client, args[0])
+	wf, err := resolveWorkflow(ctx, client, args[0])
 	if err != nil {
-		return err
+		return fmt.Errorf("resolve workflow: %w", err)
 	}
 	var result map[string]any
-	if err := client.PatchJSON(ctx, workflowPath(ref.ID), body, &result); err != nil {
-		return statusMappingError("update workflow", err)
+	if err := client.PatchJSON(ctx, "/api/issue-workflows/"+strVal(wf, "id"), body, &result); err != nil {
+		if reported := reportMappingRequired(cmd, err); reported != nil {
+			return reported
+		}
+		return fmt.Errorf("update workflow: %w", err)
 	}
-	if dryRun {
-		return printMappingPlan(cmd, result)
+	output, _ := cmd.Flags().GetString("output")
+	if output == "table" {
+		if plan, ok := result["plan"].(map[string]any); ok && dryRun {
+			printMappingPlan(plan)
+			return nil
+		}
+		printWorkflowTable(result)
+		return nil
 	}
-	return printWorkflow(cmd, result)
+	return cli.PrintJSON(os.Stdout, result)
 }
 
 func runWorkflowDelete(cmd *cobra.Command, args []string) error {
@@ -297,29 +543,25 @@ func runWorkflowDelete(cmd *cobra.Command, args []string) error {
 	ctx, cancel := cli.APIContext(context.Background())
 	defer cancel()
 
-	ref, err := resolveWorkflowID(ctx, client, args[0])
+	wf, err := resolveWorkflow(ctx, client, args[0])
 	if err != nil {
-		return err
+		return fmt.Errorf("resolve workflow: %w", err)
 	}
-	if err := client.DeleteJSON(ctx, workflowPath(ref.ID)); err != nil {
+	id := strVal(wf, "id")
+	if err := client.DeleteJSON(ctx, "/api/issue-workflows/"+id); err != nil {
 		return fmt.Errorf("delete workflow: %w", err)
 	}
 	if output, _ := cmd.Flags().GetString("output"); output == "json" {
-		return cli.PrintJSON(os.Stdout, map[string]any{"id": ref.ID, "deleted": true})
+		return cli.PrintJSON(os.Stdout, map[string]any{"id": id, "deleted": true})
 	}
-	fmt.Fprintf(os.Stdout, "Workflow %s deleted.\n", ref.Display)
+	fmt.Fprintf(os.Stdout, "Workflow %s deleted.\n", strVal(wf, "name"))
 	return nil
 }
 
-func runWorkflowHandoff(cmd *cobra.Command, args []string) error {
+func runWorkflowHandoffSet(cmd *cobra.Command, args []string) error {
 	statusKey := strings.TrimSpace(args[1])
-	handlerType, _ := cmd.Flags().GetString("handler-type")
-	if handlerType != "" && !slices.Contains(workflowHandlerTypes, handlerType) {
-		return fmt.Errorf("--handler-type must be one of: %s", strings.Join(workflowHandlerTypes, ", "))
-	}
-	instructions, hasInstructions, err := resolveTextFlag(cmd, "instructions")
-	if err != nil {
-		return err
+	if cmd.Flags().Changed("instructions") && cmd.Flags().Changed("instructions-file") {
+		return fmt.Errorf("use either --instructions or --instructions-file, not both")
 	}
 
 	client, err := newAPIClient(cmd)
@@ -329,33 +571,47 @@ func runWorkflowHandoff(cmd *cobra.Command, args []string) error {
 	ctx, cancel := cli.APIContext(context.Background())
 	defer cancel()
 
-	ref, err := resolveWorkflowID(ctx, client, args[0])
+	wf, err := resolveWorkflow(ctx, client, args[0])
 	if err != nil {
-		return err
+		return fmt.Errorf("resolve workflow: %w", err)
 	}
-	var workflow map[string]any
-	if err := client.GetJSON(ctx, workflowPath(ref.ID), &workflow); err != nil {
-		return fmt.Errorf("get workflow: %w", err)
-	}
-	step := findWorkflowStep(workflow, statusKey)
-	if step == nil {
-		return fmt.Errorf("workflow %s has no %q status; run `multica workflow get %s` to list its statuses", ref.Display, statusKey, args[0])
-	}
-
-	body := handoffRequestBody(step)
-	handler := body["handler"].(map[string]any)
-	if handlerType != "" {
-		handler["type"] = handlerType
-		if !cmd.Flags().Changed("handler-id") {
-			delete(handler, "id")
+	var current map[string]any
+	for _, s := range workflowSteps(wf) {
+		if strVal(s, "status_key") == statusKey {
+			current = s
+			break
 		}
 	}
-	if cmd.Flags().Changed("handler-id") {
-		v, _ := cmd.Flags().GetString("handler-id")
-		handler["id"] = v
+	if current == nil {
+		return fmt.Errorf("workflow %s has no step %q", strVal(wf, "name"), statusKey)
 	}
-	if hasInstructions {
-		body["instructions"] = instructions
+
+	// The API replaces the whole handoff; start from the current step so
+	// only the flags passed change.
+	body := map[string]any{
+		"handler":         current["handler"],
+		"instructions":    strVal(current, "instructions"),
+		"next_status_key": strVal(current, "next_status_key"),
+		"back_status_key": strVal(current, "back_status_key"),
+	}
+	if cmd.Flags().Changed("handler") {
+		v, _ := cmd.Flags().GetString("handler")
+		handler, err := resolveHandoffHandler(ctx, client, v)
+		if err != nil {
+			return err
+		}
+		body["handler"] = handler
+	}
+	if cmd.Flags().Changed("instructions") {
+		v, _ := cmd.Flags().GetString("instructions")
+		body["instructions"] = v
+	}
+	if path, _ := cmd.Flags().GetString("instructions-file"); path != "" {
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return fmt.Errorf("read --instructions-file: %w", err)
+		}
+		body["instructions"] = string(data)
 	}
 	if cmd.Flags().Changed("next") {
 		v, _ := cmd.Flags().GetString("next")
@@ -374,15 +630,62 @@ func runWorkflowHandoff(cmd *cobra.Command, args []string) error {
 	}
 
 	var result map[string]any
-	path := workflowPath(ref.ID) + "/handoffs/" + url.PathEscape(statusKey)
+	path := "/api/issue-workflows/" + strVal(wf, "id") + "/handoffs/" + url.PathEscape(statusKey)
 	if err := client.PutJSON(ctx, path, body, &result); err != nil {
 		return fmt.Errorf("set handoff: %w", err)
 	}
-	return printWorkflow(cmd, result)
+	if output, _ := cmd.Flags().GetString("output"); output == "table" {
+		printWorkflowTable(result)
+		return nil
+	}
+	return cli.PrintJSON(os.Stdout, result)
 }
 
-func runProjectWorkflow(cmd *cobra.Command, args []string) error {
-	mapping, err := statusMappingFlag(cmd)
+// --- project workflow commands ---
+
+func runProjectWorkflowGet(cmd *cobra.Command, args []string) error {
+	client, err := newAPIClient(cmd)
+	if err != nil {
+		return err
+	}
+	ctx, cancel := cli.APIContext(context.Background())
+	defer cancel()
+
+	projectRef, err := resolveProjectID(ctx, client, args[0])
+	if err != nil {
+		return fmt.Errorf("resolve project: %w", err)
+	}
+	var project map[string]any
+	if err := client.GetJSON(ctx, "/api/projects/"+projectRef.ID, &project); err != nil {
+		return fmt.Errorf("get project: %w", err)
+	}
+	ref := strVal(project, "workflow_id")
+	usesDefault := ref == ""
+	if usesDefault {
+		ref = "default"
+	}
+	wf, err := resolveWorkflow(ctx, client, ref)
+	if err != nil {
+		return fmt.Errorf("get workflow: %w", err)
+	}
+
+	if output, _ := cmd.Flags().GetString("output"); output == "table" {
+		if usesDefault {
+			fmt.Fprintln(os.Stdout, "Project uses the workspace Default workflow.")
+		}
+		printWorkflowTable(wf)
+		return nil
+	}
+	return cli.PrintJSON(os.Stdout, map[string]any{
+		"project_id":   projectRef.ID,
+		"uses_default": usesDefault,
+		"workflow":     wf,
+	})
+}
+
+func runProjectWorkflowSet(cmd *cobra.Command, args []string) error {
+	pairs, _ := cmd.Flags().GetStringArray("map")
+	mapping, err := parseStatusMapping(pairs)
 	if err != nil {
 		return err
 	}
@@ -399,15 +702,16 @@ func runProjectWorkflow(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("resolve project: %w", err)
 	}
+	// workflow_id null switches back to Default.
 	body := map[string]any{"workflow_id": nil}
 	if !strings.EqualFold(strings.TrimSpace(args[1]), "default") {
-		ref, err := resolveWorkflowID(ctx, client, args[1])
+		wf, err := resolveWorkflow(ctx, client, args[1])
 		if err != nil {
-			return err
+			return fmt.Errorf("resolve workflow: %w", err)
 		}
-		body["workflow_id"] = ref.ID
+		body["workflow_id"] = strVal(wf, "id")
 	}
-	if len(mapping) > 0 {
+	if mapping != nil {
 		body["status_mapping"] = mapping
 	}
 	if dryRun {
@@ -415,250 +719,20 @@ func runProjectWorkflow(cmd *cobra.Command, args []string) error {
 	}
 
 	var result map[string]any
-	if err := client.PostJSON(ctx, "/api/projects/"+url.PathEscape(projectRef.ID)+"/workflow", body, &result); err != nil {
-		return statusMappingError("switch project workflow", err)
-	}
-	if dryRun {
-		return printMappingPlan(cmd, result)
-	}
-
-	output, _ := cmd.Flags().GetString("output")
-	if output == "table" {
-		project, _ := result["project"].(map[string]any)
-		workflowID := strVal(project, "workflow_id")
-		if workflowID == "" {
-			workflowID = "default"
+	if err := client.PostJSON(ctx, "/api/projects/"+projectRef.ID+"/workflow", body, &result); err != nil {
+		if reported := reportMappingRequired(cmd, err); reported != nil {
+			return reported
 		}
-		cli.PrintTable(os.Stdout,
-			[]string{"PROJECT", "WORKFLOW", "MOVED ISSUES"},
-			[][]string{{strVal(project, "title"), workflowID, numValOrZero(result, "updated_issues")}},
-		)
+		return fmt.Errorf("set project workflow: %w", err)
+	}
+	if output, _ := cmd.Flags().GetString("output"); output == "table" {
+		plan, _ := result["plan"].(map[string]any)
+		if dryRun {
+			printMappingPlan(plan)
+			return nil
+		}
+		fmt.Fprintf(os.Stdout, "Project workflow changed; %v issue(s) moved.\n", result["updated_issues"])
 		return nil
 	}
 	return cli.PrintJSON(os.Stdout, result)
-}
-
-func workflowPath(id string) string {
-	return "/api/issue-workflows/" + url.PathEscape(id)
-}
-
-func fetchWorkflows(ctx context.Context, client *cli.APIClient) ([]any, error) {
-	var result map[string]any
-	if err := client.GetJSON(ctx, "/api/issue-workflows", &result); err != nil {
-		return nil, err
-	}
-	workflows, _ := result["workflows"].([]any)
-	if workflows == nil {
-		workflows = []any{}
-	}
-	return workflows, nil
-}
-
-// resolveWorkflowID accepts a full UUID, a UUID prefix, or a workflow name
-// (case-insensitive).
-func resolveWorkflowID(ctx context.Context, client *cli.APIClient, input string) (resolvedID, error) {
-	trimmed := strings.TrimSpace(input)
-	if uuidRegexp.MatchString(trimmed) {
-		return resolvedID{ID: trimmed, Display: trimmed}, nil
-	}
-	workflows, err := fetchWorkflows(ctx, client)
-	if err != nil {
-		return resolvedID{}, fmt.Errorf("resolve workflow: %w", err)
-	}
-	candidates := make([]idCandidate, 0, len(workflows))
-	for _, raw := range workflows {
-		wf, ok := raw.(map[string]any)
-		if !ok {
-			continue
-		}
-		c := idCandidate{ID: strVal(wf, "id"), Display: strVal(wf, "name")}
-		if strings.EqualFold(c.Display, trimmed) {
-			return resolvedID{ID: c.ID, Display: c.Display}, nil
-		}
-		candidates = append(candidates, c)
-	}
-	ref, err := resolveIDByPrefix(ctx, client, "workflow", trimmed, func(context.Context, *cli.APIClient) ([]idCandidate, error) {
-		return candidates, nil
-	})
-	if err != nil {
-		return resolvedID{}, fmt.Errorf("%w (a workflow name also works)", err)
-	}
-	return ref, nil
-}
-
-// resolveWorkflowSteps reads --steps / --steps-stdin / --steps-file and checks
-// it is a JSON array, so a malformed file fails before any request is sent.
-func resolveWorkflowSteps(cmd *cobra.Command) ([]any, bool, error) {
-	raw, ok, err := resolveTextFlag(cmd, "steps")
-	if err != nil || !ok {
-		return nil, ok, err
-	}
-	var steps []any
-	if err := json.Unmarshal([]byte(raw), &steps); err != nil {
-		return nil, false, fmt.Errorf("--steps must be a JSON array of steps: %w", err)
-	}
-	return steps, true, nil
-}
-
-func statusMappingFlag(cmd *cobra.Command) (map[string]string, error) {
-	pairs, _ := cmd.Flags().GetStringArray("map")
-	return parseStatusMapping(pairs)
-}
-
-func parseStatusMapping(pairs []string) (map[string]string, error) {
-	mapping := make(map[string]string, len(pairs))
-	for _, pair := range pairs {
-		from, to, ok := strings.Cut(pair, "=")
-		from, to = strings.TrimSpace(from), strings.TrimSpace(to)
-		if !ok || from == "" || to == "" {
-			return nil, fmt.Errorf("--map %q must look like <old-status>=<new-status>", pair)
-		}
-		if _, dup := mapping[from]; dup {
-			return nil, fmt.Errorf("--map names %q more than once", from)
-		}
-		mapping[from] = to
-	}
-	return mapping, nil
-}
-
-// statusMappingError turns the server's "mapping required" conflict into a
-// message listing each status to map and the server's suggested target.
-func statusMappingError(action string, err error) error {
-	var httpErr *cli.HTTPError
-	if !errors.As(err, &httpErr) || httpErr.StatusCode != http.StatusConflict {
-		return fmt.Errorf("%s: %w", action, err)
-	}
-	var body struct {
-		Error string `json:"error"`
-		Code  string `json:"code"`
-		Plan  struct {
-			Required []struct {
-				StatusKey          string `json:"status_key"`
-				IssueCount         int64  `json:"issue_count"`
-				SuggestedStatusKey string `json:"suggested_status_key"`
-			} `json:"required"`
-		} `json:"plan"`
-	}
-	if json.Unmarshal([]byte(httpErr.Body), &body) != nil || body.Code != "workflow_status_mapping_required" {
-		return fmt.Errorf("%s: %w", action, err)
-	}
-	var b strings.Builder
-	fmt.Fprintf(&b, "%s: %s.\nIssues on these statuses must move; pass --map for each:", action, body.Error)
-	maps := make([]string, 0, len(body.Plan.Required))
-	for _, r := range body.Plan.Required {
-		fmt.Fprintf(&b, "\n  %s (%d issue(s)) → suggested %s", r.StatusKey, r.IssueCount, r.SuggestedStatusKey)
-		maps = append(maps, "--map "+r.StatusKey+"="+r.SuggestedStatusKey)
-	}
-	if len(maps) > 0 {
-		fmt.Fprintf(&b, "\nTo accept the suggestions: %s", strings.Join(maps, " "))
-	}
-	return cli.WithUserMessage(b.String(), err)
-}
-
-func findWorkflowStep(workflow map[string]any, statusKey string) map[string]any {
-	for _, raw := range anySlice(workflow["steps"]) {
-		step, ok := raw.(map[string]any)
-		if ok && strVal(step, "status_key") == statusKey {
-			return step
-		}
-	}
-	return nil
-}
-
-// handoffRequestBody starts from the step's current handoff: the server
-// replaces the whole handoff, so unchanged fields must be sent back.
-func handoffRequestBody(step map[string]any) map[string]any {
-	handler := map[string]any{"type": "none"}
-	if current, ok := step["handler"].(map[string]any); ok {
-		if v := strVal(current, "type"); v != "" {
-			handler["type"] = v
-		}
-		if v := strVal(current, "id"); v != "" {
-			handler["id"] = v
-		}
-	}
-	return map[string]any{
-		"handler":         handler,
-		"instructions":    strVal(step, "instructions"),
-		"next_status_key": strVal(step, "next_status_key"),
-		"back_status_key": strVal(step, "back_status_key"),
-	}
-}
-
-func printWorkflow(cmd *cobra.Command, workflow map[string]any) error {
-	output, _ := cmd.Flags().GetString("output")
-	if output != "table" {
-		return cli.PrintJSON(os.Stdout, workflow)
-	}
-	cli.PrintTable(os.Stdout,
-		[]string{"ID", "NAME", "DEFAULT", "PROJECTS"},
-		[][]string{{
-			strVal(workflow, "id"),
-			strVal(workflow, "name"),
-			yesNo(workflow["is_default"] == true),
-			fmt.Sprintf("%d", len(anySlice(workflow["project_ids"]))),
-		}},
-	)
-	fmt.Fprintln(os.Stdout)
-	rows := [][]string{}
-	for _, raw := range anySlice(workflow["steps"]) {
-		step, ok := raw.(map[string]any)
-		if !ok {
-			continue
-		}
-		handler, _ := step["handler"].(map[string]any)
-		handlerLabel := strVal(handler, "type")
-		if id := strVal(handler, "id"); id != "" {
-			handlerLabel += " " + truncateID(id)
-		}
-		rows = append(rows, []string{
-			strVal(step, "status_key"),
-			handlerLabel,
-			strVal(step, "next_status_key"),
-			strVal(step, "back_status_key"),
-		})
-	}
-	cli.PrintTable(os.Stdout, []string{"STATUS", "HANDLER", "NEXT", "BACK"}, rows)
-	return nil
-}
-
-func printMappingPlan(cmd *cobra.Command, result map[string]any) error {
-	output, _ := cmd.Flags().GetString("output")
-	if output != "table" {
-		return cli.PrintJSON(os.Stdout, result)
-	}
-	plan, _ := result["plan"].(map[string]any)
-	rows := [][]string{}
-	for _, raw := range anySlice(plan["required"]) {
-		r, ok := raw.(map[string]any)
-		if !ok {
-			continue
-		}
-		rows = append(rows, []string{strVal(r, "status_key"), numValOrZero(r, "issue_count"), strVal(r, "suggested_status_key")})
-	}
-	if len(rows) == 0 {
-		fmt.Fprintln(os.Stdout, "No issues need to move.")
-		return nil
-	}
-	cli.PrintTable(os.Stdout, []string{"STATUS", "ISSUES", "SUGGESTED"}, rows)
-	return nil
-}
-
-func anySlice(v any) []any {
-	s, _ := v.([]any)
-	return s
-}
-
-func numValOrZero(m map[string]any, key string) string {
-	if v := numVal(m, key); v != "" {
-		return v
-	}
-	return "0"
-}
-
-func yesNo(b bool) string {
-	if b {
-		return "yes"
-	}
-	return "no"
 }
