@@ -1,0 +1,37 @@
+apps/desktop/electron.vite.config.ts
+  s_aa47a447e01641::t_cf752c2bf8711e 1
+  s_aa47a447e01641::t_a3f627c60b5220 18-22,26-35
+apps/desktop/src/main/renderer-web-preferences.ts
+  s_aa47a447e01641::t_4a6df7df0e9a46 15-17
+  s_aa47a447e01641::t_1f8805ee4614f1 63-64
+  s_aa47a447e01641::t_31898ef7fd4945 23
+apps/desktop/src/main/index.ts
+  s_aa47a447e01641::t_be2e3cac01bdec 337-338
+apps/desktop/package.json
+  s_aa47a447e01641::t_17192b6ab9677a 50
+  s_aa47a447e01641::t_59e4bb95fe062f 42
+apps/desktop/src/main/renderer-web-preferences.test.ts
+  s_aa47a447e01641::t_7ddc5bd74a1aeb 44-54
+apps/desktop/src/renderer/src/globals.css
+  s_aa47a447e01641::t_ea507e52a693f5 83
+docs/superpowers/state/E-462.yaml
+  s_aa47a447e01641::t_85bae947f4d48b 1-3
+pnpm-lock.yaml
+  s_aa47a447e01641::t_f3fd47b8c4d8b8 210-212,234-236,5748-5752,16827-16828
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6cb080cc4be1a7d4328f81b27f87bd047b1a866e",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
