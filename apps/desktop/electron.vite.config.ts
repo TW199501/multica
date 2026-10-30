@@ -1,3 +1,4 @@
+import { realpathSync } from "fs";
 import { resolve } from "path";
 import { defineConfig, externalizeDepsPlugin } from "electron-vite";
 import react from "@vitejs/plugin-react";
@@ -14,10 +15,24 @@ export default defineConfig({
     // externalized `require("@electron-toolkit/preload")` would throw and
     // every contextBridge API would vanish. electron-vite emits preload as a
     // single CJS bundle, which is exactly what the sandbox requires.
-    plugins: [externalizeDepsPlugin({ exclude: ["@electron-toolkit/preload"] })],
+    plugins: [
+      externalizeDepsPlugin({
+        exclude: ["@electron-toolkit/preload", "@elf-express/orca-browser"],
+      }),
+    ],
   },
   renderer: {
     server: {
+      // The linked orca-browser package resolves to a real path outside the
+      // repo, which Vite's dev server refuses to serve by default.
+      fs: {
+        allow: [
+          resolve(__dirname, "../.."),
+          realpathSync(
+            resolve(__dirname, "node_modules/@elf-express/orca-browser"),
+          ),
+        ],
+      },
       // Allow parallel worktrees to run `pnpm dev:desktop` side-by-side
       // (e.g. Multica Canary alongside a primary checkout) by overriding
       // the renderer port via env. Falls back to 5173 for the common case.

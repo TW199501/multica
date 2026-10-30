@@ -334,6 +334,8 @@ function createWindow(): BrowserWindow {
     webPreferences: createRendererWebPreferences(
       join(__dirname, "../preload/index.js"),
       systemLocale,
+      [],
+      { webviewTag: true },
     ),
   });
   const window = mainWindow;

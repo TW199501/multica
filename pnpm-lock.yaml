@@ -207,6 +207,9 @@ importers:
       '@electron-toolkit/utils':
         specifier: ^4.0.0
         version: 4.0.0(electron@45.0.0)
+      '@elf-express/orca-browser':
+        specifier: link:../../../orca-browser-e461
+        version: link:../../../orca-browser-e461
       '@fontsource-variable/geist-mono':
         specifier: ^5.3.0
         version: 5.3.0
@@ -228,6 +231,9 @@ importers:
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.96.2(react@19.2.3)
+      agent-browser:
+        specifier: ~0.27.0
+        version: 0.27.3
       electron-updater:
         specifier: ^6.8.3
         version: 6.8.3
@@ -5738,6 +5744,11 @@ packages:
   agent-base@7.1.4:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
+
+  agent-browser@0.27.3:
+    resolution: {integrity: sha512-isQ1xWoYOnfR8BigYRlYmkFOrqw71tKEmUEMmFJGStQFOyCrLSsKoOAZEu8TjPZdmjD1nPQ/hLLYlxTwdHnA0Q==}
+    engines: {node: '>=24.0.0', pnpm: '>=11.0.0'}
+    hasBin: true
 
   agent-cli-detector@0.1.7:
     resolution: {integrity: sha512-d8OWDVdZMgjhLUT9ZPgSv/BdFFF9pVuscC0JdUSz3bjwE15gcp6u/o0/JooM2yyAWC49KThFhXlgTXRa9B7yng==}
@@ -16812,6 +16823,8 @@ snapshots:
   acorn@8.16.0: {}
 
   agent-base@7.1.4: {}
+
+  agent-browser@0.27.3: {}
 
   agent-cli-detector@0.1.7: {}
 
