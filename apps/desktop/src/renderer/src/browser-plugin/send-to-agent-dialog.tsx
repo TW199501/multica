@@ -62,8 +62,10 @@ function SendToAgentMenu() {
     const toastId = hasImages
       ? toast.loading(t("multica.browser.send.sending_toast", "Uploading screenshots..."))
       : undefined;
+    let delivered = false;
     try {
       const { failed } = await deliverBrowserPayload(pending.payload, target, { api });
+      delivered = true;
       if (failed > 0) {
         toast.error(
           t(
@@ -80,7 +82,7 @@ function SendToAgentMenu() {
     } finally {
       if (toastId !== undefined) toast.dismiss(toastId);
     }
-    if (destination) push(destination);
+    if (delivered && destination) push(destination);
   };
 
   const sendToIssue = (issueId: string) => {

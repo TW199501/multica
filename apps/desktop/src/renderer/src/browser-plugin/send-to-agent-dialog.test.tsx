@@ -15,6 +15,7 @@ const P: BrowserAgentPayload = {
 const P2: BrowserAgentPayload = { ...P, text: "second" };
 
 const push = vi.fn();
+const workspace = vi.hoisted(() => ({ slug: "acme" as string | null }));
 const issueSentinel = { target: "issue" };
 const chatSentinel = { target: "chat" };
 let chatOpenAtDeliver: boolean | null = null;
@@ -46,7 +47,7 @@ vi.mock("@multica/views/navigation", () => ({
 }));
 vi.mock("@multica/core/paths", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@multica/core/paths")>()),
-  useWorkspaceSlug: () => "acme",
+  useWorkspaceSlug: () => workspace.slug,
 }));
 vi.mock("@multica/core/hooks", () => ({ useWorkspaceId: () => "ws1" }));
 vi.mock("@multica/core/api", () => ({ api: { uploadFile: vi.fn() } }));
@@ -118,6 +119,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   chatOpenAtDeliver = null;
   hostCaptured = null;
+  workspace.slug = "acme";
   useBrowserSendStore.setState({ pending: null });
   const chat = createChatStore({ storage: memoryStorage() });
   registerChatStore(chat);
@@ -177,6 +179,26 @@ describe("SendToAgentDialog", () => {
     );
   });
 
+  it("does not navigate when delivery throws", async () => {
+    deliverBrowserPayload.mockRejectedValueOnce(new Error("draft store unavailable"));
+    renderDialog();
+    const { outcome } = openSend(P);
+    fireEvent.click(await screen.findByText("Chat input"));
+
+    expect((await outcome)?.message).toBe("draft store unavailable");
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("still navigates after a partial upload failure", async () => {
+    deliverBrowserPayload.mockResolvedValueOnce({ uploaded: 0, failed: 1 });
+    renderDialog();
+    const { outcome } = openSend(P);
+    fireEvent.click(await screen.findByText("Chat input"));
+
+    expect((await outcome)?.message).toBe("Some screenshots failed to upload");
+    expect(push).toHaveBeenCalledWith("/acme/chat");
+  });
+
   it("rejects with AbortError when the dialog is dismissed", async () => {
     renderDialog();
     const { outcome } = openSend(P);
@@ -194,6 +216,35 @@ describe("SendToAgentDialog", () => {
     });
     expect((await outcome)?.name).toBe("AbortError");
     expect(useBrowserSendStore.getState().pending?.payload).toBe(P2);
+  });
+
+  it("cancels a pending send when the active workspace changes", async () => {
+    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const tree = () => (
+      <QueryClientProvider client={qc}>
+        <DesktopBrowserPluginProvider>
+          <SendToAgentDialog />
+        </DesktopBrowserPluginProvider>
+      </QueryClientProvider>
+    );
+    const { rerender } = render(tree());
+    let sent!: Promise<void>;
+    act(() => {
+      sent = hostCaptured!.onSendToAgent!(P);
+    });
+    const outcome = sent.then(
+      () => null,
+      (e: Error) => e,
+    );
+    await screen.findByText("Chat input");
+
+    workspace.slug = "beta";
+    rerender(tree());
+
+    expect((await outcome)?.name).toBe("AbortError");
+    await waitFor(() => expect(screen.queryByText("Chat input")).toBeNull());
+    expect(deliverBrowserPayload).not.toHaveBeenCalled();
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("host forwards payloads to the send store", async () => {
