@@ -67,9 +67,28 @@ vi.mock("@multica/views/platform", () => ({
 }));
 
 vi.mock("@multica/views/layout", () => ({
-  AppSidebar: () => null,
+  AppSidebar: ({
+    topSlot,
+    personalNavExtra,
+  }: {
+    topSlot?: ReactNode;
+    personalNavExtra?: ReactNode;
+  }) => (
+    <div data-testid="app-sidebar">
+      <div data-testid="sidebar-top-slot">{topSlot}</div>
+      <div data-testid="sidebar-personal-extra">{personalNavExtra}</div>
+    </div>
+  ),
   GlobalShortcuts: () => null,
   NavigationProgress: () => null,
+}));
+
+vi.mock("@/browser-plugin", () => ({
+  BrowserLayer: () => null,
+  BrowserSidebarEntry: () => <div data-testid="browser-entry" />,
+  DesktopBrowserPluginProvider: ({ children }: { children: ReactNode }) => (
+    <>{children}</>
+  ),
 }));
 
 vi.mock("@multica/views/modals/registry", () => ({ ModalRegistry: () => null }));
@@ -134,6 +153,18 @@ beforeEach(() => {
     value: 1280,
   });
   localStorage.clear();
+});
+
+describe("DesktopShell browser entry placement", () => {
+  it("passes the Browser entry as a personal nav item, not in the top slot", () => {
+    const { getByTestId } = renderShell();
+    expect(getByTestId("sidebar-personal-extra")).toContainElement(
+      getByTestId("browser-entry"),
+    );
+    expect(getByTestId("sidebar-top-slot")).not.toContainElement(
+      getByTestId("browser-entry"),
+    );
+  });
 });
 
 describe("DesktopShell sidebar trigger", () => {
