@@ -1,0 +1,21 @@
+apps/desktop/src/renderer/src/components/desktop-layout.test.tsx
+  s_aa47a447e01641::t_237627a99c27fe 46
+apps/desktop/src/renderer/src/components/desktop-layout.workspace-gate.test.tsx
+  s_aa47a447e01641::t_2c350c55220ef4 57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1d7481b21dba89fc30c92cedc32d985c574a88be",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

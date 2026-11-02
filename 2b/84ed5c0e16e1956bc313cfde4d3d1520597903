@@ -1,0 +1,57 @@
+apps/mobile/locales/zh-Hant/inbox.json
+  h_be8240d2cfaa4b 1-92
+apps/mobile/locales/zh-Hant/auth.json
+  h_be8240d2cfaa4b 1-37
+apps/mobile/locales/zh-Hant/navigation.json
+  h_be8240d2cfaa4b 1-37
+apps/mobile/locales/zh-Hant/chat.json
+  h_be8240d2cfaa4b 1-170
+apps/mobile/locales/zh-Hant/workspace.json
+  h_be8240d2cfaa4b 1-38
+apps/mobile/locales/zh-Hant/projects.json
+  h_be8240d2cfaa4b 1-78
+apps/mobile/locales/zh-Hant/issues.json
+  h_be8240d2cfaa4b 1-270
+apps/mobile/locales/zh-Hant/common.json
+  h_be8240d2cfaa4b 1-55
+apps/mobile/locales/zh-Hant/editor.json
+  h_be8240d2cfaa4b 1-22
+apps/mobile/locales/zh-Hant/settings.json
+  h_be8240d2cfaa4b 1-29,32-87
+  s_155da54c92280f::t_ed287f0b676f69 30-31
+apps/mobile/app/(app)/[workspace]/more/settings.tsx
+  s_155da54c92280f::t_6424dfd9fb2d73 37-42,74
+apps/mobile/lib/i18n/config.tsx
+  s_155da54c92280f::t_a2bc1d802ebc9f 42,73-78
+apps/mobile/lib/i18n/resources.test.ts
+  s_155da54c92280f::t_c4eb9cfbe111c9 34-45,47-49,51-73
+apps/mobile/lib/i18n/resources.ts
+  s_155da54c92280f::t_819635efe3c8b4 21-30,57-68
+apps/mobile/lib/i18n/types.ts
+  s_155da54c92280f::t_4ac1012a85ef50 1,3
+apps/mobile/locales/en/settings.json
+  s_155da54c92280f::t_7dd2c4ec12a551 30-31
+apps/mobile/locales/zh-Hans/settings.json
+  s_155da54c92280f::t_f4964da1fe1923 30-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2b84ed5c0e16e1956bc313cfde4d3d1520597903",
+  "prompts": {},
+  "humans": {
+    "h_be8240d2cfaa4b": {
+      "author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_155da54c92280f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "597fa3f2-b7a9-4412-b55f-38bdf69741cd",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

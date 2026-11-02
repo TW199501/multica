@@ -1,0 +1,19 @@
+.github/workflows/release.yml
+  s_e6eb75c69f54af::t_b1c0fa4e98e18f 88-91,115,119-120,465-469
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6295fe26a62f91505a8db2fd1e7e434653c9ec18",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

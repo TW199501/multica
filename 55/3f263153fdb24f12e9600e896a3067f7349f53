@@ -1,0 +1,41 @@
+apps/desktop/src/renderer/src/browser-plugin/browser-layer.test.tsx
+  s_aa47a447e01641::t_21f3ed954d86fd 1-86
+apps/desktop/src/renderer/src/browser-plugin/browser-layer.tsx
+  s_aa47a447e01641::t_3ccfe8fb6795d7 1-46
+apps/desktop/src/renderer/src/browser-plugin/browser-renderer-host.tsx
+  s_aa47a447e01641::t_1421716842b4cd 1-10
+apps/desktop/src/renderer/src/browser-plugin/browser-route.tsx
+  s_aa47a447e01641::t_1338161d93d7b0 1-4
+apps/desktop/src/renderer/src/browser-plugin/browser-scope.test.ts
+  s_aa47a447e01641::t_033f2af2f23c60 1-28
+apps/desktop/src/renderer/src/browser-plugin/browser-scope.ts
+  s_aa47a447e01641::t_3544af0740487b 1-18
+apps/desktop/src/renderer/src/browser-plugin/browser-sidebar-entry.test.tsx
+  s_aa47a447e01641::t_0453bc7dc0f7e0 1-57
+apps/desktop/src/renderer/src/browser-plugin/browser-sidebar-entry.tsx
+  s_aa47a447e01641::t_c8b7fc938dcbcf 1-34
+apps/desktop/src/renderer/src/browser-plugin/index.ts
+  s_aa47a447e01641::t_9e32cd701a8e0c 1-5
+apps/desktop/src/renderer/src/components/desktop-layout.tsx
+  s_aa47a447e01641::t_fd9316626314c0 35-39,279-289,293,302,305
+apps/desktop/src/renderer/src/routes.tsx
+  s_aa47a447e01641::t_37f54408bc7e09 33,232
+apps/desktop/vitest.config.ts
+  s_aa47a447e01641::t_01d6e7d1ba0ae0 11-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "553f263153fdb24f12e9600e896a3067f7349f53",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

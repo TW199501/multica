@@ -1,0 +1,21 @@
+BRANCHING.md
+  s_155da54c92280f::t_67f4cce1ea9661 1-127
+AGENTS.md
+  s_155da54c92280f::t_18eb68dbea9f37 129-132
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e8d53c10e00b9875cfceba1ad1cac91ebd09b9fe",
+  "prompts": {},
+  "sessions": {
+    "s_155da54c92280f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "597fa3f2-b7a9-4412-b55f-38bdf69741cd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+packages/views/common/docs-url.test.ts
+  s_e6eb75c69f54af::t_858c68c770dc8c 1-30
+packages/views/common/docs-url.ts
+  s_e6eb75c69f54af::t_f955d71621da05 1-25
+packages/views/layout/help-launcher.test.tsx
+  s_e6eb75c69f54af::t_ea49c0588439cf 122,124-127
+  s_e6eb75c69f54af::t_e2127a41faa8fe 88
+packages/views/agents/components/agents-page.tsx
+  s_e6eb75c69f54af::t_38ad7f983c282c 65,260,267
+packages/views/autopilots/components/webhook-event-filter-section.tsx
+  s_e6eb75c69f54af::t_bffae368824baf 9,23,25,27-28
+packages/views/layout/help-launcher.tsx
+  s_e6eb75c69f54af::t_5c4c7e9a62dca9 26,37,93
+packages/views/onboarding/onboarding-flow.tsx
+  s_e6eb75c69f54af::t_70c4d844bf3f48 13,38,315-318
+packages/views/runtimes/components/runtime-docs.test.ts
+  s_e6eb75c69f54af::t_b8deb3f8fd984c 7,17,21,24
+packages/views/runtimes/components/runtime-docs.ts
+  s_e6eb75c69f54af::t_917a99e83f280d 3-4,7-8
+packages/views/runtimes/components/runtime-profiles-dialog.tsx
+  s_e6eb75c69f54af::t_004e4c8457fbbf 59,85,113
+packages/views/runtimes/components/runtimes-page.tsx
+  s_e6eb75c69f54af::t_eb34831870c7ca 98,156,317
+packages/views/settings/components/dingtalk-tab.tsx
+  s_e6eb75c69f54af::t_c7c70bff51abe0 55,803-804,841,965
+packages/views/settings/components/lark-tab.tsx
+  s_e6eb75c69f54af::t_311e49fe1b0e0a 45,521-522,533,632
+packages/views/settings/components/slack-tab.tsx
+  s_e6eb75c69f54af::t_1cc2586d7cd501 39,247-248,277,398
+packages/views/settings/components/telegram-tab.tsx
+  s_e6eb75c69f54af::t_ed5d726298e723 39,239-240,262,374
+packages/views/skills/components/skills-page.tsx
+  s_e6eb75c69f54af::t_234e5405d5108f 81,171,178
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ac5334a9c352b7e3f739281771f351a35e5143d8",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+server/internal/cli/update.go
+  s_e6eb75c69f54af::t_963df21fe3330e 42-50,53-85,200
+  s_e6eb75c69f54af::t_d2168f1ef958aa 114-118,120-121,125-128,138,146-158,161-170,174,177-179,186-199
+  s_e6eb75c69f54af::t_d0d1c43d3d843b 86,201,306,329,332
+server/internal/handler/config_test.go
+  s_e6eb75c69f54af::t_198356678c39a2 133-153
+server/internal/cli/update_source_test.go
+  s_e6eb75c69f54af::t_8c95d29cccb07f 54-92
+server/internal/cli/update_test.go
+  s_e6eb75c69f54af::t_09f8c55a48227c 119-125,154-158
+server/internal/handler/config.go
+  s_e6eb75c69f54af::t_b973bc705d83f6 10,43-47,136-138
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d5820c66786f8f023b145cc4f3285152b67bb2d5",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

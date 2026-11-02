@@ -1,0 +1,34 @@
+server/cmd/multica/cmd_workflow.go
+  s_e6eb75c69f54af::t_cab45809285340 1-663
+  s_e6eb75c69f54af::t_7f3008d03a12b0 664
+server/cmd/multica/cmd_workflow_test.go
+  s_e6eb75c69f54af::t_695d92f80c4d12 1-275
+apps/docs/content/docs/cli.fr.mdx
+  s_e6eb75c69f54af::t_e8427c45ec9237 282,376-378
+apps/docs/content/docs/cli.ja.mdx
+  s_e6eb75c69f54af::t_681bf732f281f9 282,368-370
+apps/docs/content/docs/cli.ko.mdx
+  s_e6eb75c69f54af::t_62114f4814a3e4 282,368-370
+apps/docs/content/docs/cli.mdx
+  s_e6eb75c69f54af::t_4ca77392ae1722 297,391-393
+apps/docs/content/docs/cli.zh.mdx
+  s_e6eb75c69f54af::t_fd5229d0fcd6fc 282,368-370
+server/cmd/multica/main.go
+  s_e6eb75c69f54af::t_b1cf5efb179e14 53,80
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2791b7a2ba3cc537ed0d0cf82d62eebf35ecd4c3",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+apps/desktop/electron-builder.yml
+  s_aa47a447e01641::t_8110332b2607c9 25-27,35-36,47-48,66-68,128-130,143-146
+apps/desktop/scripts/browser-plugin/orca-browser-after-pack.cjs
+  s_aa47a447e01641::t_8d1f6853d5b80b 1-48
+apps/desktop/scripts/browser-plugin/orca-browser-after-pack.test.mjs
+  s_aa47a447e01641::t_710e78f58c1492 1-88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f766da8982b59951c1e4c349106bbe52dca05b28",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

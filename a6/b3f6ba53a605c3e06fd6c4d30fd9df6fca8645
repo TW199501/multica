@@ -1,0 +1,118 @@
+packages/views/locales/zh-Hant/squads.json
+  h_be8240d2cfaa4b 1-144
+packages/views/locales/zh-Hant/workspace.json
+  h_be8240d2cfaa4b 1-34
+packages/views/locales/zh-Hant/autopilots.json
+  h_be8240d2cfaa4b 1-538
+packages/views/locales/zh-Hant/editor.json
+  h_be8240d2cfaa4b 1-182
+packages/views/locales/zh-Hant/members.json
+  h_be8240d2cfaa4b 1-20
+packages/views/locales/zh-Hant/issues.json
+  h_be8240d2cfaa4b 1-1697
+packages/views/onboarding/templates/index.ts
+  s_155da54c92280f::t_421505e71045ca 20-22
+packages/views/locales/zh-Hant/my-issues.json
+  h_be8240d2cfaa4b 1-44
+packages/views/locales/zh-Hant/usage.json
+  h_be8240d2cfaa4b 1-111
+packages/views/locales/zh-Hant/invite.json
+  h_be8240d2cfaa4b 1-53
+packages/views/locales/zh-Hant/inbox.json
+  h_be8240d2cfaa4b 1-121
+packages/views/locales/zh-Hant/modals.json
+  h_be8240d2cfaa4b 1-268
+packages/views/locales/en/settings.json
+  s_155da54c92280f::t_453c1eeaebf4a5 171-172
+packages/views/settings/components/preferences-tab.tsx
+  s_155da54c92280f::t_9510e19be00143 167
+packages/views/locales/ko/settings.json
+  s_155da54c92280f::t_453c1eeaebf4a5 169-170
+packages/views/locales/zh-Hant/ui.json
+  h_be8240d2cfaa4b 1-11
+packages/views/agents/components/tabs/task-failure.test.ts
+  s_155da54c92280f::t_421505e71045ca 11,26,119
+packages/views/locales/zh-Hant/projects.json
+  h_be8240d2cfaa4b 1-184
+packages/views/locales/zh-Hant/search.json
+  h_be8240d2cfaa4b 1-38
+packages/views/locales/zh-Hant/billing.json
+  h_be8240d2cfaa4b 1-257
+packages/views/locales/zh-Hant/runtimes.json
+  h_be8240d2cfaa4b 1-645
+packages/views/locales/zh-Hant/layout.json
+  h_be8240d2cfaa4b 1-72
+packages/views/locales/fr/settings.json
+  s_155da54c92280f::t_453c1eeaebf4a5 171-172
+packages/views/locales/zh-Hant/agents.json
+  h_be8240d2cfaa4b 1-1030
+apps/desktop/src/renderer/src/App.tsx
+  s_155da54c92280f::t_5c08c1b7e9f806 46
+packages/views/locales/zh-Hans/settings.json
+  s_155da54c92280f::t_453c1eeaebf4a5 169-170
+packages/views/locales/zh-Hant/chat.json
+  h_be8240d2cfaa4b 1-252
+packages/views/locales/zh-Hant/onboarding.json
+  h_be8240d2cfaa4b 1-234
+packages/views/locales/zh-Hant/settings.json
+  s_155da54c92280f::t_453c1eeaebf4a5 1-1446
+packages/views/locales/zh-Hant/labels.json
+  h_be8240d2cfaa4b 1-10
+packages/views/locales/zh-Hant/skills.json
+  h_be8240d2cfaa4b 1-375
+packages/views/locales/ja/settings.json
+  s_155da54c92280f::t_453c1eeaebf4a5 169-170
+packages/core/i18n/types.ts
+  s_155da54c92280f::t_7aa97f60946093 1,6
+packages/views/locales/zh-Hant/auth.json
+  h_be8240d2cfaa4b 1-69
+packages/views/settings/components/preferences-tab.test.tsx
+  s_155da54c92280f::t_43f9b552fd2396 219
+  s_155da54c92280f::t_e7faf998ff762a 196
+  s_155da54c92280f::t_6b63500a25fdc4 197
+packages/views/locales/zh-Hant/common.json
+  h_be8240d2cfaa4b 1-133
+apps/desktop/src/main/context-menu.ts
+  s_155da54c92280f::t_5ecd7200bbdb5f 138-142,164-168
+apps/desktop/src/renderer/src/components/tab-bar.test.tsx
+  s_155da54c92280f::t_a0b57a75be3600 620-628
+apps/web/app/global-error.tsx
+  s_155da54c92280f::t_bad9b6b7e6534e 87-91
+apps/web/features/landing/i18n/types.ts
+  s_155da54c92280f::t_863d6c3818fc17 12-14,27,31
+apps/web/lib/docs-href.ts
+  s_155da54c92280f::t_9663e51c450dbc 4
+apps/web/lib/html-lang.ts
+  s_155da54c92280f::t_2c34c6c1e6213f 9
+apps/web/lib/use-cases-i18n.ts
+  s_155da54c92280f::t_41c4b553a4b21c 36-44
+apps/web/lib/use-cases-source.ts
+  s_155da54c92280f::t_0e93e1e235e8ce 20
+packages/core/i18n/pick-locale.test.ts
+  s_155da54c92280f::t_bce7c5df4c3793 42-46
+packages/views/locales/index.ts
+  s_155da54c92280f::t_f447295d7ef941 52-76,211-237
+packages/views/workspace/celestial-workspace-names.ts
+  s_155da54c92280f::t_d4b8e34fde9ac6 14-15,26-27,38-39,50-51,62-63,74-75,86-87,98-99,110-111,122-123,134-135,146-147,158-159,170-171,182-183,194-195,206-207,218-219,230-231,242-243,254-255,266-267,278-279,290-291,302-303,314-315,326-327,338-339,350-351,362-363,374-375,386-387,398-399,410-411,422-423,434-435,446-447,458-459,470-471,482-483,494-495,506-507,518-519,530-531,542-543,554-555,566-567,578-579,590-591,602-603,614-615,626-627,638-639,650-651,662-663,674-675,686-687,698-699,710-711,722-723,734-735,746-747,758-759,770-771,782-783,794-795,806-807,818-819,830-831,842-843,854-855,866-867,878-879,890-891,902-903,914-915,926-927,938-939,950-951,962-963,974-975,986-987,998-999,1010-1011,1022-1023,1034-1035,1046-1047,1058-1059,1070-1071,1082-1083,1094-1095,1106-1107,1118-1119,1130-1131,1142-1143,1154-1155,1166-1167,1178-1179,1190-1191,1202-1203
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a6b3f6ba53a605c3e06fd6c4d30fd9df6fca8645",
+  "prompts": {},
+  "humans": {
+    "h_be8240d2cfaa4b": {
+      "author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_155da54c92280f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "597fa3f2-b7a9-4412-b55f-38bdf69741cd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

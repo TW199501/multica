@@ -1,0 +1,27 @@
+apps/desktop/src/main/browser-plugin/browser-plugin-host.test.ts
+  s_aa47a447e01641::t_6b91c3b1c41853 1-92
+apps/desktop/src/main/browser-plugin/browser-plugin-host.ts
+  s_aa47a447e01641::t_9b51360f8ef507 1-60
+apps/desktop/src/main/index.ts
+  s_aa47a447e01641::t_bf577c5aa985fb 14-18,147,873-886,898-902
+apps/desktop/src/preload/index.d.ts
+  s_aa47a447e01641::t_1856ee0423fb7d 2,176
+apps/desktop/src/preload/index.ts
+  s_aa47a447e01641::t_b111c12146a0ef 3,348-349
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7b3d25501b950c1f6654e8f88cb9816fb69afbaf",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

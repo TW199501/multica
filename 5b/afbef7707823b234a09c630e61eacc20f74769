@@ -1,0 +1,647 @@
+server/internal/handler/daemon_runtime_ownership_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-441
+server/internal/attribution/attribution.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 177-188,213,245-246,322,373
+apps/docs/content/docs/environment-variables.ja.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 116,320
+packages/views/issues/components/issues-header.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 125,1927,1930-1939,2269-2305
+  s_e6eb75c69f54af::t_f50c30f7ced86d 2306-2307
+packages/views/runtimes/components/qoder-detail-page.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 156,181
+server/internal/handler/daemon_context_exhausted_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 69,77,192,194
+packages/views/agents/components/new-chat-preview.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-50
+apps/mobile/components/ui/priority-icon.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 28
+packages/views/modals/run-confirm.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 67,96,104,309-347
+server/cmd/multica/cmd_property.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 10,1059-1120,1122,1124-1126,1128-1129,1132-1135,1144-1149,1153-1154,1164-1249,1277,1279-1280
+packages/core/paths/paths.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 18,20,53,56
+server/cmd/server/credential_mint_actor_integration_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-134
+server/internal/handler/daemon_ws_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 86
+SELF_HOSTING.md
+  s_e6eb75c69f54af::t_859e585b9a00d3 17,19,105,315
+server/internal/handler/runtime_custom_name_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 133,140
+server/internal/handler/daemon_runtime_ownership_review_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-519
+server/internal/handler/daemon_claim_continuity_gap_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 24
+server/internal/middleware/task_token_workspace.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-134
+apps/docs/content/docs/agents-create.fr.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 70
+server/internal/handler/workspace_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 116-180
+server/pkg/agent/hermes_model_discovery_unix_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 24-48
+packages/core/projects/config.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 35
+server/internal/daemonws/hub.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 25-34
+apps/docs/content/docs/daemon-runtimes.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 10,12,18,22,27,31,35
+apps/mobile/components/issue/inline-comment-composer.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 50
+packages/views/issues/components/batch-action-toolbar.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 39,55-62,132,173
+packages/views/issues/components/execution-log-section.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 95-106
+packages/views/modals/run-confirm.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 70-71,87-88,156-166,168
+packages/views/issues/components/issue-detail.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 619-622,1679-1700,3146-3174
+  s_e6eb75c69f54af::t_01ed71bc232465 3175-3176
+packages/views/agents/create/manual-create-agent-page.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 215-217
+packages/views/editor/html-block-preview.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 8,166-245
+  s_e6eb75c69f54af::t_045fb6003b32ba 246-247
+packages/views/agents/create/runtime-choice-list.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 50
+server/internal/selfhosttelemetry/event_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 105,121-147
+packages/views/runtimes/components/runtimes-page.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 165,190,203,217
+server/internal/handler/task_message_batch_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 46-48
+server/internal/handler/daemon_runtime_access_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 31,67,98,183,237,366,406-407,409,455,513,614
+packages/views/runtimes/components/remote-runtime-dialog.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 14
+server/internal/handler/comment_reconcile_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 21,23
+server/internal/handler/runtime_model_catalog_fallback_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 19,22
+server/internal/handler/issue.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 2993
+packages/views/modals/create-issue.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 43,45,132,151-155,160-161,164-175,464-468,661-669,671-674,677-680,683-689,691,696-718,833-861,927,931-932,934-936,946,948-949,953-954,965-967,978-1053
+server/internal/handler/daemon_skill_resolve_scope_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 146,148
+apps/web/features/landing/i18n/ja.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 200,3400,3403
+packages/views/issues/components/batch-action-toolbar.confirm.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 111,168-204
+  s_e6eb75c69f54af::t_7878d90348f3db 205
+server/cmd/qoder-runtime/config.example.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 9
+server/internal/middleware/auth.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 126-134,138
+apps/mobile/app/(app)/[workspace]/more/settings/profile.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 13,57-59,61
+packages/views/issues/surface/issue-surface.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 45,265,399
+server/cmd/server/router.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 430-451,1665-1669,1932-1935,1937
+server/internal/service/cursor_network_retry_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-47
+apps/docs/content/docs/cli.ko.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 229
+apps/mobile/app/(app)/[workspace]/(tabs)/inbox.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 1,58,68
+server/internal/handler/comment.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 2450-2452
+Dockerfile.web
+  s_e6eb75c69f54af::t_859e585b9a00d3 2-6,29,59,65
+apps/mobile/lib/use-mention-input.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 20,99,103-106
+packages/views/chat/components/chat-empty-state.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 94
+packages/views/issues/components/issue-agent-header-chip.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 82,87,91-95,255-271
+  s_e6eb75c69f54af::t_0ae22d99b05d3a 272
+apps/docs/content/docs/workflows.ko.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 27
+server/internal/handler/daemon.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 96-163,184,190-191,204-211,251-268,279-288,425,429,441,458-460,463,470,483-489,522-548,593-620,644-654,660-672,679-687,696-740,789,804-806,810-813,858,868-870,872-875,915,920-922,928-929,931-941,955-956,958-961,980-988,991,1019-1029,1034-1040,1048,1056-1064,1099-1115,1144,1159-1163,1192,1219-1228,1361-1362,1519,2181-2185,2675-2677,5396-5400,5404-5410
+server/internal/handler/daemon_rpc_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 25
+server/pkg/db/generated/runtime.sql.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 606,615,624-626,640,1092-1129,1352,1358-1363,1380-1382,1388,1390-1391,1394,2082-2085,2096-2097,2102-2111,2138-2145,2161,2200-2203,2215-2216,2221-2231,2261-2262,2275
+server/migrations/588_daemon_token_owner.up.sql
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-14
+server/internal/handler/task_supplement_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 73,76,104,267-268
+apps/docs/content/docs/agents-create.ko.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 70
+apps/docs/content/docs/agents-create.ja.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 70
+packages/views/common/pill-button.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 18-25,27-28,40,106,123
+packages/views/locales/zh-Hans/issues.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 205-206,370,700,1495,1523,1614
+apps/mobile/data/realtime/realtime-provider.test.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 5-7,16,29-30,45-47,82-121
+server/internal/daemon/cursor_network_resume_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-22
+Dockerfile
+  s_e6eb75c69f54af::t_859e585b9a00d3 2
+packages/views/agents/components/use-conversation-starters-focus.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-75
+apps/web/features/landing/i18n/zh.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 199,389,392
+server/internal/handler/daemon_comment_workspace_scope_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 61
+server/internal/handler/handler.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 79-85
+packages/views/runtimes/components/provider-logo.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 210-211,215,221-223,226
+server/internal/handler/daemon_remote_runtime_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 33
+apps/mobile/components/issue/timeline-list.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 139-141,143,149,265,402
+packages/views/issues/utils/workflow-columns.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 27-29
+server/pkg/agent/hermes.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 537-540,693,803,811,814-815,843-857,868-870,872
+server/internal/service/selfhost_telemetry_activity_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-226
+apps/docs/content/docs/agents-create.zh.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 70
+packages/views/agents/components/agent-overview-pane.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 454-461
+packages/views/locales/ja/issues.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 205-206,370,700,1495,1523,1614
+apps/docs/content/docs/daemon-runtimes.ja.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 10,12,18,22,27,31,35
+packages/views/issues/components/issues-cold-load-loop.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 113
+packages/views/issues/components/view-bar.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 3,277-285,290,296
+server/pkg/agent/kimi_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1659-1700,1862-1894
+  s_e6eb75c69f54af::t_86df39a868cd64 1895
+apps/desktop/src/main/context-menu.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 87-92
+packages/core/runtimes/display.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 47
+packages/views/agents/create/choose-runtime-page.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 189,283
+server/internal/service/delegated_failure_recovery_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1033-1099
+server/pkg/agent/hermes_depsync_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-171
+packages/core/issues/stores/draft-store.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 104-111,121-130,199-270,285-299,312,319,334,339-340,349-363,370-371,373-375,397
+apps/mobile/lib/use-agent-presence.test.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-81
+server/internal/handler/chat_project_context_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 330
+server/internal/service/task.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 41-45,477,823-842,1401,1538,1752,2191-2196,2557,3881-3890,6104-6106,6136-6140
+apps/desktop/src/main/context-menu.test.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 19
+apps/docs/content/docs/cli.zh.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 229
+packages/views/issues/components/list-view.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 2,277,348
+server/internal/handler/chat_channel_debounce_boundary_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 58
+server/pkg/agent/kimi.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 543,797-829,894
+.github/workflows/ci.yml
+  s_e6eb75c69f54af::t_859e585b9a00d3 75,352-353,453,492-493,531-532,798-799
+docker-compose.selfhost.yml
+  s_e6eb75c69f54af::t_859e585b9a00d3 114
+apps/mobile/global.css.d.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-2
+apps/desktop/scripts/mac-update-floor.test.mjs
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-116
+server/internal/handler/daemon_batch_claim_deadline_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 79,90
+CLI_AND_DAEMON.md
+  s_e6eb75c69f54af::t_859e585b9a00d3 597,605-613
+  s_e6eb75c69f54af::t_75d439c4ba35f9 614
+packages/views/agents/components/tabs/instructions-tab.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 5,8,10,12,20,25,28-32,40-42,44-46,51,53,56-62,64,74,119-133,135-139,142-166,168-202
+packages/views/locales/en/issues.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 209-210,374,728,1550,1579,1679
+packages/views/locales/ko/settings.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 681
+server/internal/handler/daemon_legacy_skill_redirect_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 74
+packages/views/issues/components/execution-log-section.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 522,527-528,581-585,588-597,599-602
+server/internal/service/builtin_skills_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 497-503,536-538
+server/migrations/590_member_delegation_day_unique_index.up.sql
+  s_e6eb75c69f54af::t_859e585b9a00d3 1
+server/migrations/591_member_delegation_day_primary_key.down.sql
+  s_e6eb75c69f54af::t_859e585b9a00d3 1
+apps/mobile/app/(app)/[workspace]/project/[id]/edit.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 9,44-46,51
+server/pkg/db/queries/agent.sql
+  s_e6eb75c69f54af::t_859e585b9a00d3 688-694,697
+server/pkg/db/queries/daemon_token.sql
+  s_e6eb75c69f54af::t_859e585b9a00d3 2-5
+server/internal/handler/daemon_claim_attachment_batch_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 75
+server/pkg/taskfailure/cursor_network_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 4,13-14,18-35,47-48,55-117
+packages/views/issues/utils/workflow-columns.test.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 4
+packages/views/locales/zh-Hans/runtimes.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 512,526,550,591,596-597,610,633
+deploy/helm/multica/templates/configmap.yaml
+  s_e6eb75c69f54af::t_859e585b9a00d3 24
+apps/docs/content/docs/environment-variables.zh.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 116,320
+packages/views/issues/components/view-bar.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-192
+apps/docs/content/docs/environment-variables.fr.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 116,317
+server/internal/service/builtin_skills/multica-platform/references/runtimes.md
+  s_e6eb75c69f54af::t_859e585b9a00d3 178,194,210
+packages/views/agents/components/agent-detail-inspector.starters.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-119
+packages/views/agents/create/runtime-choice-list.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 164
+packages/views/locales/ko/issues.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 205-206,370,700,1495,1523,1614
+server/internal/handler/daemon_skill_load_failure_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 120,164,169
+apps/docs/content/docs/cli.ja.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 229
+packages/views/issues/components/swimlane-view.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 628-629,931
+.github/workflows/desktop-smoke.yml
+  s_e6eb75c69f54af::t_859e585b9a00d3 34-35
+server/cmd/multica/cmd_issue.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 229-242,617
+server/internal/handler/daemon_batch_claim_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 59-67,79-85,305-306,314-318,320-322,324-332,338-339
+server/internal/handler/qoder_connection.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 21,594-604,606
+server/internal/handler/workspace.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 16,219-235
+  s_e6eb75c69f54af::t_8db711db2d6353 236-237
+packages/views/agents/create/agent-created-page.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 171
+packages/views/runtimes/components/qoder-detail-page.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 57,78,435,452
+server/internal/handler/daemon_ws.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 8,39-46,76-79,81,107-122
+  s_e6eb75c69f54af::t_861a73f1a50e3d 123-124
+apps/docs/content/docs/cli.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 252
+apps/mobile/data/realtime/use-chat-sessions-realtime.test.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 3-6,9,24
+apps/mobile/package.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 92-93
+packages/views/issues/actions/__tests__/issue-actions-menu.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 217,220,305-324
+  s_e6eb75c69f54af::t_20e1659f4fec2d 325-326
+server/internal/selfhosttelemetry/event.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 14-17,46-52,65-75,79,95-101
+server/internal/handler/daemon_claim_workspace_mcp_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 17
+packages/views/modals/create-issue.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 266,319,414-417,458,469-470,474,487-491,494,508,513-520,810,1253,1422,1451
+packages/views/locales/ko/runtimes.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 512,526,550,591,596-597,610,633
+server/pkg/db/generated/agent.sql.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 4254-4257,4260,4265-4270,4276-4278,4282-4289
+packages/views/issues/components/issue-detail.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 159-163,846-847,2016-2090,2180-2189,3094,3238,3618,3681-3685,3717
+apps/desktop/electron-builder.yml
+  s_e6eb75c69f54af::t_859e585b9a00d3 38-41,43-44
+packages/views/common/single-row-fit.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 17-21,36-37,52-57
+server/internal/middleware/task_token_workspace_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-252
+packages/views/agents/create/runtime-choice.test.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 61
+server/migrations/589_member_delegation_day.up.sql
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-16
+packages/views/locales/fr/agents.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 507,516-524,530-531,543-549
+server/internal/handler/issue_wakeup_join_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 85
+server/internal/handler/workspace_delete_fence_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 363,397,467,512
+server/pkg/agent/hermes_effort_execute_unix_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 36-38,43-45,138-146
+  s_e6eb75c69f54af::t_5c4252be3f3ca6 147-148
+packages/views/locales/en/settings.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 686
+server/pkg/db/generated/daemon_token.sql.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 15-17,25,28-29,36,46,101,115
+packages/views/issues/surface/use-issue-surface-controller.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 87-88
+apps/desktop/eslint.config.mjs
+  s_e6eb75c69f54af::t_859e585b9a00d3 8
+server/internal/handler/daemon_rpc.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 67-70
+server/internal/handler/squad_briefing_claim_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 21
+apps/mobile/components/composer/message-composer.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 220,223,226,229-233,348,424,443
+apps/mobile/components/ui/project-priority-icon.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 15
+apps/docs/content/docs/workflows.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 27
+apps/mobile/data/session-renewal.test.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 4-14
+packages/views/editor/html-preview-surface.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 11,25,33,107-130
+.env.example
+  s_e6eb75c69f54af::t_859e585b9a00d3 697-706,729
+server/internal/handler/squad_no_action_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 82,84
+packages/views/agents/components/conversation-starters-editor.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 3-4,15,18-23,34-40,53-60,62-83,85-86,88-92,97,104-160,165-166,169,171,174-175,177-196,206-208
+  s_e6eb75c69f54af::t_4a3116811e45ef 209
+server/cmd/multica/cmd_issue_resolve_properties_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 416
+packages/views/agents/create/agent-configuration-panel.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 161-173,467,474,490-503
+server/internal/handler/daemon_claim_cancelled_session_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 915-916
+server/pkg/db/generated/models.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 671,1221-1223
+  s_e6eb75c69f54af::t_7a22f8a258eb22 1224-1225
+server/cmd/server/source_context_actor_integration_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 62-66
+server/pkg/taskfailure/classify.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 88-105,248-250,469-471,473-517,520-534,643-649
+apps/mobile/lib/markdown/image-sequence.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 42
+packages/views/labels/label-chip.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 60
+packages/views/locales/en/agents.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 507,515-524,530-531,543-549
+server/internal/handler/task_payload_nul_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 66
+.github/workflows/openclaw-config-smoke.yml
+  s_e6eb75c69f54af::t_859e585b9a00d3 38
+server/migrations/591_member_delegation_day_primary_key.up.sql
+  s_e6eb75c69f54af::t_859e585b9a00d3 1
+packages/ui/styles/tokens.css
+  s_e6eb75c69f54af::t_859e585b9a00d3 37,245-246,320
+packages/views/editor/extensions/code-block-view.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 6,32-33,89,93,137-148
+  s_e6eb75c69f54af::t_9c6aef40e0081e 149
+apps/docs/content/docs/workflows.zh.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 27
+server/pkg/db/queries/runtime.sql
+  s_e6eb75c69f54af::t_859e585b9a00d3 38-41,70-77,89-92,107-108,118-119,132-135,147-148,564-566,659-665
+apps/web/app/custom.css
+  s_e6eb75c69f54af::t_859e585b9a00d3 70
+packages/views/editor/dynamic-block.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 35,91-92,111,187-199
+packages/ui/components/common/actor-avatar.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 36-41,62,69,81,83,85
+server/internal/handler/daemon_batch_claim_recovery_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 52
+server/internal/service/issue_wakeup.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1326-1339,1341
+server/pkg/agent/acp_effort.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 169,171,182-259
+  s_e6eb75c69f54af::t_22a5adf1b31313 260
+packages/views/agents/components/tabs/instructions-tab.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 3-4,7,17,37,40-46,48-49,51,53-54,62-63,65-67,69-73,76-77,79-80,82-83,86-88,90,92,95-96,98,100-101,105-111,113-115,117-119,121-123
+packages/views/issues/surface/column-statuses-context.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-29
+apps/docs/content/docs/workflows.fr.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 27
+packages/views/agents/components/conversation-starters-editor.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 3-5,8,11-26,30-32,35-36,38-39,42-46,48-49,51,53-80,82-92,95-98,100-111
+server/internal/handler/task_terminal_wakeup_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 23,25
+server/internal/handler/worktree_claim_gate_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 170-171,282-283
+server/internal/qoderruntime/bridge.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 95
+packages/views/issues/surface/use-issue-surface-data.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 12,66,377,391-396,465
+server/internal/qoderruntime/prompt.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 76,91,152
+server/internal/handler/daemon_issue_snapshot_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 201
+packages/views/agents/components/new-chat-preview.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-69
+apps/mobile/app/(app)/[workspace]/issue/[id]/edit.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 21,57-58,61,68
+packages/views/runtimes/components/qoder-connect-form.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 36
+server/cmd/migrate/main.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 191
+server/internal/selfhosttelemetry/collector.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 39-77,122-134
+  s_e6eb75c69f54af::t_c6cae03c7ab0ff 135
+packages/views/locales/zh-Hans/settings.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 681
+packages/views/layout/collection-page.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 56,61
+server/internal/handler/squad_briefing_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 374
+apps/mobile/app/(app)/[workspace]/(tabs)/chat.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 146-150,436,455-457,460-463
+server/internal/handler/comment_worker_handoff_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 21,33
+packages/views/chat/components/chat-input.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 698
+packages/core/issues/stores/draft-store.test.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 57,79-145,249-457,492-519
+  s_e6eb75c69f54af::t_3b79031926dd29 520
+packages/views/locales/fr/settings.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 686
+server/internal/service/builtin_skills/multica-platform/references/issues.md
+  s_e6eb75c69f54af::t_859e585b9a00d3 170,175,182-189
+packages/views/agents/components/agent-detail-inspector.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 7,20,24,31,36-38,67-82,106-108,113,150,152-176,220-233,235,237-253,255-328,330-334,336,338,341,344-409,411,414-421,423-427,429-431
+server/pkg/db/queries/member_delegation.sql
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-8
+server/internal/service/autopilot.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1061-1062
+packages/views/locales/ko/agents.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 344,353-360,366-367,379-384
+apps/mobile/components/issue/pickers/mention-picker-body.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 102-109,112,120-125
+server/internal/service/issue_wakeup_squad_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-80
+server/migrations/588_daemon_token_owner.down.sql
+  s_e6eb75c69f54af::t_859e585b9a00d3 1
+packages/views/editor/extensions/code-block-view.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 8,47,157-183
+apps/mobile/data/realtime/use-presence-realtime.test.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 3-4,7,23
+packages/views/agents/components/agent-overview-pane.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 290
+apps/docs/content/docs/daemon-runtimes.ko.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 10,12,18,22,27,31,35
+server/cmd/qoder-runtime/main.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1
+server/pkg/agent/hermes_depsync.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-156
+packages/views/locales/ja/agents.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 336,345-352,358-359,371-376
+.github/workflows/release.yml
+  s_e6eb75c69f54af::t_859e585b9a00d3 58-59,102-103,428-429
+server/cmd/server/main.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 697-699
+server/internal/handler/issue_status_compatibility_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 196,202
+packages/views/locales/en/runtimes.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 528,542,566,609,615-616,629,653
+apps/mobile/data/realtime/realtime-provider.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 13,68-78,86,109,148
+deploy/helm/multica/values.yaml
+  s_e6eb75c69f54af::t_859e585b9a00d3 151-154
+apps/mobile/components/chat/status-pill.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 24,133-142,144-155,165
+packages/views/editor/html-block-preview.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 17,108,111-115,135,144-145,161-162,171-172,177,182-188,221-223,250,259
+packages/views/workflows/issue-flow-card.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 91
+SELF_HOSTING_ADVANCED.md
+  s_e6eb75c69f54af::t_859e585b9a00d3 78,91-110
+  s_e6eb75c69f54af::t_6fcd3285a76fc0 111
+server/internal/attribution/attribution_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 5,508-535
+  s_e6eb75c69f54af::t_ac60817e23e48c 536
+server/internal/handler/runtime_local_skills_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 498,500,529,544,622,625,671,674,725,734
+apps/docs/content/docs/troubleshooting.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 114-123
+apps/mobile/data/mutations/notification-preferences.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 17,85,87-89,150,167
+server/internal/handler/task_message_call_id_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 79-81
+server/internal/handler/workspace_delete_manifest_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 104
+packages/views/issues/components/issue-agent-header-chip.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 43-44,48,53,105,133,145,150,176,237-244
+server/internal/handler/auth.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 749-752,754-757
+server/internal/auth/daemon_token_cache.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 16-19,28-30
+server/pkg/db/generated/member_delegation.sql.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-32
+server/internal/handler/daemon_start_claim_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 34,36,174,178,193
+apps/desktop/package.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 72
+packages/core/issues/config/priority.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 37
+apps/mobile/components/issue/comment-card.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 124-133
+server/internal/handler/daemon_claim_channel_type_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 105
+server/pkg/agent/cursor_execute_unix_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 34-65
+packages/views/issues/surface/use-issue-surface-controller.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 1278,1328-1330
+packages/views/agents/components/use-conversation-starters-focus.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-157
+packages/core/agents/conversation-starters.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 35-36
+packages/views/issues/actions/issue-actions-menu-items.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 354-361
+packages/views/locales/fr/runtimes.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 528,542,566,609,615-616,629,653
+server/internal/handler/daemon_batch_claim_notifications_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 122,245,257
+server/internal/handler/runtime_lookup_metrics_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 50-51
+server/internal/handler/daemon_claim_issue_status_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 46,109,143
+server/internal/selfhosttelemetry/postgres_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 306-307,420-520
+packages/views/modals/create-issue-batch-continuation.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-600
+server/internal/handler/runtime_local_skills_overwrite_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 136
+server/migrations/590_member_delegation_day_unique_index.down.sql
+  s_e6eb75c69f54af::t_859e585b9a00d3 1
+server/internal/handler/daemon_comment_delivery_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 223,367,934
+packages/views/issues/components/issues-header.display-columns.test.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-120
+server/cmd/qoder-runtime/README.md
+  s_e6eb75c69f54af::t_859e585b9a00d3 1,45,189,191
+packages/views/locales/zh-Hans/agents.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 493,502-509,515-516,528-533
+packages/views/locales/fr/issues.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 209-210,374,728,1550,1579,1679
+server/internal/handler/daemon_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 86-95,105-107,231,250,452,456,554,581,593,598,610,646,702,729,743-752,754,758-759,801,812,986,988,1021,1023,1060,1062,1098-1100,1612,1641,1648,1672,2087,2090,2155,2221,2310,2390,2510,2574,2576,2659,2661,2707,2709,2752,2754,2822,3889,3907,3948,4002,4282,4414,4461,4513,4563,4592,4723,4741,4798-4799,4840,4886-4887,4938-4939,4958,4961
+apps/mobile/lib/use-agent-presence.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 20,44,51,70,83,108,125,127,171,191,193
+apps/docs/content/docs/workflows.ja.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 27
+apps/web/features/landing/i18n/en.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 199,405,408,871
+server/internal/handler/personal_access_token.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 60-63,65-68
+server/internal/middleware/daemon_auth.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 23-24,57-93,161-162,182-184,196-197
+apps/docs/content/docs/agents-create.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 70
+server/internal/middleware/workspace.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 74-76
+.github/RELEASING.md
+  s_e6eb75c69f54af::t_859e585b9a00d3 13-15
+apps/desktop/scripts/mac-update-floor.cjs
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-40
+server/internal/service/issue.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 8,554-560,1006-1012
+apps/docs/content/docs/daemon-runtimes.zh.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 10,12,18,22,27,31,35
+server/pkg/agent/models.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1592-1596,1916,2035-2037,2132,2257-2263
+  s_e6eb75c69f54af::t_e75f9cf1048a36 2264
+server/cmd/multica/cmd_issue_property_filter_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 28-31,53-60,106-109,118,125-128,133,138,143,148,153-161,166,171,179,184,189,197,202,209,214,219,224,230,236-364,380-414,437-468
+server/pkg/agent/hermes_depsync_execute_unix_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-160
+apps/web/features/landing/i18n/ko.ts
+  s_e6eb75c69f54af::t_859e585b9a00d3 200,3421,3424
+server/internal/handler/claim_project_context_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 128,259,323
+apps/docs/content/docs/daemon-runtimes.fr.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 10,12,18,22,27,31,35
+server/migrations/589_member_delegation_day.down.sql
+  s_e6eb75c69f54af::t_859e585b9a00d3 1
+packages/views/locales/ja/runtimes.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 512,526,550,591,596-597,610,633
+packages/views/locales/ja/settings.json
+  s_e6eb75c69f54af::t_859e585b9a00d3 681
+server/internal/handler/comment_steer_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 46-47
+apps/docs/content/docs/environment-variables.ko.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 116,320
+apps/docs/content/docs/environment-variables.mdx
+  s_e6eb75c69f54af::t_859e585b9a00d3 116,320
+packages/views/issues/components/comment-card.tsx
+  s_e6eb75c69f54af::t_859e585b9a00d3 94-96,100,697,955,962-963,982,987-988,1093,1207
+server/internal/handler/daemon_task_lookup_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 64,87,108
+server/internal/handler/credential_mint_guard_test.go
+  s_e6eb75c69f54af::t_859e585b9a00d3 1-81
+pnpm-lock.yaml
+  s_e6eb75c69f54af::t_167223831d57ca 175,178,265-266,296,299,302,311,339,402,414,459,477,483,546-547,549-550,553,592,635,659,662,668,677,708,723,741,778,793,802,876,940,952,1105,1190,1205,1919-1932,2808-2809,2838-2839,2847-2848,2859-2860,2871-2872,2885-2886,2899-2900,2913-2914,2927-2928,2939-2940,4909-4916,4924-4930,4937-4942,4947-4950,4957-4962,4970-4976,4981-4984,4991-4996,5004-5010,5015-5018,5571-5572,5605-5613,5919-5920,6091-6092,6341-6342,6472-6473,6523-6524,6562-6567,7305,7426-7428,7438-7440,7950-7951,7981-7984,8816-8817,10708-10712,10990-11009,11218-11223,12140-12153,12240,12242,12248,12250,12287,12525,12528-12529,12532-12533,12537,12542-12543,12561,12607,12612,12628,12630,12633,12660,12690,12692,12703,12705,12715,12717,12727,12732,12737,12741,12758,12779,12828,12830-12831,12833,12837,12844,12850,12857,12881,13125,13196,13198,13252,13260,13266,13272,13278,13284,13290,13296,13302,14050,14491,14493,14596,14948,15087,15117,15145,15163,15187,15190,15192-15193,15195,15198-15199,15203,15206-15211,15214-15215,15219,15226,15231,15235,15239-15251,15264-15281,15287-15291,15296-15304,15307-15308,15310-15312,15316,15318-15320,15322-15324,15330-15331,15347,15349-15350,15352-15358,15362-15377,15382,15384,15388-15410,15416-15420,15500,15504,15507,15511,15514,15527,15534,15536,15542-15543,15545,15551-15552,15908,15988,16090,16117-16129,16150,16159,16423,16426,16428,16431,16433,16638,16893,16909,17123,17125-17126,17128-17130,17132,17155,17160,17163,17166-17167,17171,17175,17178,17182,17184-17185,17196,17210,17216,17230,17235,17246,17258,17268-17278,17516,17518-17519,17530,17536,17543,17550,17562,17569,17573,17579,17583,17588,17595,17601,17605,17609,17614,17625,17640,17646,17649,17651,17686,17723,17729,17736,17746,17755,17757,17760-17762,17765,17768,17771,17776,18067,18090,18097,18120,18127,18134,18147,18149,18153,18160,18173,18178,18191,18202,18541-18542,18549-18552,18634-18637,18927,18944,19040,19076-19084,19528,19531-19533,19537,19539,19994,20328,20330,20349,20352,20395,20397,20399,20405-20412,20416,20422,20427,20444,21130,21211,21222-21233,21292,21297,21682,22106,22137,22622-22625,22715,22717-22720,22722,22728-22729,22949,22967,22975,22984,22987,23004,23013,23016,23033,23037,23042,23045,23062,23066,23075-23091,23280-23283
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5bafbef7707823b234a09c630e61eacc20f74769",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

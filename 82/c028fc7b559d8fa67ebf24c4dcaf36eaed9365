@@ -1,0 +1,39 @@
+apps/desktop/src/renderer/src/browser-plugin/browser-settings-tab.test.tsx
+  s_aa47a447e01641::t_b274032f27b9e8 1-214
+apps/desktop/src/renderer/src/browser-plugin/browser-settings-tab.tsx
+  s_aa47a447e01641::t_5e5de5e70c3ff3 1-218
+apps/desktop/src/renderer/src/browser-plugin/use-orca-browser-agent-sync.ts
+  s_aa47a447e01641::t_20136415266847 1-55
+apps/desktop/src/renderer/src/browser-plugin/index.ts
+  s_aa47a447e01641::t_ddaf2f5df5dbe0 6
+apps/desktop/src/renderer/src/browser-plugin/locales/en.json
+  s_aa47a447e01641::t_12a8798ab32e9f 195-210
+apps/desktop/src/renderer/src/browser-plugin/locales/fr.json
+  s_aa47a447e01641::t_b8c7937137d8d8 195-210
+apps/desktop/src/renderer/src/browser-plugin/locales/ja.json
+  s_aa47a447e01641::t_6ea49add5646a1 195-210
+apps/desktop/src/renderer/src/browser-plugin/locales/ko.json
+  s_aa47a447e01641::t_1c5d360c577047 195-210
+apps/desktop/src/renderer/src/browser-plugin/locales/zh-Hans.json
+  s_aa47a447e01641::t_26bf10562b21ec 195-210
+apps/desktop/src/renderer/src/browser-plugin/locales/zh-Hant.json
+  s_aa47a447e01641::t_a4c0e8b5a7fb95 195-210
+apps/desktop/src/renderer/src/routes.tsx
+  s_aa47a447e01641::t_bb6d6782df9ff4 33-34,37,50,66-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "82c028fc7b559d8fa67ebf24c4dcaf36eaed9365",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+apps/desktop/scripts/browser-plugin/orca-browser-after-pack.cjs
+  s_aa47a447e01641::t_679c259e69c46b 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2e2bd7aad1cafa1f0fd599bc380fd7bfdc3f1708",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

@@ -1,0 +1,1345 @@
+.env.example
+  s_e6eb75c69f54af::t_6b2e957a5a1b1c 670-674,734-735
+.github/ci-paths.json
+  s_e6eb75c69f54af::t_33a3675c0f0ff8 77,105,107
+.github/workflows/ci.yml
+  s_e6eb75c69f54af::t_26126f4488c1cd 920-926
+AGENTS.md
+  s_e6eb75c69f54af::t_62f3fd31aa7bdc 48,60,93,98-99,122-123,125
+CLI_AND_DAEMON.md
+  s_e6eb75c69f54af::t_00b6bbef63f327 290,394,408-409
+SELF_HOSTING_ADVANCED.md
+  s_e6eb75c69f54af::t_8e0c439d79a252 345
+apps/desktop/package.json
+  s_e6eb75c69f54af::t_4c14d96c5d40e9 4
+apps/desktop/src/main/daemon-manager.ts
+  s_e6eb75c69f54af::t_a5fc592ebc97d5 27-30,106-108,321,631-634,966,1009,1059-1062,1077-1078,1101,1248,1374-1408,1425,1431-1434,1439,1549-1551,1556-1559
+apps/desktop/src/main/index.ts
+  s_e6eb75c69f54af::t_6ce722cfec0850 7-12,849-862
+apps/desktop/src/main/update-install-gate.test.ts
+  s_e6eb75c69f54af::t_d41492fd064a28 1-74
+apps/desktop/src/main/update-install-gate.ts
+  s_e6eb75c69f54af::t_a573db73130875 1-69
+apps/desktop/src/main/update-install-lifecycle.test.ts
+  s_e6eb75c69f54af::t_89501a6e5014da 1-248
+apps/desktop/src/main/updater.test.ts
+  s_e6eb75c69f54af::t_1296e1a7dc1fea 22-23,50-55,63,66,68,294-426
+apps/desktop/src/main/updater.ts
+  s_e6eb75c69f54af::t_6ced7595255ee1 2,13,57-94,151-158,218-276,293,310-315
+apps/desktop/src/renderer/src/components/desktop-layout.test.tsx
+  s_e6eb75c69f54af::t_44884ceaac42a1 171
+apps/docs/app/[lang]/[...slug]/page.tsx
+  s_e6eb75c69f54af::t_4a310ee1c26b50 10,45
+apps/docs/app/[lang]/layout.tsx
+  s_e6eb75c69f54af::t_81651e158ac378 2,14,96,101-104,106
+apps/docs/app/[lang]/page.tsx
+  s_e6eb75c69f54af::t_dfdac4ef5112be 5,63
+apps/docs/app/global.css
+  s_e6eb75c69f54af::t_7a759a52338bf7 2,160-230,344,357,370,561,569,574,584,588,602,810-844
+apps/docs/components/demos/agent-access-demo.tsx
+  s_e6eb75c69f54af::t_986a1062bcc44c 1-380
+apps/docs/components/demos/assign-demo.tsx
+  s_e6eb75c69f54af::t_17959f744eb8c9 1-424
+apps/docs/components/demos/autopilot-demo.tsx
+  s_e6eb75c69f54af::t_2bdf67a2e7c532 1-515
+apps/docs/components/demos/channel-chat-demo.tsx
+  s_e6eb75c69f54af::t_62163281050791 1-467
+apps/docs/components/demos/chat-demo.tsx
+  s_e6eb75c69f54af::t_376ac7af068152 1-447
+apps/docs/components/demos/chat-queue-demo.tsx
+  s_e6eb75c69f54af::t_21255b09255e75 1-452
+apps/docs/components/demos/concept-map-demo.tsx
+  s_e6eb75c69f54af::t_e3dba6c0eace47 1-722
+apps/docs/components/demos/create-agent-demo.tsx
+  s_e6eb75c69f54af::t_17b454d97743e1 1-746
+apps/docs/components/demos/deliverables-demo.tsx
+  s_e6eb75c69f54af::t_6375a31e85c435 1-410
+apps/docs/components/demos/demo-kit.tsx
+  s_e6eb75c69f54af::t_64d1aa23134ced 1-319
+apps/docs/components/demos/desktop-tabs-demo.tsx
+  s_e6eb75c69f54af::t_7bc3f48c4c9ab9 1-444
+apps/docs/components/demos/inbox-demo.tsx
+  s_e6eb75c69f54af::t_c34abc1d9fb6dc 1-487
+apps/docs/components/demos/issue-draft-demo.tsx
+  s_e6eb75c69f54af::t_ec3dd06a31f383 1-538
+apps/docs/components/demos/issue-status-demo.tsx
+  s_e6eb75c69f54af::t_8a2b3bd24723aa 1-546
+apps/docs/components/demos/local-dir-mode-demo.tsx
+  s_e6eb75c69f54af::t_1530a3901d03ab 1-556
+apps/docs/components/demos/mention-demo.tsx
+  s_e6eb75c69f54af::t_39418ab841d411 1-328
+apps/docs/components/demos/pr-link-demo.tsx
+  s_e6eb75c69f54af::t_e4bc5b7125dfb5 1-475
+apps/docs/components/demos/project-demo.tsx
+  s_e6eb75c69f54af::t_725c2632b01f14 1-438
+apps/docs/components/demos/provider-picker-demo.tsx
+  s_e6eb75c69f54af::t_5f7533780584d9 1-242
+apps/docs/components/demos/quick-action-demo.tsx
+  s_e6eb75c69f54af::t_469bdf71cd6563 1-411
+apps/docs/components/demos/resolve-thread-demo.tsx
+  s_e6eb75c69f54af::t_31d1ede9d6c13d 1-413
+apps/docs/components/demos/roles-demo.tsx
+  s_e6eb75c69f54af::t_2b12363385dbf6 1-435
+apps/docs/components/demos/run-lifecycle-demo.tsx
+  s_e6eb75c69f54af::t_a55a302b356ae9 1-537
+apps/docs/components/demos/run-path-demo.tsx
+  s_e6eb75c69f54af::t_904a25219d890d 1-474
+apps/docs/components/demos/runtime-offline-demo.tsx
+  s_e6eb75c69f54af::t_16cc66942cd8f3 1-380
+apps/docs/components/demos/skill-demo.tsx
+  s_e6eb75c69f54af::t_cff39d42a1426c 1-448
+apps/docs/components/demos/squad-demo.tsx
+  s_e6eb75c69f54af::t_c3b10bcc9e665a 1-594
+apps/docs/components/demos/steer-demo.tsx
+  s_e6eb75c69f54af::t_86e95abf78efdb 1-306
+apps/docs/components/demos/trigger-chooser-demo.tsx
+  s_e6eb75c69f54af::t_86977ed7096a0a 1-455
+apps/docs/components/demos/usage-demo.tsx
+  s_e6eb75c69f54af::t_983aba21ca712f 1-925
+apps/docs/components/demos/wakeup-demo.tsx
+  s_e6eb75c69f54af::t_4ca1425dd23b35 1-808
+apps/docs/components/demos/workflow-demo.tsx
+  s_e6eb75c69f54af::t_5ec25952ed03ed 1-585
+apps/docs/components/search-dialog.tsx
+  s_e6eb75c69f54af::t_f149361d72adbf 1-118
+apps/docs/content/docs/agents-create.fr.mdx
+  s_e6eb75c69f54af::t_908e295a1683f2 3,7-8,12,14,16-17,19-24,26-27,29-34,109,120,147-193,199
+apps/docs/content/docs/agents-create.ja.mdx
+  s_e6eb75c69f54af::t_64bf4818e3597f 3,7-8,12,14,16-17,19-24,26-27,29-34,103-105,107,120,147-193,199
+apps/docs/content/docs/agents-create.ko.mdx
+  s_e6eb75c69f54af::t_4afb7a44fdf081 3,7-8,12,14,16-17,19-24,26-27,29-34,103-105,107,120,147-193,199
+apps/docs/content/docs/agents-create.mdx
+  s_e6eb75c69f54af::t_376ead15fe5a1e 3,7-8,12,14,16-17,19-27,29,31-34,109,120,143-144,149-195,201
+apps/docs/content/docs/agents-create.zh.mdx
+  s_e6eb75c69f54af::t_9878bef88afbb8 3,7-8,12,14,16-17,19-27,29,31-34,120,143-144,149-195,201
+apps/docs/content/docs/agents.fr.mdx
+  s_e6eb75c69f54af::t_affdee56cb52c8 7,11,50,58-60,63,66-72,74,97
+apps/docs/content/docs/agents.ja.mdx
+  s_e6eb75c69f54af::t_b4a8d9de267824 7,11,50,54-56,58-60,63,66-72,97
+apps/docs/content/docs/agents.ko.mdx
+  s_e6eb75c69f54af::t_47a49f0af4b260 7,11,50,54-56,58-60,63,66-72,97
+apps/docs/content/docs/agents.mdx
+  s_e6eb75c69f54af::t_89b572900f4ffc 7,11,50,58-60,63,66-72,74,97
+apps/docs/content/docs/agents.zh.mdx
+  s_e6eb75c69f54af::t_3d972c4b7103a1 7,11,43,50,58-60,63,66-72,97,99
+apps/docs/content/docs/analytics.fr.mdx
+  s_e6eb75c69f54af::t_e111eb202cb742 1-132
+apps/docs/content/docs/analytics.ja.mdx
+  s_e6eb75c69f54af::t_0a2f7f4d8b346b 1-132
+apps/docs/content/docs/analytics.ko.mdx
+  s_e6eb75c69f54af::t_b84747bc2c68b9 1-132
+apps/docs/content/docs/analytics.mdx
+  s_e6eb75c69f54af::t_dd70d4c751d752 1-132
+apps/docs/content/docs/analytics.zh.mdx
+  s_e6eb75c69f54af::t_46270212cc36bd 1-132
+apps/docs/content/docs/assigning-issues.fr.mdx
+  s_e6eb75c69f54af::t_be6df410409eae 7-8,16-17,19,21-36,55,65,67
+apps/docs/content/docs/assigning-issues.ja.mdx
+  s_e6eb75c69f54af::t_907b23d47b08ee 7-8,16-17,19-34,55,65
+apps/docs/content/docs/assigning-issues.ko.mdx
+  s_e6eb75c69f54af::t_ec0a126373ab24 7-8,16-17,19-34,55,65,67
+apps/docs/content/docs/assigning-issues.mdx
+  s_e6eb75c69f54af::t_4969943d0aa684 7-8,16-17,19,21-36,55,65,67
+apps/docs/content/docs/assigning-issues.zh.mdx
+  s_e6eb75c69f54af::t_cd12db5afae236 7-8,16-17,19,21-36,55,65,67
+apps/docs/content/docs/auth-setup.fr.mdx
+  s_e6eb75c69f54af::t_fac7c2866f2650 7,19-20,22,24-40,74,95-98,100-118,120-121,123,125-126,177,187
+apps/docs/content/docs/auth-setup.ja.mdx
+  s_e6eb75c69f54af::t_13086629e49752 7,19-20,22,24-40,74,95-98,100-118,120-121,123,125-126,177
+apps/docs/content/docs/auth-setup.ko.mdx
+  s_e6eb75c69f54af::t_e442220ec8bb99 7,19-20,22,24-40,74,95-98,100-118,120-121,123,125-126,177
+apps/docs/content/docs/auth-setup.mdx
+  s_e6eb75c69f54af::t_85f7e572c7fac7 7,19-20,22,24-40,74,95-98,100-118,120-121,123,125-126,177,187
+apps/docs/content/docs/auth-setup.zh.mdx
+  s_e6eb75c69f54af::t_79a8e95d7a3507 7,19-20,22,24-40,74,95-98,100-118,120-121,123,125-126,175,177,187
+apps/docs/content/docs/auth-tokens.zh.mdx
+  s_e6eb75c69f54af::t_2fc65665b5a8e4 59,66-67,82
+apps/docs/content/docs/autopilots.fr.mdx
+  s_e6eb75c69f54af::t_79cb8da99afaaf 7,9,11-15,29-33,42,104,161,170
+apps/docs/content/docs/autopilots.ja.mdx
+  s_e6eb75c69f54af::t_cf6fe029f2abde 7,9,11-15,29-33,42,88,104,161,170
+apps/docs/content/docs/autopilots.ko.mdx
+  s_e6eb75c69f54af::t_bedff4ad0d264f 7,9,11-15,21,29-33,39,42,70,79,88,104,110,138,140,146,150,161,170
+apps/docs/content/docs/autopilots.mdx
+  s_e6eb75c69f54af::t_ebe8d5cad24f77 7,9,11-15,29-33,42,48,50,88,104,161,170
+apps/docs/content/docs/autopilots.zh.mdx
+  s_e6eb75c69f54af::t_6234d1d89b1faa 7,9,11-15,29-33,42,48,50,88,90,104,119,140,161,170
+apps/docs/content/docs/channels.fr.mdx
+  s_e6eb75c69f54af::t_737a9d6a4d4b6d 7,9,50,52-54,72,104,106,109
+apps/docs/content/docs/channels.ja.mdx
+  s_e6eb75c69f54af::t_d1c7249be686e7 7,9,50,52-54,72,104,106,109
+apps/docs/content/docs/channels.ko.mdx
+  s_e6eb75c69f54af::t_848e6ec9e67de8 7,9,50,52-54,72,104,106,109
+apps/docs/content/docs/channels.mdx
+  s_e6eb75c69f54af::t_af3dfaf36cff7a 7,9,50,52-54,72,104,106,109
+apps/docs/content/docs/channels.zh.mdx
+  s_e6eb75c69f54af::t_64f68297b23daf 7,9,50,52-54,72,104,106,109
+apps/docs/content/docs/chat.fr.mdx
+  s_e6eb75c69f54af::t_4346cafab50425 3,7-9,11,13,15,21-42,46-60,71,83-104,125
+apps/docs/content/docs/chat.ja.mdx
+  s_e6eb75c69f54af::t_1128d612d5d642 3,7-9,11,13,15,21-42,46-60,71,83-104,125
+apps/docs/content/docs/chat.ko.mdx
+  s_e6eb75c69f54af::t_28502284fe6e62 3,7-9,11,13,15,21-42,46-60,71,83-104,125
+apps/docs/content/docs/chat.mdx
+  s_e6eb75c69f54af::t_18ab1a1ba9c701 3,7-9,11,13,15,21-42,46-60,71,83-104,125
+apps/docs/content/docs/chat.zh.mdx
+  s_e6eb75c69f54af::t_ff286f2ed1b7d5 3,7-9,11,13,15,21-42,46-60,71,83-104,125
+apps/docs/content/docs/cli.fr.mdx
+  s_e6eb75c69f54af::t_1e0327e6570f65 7,13-14,26-29,35-37,46-49,55-56,64-66,128,133-181,184-185,210-226,242-251,256-275,280,350,352,360-362,370,372,374,377,381,384,387-388,410-412,430-432
+apps/docs/content/docs/cli.ja.mdx
+  s_e6eb75c69f54af::t_46143ed6835e97 7,13-14,26-29,35-37,46-49,55-56,64-66,128,133-181,184-185,210-226,242-251,256-275,280,342,344,352-354,362,364,366,369,373,376,379-380,402-404,422-424
+apps/docs/content/docs/cli.ko.mdx
+  s_e6eb75c69f54af::t_7136df3476ad9a 7,13-14,26-29,35-37,46-49,55-56,64-66,128,133-181,184-185,210-226,242-251,256-275,280,342,344,352-354,362,364,366,369,373,376,379-380,402-404,422-424
+apps/docs/content/docs/cli.mdx
+  s_e6eb75c69f54af::t_a5637fcbfd88b1 7,13-14,26-29,35-37,46-49,55-56,64-66,128,133-181,184-185,210-226,257-266,271-290,295,365,367,375-377,385,387,389,392,396,399,402-403,425-427,445-447
+apps/docs/content/docs/cli.zh.mdx
+  s_e6eb75c69f54af::t_72bbb40009244e 7,13-14,26-29,35-37,46-49,55-56,60-61,64-66,128,133-134,137-185,210-226,242-251,256-275,280,294,317-318,342,344,352-354,362,364,366,369,373,376,379-380,402-404,422,424
+apps/docs/content/docs/cloud-quickstart.fr.mdx
+  s_e6eb75c69f54af::t_6ef6f3a27e92fa 7-8,14-15,17,19,21-22,24-26,29-32,34-37,39-40,42-45,47-48,50,60-61,63,65,67,71-72,74,84-87,95-97,112
+apps/docs/content/docs/cloud-quickstart.ja.mdx
+  s_e6eb75c69f54af::t_bcf3d476792723 7-8,14-15,17,19,21-22,24-26,29-32,34-37,39-40,42-45,47-48,50,60-61,63,65,67,71-72,74,84-87,95-97,112
+apps/docs/content/docs/cloud-quickstart.ko.mdx
+  s_e6eb75c69f54af::t_2f3de9f9b572c4 7-8,14-15,17,19,21-22,24-26,29-32,34-37,39-40,42-45,47-48,50,60-61,63,65,67,71-72,74,84-87,95-97,112
+apps/docs/content/docs/cloud-quickstart.mdx
+  s_e6eb75c69f54af::t_c2cc0dccdca7b1 7-8,14-15,17,19,21-22,24-26,29-32,34-37,39-40,42-45,47-48,50,60-61,63,65,67,71-72,74,84-87,95-97,112
+apps/docs/content/docs/cloud-quickstart.zh.mdx
+  s_e6eb75c69f54af::t_acb05e5e3c91db 7-8,14-15,17,19,21-22,24-26,29-32,34-37,39-40,42-45,47-48,50,60-61,63,65,67,71-72,74,84-87,95-97,112
+apps/docs/content/docs/comments.fr.mdx
+  s_e6eb75c69f54af::t_0e6f0b2714a721 7-9,11,21-22,25-50,52-55,57-65,69-73,77-86,115,123-124
+apps/docs/content/docs/comments.ja.mdx
+  s_e6eb75c69f54af::t_10ff0aa8731b00 7-9,11,21-22,25-50,52-55,57-65,69-73,77-86,115,123-124
+apps/docs/content/docs/comments.ko.mdx
+  s_e6eb75c69f54af::t_9cfb9930a59da6 7-9,11,19-21,25-50,52-55,57-65,69-73,77-86,115,123-124
+apps/docs/content/docs/comments.mdx
+  s_e6eb75c69f54af::t_b8ff41a3d99dd3 7-9,11,15,19-21,25-50,52-55,57-65,69-73,77-86,115,123-124
+apps/docs/content/docs/comments.zh.mdx
+  s_e6eb75c69f54af::t_ff9562c12ce3e5 7-9,11,15,19-21,25-50,52-55,57-65,69-73,77-86,115,123-124,126
+apps/docs/content/docs/community-maintained.fr.mdx
+  s_e6eb75c69f54af::t_941af033ffe224 10,33,36,40
+apps/docs/content/docs/community-maintained.ja.mdx
+  s_e6eb75c69f54af::t_2909950409c9a3 10,36,40
+apps/docs/content/docs/community-maintained.ko.mdx
+  s_e6eb75c69f54af::t_0df1cfcefa3b83 10,36,40
+apps/docs/content/docs/community-maintained.mdx
+  s_e6eb75c69f54af::t_d66819cbaa39c5 10,18,33,36,40
+apps/docs/content/docs/community-maintained.zh.mdx
+  s_e6eb75c69f54af::t_f278ca3ce3eb8a 10,18,33,36,40
+apps/docs/content/docs/concepts.fr.mdx
+  s_e6eb75c69f54af::t_5cfbecda2e0b63 6-8,50,66,71
+apps/docs/content/docs/concepts.ja.mdx
+  s_e6eb75c69f54af::t_46c0feb2629d23 6-8,28,64-66,71
+apps/docs/content/docs/concepts.ko.mdx
+  s_e6eb75c69f54af::t_85898363218268 6-8,28,48,64,66,71
+apps/docs/content/docs/concepts.mdx
+  s_e6eb75c69f54af::t_580e412ce7647e 6-8,66,71
+apps/docs/content/docs/concepts.zh.mdx
+  s_e6eb75c69f54af::t_8de977dfd3a737 6-8,18,66,71
+apps/docs/content/docs/daemon-runtimes.fr.mdx
+  s_e6eb75c69f54af::t_c5e17b1e0e6155 7-8,17,26,31-37,45-47,60,64-81,83,85,87,91-92,96-99,106-127,129,131,133,135-181,209,236,239,241,243,262-296
+apps/docs/content/docs/daemon-runtimes.ja.mdx
+  s_e6eb75c69f54af::t_bea7c6be8354f9 7-8,17,26,31-37,45-47,64-74,76-81,83-85,87,91-92,96-99,108-135,137,139,141-181,209,231-247,262-294
+apps/docs/content/docs/daemon-runtimes.ko.mdx
+  s_e6eb75c69f54af::t_d58090cc1e1661 7-8,10,17,26,31-37,45-48,60,64-74,76-81,83-85,87,91-92,96-99,108-135,137,139,141-181,185,209,231-247,262-294
+apps/docs/content/docs/daemon-runtimes.mdx
+  s_e6eb75c69f54af::t_c462e075d8bf2b 7-8,17,26,31-37,45-47,60,64-74,76-81,83-85,87,91-92,96-99,106-118,120-127,129,131,133,135-181,209,239,241,243,262-296
+apps/docs/content/docs/daemon-runtimes.zh.mdx
+  s_e6eb75c69f54af::t_dd9a34fe8fed5b 7-8,10,17,21,26,31-37,45-48,60,64-82,85,87,92-93,97-100,107-119,121-128,130,132,134,136-182,190,210,216,240,242,244,261-296
+apps/docs/content/docs/desktop-app.fr.mdx
+  s_e6eb75c69f54af::t_072a5273aeb58a 7-9,28-29,37-38,40-41,51-53,77,83-93,100-101,103-110,115-116,119-123,148,150-151,156,161,163,166,170,176,178,186-193,195-196,198-203
+apps/docs/content/docs/desktop-app.ja.mdx
+  s_e6eb75c69f54af::t_6dd80375772611 7-9,28-29,37-38,40-41,51-53,83-93,100-101,103-110,115-116,119-123,148,156,161,166,170,176,178,186-193,195-196,198-203
+apps/docs/content/docs/desktop-app.ko.mdx
+  s_e6eb75c69f54af::t_def074a2d6f77f 7-9,28-29,37-38,40-41,51-53,83-93,100-101,103-110,115-116,119-123,148,156,161,166,170,176,178,186-193,195-196,198-203
+apps/docs/content/docs/desktop-app.mdx
+  s_e6eb75c69f54af::t_bc9856b361f2c1 7-9,28-29,37-38,40-41,51-53,71,77,83-93,100-101,103-110,115-116,119-123,125,128,148,150-151,156,161,163,166,170,176,178,186-193,195-196,198-203
+apps/docs/content/docs/desktop-app.zh.mdx
+  s_e6eb75c69f54af::t_b404e782b864a6 7-9,28-29,37-38,40-41,51-53,71,83-93,100-101,103-110,112-113,115-116,119-123,141-144,148,156,161,166,170,176,178,186-193,195-196,198-203
+apps/docs/content/docs/developers/conventions.mdx
+  s_e6eb75c69f54af::t_cb9a3c55c196cd 148,151-154
+apps/docs/content/docs/developers/conventions.zh.mdx
+  s_e6eb75c69f54af::t_11df60bf1ca56f 165,168-171
+apps/docs/content/docs/dingtalk-bot-integration.fr.mdx
+  s_e6eb75c69f54af::t_d219eac6cec786 7,17-20,22,27-30,34-37,41-44,50-53,55,57-58,88
+apps/docs/content/docs/dingtalk-bot-integration.ja.mdx
+  s_e6eb75c69f54af::t_8ea9bee52f4fda 7,9,17-20,22,27-30,34-37,41-44,47,50-53,55,57-58,86,88,124
+apps/docs/content/docs/dingtalk-bot-integration.ko.mdx
+  s_e6eb75c69f54af::t_08bb2bdf0a5158 7,9,17-20,22,27-30,34-37,41-44,50-53,55,57-58,86,88,124
+apps/docs/content/docs/dingtalk-bot-integration.mdx
+  s_e6eb75c69f54af::t_145e3aa764249b 7,17-20,22,27-30,34-37,39,41-44,50-53,55,57-58,64,68,74,82,88
+apps/docs/content/docs/dingtalk-bot-integration.zh.mdx
+  s_e6eb75c69f54af::t_46657ca373cf76 7,17-20,22,27-32,34-35,37,41-44,50-53,55,57-58,60,64,74,82,88,104
+apps/docs/content/docs/environment-variables.fr.mdx
+  s_e6eb75c69f54af::t_da215a49d7af86 6,11,71,245-246,254,256-332,339-349
+apps/docs/content/docs/environment-variables.ja.mdx
+  s_e6eb75c69f54af::t_13577e8d9209a5 6,11,71,248-249,257,259-335,342-352
+apps/docs/content/docs/environment-variables.ko.mdx
+  s_e6eb75c69f54af::t_92b84a6cbfe967 6,11,71,248-249,257,259-335,342-352
+apps/docs/content/docs/environment-variables.mdx
+  s_e6eb75c69f54af::t_6aecebad5fb0cb 6,11,71,248-249,257,259-341,348-358
+apps/docs/content/docs/environment-variables.zh.mdx
+  s_e6eb75c69f54af::t_69500bc2544673 6,11,71,213,248-249,257,259-335,342,344,346,348-356
+apps/docs/content/docs/github-integration.fr.mdx
+  s_e6eb75c69f54af::t_d34c5feaafb83a 7-8,14,20-33,38,43,45,49-51,53,69,79-80,88,91-93,97-104,106,108,110,112,120-121,132-135,167-170,182,189,191-194,204-206,211-212,214,218
+apps/docs/content/docs/github-integration.ja.mdx
+  s_e6eb75c69f54af::t_557c344b3a1268 7-8,20-33,50-51,89,104-106,130-133,165-168,180,187-190,192,202-204
+apps/docs/content/docs/github-integration.ko.mdx
+  s_e6eb75c69f54af::t_15a21c4b146cb5 7-8,20-33,50-51,89,104-106,130-133,165-168,180,187-190,192,202-204
+apps/docs/content/docs/github-integration.mdx
+  s_e6eb75c69f54af::t_476b54d0e468f1 7-8,20-33,51,88,91,93,99,103,106,108-110,132-135,167-170,182,189-192,194,204-206
+apps/docs/content/docs/github-integration.zh.mdx
+  s_e6eb75c69f54af::t_5ba7fb505dde38 7-8,20-33,50-51,91,93,99,106-108,132-135,167-170,182,189-192,194,204-206
+apps/docs/content/docs/how-multica-works.fr.mdx
+  s_e6eb75c69f54af::t_ff3f56bf598eef 7,13,39
+apps/docs/content/docs/how-multica-works.ja.mdx
+  s_e6eb75c69f54af::t_a005ca70749c10 7,13,39
+apps/docs/content/docs/how-multica-works.ko.mdx
+  s_e6eb75c69f54af::t_6b6e71c72417a2 7,13,39
+apps/docs/content/docs/how-multica-works.mdx
+  s_e6eb75c69f54af::t_f23113246c4a1a 7,13,39,43
+apps/docs/content/docs/how-multica-works.zh.mdx
+  s_e6eb75c69f54af::t_176bc9990fe0b9 7,9,11,13,17,39,41,43
+apps/docs/content/docs/inbox.fr.mdx
+  s_e6eb75c69f54af::t_10bc50e0a507a7 7,9,20,45,49,51-55
+apps/docs/content/docs/inbox.ja.mdx
+  s_e6eb75c69f54af::t_a9ad2795e67bc9 7,9,20,45,49-53
+apps/docs/content/docs/inbox.ko.mdx
+  s_e6eb75c69f54af::t_4d8418c512a5b5 7,9,19-20,45,49-53
+apps/docs/content/docs/inbox.mdx
+  s_e6eb75c69f54af::t_d96e6d3166e44e 7,9,20,45,49,51-55
+apps/docs/content/docs/inbox.zh.mdx
+  s_e6eb75c69f54af::t_6c74857fdb22a5 7,9,19-20,45,49,51-55
+apps/docs/content/docs/index.fr.mdx
+  s_e6eb75c69f54af::t_5a972c94625c28 8-10,22-24
+apps/docs/content/docs/index.ja.mdx
+  s_e6eb75c69f54af::t_bbee2933572350 8-10,22-24
+apps/docs/content/docs/index.ko.mdx
+  s_e6eb75c69f54af::t_edb44b36310dd7 8-10,22-24
+apps/docs/content/docs/index.mdx
+  s_e6eb75c69f54af::t_3a228a7053186a 8-10,22-24
+apps/docs/content/docs/index.zh.mdx
+  s_e6eb75c69f54af::t_93ec289bedbb93 8-10,22-24
+apps/docs/content/docs/install-agent-runtime.fr.mdx
+  s_e6eb75c69f54af::t_accfa04cc78e52 7-9,13-16,39,51,55-58,62,64,66-77,79,81-82,84,86-89,91-94,97-132,141-143,151-152,156-162,164,176-182,187,190-192
+apps/docs/content/docs/install-agent-runtime.ja.mdx
+  s_e6eb75c69f54af::t_f0c4deee9c50c7 7-9,11,13-16,39,51,55-58,62,64,66-77,79,81-82,84,86-89,91-94,97-132,141-143,151-157,159,161-162,164,176-182,190-192
+apps/docs/content/docs/install-agent-runtime.ko.mdx
+  s_e6eb75c69f54af::t_42a843f26285d1 7-9,13-16,39,51,55-58,62,64,66-77,79,81-84,86-87,89,91-94,97-132,141-143,151-152,156-162,164,176-182,190-192
+apps/docs/content/docs/install-agent-runtime.mdx
+  s_e6eb75c69f54af::t_7cd42f26a14260 7-9,13-16,50-51,55-58,62,64,66-78,80,82-83,85,87-88,90-95,98-118,120-140,147-150,157-158,162-165,167-170,182-188,196-198
+apps/docs/content/docs/install-agent-runtime.zh.mdx
+  s_e6eb75c69f54af::t_67fb6a8394d2ac 7-9,11,13-14,16-18,39,51,55-58,60,62,64,66-77,79,81-82,84,86-87,89-94,97-132,141-143,151-157,159,161-162,164,170,176-177,179-184,187,190-192,203
+apps/docs/content/docs/issue-wakeups.fr.mdx
+  s_e6eb75c69f54af::t_33977b66391909 1-171
+apps/docs/content/docs/issue-wakeups.ja.mdx
+  s_e6eb75c69f54af::t_b9c11e9a5464ce 1-171
+apps/docs/content/docs/issue-wakeups.ko.mdx
+  s_e6eb75c69f54af::t_d5ce5fec64dcf9 1-171
+apps/docs/content/docs/issue-wakeups.mdx
+  s_e6eb75c69f54af::t_547f30ed5f3964 1-171
+apps/docs/content/docs/issue-wakeups.zh.mdx
+  s_e6eb75c69f54af::t_08f15235b4010f 1-171
+apps/docs/content/docs/issues.fr.mdx
+  s_e6eb75c69f54af::t_a70f0e16de379d 7-10,12,24,30,34-45,60-63,72-75,87-93,96,109,117-124,127-135,143-182,184-186,188
+apps/docs/content/docs/issues.ja.mdx
+  s_e6eb75c69f54af::t_3101cc7af12ae1 7-10,12,24,30,34-45,62-64,72-75,87-93,96,109,117-124,127-135,143-182,184-186,188
+apps/docs/content/docs/issues.ko.mdx
+  s_e6eb75c69f54af::t_98d10bca21a009 7-10,12,24,30,34-45,62-64,72-75,87-93,96,109,117-124,127-135,143-182,184-186,188
+apps/docs/content/docs/issues.mdx
+  s_e6eb75c69f54af::t_efd6c42847769a 7-10,12,24,30,34-45,60-63,72-75,87-93,96,109,117-124,127-135,143-182,184-186,188
+apps/docs/content/docs/issues.zh.mdx
+  s_e6eb75c69f54af::t_5b7e2306384871 7-10,12,24,30,34-45,60-63,72-75,87-93,96,109,117-124,127-135,143-182,184-186,188
+apps/docs/content/docs/lark-bot-integration.fr.mdx
+  s_e6eb75c69f54af::t_b1e4b2fd9e114f 7,9,17-32,42-52,54,64,77-80,111
+apps/docs/content/docs/lark-bot-integration.ja.mdx
+  s_e6eb75c69f54af::t_c53f8e08f3be48 7,9,17-32,42-52,54,64,75-79
+apps/docs/content/docs/lark-bot-integration.ko.mdx
+  s_e6eb75c69f54af::t_823909bf8b1f36 7,9,17-32,42-52,54,64,75-79
+apps/docs/content/docs/lark-bot-integration.mdx
+  s_e6eb75c69f54af::t_62935cd768ffda 7,9,17-32,42-52,54,64,77-80,111
+apps/docs/content/docs/lark-bot-integration.zh.mdx
+  s_e6eb75c69f54af::t_89e0f103dc828a 7,9,17-32,42-52,54,64,77-80,111
+apps/docs/content/docs/members-roles.fr.mdx
+  s_e6eb75c69f54af::t_64c8581a0698e5 7,24-25,32,40-41,44,46
+apps/docs/content/docs/members-roles.ja.mdx
+  s_e6eb75c69f54af::t_2188df5da68e7c 7,24-25,32,40-41,44,46
+apps/docs/content/docs/members-roles.ko.mdx
+  s_e6eb75c69f54af::t_47cc992dbf9008 7,24-25,32,40-41,44,46
+apps/docs/content/docs/members-roles.mdx
+  s_e6eb75c69f54af::t_37d9a518b2f8af 7,24-25,32,40-41,44,46
+apps/docs/content/docs/members-roles.zh.mdx
+  s_e6eb75c69f54af::t_f86afca91e99df 7,24-25,32,40-41,44,46
+apps/docs/content/docs/mentioning-agents.fr.mdx
+  s_e6eb75c69f54af::t_da858905b100c5 7-8,32,34,50-71,74,80,97
+apps/docs/content/docs/mentioning-agents.ja.mdx
+  s_e6eb75c69f54af::t_cae60450364e20 7-8,34,50-71,74,97
+apps/docs/content/docs/mentioning-agents.ko.mdx
+  s_e6eb75c69f54af::t_b1201c0b6c39d9 7-8,34,50-71,74,97
+apps/docs/content/docs/mentioning-agents.mdx
+  s_e6eb75c69f54af::t_ced6ca67258226 7-8,32,34,50-71,74,80,97
+apps/docs/content/docs/mentioning-agents.zh.mdx
+  s_e6eb75c69f54af::t_2c443e65ad923b 7-8,34,50-71,74,80,97
+apps/docs/content/docs/meta.fr.json
+  s_e6eb75c69f54af::t_a89ecc3a1bd2ce 14,33,41
+apps/docs/content/docs/meta.ja.json
+  s_e6eb75c69f54af::t_e3af83cfd99841 14,33,41
+apps/docs/content/docs/meta.json
+  s_e6eb75c69f54af::t_a90629719222da 14,33,41
+apps/docs/content/docs/meta.ko.json
+  s_e6eb75c69f54af::t_fe484d4e5df7ca 14,33,41
+apps/docs/content/docs/meta.zh.json
+  s_e6eb75c69f54af::t_a927c800ec172d 14,33,41
+apps/docs/content/docs/mobile-app.fr.mdx
+  s_e6eb75c69f54af::t_b70f19490ec17f 7,11,27-28,36-38,45-49,80-86,93-98,101
+apps/docs/content/docs/mobile-app.ja.mdx
+  s_e6eb75c69f54af::t_4076c67930d9db 7,11,27-28,36-38,45-49,82-86,93-98
+apps/docs/content/docs/mobile-app.ko.mdx
+  s_e6eb75c69f54af::t_c79a2cf74352f2 7,11,27-28,36-38,45-49,82-86,93-98
+apps/docs/content/docs/mobile-app.mdx
+  s_e6eb75c69f54af::t_5c058b4fb5897f 7,11,27-28,36-38,45-49,82-86,93-98
+apps/docs/content/docs/mobile-app.zh.mdx
+  s_e6eb75c69f54af::t_3900389b9ace7b 7,11,27-28,36-38,45-49,82-86,93-98
+apps/docs/content/docs/project-resources.fr.mdx
+  s_e6eb75c69f54af::t_658122d500681c 7-10,44,46,49-50,52,54-72,79,88-91,97-102,104,106,110-131,133-176,179,182-183
+apps/docs/content/docs/project-resources.ja.mdx
+  s_e6eb75c69f54af::t_324b14efa0fcdf 7-10,44,46,50-51,53-73,80,90-93,99-102,104,106-108,112-133,135-178,181,184-185
+apps/docs/content/docs/project-resources.ko.mdx
+  s_e6eb75c69f54af::t_0d8433254db17b 7-10,44,46,49-50,52,54-72,79,88-91,97-102,104,106,110-131,133-176,179,182-183
+apps/docs/content/docs/project-resources.mdx
+  s_e6eb75c69f54af::t_25270a5f1c41a2 7-10,44,46,49-50,52,54-72,79,88-91,97-102,104,106,110-131,133-176,179,182-183
+apps/docs/content/docs/project-resources.zh.mdx
+  s_e6eb75c69f54af::t_7816c2a5ce71cc 7-10,44,46,49-50,52,54-72,79,89-92,98-103,105,107,111-132,134-177,180,183-184
+apps/docs/content/docs/projects.fr.mdx
+  s_e6eb75c69f54af::t_22fddccda1cc92 7,33,36-40,44,61
+apps/docs/content/docs/projects.ja.mdx
+  s_e6eb75c69f54af::t_687ffcbe91d08c 7,33,36-40,44,61
+apps/docs/content/docs/projects.ko.mdx
+  s_e6eb75c69f54af::t_2514cf3efd8738 7,33,36-40,44,61
+apps/docs/content/docs/projects.mdx
+  s_e6eb75c69f54af::t_fb833d2489a2f1 7,33,36-40,44,61
+apps/docs/content/docs/projects.zh.mdx
+  s_e6eb75c69f54af::t_512cde47c8f49e 7,33,36-40,44,61
+apps/docs/content/docs/providers.fr.mdx
+  s_e6eb75c69f54af::t_ab77fed9802a2d 7,9,20-55,59-64,69,74,79,87,95-96
+apps/docs/content/docs/providers.ja.mdx
+  s_e6eb75c69f54af::t_65d4d87d3149fe 7,9,20-55,59-64,69,74,79,87,95-96
+apps/docs/content/docs/providers.ko.mdx
+  s_e6eb75c69f54af::t_084933ee482a7e 7,9,20-55,59-64,69,74,79,87,95-96
+apps/docs/content/docs/providers.mdx
+  s_e6eb75c69f54af::t_1734a194e8138f 7,9,20-57,65-69,74,79,81,87,95-96,99
+apps/docs/content/docs/providers.zh.mdx
+  s_e6eb75c69f54af::t_771d73e416ba5d 7,9,20-55,59-65,69,74,79,81,87,95-96,99,101
+apps/docs/content/docs/quick-actions.fr.mdx
+  s_e6eb75c69f54af::t_f8f06c18cb7dac 6-9,26-27,34-60,68,70,72
+apps/docs/content/docs/quick-actions.ja.mdx
+  s_e6eb75c69f54af::t_d570988e8693ed 6-9,26-27,34-60,68,70,72
+apps/docs/content/docs/quick-actions.ko.mdx
+  s_e6eb75c69f54af::t_c9b1bc3b86a43b 6-9,26-27,34-60,68,70,72
+apps/docs/content/docs/quick-actions.mdx
+  s_e6eb75c69f54af::t_ef79dae79d11ca 6-9,26-27,34-60,68,70,72
+apps/docs/content/docs/quick-actions.zh.mdx
+  s_e6eb75c69f54af::t_1e08917c64277d 6-9,26-28,34-60,68,70,72
+apps/docs/content/docs/security-model.fr.mdx
+  s_e6eb75c69f54af::t_aca263f1e8e9c3 8,20
+apps/docs/content/docs/security-model.ja.mdx
+  s_e6eb75c69f54af::t_82f4d09563a475 8,20
+apps/docs/content/docs/security-model.ko.mdx
+  s_e6eb75c69f54af::t_4463a35444216b 8,20
+apps/docs/content/docs/security-model.mdx
+  s_e6eb75c69f54af::t_06c4838672bb7a 8,20
+apps/docs/content/docs/security-model.zh.mdx
+  s_e6eb75c69f54af::t_72d2ff7a5336fb 8,20,37
+apps/docs/content/docs/self-host-quickstart.fr.mdx
+  s_e6eb75c69f54af::t_6df12a5f93872f 7-9,41-44,54-57,65-66,71,79-82,104-105,107-110,114-115,132-134,136-137,162-163,168,173,196-199,201,209-217,223-229,246,252-255,265-266,272-273,279-285,291-292,300-303,317-320,326-328,347-349,351,353-354,356,358,365-367,369-370,372,381-382,384,387-392,394-395,397-416,422,424-425,427,434,436,438-439,441-442,444-461,469
+apps/docs/content/docs/self-host-quickstart.ja.mdx
+  s_e6eb75c69f54af::t_7360e8330685ab 7-9,41-44,54-57,65-66,71,79-82,104-107,109-110,114-115,134-137,162-163,173,180-181,195-198,200,208-216,222-228,251-254,259,264-265,271-272,278-284,290-291,299-302,316-319,325-327,346-348,350,352-353,355,357,364-366,368-369,371,380-381,383,386-410,412-413,415,421,423-424,426,433,435,437-438,440-441,443-460,468
+apps/docs/content/docs/self-host-quickstart.ko.mdx
+  s_e6eb75c69f54af::t_66dd5867fe71f5 7-9,41-44,54-57,65-66,71,79-82,104-105,107-110,114-115,134-137,162-163,173,195-198,200,208-216,222-228,251-254,259,264-265,271-272,278-284,290-291,299-302,316-319,325-327,346-348,350,352-353,355,357,364-366,368-369,371,380-381,386-387,389,391-415,421,423-424,426,433,435,437-438,440-441,443-460,468
+apps/docs/content/docs/self-host-quickstart.mdx
+  s_e6eb75c69f54af::t_02ccd4ec78c9f0 7-9,41-44,54-57,65-66,79-82,104-107,109-110,114-115,134-137,162-163,196-199,201,209-217,223-229,252-255,265-266,272-273,279-285,291-292,300-303,317-320,326-328,347-349,351,353-354,356,358,365-367,369-370,372,381-382,387-388,390,392-416,422,424-425,427,436-454,460-461
+apps/docs/content/docs/self-host-quickstart.zh.mdx
+  s_e6eb75c69f54af::t_e565b73f554f00 7-9,41-44,54-57,65-66,71,79-82,104-105,107,109-110,112,114-117,132-134,136-137,141-152,156-158,162-163,167-191,195-198,200,208-216,222-228,236,251-254,259,264-265,271-272,278-284,290-291,295-296,299-302,316-319,325-327,346-348,350,352-353,355-357,360-361,364-366,368-369,371,373,376-377,379-383,386-387,389,391,393-394,397-399,402-403,405-410,412-413,415,421,423-424,426,435,437-438,440-441,443-460,468
+apps/docs/content/docs/shortcuts.fr.mdx
+  s_e6eb75c69f54af::t_8b1531d3763c47 1-115
+apps/docs/content/docs/shortcuts.ja.mdx
+  s_e6eb75c69f54af::t_4d7537aacde6be 1-115
+apps/docs/content/docs/shortcuts.ko.mdx
+  s_e6eb75c69f54af::t_f4f21690f02ddb 1-115
+apps/docs/content/docs/shortcuts.mdx
+  s_e6eb75c69f54af::t_20ddda9715b150 1-115
+apps/docs/content/docs/shortcuts.zh.mdx
+  s_e6eb75c69f54af::t_7ae7cb8f633eae 1-115
+apps/docs/content/docs/skills.fr.mdx
+  s_e6eb75c69f54af::t_7ea63054becb79 7,52,55,82-84
+apps/docs/content/docs/skills.ja.mdx
+  s_e6eb75c69f54af::t_ab61f299f48235 7,52,82-84
+apps/docs/content/docs/skills.ko.mdx
+  s_e6eb75c69f54af::t_13a7facd54b75a 7,52,82-84
+apps/docs/content/docs/skills.mdx
+  s_e6eb75c69f54af::t_f803f1ee8a82c5 7,52,55,82-84
+apps/docs/content/docs/skills.zh.mdx
+  s_e6eb75c69f54af::t_00ac5b7e288eb2 7,44,52,55,82-84
+apps/docs/content/docs/slack-bot-integration.fr.mdx
+  s_e6eb75c69f54af::t_83418c5dba1cef 7,20-25,81,90-93,95,99,101,108-109,111,124-126,149,165
+apps/docs/content/docs/slack-bot-integration.ja.mdx
+  s_e6eb75c69f54af::t_ecc9c64cb2da9c 7,20-25,90-93,95,101,108-111,114,124-126,149,165
+apps/docs/content/docs/slack-bot-integration.ko.mdx
+  s_e6eb75c69f54af::t_6c68bf9940db78 7,20-25,90-93,95,101,108-111,124-126,149,165
+apps/docs/content/docs/slack-bot-integration.mdx
+  s_e6eb75c69f54af::t_78fe5ecda1d575 7,9,20-25,81,90-93,95,99,101,108-109,111,121,124-126,139,149,151,165
+apps/docs/content/docs/slack-bot-integration.zh.mdx
+  s_e6eb75c69f54af::t_e9b4a2dd5cbcc0 7,9,20-25,31,33-49,51-62,64-75,90-93,95,101,108-109,111,124-126,149,151,165,167
+apps/docs/content/docs/squads.fr.mdx
+  s_e6eb75c69f54af::t_bfd8c45d361dfb 7,11,36,41-45,61-67,82
+apps/docs/content/docs/squads.ja.mdx
+  s_e6eb75c69f54af::t_5fd502cd3a9290 7,11,32-39,43-70,72,82
+apps/docs/content/docs/squads.ko.mdx
+  s_e6eb75c69f54af::t_494a4c00daaeca 7,11,32-39,43-70,72,82
+apps/docs/content/docs/squads.mdx
+  s_e6eb75c69f54af::t_134f0f38ba23d0 7,11,36,41-45,61-67,82
+apps/docs/content/docs/squads.zh.mdx
+  s_e6eb75c69f54af::t_7ce0d6546a2b92 3,7,9,11,15,23,25-26,28,35-36,43-46,51,53-55,61-67,79-80,82,88,94,100
+apps/docs/content/docs/tasks.fr.mdx
+  s_e6eb75c69f54af::t_0976632f99152a 7-8,10,22,26,32,34,51,61,63,67,70,73-75,80,83-84,97,99-100,115-118,137-139,146,149-150,153,155,157,159,163,171
+apps/docs/content/docs/tasks.ja.mdx
+  s_e6eb75c69f54af::t_37d6b0ae527cf7 7-8,10,22,26,32,51,61,67,70,73-75,80,83-84,91,97,99-100,115-118,137-139,144,146,149-150,153,155,157,159,163,171
+apps/docs/content/docs/tasks.ko.mdx
+  s_e6eb75c69f54af::t_c243343fbd68ed 7-8,10,22,26,31-32,51,57,61,67,70,73-75,80,83-84,87,91,97,99-100,115-118,137-139,144,146,149-150,153,155,157,159,163,171,173
+apps/docs/content/docs/tasks.mdx
+  s_e6eb75c69f54af::t_7ce78ebbe63d62 7-8,10,22,26,32,34,51,61,63,67,70,73-75,80,83-84,89,97,99-100,115-118,137-139,144,146,149-150,153,155,157,159,163,171
+apps/docs/content/docs/tasks.zh.mdx
+  s_e6eb75c69f54af::t_422a10cb6492ac 7-8,10,22,26,32,34,51,54,61,63,65,67,69-70,73-75,80,83-84,89,97,99-100,115-118,137-139,144,146,149-150,153,155,157,159,163,171
+apps/docs/content/docs/telegram-bot-integration.fr.mdx
+  s_e6eb75c69f54af::t_462cf9c4ca8fa8 7-8,12,14,22-27,32,38-41,49-52,60,68-92,103-121,123-124
+apps/docs/content/docs/telegram-bot-integration.ja.mdx
+  s_e6eb75c69f54af::t_f2c68c662c1b1c 7-8,10,12,14,22-27,32,35,38-41,43-45,49-75,77-78,80,82,84-85,87,89,91-92,94,96-132,138-140,142,144-147,149,153-155
+apps/docs/content/docs/telegram-bot-integration.ko.mdx
+  s_e6eb75c69f54af::t_83479e855ea497 7-8,10,12,14,22-27,32,35,38-41,43-45,49-75,77-78,80,82,84-85,87,89,91-92,94,96-132,138-140,142,144-149,153-155
+apps/docs/content/docs/telegram-bot-integration.mdx
+  s_e6eb75c69f54af::t_9fc4b3c3a99b26 7-8,12-14,22-27,32,38-41,49-52,60,68-92,103-121,123-124
+apps/docs/content/docs/telegram-bot-integration.zh.mdx
+  s_e6eb75c69f54af::t_0f2359003638c7 7-8,12-14,22-27,32,38-41,49-52,60,68-92,103-121,123-124,126,142
+apps/docs/content/docs/triggering-agents.fr.mdx
+  s_e6eb75c69f54af::t_e26c7e66564f8c 6-7,10-11,20
+apps/docs/content/docs/triggering-agents.ja.mdx
+  s_e6eb75c69f54af::t_64f82f833dbf20 6-7,10-11,19-20
+apps/docs/content/docs/triggering-agents.ko.mdx
+  s_e6eb75c69f54af::t_ac2066eba0c7d1 6-7,10-11,19-20
+apps/docs/content/docs/triggering-agents.mdx
+  s_e6eb75c69f54af::t_8ee03cd0f5a612 6-7,10-11,20
+apps/docs/content/docs/triggering-agents.zh.mdx
+  s_e6eb75c69f54af::t_d6d3551a6dedd1 6-7,10-11,20
+apps/docs/content/docs/troubleshooting.fr.mdx
+  s_e6eb75c69f54af::t_ff072f3184a4af 7-8,12-14,22-23,30-32,35-38,63,69-115,119-120,139-140,146-149,151-152,164-165,179-185,196,198,206,208-209,228-229,240-241,256,262,264-265,267,276,278-279,283-292,294,297-299,302-304,317
+apps/docs/content/docs/troubleshooting.ja.mdx
+  s_e6eb75c69f54af::t_1595ed4413937a 7-8,10-13,22-23,30-32,35-38,40,56,63,69-115,119-120,122,129,139-140,148-152,154,164-165,179-185,189,196,198,200,206,208-209,211,228-229,240-241,243,256,264-265,269,278-288,290-291,294,297-299,302-304,317,319
+apps/docs/content/docs/troubleshooting.ko.mdx
+  s_e6eb75c69f54af::t_0b8adf28eda3f4 7-8,12-14,22-23,30-32,35-38,69-115,119-120,139-140,148-152,164-165,179-185,196,198,206,208-209,228-229,240-241,256,264-265,267,278-279,283-292,294,297-299,302-304,326
+apps/docs/content/docs/troubleshooting.mdx
+  s_e6eb75c69f54af::t_7aea112cd32d54 7-8,12-14,22-23,30-32,35-38,69-115,119-120,139-140,148-152,164-165,179-180,190-196,217,219-220,239-240,251-252,267,275-276,289-290,294-303,305,308-310,313-315
+apps/docs/content/docs/troubleshooting.zh.mdx
+  s_e6eb75c69f54af::t_84fefb03cf2689 7-8,12-14,22-23,30-35,37-38,63,69-115,119-120,129,139-140,144-146,148-149,151-152,164-165,169,179-185,196,198,206,208-209,215,228-229,240-241,256,262,264-265,267,276,278-279,283-292,294,297-299,302-304,317,326
+apps/docs/content/docs/tutorial.fr.mdx
+  s_e6eb75c69f54af::t_8c021df4cf7a12 6-7,26-31,35-38,45-47,52-54,59,67,73,76,93,129-132,169-171,178-180,185-187,196-201,205-207,212-214,219-221,226-228,233-235,238,250,256-258,263-265,270-272,275-277,286-288,293-296,304,308,329,360,364,368,374-376,381-383,387,393-395,400-402,415,417
+apps/docs/content/docs/tutorial.ja.mdx
+  s_e6eb75c69f54af::t_be52aa3511e3e4 6-7,26-31,35-38,45-47,52-54,59,67,73,76,93,129-132,169-171,178-180,185-187,196-201,205-207,212-214,219-221,226-228,233-235,238,250,256-258,263-265,270-272,275-277,286-288,293-296,304,308,329,360,364,368,374-376,381-383,387,393-395,400-402,415,417
+apps/docs/content/docs/tutorial.ko.mdx
+  s_e6eb75c69f54af::t_73b330a4ff0246 6-7,26-31,35-38,45-47,52-54,59,67,73,76,93,129-132,169-171,178-180,185-187,196-201,205-207,212-214,219-221,226-228,233-235,238,250,256-258,263-265,270-272,275-277,286-288,293-296,304,308,329,360,364,368,374-376,381-383,387,393-395,400-402,415,417
+apps/docs/content/docs/tutorial.mdx
+  s_e6eb75c69f54af::t_a577e2a8904cef 6-7,26-31,35-38,45-48,52-54,59,67,73,76,93,99,111,129-132,134,169-171,174,178-180,185-187,194-196,198-201,205-208,212-215,219-221,226-228,233-235,238,240,250,256-258,263-266,270-272,275-277,286-288,293-296,304,308,312,329,352,360,364,368,372-375,381-383,387,393-395,400-402,407,415,417
+apps/docs/content/docs/tutorial.zh.mdx
+  s_e6eb75c69f54af::t_1566edfdb1b291 6-7,26-31,35-38,45-48,52-54,59,67,73,76,99,111,129-132,134,169-170,172-174,178-180,185-187,190,194-196,198-201,205-208,212-215,219-221,226-228,233-235,238,240,250,256-258,263-266,270-272,275-277,286-288,293-296,300,302,304,308,312,329,352,354,360,364,368,372-375,377,381-383,387,389,393-395,400-402,407,413,415,417
+apps/docs/content/docs/vcs-integration.fr.mdx
+  s_e6eb75c69f54af::t_bd9b9f9f383552 7-8,11,14,16,19,48-64,78,80-83,90-93,99-101,112
+apps/docs/content/docs/vcs-integration.ja.mdx
+  s_e6eb75c69f54af::t_bf2bcf84969bca 7-8,11,14,16,19,48-64,78,80-83,90-93,99-101
+apps/docs/content/docs/vcs-integration.ko.mdx
+  s_e6eb75c69f54af::t_8aa6ba4c0faecf 7-8,11,14,16,19,48-64,78,80-83,90-93,99-101
+apps/docs/content/docs/vcs-integration.mdx
+  s_e6eb75c69f54af::t_724b6d37c37b22 7-8,11,14,16,19,30,48-64,78,80-83,90-93,99-101,106-108,112
+apps/docs/content/docs/vcs-integration.zh.mdx
+  s_e6eb75c69f54af::t_07f5216309d70b 7-8,11,14,16,19,30,48-64,78,80-83,90-93,99-101,112
+apps/docs/content/docs/workflows.fr.mdx
+  s_e6eb75c69f54af::t_c8264b090e6fa4 6-9,21,27-53,71-72,75,77
+apps/docs/content/docs/workflows.ja.mdx
+  s_e6eb75c69f54af::t_3eac257aa56dd6 6-9,21,27-53,71-73,75,77
+apps/docs/content/docs/workflows.ko.mdx
+  s_e6eb75c69f54af::t_3e64b994ae6932 6-9,21,27-53,71-73,75,77
+apps/docs/content/docs/workflows.mdx
+  s_e6eb75c69f54af::t_bfe83dfe864547 6-9,21,27-53,71-72,75,77
+apps/docs/content/docs/workflows.zh.mdx
+  s_e6eb75c69f54af::t_ec936cf87da46f 6-9,21,27-53,71-72,75,77
+apps/docs/content/docs/workspaces.fr.mdx
+  s_e6eb75c69f54af::t_93e9a5a96a9b1d 8,17,43,51
+apps/docs/content/docs/workspaces.ja.mdx
+  s_e6eb75c69f54af::t_bddef002d5c49f 8,17,43,51
+apps/docs/content/docs/workspaces.ko.mdx
+  s_e6eb75c69f54af::t_7a94c4b6ffdf29 8,17,43,51
+apps/docs/content/docs/workspaces.mdx
+  s_e6eb75c69f54af::t_27d7e8028f89d1 17
+apps/docs/content/docs/workspaces.zh.mdx
+  s_e6eb75c69f54af::t_13118e311fe9a9 8,17,23,43,51
+apps/docs/lib/locale-link.ts
+  s_e6eb75c69f54af::t_1594cd82482b67 7
+apps/docs/lib/source.ts
+  s_e6eb75c69f54af::t_3914dfba5e4b04 1
+apps/docs/lib/translations.ts
+  s_e6eb75c69f54af::t_0ffa0f34dcac98 8-19,22-33,36-47,50-61,108-117
+apps/docs/next-env.d.ts
+  s_e6eb75c69f54af::t_850dfbe4b19f31 3-4
+apps/docs/package.json
+  s_e6eb75c69f54af::t_cfbd679c921e93 17-19,25-26
+apps/docs/proxy.ts
+  s_e6eb75c69f54af::t_23ac76db6bc1b9 6,13
+apps/docs/tsconfig.json
+  s_e6eb75c69f54af::t_9761f9243598c3 22
+apps/mobile/locales/zh-Hant/chat.json
+  s_e6eb75c69f54af::t_16a0120354446c 67,123,167
+apps/mobile/locales/zh-Hant/settings.json
+  s_e6eb75c69f54af::t_42eadb125d46af 53-54
+apps/ui-lab/src/locales/zh-Hant.json
+  s_e6eb75c69f54af::t_c39f0f04a7c9a6 513
+apps/web/app/layout.tsx
+  s_e6eb75c69f54af::t_035f3702e1de7d 18-19,135-136,176
+apps/web/components/google-analytics.test.tsx
+  s_e6eb75c69f54af::t_04d61c5d751bee 1-87
+apps/web/components/google-analytics.tsx
+  s_e6eb75c69f54af::t_468f96509f24f5 1-12
+apps/web/config/google-analytics.test.ts
+  s_e6eb75c69f54af::t_fa8135b6bc4f85 1-39
+apps/web/config/google-analytics.ts
+  s_e6eb75c69f54af::t_58111d0b374559 1-161
+apps/web/features/landing/i18n/en.ts
+  s_e6eb75c69f54af::t_38a63ca5201d7a 107,122,142,199,525-573
+apps/web/features/landing/i18n/ja.ts
+  s_e6eb75c69f54af::t_e6aa1295f97fe1 124,145,200,282-330
+apps/web/features/landing/i18n/ko.ts
+  s_e6eb75c69f54af::t_32d3feba1c0175 124,200,281-329
+apps/web/features/landing/i18n/zh.ts
+  s_e6eb75c69f54af::t_8292082763204b 107,122,142,199,510-558
+apps/web/lib/google-analytics.ts
+  s_e6eb75c69f54af::t_e4e601c971098b 1-169
+apps/web/package.json
+  s_e6eb75c69f54af::t_aac823adf60fe8 3
+deploy/helm/multica/templates/frontend.yaml
+  s_e6eb75c69f54af::t_c07e0fcbd05206 49-52
+deploy/helm/multica/values.yaml
+  s_e6eb75c69f54af::t_181f2782ec99ab 200-201
+docker-compose.selfhost.yml
+  s_e6eb75c69f54af::t_c7382e40a69c17 234
+docs/engineering/issue-wakeups.md
+  s_e6eb75c69f54af::t_c6313b86061054 583
+docs/lark-outbound-media.md
+  s_e6eb75c69f54af::t_6315f8b7b1354a 1-78
+e2e/fixtures.ts
+  s_e6eb75c69f54af::t_dd1dfb8bc98d43 56,203-216,470-482
+e2e/html-preview-fullscreen.spec.ts
+  s_e6eb75c69f54af::t_ce5c199d397306 10-16,174-254
+e2e/issue-add-property-overflow.spec.ts
+  s_e6eb75c69f54af::t_bf9319f0a250fb 1-68
+package.json
+  s_e6eb75c69f54af::t_d79673f10bff98 31
+packages/core/agents/mcp-support.test.ts
+  s_e6eb75c69f54af::t_920363997ed19d 8
+packages/core/agents/mcp-support.ts
+  s_e6eb75c69f54af::t_88283418a2244f 28
+packages/core/agents/openclaw-runtime-config.test.ts
+  s_e6eb75c69f54af::t_ff0923b7d50d45 4-5,65-130
+packages/core/agents/openclaw-runtime-config.ts
+  s_e6eb75c69f54af::t_7f571ea76d39b6 20-23,45-47,69,95
+packages/core/agents/stores/view-store.test.ts
+  s_e6eb75c69f54af::t_7c7fc3ef8bb2a7 29,188-265
+packages/core/agents/stores/view-store.ts
+  s_e6eb75c69f54af::t_5c9ee5d25abe8e 15-17,81-87,95-97,118,125,174,185-198,204-205,215
+packages/core/api/client.ts
+  s_e6eb75c69f54af::t_15912df52cca83 4188-4189
+packages/core/api/issue-wakeup.test.ts
+  s_e6eb75c69f54af::t_e43b54d0ee34ea 234,237,241
+packages/core/api/schema.test.ts
+  s_e6eb75c69f54af::t_2da6a107432a64 904-933
+packages/core/api/schemas.ts
+  s_e6eb75c69f54af::t_3792dbab6e609a 887,1166,1185,3731
+packages/core/config/index.ts
+  s_e6eb75c69f54af::t_8b7135d016f1ee 3,39-40,84,87,105-106,123-133
+packages/core/issues/queries.test.ts
+  s_e6eb75c69f54af::t_01da12cae2342a 465-484
+packages/core/issues/queries.ts
+  s_e6eb75c69f54af::t_bb9a9e0d78dd29 383-386,388,413,415-420
+packages/core/platform/auth-initializer.test.tsx
+  s_e6eb75c69f54af::t_334bec3daecbee 8,10,79-84,124-129,134,139-272
+packages/core/platform/auth-initializer.tsx
+  s_e6eb75c69f54af::t_0c31d4147b2f91 14,60,81-87,91,132-135
+packages/core/runtimes/commands.test.ts
+  s_e6eb75c69f54af::t_26b1550bcc9018 1-114
+packages/core/runtimes/commands.ts
+  s_e6eb75c69f54af::t_32e658262f50ed 1-49
+packages/core/runtimes/index.ts
+  s_e6eb75c69f54af::t_22fc76aa971751 14-15
+packages/core/runtimes/use-daemon-setup-commands.ts
+  s_e6eb75c69f54af::t_d88f1be8a93920 1-10
+packages/core/types/agent.ts
+  s_e6eb75c69f54af::t_e70bb3d2878dc7 134
+packages/core/types/issue-wakeup.ts
+  s_e6eb75c69f54af::t_5d637cd749b97e 57
+packages/ui/components/ui/sidebar.tsx
+  s_e6eb75c69f54af::t_6669d08d5acfdf 36-39,69,168,185,337-344,350-351,356,379,596
+packages/ui/hooks/use-mobile.ts
+  s_e6eb75c69f54af::t_b83b321f5df9c7 4-8
+packages/views/agents/components/agent-detail-inspector.qoder.test.tsx
+  s_e6eb75c69f54af::t_82cf772dd4df16 94
+packages/views/agents/components/agent-detail-inspector.tsx
+  s_e6eb75c69f54af::t_838b950a444990 147
+packages/views/agents/components/agent-overview-pane.test.tsx
+  s_e6eb75c69f54af::t_a89622409af0c9 304,307
+packages/views/agents/components/agent-overview-pane.tsx
+  s_e6eb75c69f54af::t_d9bcfb8149cd95 195
+packages/views/agents/components/agents-page.test.tsx
+  s_e6eb75c69f54af::t_ef596433a6f5f1 37,45-46,113,253-254,354-376
+packages/views/agents/components/agents-page.tsx
+  s_e6eb75c69f54af::t_7d530271c93aa1 108-109,792-795,1147-1150
+packages/views/agents/components/tabs/runtime-config-tab.tsx
+  s_e6eb75c69f54af::t_603cb13bf81111 28-30,48,62-64,189-208,325
+packages/views/agents/create/choose-runtime-page.tsx
+  s_e6eb75c69f54af::t_6102826283d3b5 91
+packages/views/agents/create/runtime-choice-list.test.tsx
+  s_e6eb75c69f54af::t_0916866a270a56 172-182
+packages/views/agents/create/runtime-choice-list.tsx
+  s_e6eb75c69f54af::t_a5843b3e25eff8 44
+packages/views/chat/chat-page.test.tsx
+  s_e6eb75c69f54af::t_7db6d22fab7908 77-80,85,458-461,470,473,486-487,490
+packages/views/common/daemon-setup-notice.tsx
+  s_e6eb75c69f54af::t_7a25731efd560c 1-18
+packages/views/common/date-only-picker.test.tsx
+  s_e6eb75c69f54af::t_f4c0f25e8b6a9b 1-14
+packages/views/common/date-only-picker.tsx
+  s_e6eb75c69f54af::t_09c03ea4207a39 71-72,76
+packages/views/common/task-transcript/agent-transcript-dialog.tsx
+  s_e6eb75c69f54af::t_3db5082b835426 1746-1749
+packages/views/editor/content-editor-quick-actions.test.tsx
+  s_e6eb75c69f54af::t_97d5eab28f76cc 1-200
+packages/views/editor/content-editor.tsx
+  s_e6eb75c69f54af::t_1c4f073b8938e3 415,621-624,698-703
+packages/views/editor/dynamic-block.test.tsx
+  s_e6eb75c69f54af::t_d65d1aef75dd56 88-142
+packages/views/editor/dynamic-block.tsx
+  s_e6eb75c69f54af::t_8e2d537700b595 100-103,105-114,128,134-162,282-288,292,298,305-359,361
+packages/views/editor/extensions/slash-command-suggestion.tsx
+  s_e6eb75c69f54af::t_916f532d93847f 322,325,420,422-424
+packages/views/editor/extensions/suggestion-popup.tsx
+  s_e6eb75c69f54af::t_15164e6b79116d 18-19,35,43-44,47-49,175,191-195,199
+packages/views/editor/html-block-preview.test.tsx
+  s_e6eb75c69f54af::t_d651ecef91b374 150-205,262-286,387-418
+packages/views/editor/html-block-preview.tsx
+  s_e6eb75c69f54af::t_7294c821a74709 12-22,120-123,151-155,163,167,182,186,194-195,199,271-281,285-293
+packages/views/editor/utils/preview.test.ts
+  s_e6eb75c69f54af::t_a0abc3bc37227e 2,12-17,159,161-195,200-204,206-280
+packages/views/editor/utils/preview.ts
+  s_e6eb75c69f54af::t_0d613b50006794 7-9,15-20,161-164,166-167,190-192,206
+packages/views/editor/utils/text-preview-whitelist.generated.ts
+  s_e6eb75c69f54af::t_5bf0834647ca82 1-80
+packages/views/inbox/components/inbox-page.test.tsx
+  s_e6eb75c69f54af::t_db2c5fea4779f1 150-153,158,883-885,887,898-899,901-902,904
+packages/views/issues/components/deliverables/deliverables-section.tsx
+  s_e6eb75c69f54af::t_5110eb1c12eb82 3-4,6,8,54-56,58,60,86,112
+packages/views/issues/components/execution-log-section.test.tsx
+  s_e6eb75c69f54af::t_90aa81520c4751 312,352-353,359,362-369,372,374-375,411,418,423-426,434,447,449-451,453-480,482-485,487-515,518,520-521,524
+packages/views/issues/components/execution-log-section.tsx
+  s_e6eb75c69f54af::t_03c8eafd2ad461 5,12,24,40,47-48,130,145-155,157-158,160-165,167-170,172-178,280,633-634,639-643,655,682,718
+packages/views/issues/components/issue-detail.test.tsx
+  s_e6eb75c69f54af::t_8061ddb80946a5 23-29,96,126-127,136,754-772,1143,1168-1188,1328,1343,1348,1351,1354-1357,2674,2808,3034-3044,3073-3095
+packages/views/issues/components/issue-detail.tsx
+  s_e6eb75c69f54af::t_7d31b6b21caa2f 12,178-179,1355,2179-2198,2750-2842,2844,2847-2848,2941,2953-2954,2958,2964,2973-2976,2979,2991,3015,3023-3025,3029,3032,3035,3038-3039,3316,3558-3559,3579,3596,3598,3806-3811,3934,3939-3951,3996
+packages/views/issues/components/issue-duplicates.tsx
+  s_e6eb75c69f54af::t_9f57d00c2d6c7e 3-4,7,104,106,111
+packages/views/issues/components/issue-runs-dialog.test.tsx
+  s_e6eb75c69f54af::t_f627658f27c8b4 260-261
+packages/views/issues/components/issue-sidebar-section.test.tsx
+  s_e6eb75c69f54af::t_f841bc678a39ea 1-46
+packages/views/issues/components/issue-sidebar-section.tsx
+  s_e6eb75c69f54af::t_e1bfec7353d312 1-59
+packages/views/issues/components/metadata-section.test.tsx
+  s_e6eb75c69f54af::t_8ff5db7c3b53e2 1-64
+packages/views/issues/components/metadata-section.tsx
+  s_e6eb75c69f54af::t_28b952be829a84 1-77
+packages/views/issues/components/pickers/label-picker.test.tsx
+  s_e6eb75c69f54af::t_b1f948bc578085 1-52
+packages/views/issues/components/pickers/label-picker.tsx
+  s_e6eb75c69f54af::t_cf20aa14a64a9d 235
+packages/views/issues/components/pickers/property-picker.tsx
+  s_e6eb75c69f54af::t_3d8adc7e419ac3 45,61-62,186
+packages/views/issues/components/pull-request-list.tsx
+  s_e6eb75c69f54af::t_d4d1b54124ae87 83,93-97,99,128,219,225,283,285,296,343,435,444
+packages/views/issues/components/pull-requests-section.test.tsx
+  s_e6eb75c69f54af::t_8967bbad5e89b0 12,22-25,53,55-57,76,84-104,181
+packages/views/issues/components/pull-requests-section.tsx
+  s_e6eb75c69f54af::t_d7b0d554b5ff06 3-4,8,50,56-57,60-68,194-195,205
+packages/views/issues/components/quick-actions-section.test.tsx
+  s_e6eb75c69f54af::t_1c7425c5d3f06f 2,21-24,27,30-31,33-34,95-98,104-114,116-137,142-144,232,240,244-245,249-254,256-259
+packages/views/issues/components/quick-actions-section.tsx
+  s_e6eb75c69f54af::t_d8c046b4bb5a4b 5,24,56,62-66,73,75-78,87,91,95,194-195
+packages/views/issues/components/system-wakeup-row.tsx
+  s_e6eb75c69f54af::t_2ad56cca8952ec 75,79,81,84,126,128
+packages/views/issues/components/thread-minimap.test.tsx
+  s_e6eb75c69f54af::t_5adedea336aa48 77-82,103,105,110-211,214,217,219,232,234,236,243,265,274,292,298,300,321,348,379,398,418,438,455,467,480,483,491-494,496,514,519,535,539,545,565,573,597,622,630,634,648-678
+packages/views/issues/components/thread-minimap.tsx
+  s_e6eb75c69f54af::t_d962d097b40918 10-18,122-125,135-146,148,156-162,167-169,173-176,179-182,185-188,194-196,198-202,217-218,232-233,256,261-265,267,272,279-280,292,336-337,356-357,359-360,362-367,372,375-379,383,388,422,441-456,469-471,479-482,493,504-505,518-519,555-557,564,568,574,576-578,582-585,588-591,593,595,617-625,636-637,639-642,644-645,662,677,679,681,687,696,702-705,709-745,785,825-826
+packages/views/issues/components/wakeup-activity.test.tsx
+  s_e6eb75c69f54af::t_5051a8b9dbf883 76-84
+packages/views/issues/components/wakeup-activity.tsx
+  s_e6eb75c69f54af::t_6d4fc8b356e524 103-107
+packages/views/issues/components/wakeup-control.tsx
+  s_e6eb75c69f54af::t_09a18aa7a2b69b 25,31,54,57
+packages/views/issues/components/wakeup-create.tsx
+  s_e6eb75c69f54af::t_f54a5a6f703c26 477
+packages/views/issues/components/wakeup-draft.test.ts
+  s_e6eb75c69f54af::t_bc2bb3974b2a13 94-96
+packages/views/issues/components/wakeup-draft.ts
+  s_e6eb75c69f54af::t_a49b1d3c4affa3 83
+packages/views/issues/components/wakeup-presentation.ts
+  s_e6eb75c69f54af::t_9936c72a18f69a 245
+packages/views/issues/components/wakeups-section.test.tsx
+  s_e6eb75c69f54af::t_2e690eae3ebd0b 12-14,23-24,26,43-44,47,71-73,103-126,208,228,241,256,283,324,337,405,472
+packages/views/issues/components/wakeups-section.tsx
+  s_e6eb75c69f54af::t_5d26894640f95b 3-4,187,191,196,200,352,381,385-387,392,426-434,438-439,460
+packages/views/issues/hooks/use-quick-action-menu.ts
+  s_e6eb75c69f54af::t_eab47375717113 3,31,36,38,44
+packages/views/issues/utils/workflow-columns.test.ts
+  s_e6eb75c69f54af::t_536429a1cf2568 69-72
+packages/views/issues/utils/workflow-columns.ts
+  s_e6eb75c69f54af::t_f4e74883516b3d 24-25
+packages/views/layout/animated-right-sidebar.tsx
+  s_e6eb75c69f54af::t_e7fc232e688b9f 143
+packages/views/layout/sidebar-auto-collapse.test.tsx
+  s_e6eb75c69f54af::t_acc44314fd23c2 7-8,40,42,52,133-149,151,159,161
+packages/views/locales/en/agents.json
+  s_e6eb75c69f54af::t_a603c79b536899 173,282,719-721
+packages/views/locales/en/common.json
+  s_e6eb75c69f54af::t_e7568c968f2212 2-7
+packages/views/locales/en/issues.json
+  s_e6eb75c69f54af::t_7d45309f340ee0 384-392,476-478,547,778-779,1126,1318,1374,1398
+packages/views/locales/en/runtimes.json
+  s_e6eb75c69f54af::t_5c924323c3de7b 542,573-577,579-580,586
+packages/views/locales/fr/agents.json
+  s_e6eb75c69f54af::t_d06cced7729d9c 173,282,719-721
+packages/views/locales/fr/common.json
+  s_e6eb75c69f54af::t_c09df0efe4695d 2-7
+packages/views/locales/fr/issues.json
+  s_e6eb75c69f54af::t_b919a9375ccd60 384-391,475-477,546,777-778,1125,1317,1373,1397
+packages/views/locales/fr/runtimes.json
+  s_e6eb75c69f54af::t_9b7f4d7f4ca0ba 542,573-577,579-580,586
+packages/views/locales/ja/agents.json
+  s_e6eb75c69f54af::t_3e66f38f25dd9c 156,264,545-547
+packages/views/locales/ja/common.json
+  s_e6eb75c69f54af::t_27f88fc99cb948 2-7
+packages/views/locales/ja/issues.json
+  s_e6eb75c69f54af::t_4e656dab305d80 380-388,438,471-473,537,748,1084,1275,1329,1353
+packages/views/locales/ja/runtimes.json
+  s_e6eb75c69f54af::t_4c082c15188005 525,556-560,562-563,569
+packages/views/locales/ko/agents.json
+  s_e6eb75c69f54af::t_d3cffc09c26f03 164,272,553-555
+packages/views/locales/ko/common.json
+  s_e6eb75c69f54af::t_1e7f321367e31e 2-7
+packages/views/locales/ko/issues.json
+  s_e6eb75c69f54af::t_5edf1e956963ac 380-388,471-473,537,748,1084,1275,1329,1353
+packages/views/locales/ko/runtimes.json
+  s_e6eb75c69f54af::t_402276dbda6ee3 525,556-560,562-563,569
+packages/views/locales/zh-Hans/agents.json
+  s_e6eb75c69f54af::t_90066dcfafee70 164,272,702-704
+packages/views/locales/zh-Hans/common.json
+  s_e6eb75c69f54af::t_3b17b37b78b42c 2-7
+packages/views/locales/zh-Hans/issues.json
+  s_e6eb75c69f54af::t_99269d3c4bc3fd 380-388,469-471,537,748,1084,1275,1329,1353
+packages/views/locales/zh-Hans/runtimes.json
+  s_e6eb75c69f54af::t_3232c03ecb1b60 525,556-560,562-563,569
+packages/views/locales/zh-Hant/agents.json
+  s_e6eb75c69f54af::t_2974a9cdf3dbc0 77,136,155,164-165,197,259,261,272,299,437,611,702-704,738,838,859,865,1025
+packages/views/locales/zh-Hant/autopilots.json
+  s_e6eb75c69f54af::t_d7153951aa5a14 80,124,126-129
+packages/views/locales/zh-Hant/billing.json
+  s_e6eb75c69f54af::t_0adc54d90ad310 107,253
+packages/views/locales/zh-Hant/chat.json
+  s_e6eb75c69f54af::t_a1102d670a93b0 5,17,24,41,66,194
+packages/views/locales/zh-Hant/common.json
+  s_e6eb75c69f54af::t_d8a0c95ef1c40b 2-7
+packages/views/locales/zh-Hant/issues.json
+  s_e6eb75c69f54af::t_1285057a459be7 380-387,468-470,536,581,589,595,710,747,1083,1126,1274,1328,1352
+packages/views/locales/zh-Hant/runtimes.json
+  s_e6eb75c69f54af::t_e9599396dedaa3 256,525,556-560,562-563,569
+packages/views/locales/zh-Hant/settings.json
+  s_e6eb75c69f54af::t_e1fa329cbc277c 448,459-460,499,694,701,843,911,918-919,949,971,1051,1194,1349,1359
+packages/views/locales/zh-Hant/skills.json
+  s_e6eb75c69f54af::t_3feb5fb8181140 46,123,149,203
+packages/views/locales/zh-Hant/workspace.json
+  s_e6eb75c69f54af::t_4001cf38660598 30
+packages/views/modals/create-project.test.tsx
+  s_e6eb75c69f54af::t_7a56ca5c5b1c4a 149-150
+packages/views/onboarding/steps/cli-install-instructions.test.tsx
+  s_e6eb75c69f54af::t_b52177de9bb68f 1,3,5,15-38,40-78,82,95-115
+packages/views/onboarding/steps/cli-install-instructions.tsx
+  s_e6eb75c69f54af::t_cab52cc9d7e7a7 10,12,83-84,103-107
+packages/views/onboarding/steps/step-platform-fork.test.tsx
+  s_e6eb75c69f54af::t_9571e5521db79b 1-2,7,84,89-129
+packages/views/onboarding/steps/step-platform-fork.tsx
+  s_e6eb75c69f54af::t_24cc654ce1c9bc 15-18,402,406,414-416,460,467,474
+packages/views/plugins/plugin-panel-section.test.tsx
+  s_e6eb75c69f54af::t_2d81d2561c125a 3,32-37,97-117
+packages/views/plugins/plugin-panel-section.tsx
+  s_e6eb75c69f54af::t_a55055501f46d5 3,11,24,49-61
+packages/views/projects/components/local-directory-hint.test.tsx
+  s_e6eb75c69f54af::t_15ed3ce8410782 5,26,31,37-40,44,47,51,86-120,243,256-257
+packages/views/projects/components/local-directory-hint.tsx
+  s_e6eb75c69f54af::t_640c2494592dd2 6,8-9,16-17,33-34,38,41-42,47-54,62,70
+packages/views/projects/components/project-detail.test.tsx
+  s_e6eb75c69f54af::t_f7f3ce0b0805a9 25
+packages/views/projects/components/project-detail.tsx
+  s_e6eb75c69f54af::t_f820d62f518e5f 100
+packages/views/quick-actions/components/quick-action-dialog.test.tsx
+  s_e6eb75c69f54af::t_fb30a04d5f9b36 1-83
+packages/views/quick-actions/components/quick-action-dialog.tsx
+  s_e6eb75c69f54af::t_b5f8bad8e386c2 1-236
+packages/views/runtimes/components/connect-remote-dialog.test.tsx
+  s_e6eb75c69f54af::t_209e589479d760 7,62-63,71-72,74-75,107,123-159
+packages/views/runtimes/components/connect-remote-dialog.tsx
+  s_e6eb75c69f54af::t_3c61197a7d8d52 15,36,215,251-258,260-264,267-272
+packages/views/runtimes/components/provider-logo.tsx
+  s_e6eb75c69f54af::t_6547daaf53c037 415-416
+packages/views/runtimes/components/qoder-configuration.test.tsx
+  s_e6eb75c69f54af::t_9285cba4cfb23e 71-80
+packages/views/runtimes/components/runtime-profiles-dialog.test.tsx
+  s_e6eb75c69f54af::t_b8c3a079220a35 208-227
+packages/views/runtimes/components/runtimes-page.test.tsx
+  s_e6eb75c69f54af::t_1e350058345f5c 218,221
+packages/views/runtimes/components/runtimes-page.tsx
+  s_e6eb75c69f54af::t_38e0f6e000acba 241
+packages/views/runtimes/utils.test.ts
+  s_e6eb75c69f54af::t_ef631c5393b90d 810,818,822,844-943
+packages/views/runtimes/utils.ts
+  s_e6eb75c69f54af::t_2182f2c90a4e06 327-340,702-716,735-738,744,749
+packages/views/settings/components/quick-actions-tab.tsx
+  s_e6eb75c69f54af::t_e32e4d0be75b7f 3,33
+packages/views/settings/components/settings-navigation.test.ts
+  s_e6eb75c69f54af::t_89ac59ed4e1b94 10
+packages/views/settings/components/settings-navigation.ts
+  s_e6eb75c69f54af::t_82461e33c4afb9 40-41
+packages/views/settings/components/settings-page.test.tsx
+  s_e6eb75c69f54af::t_a06220e86be923 176-177,188,193-194,236
+packages/views/settings/components/settings-page.tsx
+  s_e6eb75c69f54af::t_5a01dd7d5204be 209-211
+packages/views/workflows/issue-flow-card.tsx
+  s_e6eb75c69f54af::t_0efcf411a3afcf 87
+packages/views/workflows/project-workflow-menu.tsx
+  s_e6eb75c69f54af::t_0d3e53ae0b7b97 43,56,90
+packages/views/workflows/project-workflow-row.tsx
+  s_e6eb75c69f54af::t_8e5d4a56ab1989 120,209-213
+packages/views/workflows/workflow-pill.tsx
+  s_e6eb75c69f54af::t_e6b18958964e89 18-19
+pnpm-lock.yaml
+  s_e6eb75c69f54af::t_8c35ed38b7458f 279,297,309,324,332-333,335-336,338-339,358-360,379,508,562,565,593,651,663,675,678,702,748,763,818,980,992,1175,1230,1245,2139-2144,2151-2156,2163-2168,2175-2180,2187-2192,2199-2204,2211-2216,2223-2228,2235-2240,2247-2252,2259-2264,2271-2276,2283-2288,2295-2300,2307-2312,2319-2324,2331-2336,2343-2348,2355-2360,2367-2372,2379-2384,2391-2396,2403-2408,2415-2420,2427-2432,2439-2444,2720-2740,3002-3004,3519-3520,3525-3542,3580-3592,3606-3618,3628-3636,3646-3654,3668-3680,3690-3698,3712-3724,3747-3755,3769-3781,3791-3799,3813-3814,3826-3827,3852-3853,3865-3866,3878-3879,3891-3892,3904-3905,3917-3918,3930-3931,3943-3944,3956-4022,4039-4047,4074-4086,4096-4104,4114-4122,4132-4140,4150-4158,4168-4176,4186-4194,4204-4212,4222-4232,4247-4249,4633-4636,4640-4643,4647-4650,4658-4661,4666-4669,4680-4683,4694-4697,5290-5292,5664-5732,6145-6148,6222-6226,6969-6973,7604-7614,7702-7769,7789-7791,7793-7795,7797-7803,7805-7813,7817-7843,8925-8933,8941-8943,9223-9225,9289-9291,9322-9324,9424-9426,9430-9432,9447-9457,9619-9622,9713-9715,9719-9721,10470-10473,10881-10884,11242-11245,11868-11872,11893-11908,11926-11928,13178-13180,13184-13186,13190-13192,13196-13198,13202-13204,13208-13210,13214-13216,13220-13222,13226-13228,13232-13234,13238-13240,13244-13246,13250-13252,13256-13258,13262-13264,13268-13270,13274-13276,13280-13282,13286-13288,13292-13294,13298-13300,13304-13306,13310-13312,13316-13318,13322-13324,13328-13330,13806-13818,14044-14045,14468,14472-14474,14476-14493,14525-14540,14553-14565,14572-14577,14584-14589,14612-14634,14641-14646,14660-14672,14694-14699,14711-14721,14729-14735,14762-14778,14785-14800,14827-14844,14855-14873,14902-14910,14946-14976,15006-15012,15044-15059,15066-15072,15081-15089,15097-15103,15111-15116,15123-15128,15135-15140,15148-15154,15162,15164-15171,15180-15181,15566-15574,15583-15588,15594-15598,15607-15610,15617-15622,15640-15643,15659-15663,15762,15767,16273-16276,16667,16675,16679-16686,16689,16693,16696,16709,16716-16725,16727,16734,16736,16743,16745,16752,16780-16817,17346-17349,17425-17426,18066,18074,18292-18320,19213-19221,19307-19343,19368,19370-19413,19415-19418,19422,19424,19426,19431,20510-20515,20522-20525,21152,21155,21198-21205,21365-21368,21430-21452,21531-21534,21537-21538,21547-21554,21649,21653-21654,21780-21781,21876-21877,21884-21889,22169,22175,22520,22531,22795-22796,22972,22975,23467-23477,23770,23772,23774,23793,23858-23859,24246,24255,24259,24261,24274,24276,24285,24289-24303,24306-24321,24324,24341,24350-24379,24382,24399,24408,24411,24428,24437,24440,24457,24642-24643,24662-24690,24703-24704
+scripts/agent-cli-command-names.txt
+  s_e6eb75c69f54af::t_e03e3364831536 9
+scripts/ci-scope.test.mjs
+  s_e6eb75c69f54af::t_eae7e28da6c5e6 37-38
+scripts/generate-attachment-text-preview.mjs
+  s_e6eb75c69f54af::t_49d267ce810d99 1-76
+server/cmd/migrate/main.go
+  s_e6eb75c69f54af::t_378949591522ff 143
+server/cmd/migrate/migrate_task_process_cleanup_index_test.go
+  s_e6eb75c69f54af::t_683311af7c6141 1-130
+server/cmd/multica/cmd_agent.go
+  s_e6eb75c69f54af::t_d9659c6a3a633b 169,193
+server/cmd/multica/cmd_issue.go
+  s_e6eb75c69f54af::t_331c965c42c449 452-468,607,730-733,2962-2995
+server/cmd/multica/cmd_issue_rerun_test.go
+  s_e6eb75c69f54af::t_8d9bbaa472985d 1-103
+server/cmd/multica/cmd_issue_wakeup.go
+  s_e6eb75c69f54af::t_0ffc562ea0f6d9 24,86
+server/cmd/qoder-runtime/README.md
+  s_e6eb75c69f54af::t_13ff886a1feb80 42,184,186,190,192,216,221,226,231,234-236,253,259,269
+server/cmd/server/autopilot_listeners.go
+  s_e6eb75c69f54af::t_215373ed5b0685 42,83-85
+server/cmd/server/autopilot_listeners_test.go
+  s_e6eb75c69f54af::t_8ef5c58a1e9c9b 11-12,14,154-158,227,336-729
+server/cmd/server/rerun_session_test.go
+  s_e6eb75c69f54af::t_86feb40e2982a3 752,828,902,968
+server/cmd/server/router.go
+  s_e6eb75c69f54af::t_71bb9ca7b34f4d 621-623,2421
+server/go.mod
+  s_e6eb75c69f54af::t_fdfc20ff98afbe 34
+server/internal/daemon/agents_probe.go
+  s_e6eb75c69f54af::t_99652c48950ce1 278-280
+server/internal/daemon/agents_probe_devin_test.go
+  s_e6eb75c69f54af::t_ec5cc51397fe9e 1-52
+server/internal/daemon/client.go
+  s_e6eb75c69f54af::t_fa39fdd787b693 217,544-545,579-581
+server/internal/daemon/client_test.go
+  s_e6eb75c69f54af::t_23060d3072787f 61-64
+server/internal/daemon/config.go
+  s_e6eb75c69f54af::t_0e8590bc2b5d00 268,972
+server/internal/daemon/daemon.go
+  s_e6eb75c69f54af::t_1d6ca4df54660b 5795-5798,5829,5880,5954-5974,7854,8032,8035-8037,8403-8405,8473-8475,8814,8896-8900,9043-9048,9969-9974,9977,9980-9982,9986,10026-10028,10039-10041,10053,10055-10056,10063-10069
+server/internal/daemon/daemon_test.go
+  s_e6eb75c69f54af::t_ddfd81af7648fc 4185-4187,4217-4229,4235,4420-4424,4430-4432,4450,4470-4472
+server/internal/daemon/empty_output_completion_test.go
+  s_e6eb75c69f54af::t_0ea93c49fd917e 1-70
+server/internal/daemon/execenv/context.go
+  s_e6eb75c69f54af::t_417a48d9333516 416-417
+server/internal/daemon/execenv/devin_test.go
+  s_e6eb75c69f54af::t_ab5ce1280c7f50 1-54
+server/internal/daemon/execenv/execenv.go
+  s_e6eb75c69f54af::t_1fd60052fd9cab 217-222
+server/internal/daemon/execenv/local_worktree.go
+  s_e6eb75c69f54af::t_411fa7a6c57668 1324-1332,1334-1349,1351,1354-1357
+server/internal/daemon/execenv/local_worktree_test.go
+  s_e6eb75c69f54af::t_9dae4defa91586 1530-1590
+server/internal/daemon/execenv/runtime_config.go
+  s_e6eb75c69f54af::t_bdaf146ca36914 221
+server/internal/daemon/execenv/runtime_config_commands_test.go
+  s_e6eb75c69f54af::t_6cb229f2db70ea 1-139
+server/internal/daemon/execenv/runtime_config_project_workflow_test.go
+  s_e6eb75c69f54af::t_55473c18b286f5 1-99
+server/internal/daemon/execenv/runtime_config_sections.go
+  s_e6eb75c69f54af::t_23a1970545ea64 195-201,223-224,229,231-233,250,284-292,609-614,620-624,642-662
+server/internal/daemon/execenv/runtime_config_test.go
+  s_e6eb75c69f54af::t_a8fdb90315a373 1086,1153-1163,1479
+server/internal/daemon/execenv/sidecar_manifest_test.go
+  s_e6eb75c69f54af::t_e091288464dfe1 161,247,315,649
+server/internal/daemon/local_skills.go
+  s_e6eb75c69f54af::t_132a180771b6f1 10,136,249-250,268-270,292-310
+server/internal/daemon/local_skills_devin_test.go
+  s_e6eb75c69f54af::t_b613dbacb5cb00 1-64
+server/internal/daemon/pi_cleanup_test.go
+  s_e6eb75c69f54af::t_2b1896235dd0de 1-64
+server/internal/daemon/pi_cleanup_unix_test.go
+  s_e6eb75c69f54af::t_cbab2bc8513624 1-99
+server/internal/daemon/prompt.go
+  s_e6eb75c69f54af::t_c92fac2aa5c9b0 78-85,90,93,459-461,473-482,484-486,496,520-527,531-533,952-974
+server/internal/daemon/prompt_edited_trigger_test.go
+  s_e6eb75c69f54af::t_ce25c06d6d3713 1-104
+server/internal/daemon/skill_cache.go
+  s_e6eb75c69f54af::t_d5c0e0be01f178 13,158
+server/internal/daemon/skill_cache_test.go
+  s_e6eb75c69f54af::t_fab3a3829686e9 77-87
+server/internal/daemon/testmain_test.go
+  s_e6eb75c69f54af::t_e066b47c22b8ca 20-22
+server/internal/daemon/types.go
+  s_e6eb75c69f54af::t_8393450a8a0fb7 111,130-131,216-217
+server/internal/daemon/workflow_prompt_test.go
+  s_e6eb75c69f54af::t_c992972f6a1540 58-72
+server/internal/featureflags/keys.go
+  s_e6eb75c69f54af::t_d48a51ebc530fd 53-55,85,92
+server/internal/handler/agent.go
+  s_e6eb75c69f54af::t_aadca5fc8fb5d7 303-319,455-459,507-516,779-787,1515-1518,2110-2124
+server/internal/handler/agent_custom_args_test.go
+  s_e6eb75c69f54af::t_da1762f2c80111 1-107
+server/internal/handler/attachment_text_preview.go
+  s_e6eb75c69f54af::t_c110bbd4c05974 1-130
+server/internal/handler/attachment_text_preview.json
+  s_e6eb75c69f54af::t_1103d7a0e5c0e5 1-75
+server/internal/handler/attachment_text_preview_test.go
+  s_e6eb75c69f54af::t_c1319f100c7108 1-82
+server/internal/handler/comment_thread_queue_test.go
+  s_e6eb75c69f54af::t_f6e322293cd59e 95
+server/internal/handler/config.go
+  s_e6eb75c69f54af::t_d9aa6b6f02a8f8 48-50,142,150-151
+server/internal/handler/config_test.go
+  s_e6eb75c69f54af::t_0acf304adb27c5 154-179,507-509,561-578
+server/internal/handler/daemon.go
+  s_e6eb75c69f54af::t_dda6a7866c5e9d 3004-3009,3123-3127,3165-3177,3196,3242,3305-3307,3318,3394,3398,3431,3467,3499-3518,4016,4602,4619-4620,4630-4635,4637-4678,4696-4701,5212,5809-5810,5888,5913-5930
+server/internal/handler/daemon_claim_edited_trigger_test.go
+  s_e6eb75c69f54af::t_e806f7830bcde7 1-316
+server/internal/handler/daemon_comment_delivery_test.go
+  s_e6eb75c69f54af::t_855cca2e5e3262 774,821
+server/internal/handler/daemon_process_cleanup_test.go
+  s_e6eb75c69f54af::t_04fd5cbfd9b9d6 1-215
+server/internal/handler/fail_task_successor_test.go
+  s_e6eb75c69f54af::t_4b4dcdfe266327 79,222,433
+server/internal/handler/file.go
+  s_e6eb75c69f54af::t_81ec7508a27569 1348-1350,1352
+server/internal/handler/file_test.go
+  s_e6eb75c69f54af::t_40518d6fab8b2e 1685-1686
+server/internal/handler/issue.go
+  s_e6eb75c69f54af::t_d28744cfc3dd61 775,780-781,785-786,3656,3662-3664,3687,3757,4055,4882
+server/internal/handler/issue_channel_media_merge_test.go
+  s_e6eb75c69f54af::t_2495d0a3f69a9f 84
+server/internal/handler/issue_snapshot.go
+  s_e6eb75c69f54af::t_1135538e80e467 196-221
+server/internal/handler/issue_triage_no_run_test.go
+  s_e6eb75c69f54af::t_dc7fce0fd3c313 340
+server/internal/handler/issue_workflow.go
+  s_e6eb75c69f54af::t_a0ea8acfc5cc96 215-219
+server/internal/handler/issue_workflow_entry.go
+  s_e6eb75c69f54af::t_361c6e4cc41a0c 334-337,348
+server/internal/handler/issue_workflow_test.go
+  s_e6eb75c69f54af::t_840fa56933c234 156-218,368,837,868,881,1242-1305
+server/internal/handler/openclaw_model_override_test.go
+  s_e6eb75c69f54af::t_6fceb9a2a096ed 1-28
+server/internal/handler/project.go
+  s_e6eb75c69f54af::t_215d77f0e32e1b 387
+server/internal/handler/project_resource.go
+  s_e6eb75c69f54af::t_1b34dbe416cbd4 166-173,185,579,587,654-668,700-704,725,812,826-829,855-860,868
+server/internal/handler/project_resource_partial_update_test.go
+  s_e6eb75c69f54af::t_bafa8630c854ac 1-240
+server/internal/handler/qoder_catalog.go
+  s_e6eb75c69f54af::t_8ffe32f3fe6534 56,61,65,79,87,103,107,117,123,127,132,150,161,171,180,188,250
+server/internal/handler/qoder_connection.go
+  s_e6eb75c69f54af::t_ad1a50b8ed00eb 80,103,132,147,157,186,228,234,239,248,280,286,291,295,320,329,333,351,359,541,547,552,556,564,568,578
+server/internal/handler/qoder_disconnect.go
+  s_e6eb75c69f54af::t_14330cb7eb1d92 71,131,140,144,157,161,186,190
+server/internal/handler/rerun_task_test.go
+  s_e6eb75c69f54af::t_5a15bf6c75b90f 1-126
+server/internal/handler/search_identifier_test.go
+  s_e6eb75c69f54af::t_bf2a34304d4c98 21-32,57-111
+server/internal/handler/skill.go
+  s_e6eb75c69f54af::t_b0a804dcf591bf 309,311,892,896-904,1156-1158,1165,1276-1278,1292-1295,1308-1311,1315-1316,1325,1329,1360-1362,1541,1569,1572,1578-1580,1582-1584,1592,1603,1605,1610,1613-1618,1621,2058-2059
+server/internal/handler/skill_path_test.go
+  s_e6eb75c69f54af::t_78b78c77f49ffa 1-54
+server/internal/handler/skill_refresh_atomic_test.go
+  s_e6eb75c69f54af::t_c2bdfb16101e51 1-208
+server/internal/handler/skill_test.go
+  s_e6eb75c69f54af::t_d326179963ee38 190,229-230,232-233,1554-1555,1557-1579,1582-1583,1585-1586,1588
+server/internal/handler/squad_briefing.go
+  s_e6eb75c69f54af::t_558fe675c65cab 21-23,125-166,212-214,216-221,242-245,249,251
+server/internal/handler/squad_briefing_test.go
+  s_e6eb75c69f54af::t_c117c6e389e272 22,46,156,198,274,293,317,327-329,333,339,343-345,347-353,355-362
+server/internal/handler/squad_parent_status_contract_test.go
+  s_e6eb75c69f54af::t_a89177df540cc8 55,99
+server/internal/handler/squad_workflow_status_contract_test.go
+  s_e6eb75c69f54af::t_57b386399159cc 1-126
+server/internal/handler/task_lifecycle.go
+  s_e6eb75c69f54af::t_260ffaa56b2b83 155-156,182-223,225,246,259
+server/internal/handler/task_supplement_test.go
+  s_e6eb75c69f54af::t_f97f5329423ea9 16,223
+server/internal/handler/workspace.go
+  s_e6eb75c69f54af::t_376d54f83ca570 1259
+server/internal/integrations/lark/content_flatten.go
+  s_e6eb75c69f54af::t_a70d3b5244b50c 63-64,73-123,129,158-159,209-217
+server/internal/integrations/lark/http_client.go
+  s_e6eb75c69f54af::t_2fc5baae70957b 111,117,418-442,465,467,469,512
+server/internal/integrations/lark/http_client_media.go
+  s_e6eb75c69f54af::t_dd383658efcc58 1-358
+server/internal/integrations/lark/http_client_media_test.go
+  s_e6eb75c69f54af::t_d78aa8878cfe9a 1-397
+server/internal/integrations/lark/markdown_images.go
+  s_e6eb75c69f54af::t_e9717c08328823 1-37
+server/internal/integrations/lark/markdown_images_test.go
+  s_e6eb75c69f54af::t_13bf17f0ca0a86 1-51
+server/internal/integrations/lark/media_ingest.go
+  s_e6eb75c69f54af::t_2c84b75e15d7ed 309-310,337-338,342-345,348
+server/internal/integrations/lark/mixed_media.go
+  s_e6eb75c69f54af::t_93263678cb853d 1-161
+server/internal/integrations/lark/mixed_media_test.go
+  s_e6eb75c69f54af::t_29aa1896d57ac4 1-290
+server/internal/integrations/lark/outbound.go
+  s_e6eb75c69f54af::t_1c8d6128023c55 146,157-163,224-241,248-265,341-342,387,477,481,483-484,490-495,501,510-569,572,576,580,584-607,720-725
+server/internal/integrations/lark/outbound_media.go
+  s_e6eb75c69f54af::t_e6683cef50d926 1-332
+server/internal/integrations/lark/outbound_media_boundaries_test.go
+  s_e6eb75c69f54af::t_02e7cade4bcf49 1-365
+server/internal/integrations/lark/outbound_media_delivery.go
+  s_e6eb75c69f54af::t_134b6ec7c5ab5a 1-138
+server/internal/integrations/lark/outbound_media_delivery_db_test.go
+  s_e6eb75c69f54af::t_20d0de46431985 1-61
+server/internal/integrations/lark/outbound_media_delivery_test.go
+  s_e6eb75c69f54af::t_6846cb773c3c59 1-64
+server/internal/integrations/lark/outbound_media_pipeline_db_test.go
+  s_e6eb75c69f54af::t_d1b55cac338761 1-177
+server/internal/integrations/lark/outbound_media_test.go
+  s_e6eb75c69f54af::t_9cb6a92fcf3d2b 1-479
+server/internal/integrations/lark/outbound_test.go
+  s_e6eb75c69f54af::t_1b6bc7cc792f07 43-63,95-98
+server/internal/integrations/lark/params.go
+  s_e6eb75c69f54af::t_723fba492662be 138-191
+server/internal/integrations/lark/post_files_test.go
+  s_e6eb75c69f54af::t_8cedc6c146c91f 1-95
+server/internal/issueworkflow/issueworkflow.go
+  s_e6eb75c69f54af::t_c1de9c3da40384 325-401,702-709,715-717,740-763,772-781,814-828,831,837,839-848
+server/internal/issueworkflow/issueworkflow_test.go
+  s_e6eb75c69f54af::t_f9076d5009da9e 267-269,278-308,332,337,389,393-537
+server/internal/metrics/labels.go
+  s_e6eb75c69f54af::t_5721bb7ade8397 163
+server/internal/metrics/pricing.go
+  s_e6eb75c69f54af::t_bdda98e412b315 67-74,230-233,322-345,347
+server/internal/metrics/pricing_test.go
+  s_e6eb75c69f54af::t_ab23c01e618e1f 656-765
+server/internal/qoderruntime/prompt.go
+  s_e6eb75c69f54af::t_05206d992d8660 31,133,192
+server/internal/service/admission_mul4525_test.go
+  s_e6eb75c69f54af::t_2eb71382c34163 69,86
+server/internal/service/attribution_stamp_test.go
+  s_e6eb75c69f54af::t_f9635231c9c32e 1226
+server/internal/service/autopilot.go
+  s_e6eb75c69f54af::t_a7f5f3b83a9a63 370-371,374,377-378,381,845,855,858,862,865,868,1096-1115,1133,1141-1168,1178,1237-1248,1261-1264,1275-1278,1280,1287-1305,1331-1474
+server/internal/service/builtin_skills/multica-platform/references/agents.md
+  s_e6eb75c69f54af::t_1a2be6201c155c 212-222
+server/internal/service/builtin_skills/multica-platform/references/issues.md
+  s_e6eb75c69f54af::t_157c38e27353ff 253-255,462
+server/internal/service/builtin_skills/multica-platform/references/mentions.md
+  s_e6eb75c69f54af::t_05cbf9b819bd14 29-44
+server/internal/service/builtin_skills/multica-platform/references/projects.md
+  s_e6eb75c69f54af::t_7e813938a9b870 163-171,187-190
+server/internal/service/builtin_skills/multica-platform/references/runtimes.md
+  s_e6eb75c69f54af::t_e533c9cb1364a0 181,209,223,232
+server/internal/service/builtin_skills/multica-platform/references/skill-import.md
+  s_e6eb75c69f54af::t_1dc5646bf57b84 66-70
+server/internal/service/builtin_skills/multica-platform/references/squads.md
+  s_e6eb75c69f54af::t_cdd6909a314541 178-179,257-258
+server/internal/service/builtin_skills_test.go
+  s_e6eb75c69f54af::t_0950e40728bcb3 550-556,735-738,772-800
+server/internal/service/delegated_failure_recovery_settled_test.go
+  s_e6eb75c69f54af::t_eacd0497505518 271
+server/internal/service/delegated_failure_recovery_test.go
+  s_e6eb75c69f54af::t_21894af8c350d0 839
+server/internal/service/issue_wakeup_condition.go
+  s_e6eb75c69f54af::t_1787b9b2b18112 52,202-203,417-418
+server/internal/service/issue_wakeup_condition_test.go
+  s_e6eb75c69f54af::t_c57e352c959c5f 161-209
+server/internal/service/object_cleanup_claim_test.go
+  s_e6eb75c69f54af::t_8868b6d0ea100b 1-98
+server/internal/service/rerun_queue_behind_active_test.go
+  s_e6eb75c69f54af::t_ec63f08ef1e609 69,103
+server/internal/service/rerun_workdir_reuse_test.go
+  s_e6eb75c69f54af::t_81b3ea78277b90 63
+server/internal/service/runtime_health_gate_test.go
+  s_e6eb75c69f54af::t_d1464a9d03aca5 6,8,16-95
+server/internal/service/task.go
+  s_e6eb75c69f54af::t_3670fe66bf0d50 1282,1285,1339,1461,1464,1514,3015-3017,4360-4366,4369-4373,4378,4396,4413-4416,4419-4420,5119-5121,5380,5830,5852-5860,5873,6038,6054,6137-6139,6142,6144
+server/internal/service/task_complete_delivery_test.go
+  s_e6eb75c69f54af::t_78afaef844412b 1-177
+server/internal/skill/file_path.go
+  s_e6eb75c69f54af::t_744dd0b0ea0ec0 1-24
+server/internal/skill/file_path_test.go
+  s_e6eb75c69f54af::t_30e381ec01bd54 1-40
+server/internal/testutil/pi_cleanup_other.go
+  s_e6eb75c69f54af::t_45d0a1e99a17bb 1-5
+server/internal/testutil/pi_cleanup_unix.go
+  s_e6eb75c69f54af::t_e50611f2d592ce 1-117
+server/internal/util/mention.go
+  s_e6eb75c69f54af::t_41b003b8fda84a 3-17,21,32-33,40-49,51-64,67-82,84,87-89,93-211
+server/internal/util/mention_test.go
+  s_e6eb75c69f54af::t_ee88e046336d75 61-69,75-401
+server/migrations/593_runtime_profile_add_devin.down.sql
+  s_e6eb75c69f54af::t_0ffe14d6dc10b9 1-33
+server/migrations/593_runtime_profile_add_devin.up.sql
+  s_e6eb75c69f54af::t_801462afcf7fda 1-34
+server/migrations/594_agent_task_process_cleanup_index.down.sql
+  s_e6eb75c69f54af::t_c8bf77d2c3d314 1
+server/migrations/594_agent_task_process_cleanup_index.up.sql
+  s_e6eb75c69f54af::t_a5bf291007eca3 1-7
+server/pkg/agent/acp_deliverable_test.go
+  s_e6eb75c69f54af::t_f0205f12c1df04 175,216-219,234
+server/pkg/agent/agent.go
+  s_e6eb75c69f54af::t_d3763a83abb1cd 132-137,167-170,410,515-516,566
+server/pkg/agent/antigravity.go
+  s_e6eb75c69f54af::t_e20fd037632471 193-196,224,280-286,509
+server/pkg/agent/antigravity_test.go
+  s_e6eb75c69f54af::t_8937731ef4eb39 969-1017,1133,1203,1211
+server/pkg/agent/claude.go
+  s_e6eb75c69f54af::t_be91c2902d41a6 101,285-294,302-304
+server/pkg/agent/claude_deadlock_test.go
+  s_e6eb75c69f54af::t_6f3b05e82696ed 13-14,25-27
+server/pkg/agent/claude_usage_test.go
+  s_e6eb75c69f54af::t_8cccd82fdaf386 12,440-444,463-468,476,514-637
+server/pkg/agent/codex.go
+  s_e6eb75c69f54af::t_78d7bd60711ca0 1245-1247,1250,1313,1318,1323,1901,2323-2349,2355-2364,2366,2430-2431,2433,2441-2442,3429,3836,3838,3846-3849
+server/pkg/agent/codex_test.go
+  s_e6eb75c69f54af::t_be3fe4293bf3e2 1561,1591,1634,1821-1825,1832-1834,1837,1842-1846,1849-1895,1898-1902,1905-1916,1927,1934-1935,1941,1944-1947,1953-1973,4403-4447
+server/pkg/agent/devin.go
+  s_e6eb75c69f54af::t_a413ac50a85ccd 1-539
+server/pkg/agent/devin_cancel_unix_test.go
+  s_e6eb75c69f54af::t_251f5a73b901fd 1-134
+server/pkg/agent/devin_contract_test.go
+  s_e6eb75c69f54af::t_723364e1c99782 1-320
+server/pkg/agent/devin_model.go
+  s_e6eb75c69f54af::t_7de9e1a24a98d2 1-175
+server/pkg/agent/devin_model_test.go
+  s_e6eb75c69f54af::t_5d5482c17c9319 1-58
+server/pkg/agent/devin_test.go
+  s_e6eb75c69f54af::t_06f19c26c01fcf 1-238
+server/pkg/agent/hermes_escaped_holder_unix_test.go
+  s_e6eb75c69f54af::t_80acb449b3af1e 145-149,157,180,182
+server/pkg/agent/kiro.go
+  s_e6eb75c69f54af::t_608beb6de807ac 566-579
+server/pkg/agent/kiro_panic_test.go
+  s_e6eb75c69f54af::t_afb9b097c568f8 39-40,141-163
+server/pkg/agent/launch.go
+  s_e6eb75c69f54af::t_690706799fc0a7 7,459-460,471,475-498
+server/pkg/agent/launch_test.go
+  s_e6eb75c69f54af::t_09fa8d1a29f66e 25-75,155-172
+server/pkg/agent/models.go
+  s_e6eb75c69f54af::t_8b2addfe352fbc 307-310
+server/pkg/agent/openclaw.go
+  s_e6eb75c69f54af::t_fe981a710854ec 44,195-200,204,223-228,259-264,286-301
+server/pkg/agent/openclaw_test.go
+  s_e6eb75c69f54af::t_88df09c66fd3b3 967-1013,1094,1104-1107
+server/pkg/agent/pi.go
+  s_e6eb75c69f54af::t_73013c9a8d81d3 7,41,449-450,512-521,547-563,596,716-724,736-748,750,756-758,836-840,872
+server/pkg/agent/pi_cleanup.go
+  s_e6eb75c69f54af::t_a1afd7c8ca9b3f 1-165
+server/pkg/agent/pi_cleanup_darwin.go
+  s_e6eb75c69f54af::t_38b8f6a7a12ca6 1-59
+server/pkg/agent/pi_cleanup_exit_other.go
+  s_e6eb75c69f54af::t_67579bbee2951c 1-9
+server/pkg/agent/pi_cleanup_exit_windows.go
+  s_e6eb75c69f54af::t_9cdb09a418f538 1-22
+server/pkg/agent/pi_cleanup_linux.go
+  s_e6eb75c69f54af::t_1fefedf5ef1bd5 1-39
+server/pkg/agent/pi_cleanup_other.go
+  s_e6eb75c69f54af::t_44ae3ac9aa74a5 1-27
+server/pkg/agent/pi_cleanup_test.go
+  s_e6eb75c69f54af::t_d827d8bed2d0d8 1-116
+server/pkg/agent/pi_cleanup_unix.go
+  s_e6eb75c69f54af::t_7be0fb0c67c9ae 1-192
+server/pkg/agent/pi_cleanup_unix_test.go
+  s_e6eb75c69f54af::t_bff8c9b9760ede 1-115
+server/pkg/agent/pi_turn_error_unix_test.go
+  s_e6eb75c69f54af::t_e341d77e1384ff 97
+server/pkg/agent/version.go
+  s_e6eb75c69f54af::t_52210351012ef4 21-29
+server/pkg/db/generated/agent.sql.go
+  s_e6eb75c69f54af::t_878d284f76e50f 2282,2285-2290,2300,2303,2321,2342-2344,2368,7906,7941-7944,7963-7964
+server/pkg/db/generated/autopilot.sql.go
+  s_e6eb75c69f54af::t_1721cbdf533ef0 1982-2004
+server/pkg/db/generated/channel.sql.go
+  s_e6eb75c69f54af::t_99b6f28425ed2d 339,350-356,373-374
+server/pkg/db/generated/project_resource.sql.go
+  s_e6eb75c69f54af::t_04a379d13895ca 158-188
+server/pkg/db/generated/source_context.sql.go
+  s_e6eb75c69f54af::t_ec1c800f060a4b 81,92-97,102-103
+server/pkg/db/generated/supplement.sql.go
+  s_e6eb75c69f54af::t_26ea6de9dd88d0 731,738,748-751,761,770
+server/pkg/db/generated/task_cleanup.sql.go
+  s_e6eb75c69f54af::t_4404d53d14c834 1-187
+server/pkg/db/queries/agent.sql
+  s_e6eb75c69f54af::t_45ce941dabf636 327-329,354,357-362,910-912,947-950
+server/pkg/db/queries/autopilot.sql
+  s_e6eb75c69f54af::t_c4c5341a6a70fd 429-437
+server/pkg/db/queries/channel.sql
+  s_e6eb75c69f54af::t_4a83f1dd96e2b8 1306-1307,1318,1329-1335
+server/pkg/db/queries/project_resource.sql
+  s_e6eb75c69f54af::t_6d1077b34a6b83 27-34
+server/pkg/db/queries/source_context.sql
+  s_e6eb75c69f54af::t_2850c28d248029 133-135,146-151
+server/pkg/db/queries/supplement.sql
+  s_e6eb75c69f54af::t_ed45b4afa1c9ba 26-29
+server/pkg/db/queries/task_cleanup.sql
+  s_e6eb75c69f54af::t_49157ba637916c 1-72
+server/pkg/protocol/messages.go
+  s_e6eb75c69f54af::t_997b48ef447cb7 74-83
+server/pkg/taskfailure/failure.go
+  s_e6eb75c69f54af::t_8593bd15d35fc6 96-101,297-298
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "51f8ff1e0d11587b044daefcdb706b423bc87643",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

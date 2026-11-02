@@ -1,0 +1,31 @@
+apps/desktop/package.json
+  s_ff9d2eb3460ff5::t_88f3b47e6a2eb9 74
+package.json
+  s_e6eb75c69f54af::t_0f52702124c719 87-88
+pnpm-lock.yaml
+  s_ff9d2eb3460ff5::t_b5c16c958769ab 160,303-306,745,977,6248-6249,7410-7411,15653,15674,15678,16036,16686,16688,16768,16770-16771,16777,16779,16784,18463
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "78179c903f658a0a7a25614fe4453238426fdf69",
+  "prompts": {},
+  "sessions": {
+    "s_e6eb75c69f54af": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16bec318-997c-4dfe-840b-4181cf5ce0a3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    },
+    "s_ff9d2eb3460ff5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "80036701-a903-4f95-a2da-bbad1439dffa",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

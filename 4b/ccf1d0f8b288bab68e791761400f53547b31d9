@@ -1,0 +1,23 @@
+apps/mobile/locales/zh-Hant/inbox.json
+  s_8561ab4dcd9e26::t_c20974149ddde2 57
+packages/views/locales/zh-Hant/issues.json
+  s_8561ab4dcd9e26::t_8ab662aa2145b7 126,1273,1327,1351
+packages/views/locales/zh-Hant/settings.json
+  s_8561ab4dcd9e26::t_c85e31c7f0aad3 68,76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4bccf1d0f8b288bab68e791761400f53547b31d9",
+  "prompts": {},
+  "sessions": {
+    "s_8561ab4dcd9e26": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b399881b-e84d-4563-83db-c2f2b7f8f619",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

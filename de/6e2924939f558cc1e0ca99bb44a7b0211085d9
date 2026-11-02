@@ -1,0 +1,65 @@
+apps/mobile/locales/zh-Hant/chat.json
+  s_d61ba40585d785::t_ed4d887ca3e5d2 6-8,19,27,37-39,43-44,46,66-67,69,75-76,79,84,87,91,107,119,122-123,167,169
+apps/mobile/locales/zh-Hant/inbox.json
+  s_d61ba40585d785::t_d59d1c5d89d209 5,76
+apps/mobile/locales/zh-Hant/issues.json
+  s_d61ba40585d785::t_0fd461fc66b27f 121,171,181,265
+apps/mobile/locales/zh-Hant/workspace.json
+  s_d61ba40585d785::t_0981b3883ebd28 16-17
+apps/ui-lab/src/locales/zh-Hant.json
+  s_d61ba40585d785::t_edd19736a8ab0b 334,347,353,372
+packages/views/locales/zh-Hant/agents.json
+  s_d61ba40585d785::t_d2ce71cc2947b2 5-6,9-10,38,41-42,45-46,50-56,63,104,108-111,125,131-137,139-140,143,147-153,155-156,164,187,191,279-280,306,319-320,323-324,333-334,339,346,349-350,366,368,385-386,389,428-430,432,434,439,441,445,454,462,470,503,521,527-528,536,538,566,587,591-594,596,598,607,632,675,680,684,690,694-696,703,721,724,755,784,786,829,833,837-838,850,852,855,857,863,865,984,987
+packages/views/locales/zh-Hant/autopilots.json
+  s_d61ba40585d785::t_22e589627cf70f 21,30,73,80-84,281,298-299,333,432-434,437,484-485,502,531
+packages/views/locales/zh-Hant/chat.json
+  s_d61ba40585d785::t_774647e63a0345 5,13,15,17,24-26,34,41,60,62,64,66,72,108-109,135,137,139,141,144,192,196,232,234,246
+packages/views/locales/zh-Hant/common.json
+  s_d61ba40585d785::t_07dc2439f52fa9 58,73,88,103,122
+packages/views/locales/zh-Hant/editor.json
+  s_d61ba40585d785::t_ac939e84a40e8f 115
+packages/views/locales/zh-Hant/inbox.json
+  s_d61ba40585d785::t_2b816388a85957 19,78-80,95
+packages/views/locales/zh-Hant/issues.json
+  s_d61ba40585d785::t_d0c99bc8fafe50 6-7,10,39,68,99,154,333,337,409,416,454-455,493,589,612,616,620,649,676,678,681-683,685,687,702,712,739,792,794,903,952,956,966,990,995,1102,1104,1170,1198,1223,1240,1271,1292,1533,1542,1571,1604,1646,1650-1651,1653
+packages/views/locales/zh-Hant/layout.json
+  s_d61ba40585d785::t_33c8cdc36f358d 27
+packages/views/locales/zh-Hant/members.json
+  s_d61ba40585d785::t_8ba73ca3a6ed40 11
+packages/views/locales/zh-Hant/modals.json
+  s_d61ba40585d785::t_ebc0c8f7e56736 80,85,87,91,95-97,99,114,150,157,200-201,232-235,238-241,253,255
+packages/views/locales/zh-Hant/my-issues.json
+  s_d61ba40585d785::t_21e0daecd3724e 11,16-17
+packages/views/locales/zh-Hant/onboarding.json
+  s_d61ba40585d785::t_ae024505a7fb36 31-35,38,40,114,128,172,175,179,192,197,229,232
+packages/views/locales/zh-Hant/projects.json
+  s_d61ba40585d785::t_3b0e05e35f8e71 75,119
+packages/views/locales/zh-Hant/runtimes.json
+  s_d61ba40585d785::t_f08faa02c1c2b4 77,149,165-166,181-183,186-188,200,203,221-226,228,280,282,463,509,511,513,556-560,562-563,566,568,573,582,589,608,616,621,649-650
+packages/views/locales/zh-Hant/search.json
+  s_d61ba40585d785::t_8ea33bdf8b455b 3,29,39,132,135,141,166
+packages/views/locales/zh-Hant/settings.json
+  s_d61ba40585d785::t_ea446b2ab6ea13 73-74,93,106,127,194,305-306,366,368,383,492-494,505,647,753,777,825,879,889,920,946,953,971,983,993,1001,1010,1026-1027,1057,1060,1076,1089,1099,1107,1115,1128-1129,1139,1150,1158,1165,1441-1442,1445,1447-1448
+packages/views/locales/zh-Hant/skills.json
+  s_d61ba40585d785::t_7900569d149f85 14,18,38,68,70-74,83,98,126,175-176,198,214-216,266,326
+packages/views/locales/zh-Hant/squads.json
+  s_d61ba40585d785::t_2b87d09bfa02e9 45,50-51,78,80
+packages/views/locales/zh-Hant/usage.json
+  s_d61ba40585d785::t_0486a8edc7d6c5 52,69,77,87-88,90-91,102,106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "de6e2924939f558cc1e0ca99bb44a7b0211085d9",
+  "prompts": {},
+  "sessions": {
+    "s_d61ba40585d785": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a12c4ce-7aab-4ad6-97b5-b743f19b21f5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}

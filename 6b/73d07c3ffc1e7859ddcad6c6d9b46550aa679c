@@ -1,0 +1,21 @@
+server/go.mod
+  s_aa47a447e01641::t_294e52a9ee9653 34-36,75-77
+server/go.sum
+  s_aa47a447e01641::t_30706fc481f40f 173-182,185-186
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6b73d07c3ffc1e7859ddcad6c6d9b46550aa679c",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
