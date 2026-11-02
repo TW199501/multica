@@ -198,6 +198,7 @@
   "multica.browser.settings.copy_token": "複製權杖",
   "multica.browser.settings.rotate": "輪替權杖",
   "multica.browser.settings.rotate_confirm": "在此頁面之外設定的智慧體將無法存取，直到你更新它們。",
+  "multica.browser.settings.rotate_failed_toast": "無法輪替權杖。智慧體仍在使用先前的權杖。",
   "multica.browser.settings.status_starting": "MCP 服務正在啟動",
   "multica.browser.settings.status_port_in_use": "連接埠 {{port}} 已被占用。請關閉占用它的程式，然後重新啟動 Multica。",
   "multica.browser.settings.status_error": "MCP 服務啟動失敗：{{message}}",

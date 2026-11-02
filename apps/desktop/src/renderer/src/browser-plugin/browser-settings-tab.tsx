@@ -71,16 +71,30 @@ export function BrowserSettingsTab() {
   const rotate = async () => {
     setConfirmRotate(false);
     setRotating(true);
+    const rotateFailed = () =>
+      toast.error(
+        t(
+          "multica.browser.settings.rotate_failed_toast",
+          "Couldn't rotate the token. Agents still use the previous token.",
+        ),
+      );
     try {
-      await window.browserAPI?.mcp.rotateToken();
-      const next = (await refetchEndpoint()).data;
-      if (!next) return;
+      const token = await window.browserAPI?.mcp.rotateToken();
+      if (!token || !endpoint) {
+        rotateFailed();
+        return;
+      }
+      // Build from the returned token: a failed refetch would hand back the revoked one.
+      const next = { ...endpoint, token };
+      void refetchEndpoint();
       const enabledIds = rows.filter((r) => r.enabled && r.editable).map((r) => r.agent.id);
       const { failed } = await rewriteEnabledAgents(enabledIds, next, sync.mutateAsync);
       for (const id of failed) {
         const name = rows.find((r) => r.agent.id === id)?.agent.name ?? id;
         toast.error(t("multica.browser.settings.update_failed_toast", "Couldn't update {{name}}", { name }));
       }
+    } catch {
+      rotateFailed();
     } finally {
       setRotating(false);
     }

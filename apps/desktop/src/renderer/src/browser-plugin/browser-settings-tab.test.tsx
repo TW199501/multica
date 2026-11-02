@@ -168,11 +168,48 @@ describe("BrowserSettingsTab", () => {
 
   it("disables rows the viewer cannot edit", async () => {
     renderTab();
-    const box = await screen.findByRole("checkbox", { name: "Shared Agent" });
+    const editable = await screen.findByRole("checkbox", { name: "Claude Agent" });
+    await waitFor(() => expect(isDisabled(editable)).toBe(false));
+    const box = screen.getByRole("checkbox", { name: "Shared Agent" });
     expect(isDisabled(box)).toBe(true);
     expect(
       screen.getByText("Only the agent owner or a workspace admin can change this"),
     ).toBeTruthy();
+  });
+
+  async function startRotate() {
+    const rotate = await screen.findByRole("button", { name: "Rotate token" });
+    await waitFor(() => expect(isDisabled(rotate)).toBe(false));
+    fireEvent.click(rotate);
+    const dialog = await screen.findByRole("alertdialog");
+    fireEvent.click(within(dialog).getByRole("button", { name: "Rotate token" }));
+  }
+
+  it("toasts and writes nothing when rotateToken rejects", async () => {
+    rotateToken.mockRejectedValue(new Error("nope"));
+    renderTab();
+    await startRotate();
+    await waitFor(() =>
+      expect(toastError).toHaveBeenCalledWith(
+        "Couldn't rotate the token. Agents still use the previous token.",
+      ),
+    );
+    expect(updateAgent).not.toHaveBeenCalled();
+  });
+
+  it("writes the returned token even when the endpoint refetch stays stale", async () => {
+    rotateToken.mockResolvedValue("t2");
+    getAgent.mockResolvedValue(
+      ag("a8", "Other Agent", "r1", {
+        mcp_config: { mcpServers: { github: G, "orca-browser": E } },
+      }),
+    );
+    renderTab();
+    await startRotate();
+    await waitFor(() => expect(updateAgent).toHaveBeenCalledTimes(1));
+    const body = JSON.stringify(updateAgent.mock.calls[0]![1]);
+    expect(body).toContain("Bearer t2");
+    expect(body).not.toContain("Bearer t1");
   });
 
   it("disables checkboxes when the MCP port is in use", async () => {

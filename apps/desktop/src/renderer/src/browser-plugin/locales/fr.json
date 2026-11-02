@@ -198,6 +198,7 @@
   "multica.browser.settings.copy_token": "Copier le jeton",
   "multica.browser.settings.rotate": "Renouveler le jeton",
   "multica.browser.settings.rotate_confirm": "Les agents configurés en dehors de cette page perdront l'accès tant que vous ne les aurez pas mis à jour.",
+  "multica.browser.settings.rotate_failed_toast": "Impossible de renouveler le jeton. Les agents utilisent toujours l'ancien jeton.",
   "multica.browser.settings.status_starting": "Le serveur MCP démarre",
   "multica.browser.settings.status_port_in_use": "Le port {{port}} est déjà utilisé. Fermez le programme qui l'utilise, puis redémarrez Multica.",
   "multica.browser.settings.status_error": "Échec du démarrage du serveur MCP : {{message}}",

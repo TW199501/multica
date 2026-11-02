@@ -198,6 +198,7 @@
   "multica.browser.settings.copy_token": "토큰 복사",
   "multica.browser.settings.rotate": "토큰 교체",
   "multica.browser.settings.rotate_confirm": "이 페이지 밖에서 설정한 에이전트는 업데이트하기 전까지 접근할 수 없게 됩니다.",
+  "multica.browser.settings.rotate_failed_toast": "토큰을 교체하지 못했습니다. 에이전트는 이전 토큰을 계속 사용합니다.",
   "multica.browser.settings.status_starting": "MCP 서버를 시작하는 중입니다",
   "multica.browser.settings.status_port_in_use": "포트 {{port}}이(가) 이미 사용 중입니다. 사용 중인 프로그램을 종료한 다음 Multica를 다시 시작하세요.",
   "multica.browser.settings.status_error": "MCP 서버를 시작하지 못했습니다: {{message}}",

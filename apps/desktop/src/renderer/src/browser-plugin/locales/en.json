@@ -198,6 +198,7 @@
   "multica.browser.settings.copy_token": "Copy token",
   "multica.browser.settings.rotate": "Rotate token",
   "multica.browser.settings.rotate_confirm": "Agents configured outside this page will lose access until you update them.",
+  "multica.browser.settings.rotate_failed_toast": "Couldn't rotate the token. Agents still use the previous token.",
   "multica.browser.settings.status_starting": "MCP server is starting",
   "multica.browser.settings.status_port_in_use": "Port {{port}} is already in use. Close the program using it, then restart Multica.",
   "multica.browser.settings.status_error": "MCP server failed to start: {{message}}",
