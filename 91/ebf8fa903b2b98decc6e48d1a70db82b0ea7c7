@@ -1,0 +1,21 @@
+apps/desktop/src/renderer/src/browser-plugin/local-agents.ts
+  s_aa47a447e01641::t_4500511219f11a 12-47,61
+apps/desktop/src/renderer/src/browser-plugin/local-agents.test.ts
+  s_aa47a447e01641::t_99e4262878558c 34-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "91ebf8fa903b2b98decc6e48d1a70db82b0ea7c7",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
