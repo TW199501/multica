@@ -7,7 +7,12 @@ import { useWorkspaceSlug } from "@multica/core/paths";
 import { runtimeDisplayLabel, runtimeListOptions } from "@multica/core/runtimes";
 import { agentListOptions } from "@multica/core/workspace/queries";
 import { Button } from "@multica/ui/components/ui/button";
-import { Checkbox } from "@multica/ui/components/ui/checkbox";
+import { Switch } from "@multica/ui/components/ui/switch";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@multica/ui/components/ui/collapsible";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@multica/ui/components/ui/alert-dialog";
-import { Copy, RotateCw } from "@multica/ui/icons";
+import { ChevronRight, Copy, RotateCw } from "@multica/ui/icons";
 import { useLocalDaemonStatus } from "@multica/views/platform";
 import { SettingsCard, SettingsRow, SettingsSection, SettingsTab } from "@multica/views/settings";
 import { useBrowserT } from "./i18n";
@@ -60,6 +65,14 @@ export function BrowserSettingsTab() {
     sync.mutate(
       { agentId, endpoint: checked ? endpoint! : null },
       {
+        onSuccess: () => {
+          const name = rows.find((r) => r.agent.id === agentId)?.agent.name ?? agentId;
+          toast.success(
+            checked
+              ? t("multica.browser.settings.enabled_toast", "{{name}} can now use the browser", { name })
+              : t("multica.browser.settings.disabled_toast", "{{name}} can no longer use the browser", { name }),
+          );
+        },
         onError: () => {
           const name = rows.find((r) => r.agent.id === agentId)?.agent.name ?? agentId;
           toast.error(t("multica.browser.settings.update_failed_toast", "Couldn't update {{name}}", { name }));
@@ -121,48 +134,21 @@ export function BrowserSettingsTab() {
 
   return (
     <SettingsTab title={t("multica.browser.settings.tab", "Browser")}>
-      <SettingsSection title={t("multica.browser.settings.mcp_title", "MCP server")}>
-        <SettingsCard>
-          {statusMessage ? (
-            <p className="px-4 py-3 text-body text-muted-foreground">{statusMessage}</p>
-          ) : (
-            <SettingsRow label={t("multica.browser.settings.endpoint", "Endpoint")}>
-              <span className="font-mono text-caption text-muted-foreground">
-                {endpoint?.url ?? ""}
-              </span>
-            </SettingsRow>
-          )}
-          <div className="flex items-center gap-2 px-4 py-3">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={!listening || !endpoint || rotating}
-              onClick={() => {
-                if (endpoint) void navigator.clipboard.writeText(endpoint.token);
-              }}
-            >
-              <Copy />
-              {t("multica.browser.settings.copy_token", "Copy token")}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={controlsLocked}
-              onClick={() => setConfirmRotate(true)}
-            >
-              <RotateCw />
-              {t("multica.browser.settings.rotate", "Rotate token")}
-            </Button>
-          </div>
-        </SettingsCard>
-      </SettingsSection>
-
       <SettingsSection
-        title={t("multica.browser.settings.agents_title", "Agents on this machine")}
-        description={t("multica.browser.settings.verified", "Verified: Claude Code")}
+        title={t("multica.browser.settings.agents_title", "Let agents use the browser")}
+        description={
+          <>
+            {t(
+              "multica.browser.settings.agents_description",
+              "Agents you allow can operate this browser while running tasks: open pages, click, and take screenshots.",
+            )}
+            <span className="block">{t("multica.browser.settings.verified", "Verified: Claude Code")}</span>
+          </>
+        }
       >
+        {statusMessage ? (
+          <p className="text-body text-muted-foreground">{statusMessage}</p>
+        ) : null}
         {!daemonId ? (
           <p className="text-body text-muted-foreground">
             {t(
@@ -178,12 +164,17 @@ export function BrowserSettingsTab() {
           <SettingsCard>
             {rows.map(({ agent, runtime, enabled, editable }) => (
               <div key={agent.id} className="flex items-center gap-3 px-4 py-3">
-                <Checkbox
+                <Switch
                   aria-label={agent.name}
                   checked={enabled}
                   disabled={controlsLocked || !editable}
                   onCheckedChange={(checked) => toggle(agent.id, checked === true)}
                 />
+                <span className="w-20 shrink-0 text-caption text-muted-foreground">
+                  {enabled
+                    ? t("multica.browser.settings.allowed", "Allowed")
+                    : t("multica.browser.settings.not_allowed", "Not allowed")}
+                </span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-body font-medium">{agent.name}</p>
                   <p className="truncate text-caption text-muted-foreground">
@@ -207,6 +198,48 @@ export function BrowserSettingsTab() {
       <SettingsSection title={t("multica.browser.settings.profiles_title", "Profiles & cookies")}>
         <BrowserSettingsPanel scopeId={slug ?? undefined} />
       </SettingsSection>
+
+      <Collapsible>
+        <CollapsibleTrigger className="group/adv flex items-center gap-1 text-body font-semibold text-muted-foreground transition-colors hover:text-foreground">
+          <ChevronRight className="size-4 transition-transform group-data-[panel-open]/adv:rotate-90" />
+          {t("multica.browser.settings.advanced", "Advanced: MCP connection")}
+        </CollapsibleTrigger>
+        <CollapsibleContent className="mt-3">
+          <SettingsCard>
+            {!statusMessage ? (
+              <SettingsRow label={t("multica.browser.settings.endpoint", "Endpoint")}>
+                <span className="font-mono text-caption text-muted-foreground">
+                  {endpoint?.url ?? ""}
+                </span>
+              </SettingsRow>
+            ) : null}
+            <div className="flex items-center gap-2 px-4 py-3">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={!listening || !endpoint || rotating}
+                onClick={() => {
+                  if (endpoint) void navigator.clipboard.writeText(endpoint.token);
+                }}
+              >
+                <Copy />
+                {t("multica.browser.settings.copy_token", "Copy token")}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={controlsLocked}
+                onClick={() => setConfirmRotate(true)}
+              >
+                <RotateCw />
+                {t("multica.browser.settings.rotate", "Rotate token")}
+              </Button>
+            </div>
+          </SettingsCard>
+        </CollapsibleContent>
+      </Collapsible>
 
       <AlertDialog open={confirmRotate} onOpenChange={setConfirmRotate}>
         <AlertDialogContent>

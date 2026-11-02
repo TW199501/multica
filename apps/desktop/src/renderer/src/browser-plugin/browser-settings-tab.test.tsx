@@ -5,7 +5,7 @@ import type { Agent, AgentRuntime } from "@multica/core/types";
 import { agentListOptions } from "@multica/core/workspace/queries";
 import { runtimeListOptions } from "@multica/core/runtimes";
 
-const { getAgent, updateAgent, listAgents, listRuntimes, daemon, toastError } = vi.hoisted(() => ({
+const { getAgent, updateAgent, listAgents, listRuntimes, daemon, toastError, toastSuccess } = vi.hoisted(() => ({
   getAgent: vi.fn(),
   updateAgent: vi.fn(),
   listAgents: vi.fn(),
@@ -18,6 +18,7 @@ const { getAgent, updateAgent, listAgents, listRuntimes, daemon, toastError } = 
     },
   },
   toastError: vi.fn(),
+  toastSuccess: vi.fn(),
 }));
 
 vi.mock("@multica/core/api", () => ({
@@ -31,7 +32,7 @@ vi.mock("@elf-express/orca-browser/renderer", () => ({
     <div data-testid="browser-settings-panel" data-scope-id={scopeId} />
   ),
 }));
-vi.mock("sonner", () => ({ toast: { error: toastError, success: vi.fn() } }));
+vi.mock("sonner", () => ({ toast: { error: toastError, success: toastSuccess } }));
 
 import { BrowserSettingsTab } from "./browser-settings-tab";
 
@@ -68,6 +69,10 @@ const rotateToken = vi.fn();
 
 function isDisabled(el: HTMLElement) {
   return el.hasAttribute("disabled") || el.getAttribute("aria-disabled") === "true";
+}
+
+async function openAdvanced() {
+  fireEvent.click(await screen.findByRole("button", { name: "Advanced: MCP connection" }));
 }
 
 function renderTab() {
@@ -115,7 +120,7 @@ describe("BrowserSettingsTab", () => {
       ag("a1", "Claude Agent", "r1", { mcp_config: { mcpServers: { github: G } } }),
     );
     renderTab();
-    const box = await screen.findByRole("checkbox", { name: "Claude Agent" });
+    const box = await screen.findByRole("switch", { name: "Claude Agent" });
     await waitFor(() => expect(isDisabled(box)).toBe(false));
     fireEvent.click(box);
     await waitFor(() => expect(updateAgent).toHaveBeenCalledTimes(1));
@@ -131,7 +136,7 @@ describe("BrowserSettingsTab", () => {
       }),
     );
     renderTab();
-    const box = await screen.findByRole("checkbox", { name: "Other Agent" });
+    const box = await screen.findByRole("switch", { name: "Other Agent" });
     await waitFor(() => expect(isDisabled(box)).toBe(false));
     fireEvent.click(box);
     await waitFor(() => expect(updateAgent).toHaveBeenCalledTimes(1));
@@ -154,6 +159,7 @@ describe("BrowserSettingsTab", () => {
       }),
     );
     renderTab();
+    await openAdvanced();
     const rotate = await screen.findByRole("button", { name: "Rotate token" });
     await waitFor(() => expect(isDisabled(rotate)).toBe(false));
     fireEvent.click(rotate);
@@ -174,9 +180,9 @@ describe("BrowserSettingsTab", () => {
 
   it("disables rows the viewer cannot edit", async () => {
     renderTab();
-    const editable = await screen.findByRole("checkbox", { name: "Claude Agent" });
+    const editable = await screen.findByRole("switch", { name: "Claude Agent" });
     await waitFor(() => expect(isDisabled(editable)).toBe(false));
-    const box = screen.getByRole("checkbox", { name: "Shared Agent" });
+    const box = screen.getByRole("switch", { name: "Shared Agent" });
     expect(isDisabled(box)).toBe(true);
     expect(
       screen.getByText("Only the agent owner or a workspace admin can change this"),
@@ -184,6 +190,7 @@ describe("BrowserSettingsTab", () => {
   });
 
   async function startRotate() {
+    await openAdvanced();
     const rotate = await screen.findByRole("button", { name: "Rotate token" });
     await waitFor(() => expect(isDisabled(rotate)).toBe(false));
     fireEvent.click(rotate);
@@ -227,10 +234,41 @@ describe("BrowserSettingsTab", () => {
         "Port 47821 is already in use. Close the program using it, then restart Multica.",
       ),
     ).toBeTruthy();
-    for (const box of screen.getAllByRole("checkbox")) {
+    for (const box of screen.getAllByRole("switch")) {
       expect(isDisabled(box)).toBe(true);
     }
+    await openAdvanced();
     expect(isDisabled(screen.getByRole("button", { name: "Rotate token" }))).toBe(true);
+  });
+
+  it("shows the enabled toast with the agent name after toggling on", async () => {
+    getAgent.mockResolvedValue(ag("a1", "Claude Agent", "r1"));
+    renderTab();
+    const box = await screen.findByRole("switch", { name: "Claude Agent" });
+    await waitFor(() => expect(isDisabled(box)).toBe(false));
+    fireEvent.click(box);
+    await waitFor(() => expect(toastSuccess).toHaveBeenCalledWith("Claude Agent can now use the browser"));
+  });
+
+  it("shows the disabled toast with the agent name after toggling off", async () => {
+    getAgent.mockResolvedValue(
+      ag("a8", "Other Agent", "r1", { mcp_config: { mcpServers: { "orca-browser": E } } }),
+    );
+    renderTab();
+    const box = await screen.findByRole("switch", { name: "Other Agent" });
+    await waitFor(() => expect(isDisabled(box)).toBe(false));
+    fireEvent.click(box);
+    await waitFor(() =>
+      expect(toastSuccess).toHaveBeenCalledWith("Other Agent can no longer use the browser"),
+    );
+  });
+
+  it("keeps the Advanced panel collapsed by default", async () => {
+    renderTab();
+    await screen.findByText("Claude Agent");
+    expect(screen.queryByRole("button", { name: "Rotate token" })).toBeNull();
+    await openAdvanced();
+    expect(await screen.findByRole("button", { name: "Rotate token" })).toBeTruthy();
   });
 
   it("shows the start error", async () => {
