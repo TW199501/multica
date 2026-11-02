@@ -1,0 +1,33 @@
+apps/desktop/src/renderer/src/browser-plugin/browser-settings-tab.test.tsx
+  s_aa47a447e01641::t_db901672d11e44 171-173,180-214
+apps/desktop/src/renderer/src/browser-plugin/browser-settings-tab.tsx
+  s_aa47a447e01641::t_06ace143855b2c 74-80,82-89,96-97
+apps/desktop/src/renderer/src/browser-plugin/locales/en.json
+  s_aa47a447e01641::t_2400f9cfb25f3d 201
+apps/desktop/src/renderer/src/browser-plugin/locales/fr.json
+  s_aa47a447e01641::t_d2ca67f23625ba 201
+apps/desktop/src/renderer/src/browser-plugin/locales/ja.json
+  s_aa47a447e01641::t_7cb935a3a44ab4 201
+apps/desktop/src/renderer/src/browser-plugin/locales/ko.json
+  s_aa47a447e01641::t_d641b28e57ba09 201
+apps/desktop/src/renderer/src/browser-plugin/locales/zh-Hans.json
+  s_aa47a447e01641::t_c6eaee39572399 201
+apps/desktop/src/renderer/src/browser-plugin/locales/zh-Hant.json
+  s_aa47a447e01641::t_6fd5af9952a9fb 201
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a1e9c7ee4abe31c443c02c662f5bad3abf117f69",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
