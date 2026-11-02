@@ -72,7 +72,7 @@ export async function deliverBrowserPayload(
         clientUploadId,
         filename: file.name,
         size: file.size,
-        contentType: "image/png",
+        contentType: image.mimeType,
         status: "uploading",
       });
       return new Promise<UploadOutcome>((resolve) => {

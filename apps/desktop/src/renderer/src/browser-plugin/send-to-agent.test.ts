@@ -97,6 +97,23 @@ describe("send-to-agent", () => {
     expect(uploadFile).not.toHaveBeenCalled();
   });
 
+  it("registers the upload with the screenshot's own content type", async () => {
+    // The package types screenshots as PNG today; the upload must still follow the payload.
+    const jpeg = {
+      ...P,
+      images: [{ name: "shot.jpg", mimeType: "image/jpeg", dataBase64: btoa("abc") }],
+    } as unknown as BrowserAgentPayload;
+    const target = issueCommentDraftTarget("i1");
+    const addUpload = vi.spyOn(target, "addUpload");
+    await deliverBrowserPayload(jpeg, target, {
+      api: { uploadFile: vi.fn().mockResolvedValue({ ...ATT, content_type: "image/jpeg" }) },
+      createId: () => "u1",
+    });
+    expect(addUpload).toHaveBeenCalledWith(
+      expect.objectContaining({ clientUploadId: "u1", contentType: "image/jpeg" }),
+    );
+  });
+
   it("writes into the new chat draft slot", async () => {
     await deliverBrowserPayload(NO_IMAGES, chatDraftTarget(DRAFT_NEW_SESSION), {
       api: { uploadFile: vi.fn() },
