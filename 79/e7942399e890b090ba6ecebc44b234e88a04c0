@@ -1,0 +1,27 @@
+apps/desktop/src/renderer/src/browser-plugin/local-agents.test.ts
+  s_aa47a447e01641::t_b20e5918108c7c 1-49
+apps/desktop/src/renderer/src/browser-plugin/local-agents.ts
+  s_aa47a447e01641::t_ae60527150e5ea 1-34
+apps/desktop/src/renderer/src/browser-plugin/mcp-config.test.ts
+  s_aa47a447e01641::t_67ba98a2f6b312 1-62
+apps/desktop/src/renderer/src/browser-plugin/mcp-config.ts
+  s_aa47a447e01641::t_13c45ec9cd43e5 1-58
+docs/superpowers/state/E-463.yaml
+  s_aa47a447e01641::t_ca69f5bab2bf6c 1-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "79e7942399e890b090ba6ecebc44b234e88a04c0",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
