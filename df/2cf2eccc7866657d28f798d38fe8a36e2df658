@@ -1,0 +1,29 @@
+apps/desktop/src/renderer/src/browser-plugin/browser-sidebar-entry.tsx
+  s_aa47a447e01641::t_09136262ba4369 7,13,21-30
+apps/desktop/src/renderer/src/components/desktop-layout.test.tsx
+  s_aa47a447e01641::t_a3644fbe3da478 70-81,86-93,158-169
+apps/desktop/src/renderer/src/components/desktop-layout.tsx
+  s_aa47a447e01641::t_7f91eed68753f0 281-282
+packages/views/layout/app-sidebar.test.tsx
+  s_aa47a447e01641::t_686005999d50f8 414-439
+packages/views/layout/app-sidebar.tsx
+  s_aa47a447e01641::t_9263c50487d10f 171,427-428,437,810
+packages/views/layout/index.ts
+  s_aa47a447e01641::t_22615637479a94 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "df2cf2eccc7866657d28f798d38fe8a36e2df658",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
