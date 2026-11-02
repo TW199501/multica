@@ -1,0 +1,43 @@
+packages/core/paths/route-icons.ts
+  s_aa47a447e01641::t_6a4039a82e3edb 36
+packages/core/paths/tab-presentation.test.ts
+  s_aa47a447e01641::t_4e95d3084db5ac 192-200
+packages/core/paths/tab-presentation.ts
+  s_aa47a447e01641::t_744582a6d776e5 54,231-235
+packages/core/paths/tab-subject.test.ts
+  s_aa47a447e01641::t_5792aeb9f16f27 58-59,95
+packages/core/paths/tab-subject.ts
+  s_aa47a447e01641::t_a11862108921be 48-49,111-112,168-169
+packages/views/layout/route-icon-components.tsx
+  s_aa47a447e01641::t_147a5c42ed3f28 15,49
+packages/views/layout/tab-presentation.test.tsx
+  s_aa47a447e01641::t_f4fa07e35f460b 319-325
+packages/views/locales/en/layout.json
+  s_aa47a447e01641::t_08de281243aa08 28
+packages/views/locales/fr/layout.json
+  s_aa47a447e01641::t_fb8aefe9e32a2b 28
+packages/views/locales/ja/layout.json
+  s_aa47a447e01641::t_8cc0f1efc15a3c 28
+packages/views/locales/ko/layout.json
+  s_aa47a447e01641::t_043f5894cbb6ca 28
+packages/views/locales/zh-Hans/layout.json
+  s_aa47a447e01641::t_139fdc2a1089d5 28
+packages/views/locales/zh-Hant/layout.json
+  s_aa47a447e01641::t_e0b55967d0e803 28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b5be8c544d0a69d63203ecc9a646e73e95ad36d7",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
