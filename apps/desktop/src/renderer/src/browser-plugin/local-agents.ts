@@ -9,6 +9,42 @@ export interface LocalBrowserAgent {
   editable: boolean;
 }
 
+// MCP-capable providers whose daemon delivery accepts the `{ type: "http", url, headers }`
+// entry as written or converts it (paths under server/):
+//   claude, codebuddy: pkg/agent/claude.go:79, codebuddy.go:121 (file passed to --mcp-config)
+//   codex: pkg/agent/codex.go:763 · cursor: internal/daemon/execenv/cursor_mcp.go:42
+//   opencode, codearts: pkg/agent/opencode_mcp.go:316, codearts.go:759 · dsh: pkg/agent/dsh.go:181
+//   ACP runtimes: pkg/agent/hermes.go:2842 · pi, omp: pkg/agent/pi.go:1261, internal/daemon/runtime_mcp.go:451
+// Left out: openclaw reads `transport`, not `type` (execenv/openclaw_config.go:1361);
+// qwen hands the file verbatim to Qwen Code (pkg/agent/qwen.go:94), which uses its own remote keys.
+const ORCA_BROWSER_PROVIDERS = new Set([
+  "claude",
+  "codebuddy",
+  "codex",
+  "cursor",
+  "opencode",
+  "codearts",
+  "dsh",
+  "devin",
+  "dim",
+  "grok",
+  "hermes",
+  "kimi",
+  "kiro",
+  "mcode",
+  "qoder",
+  "qoderclicn",
+  "qwenpaw",
+  "reasonix",
+  "traecli",
+  "pi",
+  "omp",
+]);
+
+function acceptsOrcaBrowserEntry(provider: string | undefined): boolean {
+  return !!provider && providerSupportsMcpConfig(provider) && ORCA_BROWSER_PROVIDERS.has(provider);
+}
+
 export function selectLocalBrowserAgents(
   agents: Agent[],
   runtimes: AgentRuntime[],
@@ -22,7 +58,7 @@ export function selectLocalBrowserAgents(
     const runtime = byId.get(agent.runtime_id);
     if (!runtime) continue;
     if (runtime.daemon_id !== localDaemonId || runtime.runtime_mode !== "local") continue;
-    if (!providerSupportsMcpConfig(runtime.provider)) continue;
+    if (!acceptsOrcaBrowserEntry(runtime.provider)) continue;
     result.push({
       agent,
       runtime,

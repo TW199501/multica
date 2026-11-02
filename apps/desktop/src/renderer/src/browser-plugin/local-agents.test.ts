@@ -31,6 +31,20 @@ describe("selectLocalBrowserAgents", () => {
     expect(selectLocalBrowserAgents(agents, runtimes, "d1").map((x) => x.agent.id)).toEqual(["a1"]);
   });
 
+  it("offers only providers whose daemon accepts the orca-browser HTTP entry", () => {
+    const providers = ["claude", "codex", "cursor", "opencode", "hermes", "dsh", "openclaw", "qwen"];
+    const runtimes = providers.map((provider) => rt(provider, { provider }));
+    const agents = providers.map((provider) => ag(provider, provider));
+    expect(selectLocalBrowserAgents(agents, runtimes, "d1").map((x) => x.agent.id)).toEqual([
+      "claude",
+      "codex",
+      "cursor",
+      "dsh",
+      "hermes",
+      "opencode",
+    ]);
+  });
+
   it("marks enabled and editable", () => {
     const agents = [
       ag("a1", "r1", { mcp_config: { mcpServers: { "orca-browser": {} } } }),
