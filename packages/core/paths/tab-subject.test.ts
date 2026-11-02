@@ -57,6 +57,8 @@ describe("parseTabSubject", () => {
     ["/acme/chat?agent=ag-1", { kind: "chat", sessionId: null }],
     // Desktop-only browser surface
     ["/acme/browser", { kind: "browser" }],
+    // The desktop route only matches the exact path, so a sub-path is unknown
+    ["/acme/browser/x", { kind: "unknown" }],
     // Members list route does not exist
     ["/acme/members", { kind: "unknown" }],
     // Unknown / too short

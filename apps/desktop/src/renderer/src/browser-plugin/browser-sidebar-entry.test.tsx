@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { SidebarProvider } from "@multica/ui/components/ui/sidebar";
+import { SidebarMenu, SidebarProvider } from "@multica/ui/components/ui/sidebar";
+import { NAV_ITEM_CLASS_NAME } from "@multica/views/layout";
 
 let slug: string | null = "acme";
 let activeUrl: string | null = null;
@@ -23,7 +24,9 @@ import { BrowserSidebarEntry } from "./browser-sidebar-entry";
 function renderEntry() {
   return render(
     <SidebarProvider>
-      <BrowserSidebarEntry />
+      <SidebarMenu>
+        <BrowserSidebarEntry />
+      </SidebarMenu>
     </SidebarProvider>,
   );
 }
@@ -39,6 +42,15 @@ describe("BrowserSidebarEntry", () => {
     const link = screen.getByRole("link", { name: "Browser" });
     expect(link.getAttribute("href")).toBe("/acme/browser");
     expect(link.hasAttribute("data-active")).toBe(false);
+  });
+
+  it("uses the shared nav item styling at the default size", () => {
+    renderEntry();
+    const link = screen.getByRole("link", { name: "Browser" });
+    for (const cls of NAV_ITEM_CLASS_NAME.split(" ")) {
+      expect(link.className).toContain(cls);
+    }
+    expect(link.getAttribute("data-size")).toBe("default");
   });
 
   it("marks itself active on the browser route", () => {
