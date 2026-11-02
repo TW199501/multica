@@ -411,6 +411,32 @@ describe("navigation item presentation", () => {
   });
 });
 
+describe("personalNavExtra", () => {
+  beforeEach(() => {
+    navigation.current = { pathname: "/acme/issues" };
+  });
+
+  it("renders right after Chat in the personal group", () => {
+    const { container } = render(
+      <AppSidebar personalNavExtra={<button data-testid="extra">Browser</button>} />,
+    );
+    const chat = container.querySelector('button[data-href="/acme/chat"]');
+    const extra = container.querySelector('[data-testid="extra"]');
+    expect(chat).not.toBeNull();
+    expect(extra).not.toBeNull();
+    expect(
+      chat!.compareDocumentPosition(extra!) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    // Nothing between Chat and the extra entry inside the personal group.
+    expect(chat!.nextElementSibling).toBe(extra);
+  });
+
+  it("renders nothing extra when the prop is omitted", () => {
+    const { container } = render(<AppSidebar />);
+    expect(container.querySelector('[data-testid="extra"]')).toBeNull();
+  });
+});
+
 describe("personal nav — Chat", () => {
   beforeEach(() => {
     chatSessions.current = [];

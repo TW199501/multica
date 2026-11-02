@@ -55,6 +55,10 @@ describe("parseTabSubject", () => {
     ["/acme/chat", { kind: "chat", sessionId: null }],
     ["/acme/chat?session=sess-1", { kind: "chat", sessionId: "sess-1" }],
     ["/acme/chat?agent=ag-1", { kind: "chat", sessionId: null }],
+    // Desktop-only browser surface
+    ["/acme/browser", { kind: "browser" }],
+    // The desktop route only matches the exact path, so a sub-path is unknown
+    ["/acme/browser/x", { kind: "unknown" }],
     // Members list route does not exist
     ["/acme/members", { kind: "unknown" }],
     // Unknown / too short
@@ -90,6 +94,7 @@ describe("parseTabSubject", () => {
 describe("tabSubjectKey", () => {
   it("is stable for the same subject and distinct across selections", () => {
     expect(tabSubjectKey({ kind: "issue", id: "x" })).toBe("issue:x");
+    expect(tabSubjectKey({ kind: "browser" })).toBe("browser");
     expect(tabSubjectKey({ kind: "chat", sessionId: null })).toBe("chat:");
     expect(tabSubjectKey({ kind: "chat", sessionId: "s1" })).toBe("chat:s1");
     expect(

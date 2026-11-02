@@ -1,4 +1,4 @@
-export { AppSidebar } from "./app-sidebar";
+export { AppSidebar, NAV_ITEM_CLASS_NAME } from "./app-sidebar";
 export {
   CollectionPageHeader,
   CollectionPageHeaderAction,

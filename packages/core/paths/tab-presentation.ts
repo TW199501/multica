@@ -51,6 +51,7 @@ export type TabLabelKey =
   | "runtime"
   | "attachment"
   | "create_agent"
+  | "browser"
   | "unknown";
 
 /** How a tab's title should be produced. */
@@ -227,6 +228,11 @@ export function resolveTabPresentation(
           : { kind: "nav", navKey: "chat" };
       return { visual: { kind: "icon", icon: "MessageSquare" }, title };
     }
+    case "browser":
+      return {
+        visual: { kind: "icon", icon: "Globe" },
+        title: { kind: "tab", tabKey: "browser" },
+      };
     case "flow":
       return {
         visual: { kind: "icon", icon: "Bot" },

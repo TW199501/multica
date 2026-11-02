@@ -278,12 +278,8 @@ export function DesktopShell() {
             {slug && <WindowToolbar />}
             {slug && (
               <AppSidebar
-                topSlot={
-                  <>
-                    <SidebarTopSpacer />
-                    <BrowserSidebarEntry />
-                  </>
-                }
+                topSlot={<SidebarTopSpacer />}
+                personalNavExtra={<BrowserSidebarEntry />}
                 searchSlot={<SearchTrigger />}
               />
             )}
