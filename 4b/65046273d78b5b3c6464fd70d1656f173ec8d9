@@ -1,0 +1,40 @@
+apps/desktop/src/renderer/src/browser-plugin/send-to-agent-store.ts
+  s_aa47a447e01641::t_d9402574e84ad0 1-38
+apps/desktop/src/renderer/src/browser-plugin/send-to-agent-dialog.tsx
+  s_aa47a447e01641::t_d8be2f5c9153bf 1-146
+apps/desktop/src/renderer/src/browser-plugin/send-to-agent-dialog.test.tsx
+  s_aa47a447e01641::t_c536d61f1c8043 1-208,211-212
+  s_aa47a447e01641::t_f50dd66e11c5ad 209-210,213-215
+apps/desktop/src/renderer/src/browser-plugin/browser-layer.tsx
+  s_aa47a447e01641::t_2ee438a8a86763 5,9,16,30
+apps/desktop/src/renderer/src/browser-plugin/browser-renderer-host.tsx
+  s_aa47a447e01641::t_9ef855e35fd6f1 2,4,9-12
+apps/desktop/src/renderer/src/browser-plugin/locales/en.json
+  s_aa47a447e01641::t_2ab53adca95ada 212-219
+apps/desktop/src/renderer/src/browser-plugin/locales/fr.json
+  s_aa47a447e01641::t_b85c0bad3e8513 212-219
+apps/desktop/src/renderer/src/browser-plugin/locales/ja.json
+  s_aa47a447e01641::t_8471da9ce8ae8b 212-219
+apps/desktop/src/renderer/src/browser-plugin/locales/ko.json
+  s_aa47a447e01641::t_d0cfa3704f1fc5 212-219
+apps/desktop/src/renderer/src/browser-plugin/locales/zh-Hans.json
+  s_aa47a447e01641::t_cddf5eab095e18 212-219
+apps/desktop/src/renderer/src/browser-plugin/locales/zh-Hant.json
+  s_aa47a447e01641::t_91897ede20c897 212-219
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4b65046273d78b5b3c6464fd70d1656f173ec8d9",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
