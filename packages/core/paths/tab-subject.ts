@@ -45,6 +45,8 @@ export type TabSubject =
   | { kind: "chat"; sessionId: string | null }
   /** A creation flow that has not produced a resource yet. */
   | { kind: "flow"; flow: "create-agent" }
+  /** The desktop-only Browser surface (`/{slug}/browser`). */
+  | { kind: "browser" }
   /** An unrecognized URL. Never impersonate a real page. */
   | { kind: "unknown" };
 
@@ -106,6 +108,8 @@ export function parseTabSubject(url: string): TabSubject {
       };
     case "chat":
       return { kind: "chat", sessionId: query.get("session") || null };
+    case "browser":
+      return { kind: "browser" };
     case "runtimes":
       if (!id) return { kind: "page", page: "runtimes" };
       // `/runtimes/:machineId/runtime/:runtimeId` — nested runtime.
@@ -161,6 +165,8 @@ export function tabSubjectKey(subject: TabSubject): string {
       return `inbox:${subject.archived ? "archived" : "inbox"}:${subject.selectedKey ?? ""}`;
     case "chat":
       return `chat:${subject.sessionId ?? ""}`;
+    case "browser":
+      return "browser";
     case "flow":
       return `flow:${subject.flow}`;
     case "unknown":

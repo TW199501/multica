@@ -189,6 +189,15 @@ describe("resolveTabPresentation — containers keep their icon, title tracks se
   });
 });
 
+describe("resolveTabPresentation — browser", () => {
+  it("browser uses the Globe icon and a Browser label, not the unknown fallback", () => {
+    expect(present("/acme/browser")).toEqual({
+      visual: { kind: "icon", icon: "Globe" },
+      title: { kind: "tab", tabKey: "browser" },
+    });
+  });
+});
+
 describe("resolveTabPresentation — flow and unknown", () => {
   it("create-agent flow uses the agent icon and a flow label", () => {
     expect(present("/acme/agents/new")).toEqual({

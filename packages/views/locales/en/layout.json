@@ -25,6 +25,7 @@
     "runtime": "Runtime",
     "attachment": "Attachment",
     "create_agent": "Create Agent",
+    "browser": "Browser",
     "unknown": "Unknown page"
   },
   "help": {

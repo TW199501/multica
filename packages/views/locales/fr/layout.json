@@ -25,6 +25,7 @@
     "runtime": "Runtime",
     "attachment": "Pièce jointe",
     "create_agent": "Créer un agent",
+    "browser": "Navigateur",
     "unknown": "Page inconnue"
   },
   "help": {

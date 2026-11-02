@@ -316,6 +316,13 @@ describe("useTabPresentation — pending / fallback", () => {
     });
   });
 
+  it("browser route is titled Browser with the Globe icon, not unknown", () => {
+    expect(presentationOf("/acme/browser")).toEqual({
+      visual: { kind: "icon", icon: "Globe" },
+      title: "Browser",
+    });
+  });
+
   it("actor falls back to a type icon before the workspace resolves", () => {
     ws.current = null;
     expect(presentationOf("/acme/agents/ag1").visual).toEqual({
