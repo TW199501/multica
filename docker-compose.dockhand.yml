@@ -111,6 +111,9 @@ services:
       # Off by default here: set DO_NOT_TRACK= (empty) to send the anonymous daily
       # instance snapshot to telemetry.multica.ai again.
       DO_NOT_TRACK: ${DO_NOT_TRACK:-1}
+      # On by default here: shows Settings → Plugins. Set FF_PLUGINS_V1=off to
+      # hide it again.
+      FF_PLUGINS_V1: ${FF_PLUGINS_V1:-on}
       # Managed Cloud stays off for self-hosting. All managed Cloud clients use
       # this single URL when it is configured.
       MULTICA_CLOUD_URL: ${MULTICA_CLOUD_URL:-}
