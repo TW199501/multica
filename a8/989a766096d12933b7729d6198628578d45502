@@ -1,0 +1,24 @@
+apps/desktop/src/renderer/src/browser-plugin/send-to-agent-dialog.tsx
+  s_aa47a447e01641::t_12c30a29347a0d 65,68
+  s_aa47a447e01641::t_a8fec76f3cbebb 85
+apps/desktop/src/renderer/src/browser-plugin/browser-renderer-host.tsx
+  s_aa47a447e01641::t_4c52bb247cd5be 1,3,10,15-17
+apps/desktop/src/renderer/src/browser-plugin/send-to-agent-dialog.test.tsx
+  s_aa47a447e01641::t_b228044558b6da 18,50,122,182-201,221-249
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a8989a766096d12933b7729d6198628578d45502",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
