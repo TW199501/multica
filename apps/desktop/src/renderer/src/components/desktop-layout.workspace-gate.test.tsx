@@ -54,6 +54,7 @@ vi.mock("@multica/core/paths", () => ({
   ),
   paths: { workspace: () => ({ inbox: () => "/acme/inbox" }) },
   useCurrentWorkspace: () => null,
+  useWorkspaceSlug: () => state.currentSlug,
 }));
 
 vi.mock("@multica/core/platform", () => ({
