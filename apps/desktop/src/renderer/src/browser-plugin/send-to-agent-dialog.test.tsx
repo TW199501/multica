@@ -21,6 +21,7 @@ let chatOpenAtDeliver: boolean | null = null;
 
 const deliverBrowserPayload = vi.fn(async (..._args: unknown[]) => {
   chatOpenAtDeliver = useChatStore.getState().isOpen;
+  expect(push).not.toHaveBeenCalled();
   return { uploaded: 1, failed: 0 };
 });
 const issueCommentDraftTarget = vi.fn((_id: string) => issueSentinel);
@@ -47,6 +48,7 @@ vi.mock("@multica/core/paths", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@multica/core/paths")>()),
   useWorkspaceSlug: () => "acme",
 }));
+vi.mock("@multica/core/hooks", () => ({ useWorkspaceId: () => "ws1" }));
 vi.mock("@multica/core/api", () => ({ api: { uploadFile: vi.fn() } }));
 vi.mock("sonner", () => ({
   toast: {
@@ -122,6 +124,7 @@ beforeEach(() => {
   chat.getState().setOpen(true);
   deliverBrowserPayload.mockImplementation(async () => {
     chatOpenAtDeliver = useChatStore.getState().isOpen;
+    expect(push).not.toHaveBeenCalled();
     return { uploaded: 1, failed: 0 };
   });
 });

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { api } from "@multica/core/api";
 import { DRAFT_NEW_SESSION, useChatStore } from "@multica/core/chat";
+import { useWorkspaceId } from "@multica/core/hooks";
 import { paths, useWorkspaceSlug } from "@multica/core/paths";
 import { searchIssues } from "@multica/core/search-index";
 import {
@@ -34,6 +35,7 @@ export function SendToAgentDialog() {
 function SendToAgentMenu() {
   const t = useBrowserT();
   const slug = useWorkspaceSlug();
+  const wsId = useWorkspaceId();
   const { push } = useNavigation();
   const [query, setQuery] = useState("");
   const [debounced, setDebounced] = useState("");
@@ -45,7 +47,7 @@ function SendToAgentMenu() {
 
   const searching = query.trim() !== "";
   const { data, isFetching } = useQuery({
-    queryKey: ["browser-plugin", "send-to-agent", "issues", slug, debounced],
+    queryKey: ["browser-plugin", "send-to-agent", "issues", wsId, debounced],
     queryFn: () => searchIssues({ q: debounced, limit: 20 }),
     enabled: debounced !== "",
   });

@@ -137,7 +137,7 @@ export function BrowserSettingsTab() {
               type="button"
               variant="outline"
               size="sm"
-              disabled={!listening || !endpoint}
+              disabled={!listening || !endpoint || rotating}
               onClick={() => {
                 if (endpoint) void navigator.clipboard.writeText(endpoint.token);
               }}

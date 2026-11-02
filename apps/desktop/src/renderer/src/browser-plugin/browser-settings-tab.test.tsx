@@ -139,7 +139,12 @@ describe("BrowserSettingsTab", () => {
   });
 
   it("rotating the token rewrites enabled agents only", async () => {
+    let copyDisabledWhileRotating = false;
     rotateToken.mockImplementation(async () => {
+      await waitFor(() =>
+        expect(isDisabled(screen.getByRole("button", { name: "Copy token", hidden: true }))).toBe(true),
+      );
+      copyDisabledWhileRotating = true;
       getEndpoint.mockResolvedValue({ url: "http://127.0.0.1:47821/mcp", token: "t2" });
       return "t2";
     });
@@ -161,6 +166,7 @@ describe("BrowserSettingsTab", () => {
     fireEvent.click(within(dialog).getByRole("button", { name: "Rotate token" }));
     await waitFor(() => expect(updateAgent).toHaveBeenCalledTimes(1));
     expect(rotateToken).toHaveBeenCalledTimes(1);
+    expect(copyDisabledWhileRotating).toBe(true);
     const [id, body] = updateAgent.mock.calls[0]!;
     expect(id).toBe("a8");
     expect(JSON.stringify(body)).toContain("Bearer t2");
