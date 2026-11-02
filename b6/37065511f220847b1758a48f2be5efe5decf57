@@ -1,0 +1,22 @@
+apps/desktop/src/renderer/src/browser-plugin/send-to-agent.test.ts
+  s_aa47a447e01641::t_1abd513427aad9 100,103-104,106-116
+  s_aa47a447e01641::t_cab0b176241c6b 101-102,105
+apps/desktop/src/renderer/src/browser-plugin/send-to-agent.ts
+  s_aa47a447e01641::t_798678f2c0ad95 75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b637065511f220847b1758a48f2be5efe5decf57",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
