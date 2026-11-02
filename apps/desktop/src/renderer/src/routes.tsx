@@ -30,10 +30,11 @@ import { AgentCreatedPage } from "./pages/agent-created-page";
 import { SquadsPage, SquadDetailPage as SquadDetailPageView } from "@multica/views/squads/components";
 import { InboxPage } from "@multica/views/inbox";
 import { ChatPage } from "@multica/views/chat";
-import { BrowserRoute } from "./browser-plugin";
+import { BrowserRoute, BrowserSettingsTab } from "./browser-plugin";
+import { useBrowserT } from "./browser-plugin/i18n";
 import { SettingsPage } from "@multica/views/settings";
 import { useT } from "@multica/views/i18n";
-import { Download, Server } from "@multica/ui/icons";
+import { Download, Globe, Server } from "@multica/ui/icons";
 import { DaemonSettingsTab } from "./components/daemon-settings-tab";
 import { UpdatesSettingsTab } from "./components/updates-settings-tab";
 import { WorkspaceRouteLayout } from "./components/workspace-route-layout";
@@ -46,6 +47,7 @@ import { DesktopRouteErrorPage } from "./components/route-error-page";
  */
 function DesktopSettingsRoute() {
   const { t } = useT("settings");
+  const browserT = useBrowserT();
   return (
     <SettingsPage
       extraDeviceTabs={[
@@ -60,6 +62,12 @@ function DesktopSettingsRoute() {
           label: t(($) => $.desktop.tabs.updates),
           icon: Download,
           content: <UpdatesSettingsTab />,
+        },
+        {
+          value: "browser",
+          label: browserT("multica.browser.settings.tab", "Browser"),
+          icon: Globe,
+          content: <BrowserSettingsTab />,
         },
       ]}
     />
