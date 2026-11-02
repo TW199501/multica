@@ -41,6 +41,17 @@ describe("createRendererWebPreferences", () => {
     ]);
   });
 
+  it("enables webviewTag only when the caller opts in", () => {
+    expect(
+      createRendererWebPreferences(PRELOAD, "en", [], { webviewTag: true })
+        .webviewTag,
+    ).toBe(true);
+  });
+
+  it("keeps webviewTag off by default (issue windows)", () => {
+    expect(createRendererWebPreferences(PRELOAD, "en").webviewTag).toBe(false);
+  });
+
   it("defaults to the locale flag alone", () => {
     expect(
       createRendererWebPreferences(PRELOAD, "fr").additionalArguments,

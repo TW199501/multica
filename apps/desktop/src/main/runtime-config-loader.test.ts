@@ -3,7 +3,22 @@ import { mkdtemp, writeFile } from "fs/promises";
 import { join } from "path";
 import { tmpdir } from "os";
 import { describe, expect, it } from "vitest";
-import { loadRuntimeConfig } from "./runtime-config-loader";
+import { desktopConfigPath, loadRuntimeConfig } from "./runtime-config-loader";
+
+describe("desktopConfigPath", () => {
+  it("uses MULTICA_DESKTOP_CONFIG when it is set", () => {
+    expect(
+      desktopConfigPath({ MULTICA_DESKTOP_CONFIG: "/tmp/desktop.test.json" }, () => "/home/me"),
+    ).toBe("/tmp/desktop.test.json");
+  });
+
+  it("falls back to ~/.multica/desktop.json when MULTICA_DESKTOP_CONFIG is unset or blank", () => {
+    const home = () => "/home/me";
+    const fallback = join("/home/me", ".multica", "desktop.json");
+    expect(desktopConfigPath({}, home)).toBe(fallback);
+    expect(desktopConfigPath({ MULTICA_DESKTOP_CONFIG: "  " }, home)).toBe(fallback);
+  });
+});
 
 describe("loadRuntimeConfig", () => {
   it("uses dev env and ignores desktop.json during electron-vite dev", async () => {

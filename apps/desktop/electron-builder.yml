@@ -22,6 +22,9 @@ files:
   # because the first arch writes into dist/ mid-run before the second is
   # packaged.
   - "!dist/**"
+  # The agent-browser native binaries are shipped through extraResources (one
+  # per target), not inside the asar.
+  - "!**/node_modules/agent-browser/bin/**"
 # Ship the license and attribution notices inside the packaged app, so the
 # NOTICE obligations travel with the installer rather than only the git repo.
 extraResources:
@@ -29,6 +32,8 @@ extraResources:
     to: LICENSE
   - from: ../../NOTICE
     to: NOTICE
+  - from: node_modules/@elf-express/orca-browser/NOTICE
+    to: orca-browser-NOTICE
 protocols:
   - name: Multica
     schemes:
@@ -39,6 +44,8 @@ asarUnpack:
 # latest-x64-mac.yml so installed macOS 12 clients skip updates they cannot
 # launch. See scripts/mac-update-floor.cjs for why this can't be plain config.
 beforePack: ./scripts/mac-update-floor.cjs
+# Verifies the agent-browser binary and orca-browser NOTICE were packed.
+afterPack: ./scripts/browser-plugin/orca-browser-after-pack.cjs
 mac:
   # Electron 44 requires macOS 13 Ventura; declare it on every mac bundle.
   minimumSystemVersion: "13.0.0"
@@ -56,6 +63,9 @@ mac:
   # unaffected because `pnpm package` already requires the Developer ID
   # signing cert — notarization is a strict superset.
   notarize: true
+  extraResources:
+    - from: "node_modules/agent-browser/bin/agent-browser-darwin-${arch}"
+      to: "agent-browser-darwin-${arch}"
 dmg:
   artifactName: multica-desktop-${version}-mac-${arch}.${ext}
 linux:
@@ -115,6 +125,9 @@ linux:
     - deb
     - rpm
   artifactName: multica-desktop-${version}-linux-${arch}.${ext}
+  extraResources:
+    - from: "node_modules/agent-browser/bin/agent-browser-linux-${arch}"
+      to: "agent-browser-linux-${arch}"
 rpm:
   # Disable RPM build-id symlinks. Electron apps embed the upstream Electron
   # binary, whose GNU build-id is identical across every app shipping the same
@@ -127,6 +140,10 @@ win:
   target:
     - nsis
   artifactName: multica-desktop-${version}-windows-${arch}.${ext}
+  # arm64 builds reuse the x64 binary (runs under emulation).
+  extraResources:
+    - from: node_modules/agent-browser/bin/agent-browser-win32-x64.exe
+      to: "agent-browser-win32-${arch}.exe"
 publish:
   provider: github
   owner: multica-ai

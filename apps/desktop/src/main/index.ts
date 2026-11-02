@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, nativeImage, Notification, screen } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, nativeImage, Notification, screen, webContents } from "electron";
 import { homedir } from "os";
 import { join } from "path";
 import { pathToFileURL } from "url";
@@ -11,6 +11,13 @@ import {
   setupDaemonManager,
 } from "./daemon-manager";
 import { setupLocalDirectory } from "./local-directory";
+import { installBrowserPlugin, type BrowserPluginHandle } from "@elf-express/orca-browser/main";
+import { blockAllWebviews } from "./browser-plugin/block-webviews";
+import { disposeWithTimeout } from "./browser-plugin/dispose-with-timeout";
+import {
+  createBrowserHost,
+  resolveDevAgentBrowserBinDir,
+} from "./browser-plugin/browser-plugin-host";
 import { configureLinuxFileDialogs } from "./linux-file-dialog";
 import { openExternalSafely, downloadURLSafely } from "./external-url";
 import { installContextMenu } from "./context-menu";
@@ -139,6 +146,8 @@ function freezeBreadcrumbPath(): string {
 }
 
 let mainWindow: BrowserWindow | null = null;
+const BROWSER_PLUGIN_DISPOSE_TIMEOUT_MS = 10_000;
+let browserPlugin: BrowserPluginHandle | null = null;
 const issueWindows = new Set<BrowserWindow>();
 const authSessionCoordinator = new AuthSessionCoordinator<BrowserWindow>(
   (window) => {
@@ -334,6 +343,8 @@ function createWindow(): BrowserWindow {
     webPreferences: createRendererWebPreferences(
       join(__dirname, "../preload/index.js"),
       systemLocale,
+      [],
+      { webviewTag: true },
     ),
   });
   const window = mainWindow;
@@ -862,6 +873,33 @@ if (!gotTheLock) {
     });
     setupDaemonManager(() => mainWindow);
     setupLocalDirectory(() => mainWindow);
+    let devAgentBrowserBinDir = "";
+    if (!app.isPackaged) {
+      try {
+        devAgentBrowserBinDir = resolveDevAgentBrowserBinDir();
+      } catch (err) {
+        console.warn("[orca-browser] agent-browser not resolvable in dev", err);
+      }
+    }
+    try {
+      browserPlugin = installBrowserPlugin({
+        host: createBrowserHost({
+          getMainWindow: () => mainWindow,
+          userDataDir: app.getPath("userData"),
+          isPackaged: app.isPackaged,
+          processResourcesPath: process.resourcesPath,
+          devAgentBrowserBinDir,
+          openExternal: openExternalSafely,
+        }),
+      });
+    } catch (err) {
+      console.error("[orca-browser] install failed", err);
+      blockAllWebviews({
+        onWebContentsCreated: (listener) =>
+          app.on("web-contents-created", (_event, contents) => listener(contents)),
+        getAllWebContents: () => webContents.getAllWebContents(),
+      });
+    }
 
     app.on("activate", () => {
       const window = ensureMainWindow();
@@ -872,4 +910,17 @@ if (!gotTheLock) {
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
+});
+
+app.on("will-quit", (event) => {
+  const plugin = browserPlugin;
+  if (!plugin) return;
+  // Electron does not await will-quit handlers; hold the quit until the
+  // plugin has closed its agent-browser sessions, then quit again. The plugin
+  // handle is cleared first, so the second pass falls straight through.
+  event.preventDefault();
+  browserPlugin = null;
+  void disposeWithTimeout(() => plugin.dispose(), BROWSER_PLUGIN_DISPOSE_TIMEOUT_MS).finally(
+    () => app.quit(),
+  );
 });

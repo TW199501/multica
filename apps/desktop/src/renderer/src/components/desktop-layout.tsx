@@ -32,6 +32,11 @@ import {
   DesktopNavigationProvider,
   routeContentLinkPath,
 } from "@/platform/navigation";
+import {
+  BrowserLayer,
+  BrowserSidebarEntry,
+  DesktopBrowserPluginProvider,
+} from "@/browser-plugin";
 import { TabBar } from "./tab-bar";
 import { TabContent } from "./tab-content";
 import { WindowOverlay } from "./window-overlay";
@@ -271,20 +276,33 @@ export function DesktopShell() {
           >
             {slug && <GlobalShortcuts />}
             {slug && <WindowToolbar />}
-            {slug && <AppSidebar topSlot={<SidebarTopSpacer />} searchSlot={<SearchTrigger />} />}
+            {slug && (
+              <AppSidebar
+                topSlot={
+                  <>
+                    <SidebarTopSpacer />
+                    <BrowserSidebarEntry />
+                  </>
+                }
+                searchSlot={<SearchTrigger />}
+              />
+            )}
             {/* Right side: header + content container */}
             <div className="flex flex-1 min-w-0 flex-col">
               <MainTopBar sidebarMounted={Boolean(slug)} />
-              <MainCanvas showWorkspaceLoading={!slug}>
-                {/* Same indicator, same anchor as web: DashboardLayout puts it
-                    at the top of SidebarInset, and MainCanvas is desktop's
-                    equivalent relative/overflow-hidden content box. Desktop
-                    used to have no navigation feedback at all — a click just
-                    froze until the destination committed (MUL-6404). */}
-                <NavigationProgress />
-                <TabContent />
-                {slug && <FloatingChat />}
-              </MainCanvas>
+              <DesktopBrowserPluginProvider>
+                <MainCanvas showWorkspaceLoading={!slug}>
+                  {/* Same indicator, same anchor as web: DashboardLayout puts it
+                      at the top of SidebarInset, and MainCanvas is desktop's
+                      equivalent relative/overflow-hidden content box. Desktop
+                      used to have no navigation feedback at all — a click just
+                      froze until the destination committed (MUL-6404). */}
+                  <NavigationProgress />
+                  <TabContent />
+                  <BrowserLayer />
+                  {slug && <FloatingChat />}
+                </MainCanvas>
+              </DesktopBrowserPluginProvider>
             </div>
           </SidebarProvider>
         </div>

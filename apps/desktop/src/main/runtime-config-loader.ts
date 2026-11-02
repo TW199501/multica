@@ -40,8 +40,15 @@ export async function loadRuntimeConfig(options: {
   }
 }
 
-export function desktopConfigPath(): string {
-  return join(app.getPath("home"), ".multica", "desktop.json");
+// MULTICA_DESKTOP_CONFIG lets a test build read its own endpoints instead of
+// the ~/.multica/desktop.json that the installed app uses.
+export function desktopConfigPath(
+  env: NodeJS.ProcessEnv = process.env,
+  homeDir: () => string = () => app.getPath("home"),
+): string {
+  const override = env.MULTICA_DESKTOP_CONFIG?.trim();
+  if (override) return override;
+  return join(homeDir(), ".multica", "desktop.json");
 }
 
 function isMissingFileError(err: unknown): boolean {

@@ -80,6 +80,7 @@ html[lang="zh-TW"] {
 @source "../../../../../packages/core/**/*.{ts,tsx}";
 @source "../../../../../packages/views/**/*.{ts,tsx}";
 @source "./**/*.tsx";
+@source "../../../node_modules/@elf-express/orca-browser/dist/renderer/**/*.js";
 
 /* Desktop-specific: override sidebar container padding for traffic light layout */
 [data-slot="sidebar-container"] {

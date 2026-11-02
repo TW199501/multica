@@ -12,11 +12,15 @@ import type { WebPreferences } from "electron";
  * `preloadPath` is injected rather than derived from `__dirname` here to keep
  * this a pure function — the bundled main process resolves it relative to its
  * own output directory at the call sites.
+ *
+ * `options.webviewTag` is opt-in: only the tabbed main window hosts the
+ * browser plugin's `<webview>`.
  */
 export function createRendererWebPreferences(
   preloadPath: string,
   systemLocale: string,
   additionalArguments: string[] = [],
+  options: { webviewTag?: boolean } = {},
 ): WebPreferences {
   return {
     preload: preloadPath,
@@ -56,6 +60,7 @@ export function createRendererWebPreferences(
     // in a dedicated WebContentsView with `plugins: true` scoped to that view,
     // keeping the main renderer plugin-free.
     plugins: true,
+    webviewTag: options.webviewTag === true,
     additionalArguments: [
       `--multica-locale=${systemLocale}`,
       ...additionalArguments,
