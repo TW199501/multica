@@ -166,7 +166,7 @@ describe("BrowserSettingsTab", () => {
     const dialog = await screen.findByRole("alertdialog");
     expect(
       within(dialog).getByText(
-        "Agents configured outside this page will lose access until you update them.",
+        "Only agents in this workspace get the new token. Agents in other workspaces, or set up outside this page, lose browser access until you update them.",
       ),
     ).toBeTruthy();
     fireEvent.click(within(dialog).getByRole("button", { name: "Rotate token" }));

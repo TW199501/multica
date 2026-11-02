@@ -204,7 +204,7 @@
   "multica.browser.settings.advanced": "高级：MCP 连接",
   "multica.browser.settings.copy_token": "复制令牌",
   "multica.browser.settings.rotate": "轮换令牌",
-  "multica.browser.settings.rotate_confirm": "在此页面之外配置的智能体将无法访问，直到你更新它们。",
+  "multica.browser.settings.rotate_confirm": "只有此工作区的智能体会获得新令牌。其他工作区的智能体，或在此页面之外配置的智能体，将无法使用浏览器，直到你更新它们。",
   "multica.browser.settings.rotate_failed_toast": "无法轮换令牌。智能体仍在使用之前的令牌。",
   "multica.browser.settings.status_starting": "MCP 服务正在启动",
   "multica.browser.settings.status_port_in_use": "端口 {{port}} 已被占用。请关闭占用它的程序，然后重启 Multica。",

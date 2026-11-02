@@ -204,7 +204,7 @@
   "multica.browser.settings.advanced": "詳細設定：MCP 接続",
   "multica.browser.settings.copy_token": "トークンをコピー",
   "multica.browser.settings.rotate": "トークンをローテーション",
-  "multica.browser.settings.rotate_confirm": "このページ以外で設定したエージェントは、更新するまでアクセスできなくなります。",
+  "multica.browser.settings.rotate_confirm": "新しいトークンを受け取るのは、このワークスペースのエージェントだけです。他のワークスペースのエージェントや、このページ以外で設定したエージェントは、更新するまでブラウザを使用できなくなります。",
   "multica.browser.settings.rotate_failed_toast": "トークンをローテーションできませんでした。エージェントは引き続き以前のトークンを使用します。",
   "multica.browser.settings.status_starting": "MCP サーバーを起動しています",
   "multica.browser.settings.status_port_in_use": "ポート {{port}} はすでに使用されています。使用中のプログラムを閉じてから、Multica を再起動してください。",
