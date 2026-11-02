@@ -1,0 +1,33 @@
+apps/desktop/src/renderer/src/browser-plugin/browser-settings-tab.test.tsx
+  s_aa47a447e01641::t_dde38337b35f00 8,21,35,74-77,123,139,162,183,185,193,237,240,244-273
+apps/desktop/src/renderer/src/browser-plugin/browser-settings-tab.tsx
+  s_aa47a447e01641::t_1903b47ce171a5 10-15,26,68-75,138-147,149-151,167,173-177,202-243
+apps/desktop/src/renderer/src/browser-plugin/locales/en.json
+  s_aa47a447e01641::t_7a1eb14cee71de 198-204
+apps/desktop/src/renderer/src/browser-plugin/locales/fr.json
+  s_aa47a447e01641::t_83e5fe3f7285fd 198-204
+apps/desktop/src/renderer/src/browser-plugin/locales/ja.json
+  s_aa47a447e01641::t_6bb1fe02bb37c9 198-204
+apps/desktop/src/renderer/src/browser-plugin/locales/ko.json
+  s_aa47a447e01641::t_ee354bcd177a47 198-204
+apps/desktop/src/renderer/src/browser-plugin/locales/zh-Hans.json
+  s_aa47a447e01641::t_407d94cf6b1166 198-204
+apps/desktop/src/renderer/src/browser-plugin/locales/zh-Hant.json
+  s_aa47a447e01641::t_bbc079c7a5fb47 198-204
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bcf2b6e373aec8c6bee96a7daa6f014f141e16ed",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
