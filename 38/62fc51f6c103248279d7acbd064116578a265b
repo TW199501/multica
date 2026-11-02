@@ -1,0 +1,23 @@
+apps/desktop/src/renderer/src/browser-plugin/browser-sidebar-entry.test.tsx
+  s_aa47a447e01641::t_87527d5d303f4c 4-5,27-29,47-55
+packages/core/paths/tab-subject.test.ts
+  s_aa47a447e01641::t_c18a1d3938a25e 60-61
+packages/core/paths/tab-subject.ts
+  s_aa47a447e01641::t_cb46611b3414db 112
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3862fc51f6c103248279d7acbd064116578a265b",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
