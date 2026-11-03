@@ -147,11 +147,10 @@ function AISettingsForm({
 
   const preset = PROVIDER_PRESETS.find((p) => p.key === provider);
   const keyless = KEYLESS_PROVIDERS.has(provider);
-  const keyRequired =
-    !keyless &&
-    (!settings.api_key_set ||
-      provider !== settings.provider ||
-      hostOf(baseUrl) !== hostOf(settings.base_url));
+  const targetChanged =
+    provider !== settings.provider ||
+    hostOf(baseUrl) !== hostOf(settings.base_url);
+  const keyRequired = !keyless && (!settings.api_key_set || targetChanged);
   const blocked = !settings.secret_key_available;
 
   const providerItems = useMemo(() => {
@@ -186,7 +185,10 @@ function AISettingsForm({
     };
     const key = apiKey.trim();
     if (key) input.api_key = key;
-    else if (keyless) input.clear_api_key = true;
+    // Same target with an empty field keeps the stored key; only moving a
+    // stored key's owner to a keyless-capable endpoint drops it.
+    else if (keyless && targetChanged && settings.api_key_set)
+      input.clear_api_key = true;
     return input;
   };
 

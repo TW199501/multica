@@ -64,5 +64,5 @@ export const PROVIDER_PRESETS: ProviderPreset[] = [
   { key: "custom", baseUrl: "", models: [] },
 ];
 
-/** Providers that run without an API key. */
-export const KEYLESS_PROVIDERS = new Set(["llamacpp"]);
+/** Providers whose endpoint may run without an API key, so the key is never forced. */
+export const KEYLESS_PROVIDERS = new Set(["llamacpp", "custom"]);

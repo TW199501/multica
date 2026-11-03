@@ -224,4 +224,45 @@ describe("AISettingsPage", () => {
     expect(await screen.findByLabelText(/API key/)).toBeInTheDocument();
     expect(mocks.api.getAISettings).toHaveBeenCalledTimes(2);
   });
+
+  it("keeps a stored llama.cpp key when only the prompt changes", async () => {
+    const user = userEvent.setup();
+    mocks.api.getAISettings.mockResolvedValue(
+      settings({
+        provider: "llamacpp",
+        base_url: "http://localhost:8080/v1",
+        model: "",
+      }),
+    );
+    renderUi(<AISettingsPage />);
+    const prompt = await screen.findByLabelText("Prompt");
+    await user.clear(prompt);
+    await user.type(prompt, "new prompt");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(mocks.api.updateAISettings).toHaveBeenCalled());
+    const [, input] = mocks.api.updateAISettings.mock.calls[0]!;
+    expect(input.prompt).toBe("new prompt");
+    expect(input).not.toHaveProperty("clear_api_key");
+    expect(input).not.toHaveProperty("api_key");
+  });
+
+  it("clears the stored key when switching a hosted provider to custom without a key", async () => {
+    const user = userEvent.setup();
+    renderUi(<AISettingsPage />);
+    await screen.findByLabelText(/API key/);
+    await user.click(screen.getByRole("combobox", { name: "Provider" }));
+    await user.click(await screen.findByRole("option", { name: "Custom" }));
+    const endpoint = screen.getByLabelText("API endpoint");
+    await user.clear(endpoint);
+    await user.type(endpoint, "http://vllm.internal:8000/v1");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(mocks.api.updateAISettings).toHaveBeenCalled());
+    const [, input] = mocks.api.updateAISettings.mock.calls[0]!;
+    expect(input).toMatchObject({
+      provider: "custom",
+      base_url: "http://vllm.internal:8000/v1",
+      clear_api_key: true,
+    });
+    expect(input).not.toHaveProperty("api_key");
+  });
 });
