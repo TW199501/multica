@@ -185,7 +185,7 @@ Les limites de débit d'authentification nécessitent `REDIS_URL` ; sans cette v
 | GitHub | `GITHUB_APP_PRIVATE_KEY` | Clé privée PEM complète associée à l'App ID ; mêmes usages que ci-dessus |
 | Lark | `MULTICA_LARK_SECRET_KEY` | Clé de chiffrement des identifiants de 32 octets, encodée en Base64 |
 | Slack | `MULTICA_SLACK_SECRET_KEY` | Clé de chiffrement des jetons de 32 octets, encodée en Base64 |
-| Paramètres IA | `MULTICA_AI_SECRET_KEY` | Clé de 32 octets encodée en Base64 qui chiffre la clé des paramètres IA de l'espace de travail ; sans elle, la page des paramètres IA ne peut pas enregistrer et l'amélioration des messages est indisponible |
+| Paramètres IA | `MULTICA_AI_SECRET_KEY` | Clé de 32 octets encodée en Base64 qui chiffre la clé des paramètres IA de l'espace de travail ; sans elle, la page des paramètres IA ne peut pas enregistrer et l'amélioration des messages est indisponible. Gardez-la stable : la perdre ou la changer rend illisibles les clés IA enregistrées |
 | Telegram | `MULTICA_TELEGRAM_SECRET_KEY` | Clé de chiffrement du jeton du bot de 32 octets, encodée en Base64 |
 | Composio | `COMPOSIO_API_KEY` | Active les connexions d'outils Composio |
 | Composio | `COMPOSIO_CALLBACK_BASE_URL` | URL de l'API de rappel ; peut se rabattre sur `MULTICA_PUBLIC_URL` |

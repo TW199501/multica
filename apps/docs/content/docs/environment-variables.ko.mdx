@@ -185,7 +185,7 @@ reverse proxy 뒤에 배포한다면 실제 proxy 네트워크를 입력해야 �
 | GitHub | `GITHUB_APP_PRIVATE_KEY` | App ID와 짝을 이루는 전체 PEM private key. 용도는 위와 같음 |
 | Feishu | `MULTICA_LARK_SECRET_KEY` | base64로 인코딩한 32바이트 자격 증명 암호화 키 |
 | Slack | `MULTICA_SLACK_SECRET_KEY` | base64로 인코딩한 32바이트 token 암호화 키 |
-| AI 설정 | `MULTICA_AI_SECRET_KEY` | 워크스페이스 AI 설정의 key를 암호화하는 base64로 인코딩한 32바이트 키. 없으면 AI 설정 페이지에서 저장할 수 없고 메시지 다듬기도 사용할 수 없음 |
+| AI 설정 | `MULTICA_AI_SECRET_KEY` | 워크스페이스 AI 설정의 key를 암호화하는 base64로 인코딩한 32바이트 키. 없으면 AI 설정 페이지에서 저장할 수 없고 메시지 다듬기도 사용할 수 없음. 분실하거나 변경하면 저장된 AI key를 복호화할 수 없으므로 고정해 두세요 |
 | Telegram | `MULTICA_TELEGRAM_SECRET_KEY` | base64로 인코딩한 32바이트 Bot token 암호화 키 |
 | Composio | `COMPOSIO_API_KEY` | Composio 도구 연결 활성화 |
 | Composio | `COMPOSIO_CALLBACK_BASE_URL` | callback API 주소. `MULTICA_PUBLIC_URL`로 fallback 가능 |

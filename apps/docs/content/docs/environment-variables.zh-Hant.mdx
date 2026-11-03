@@ -185,7 +185,7 @@ MULTICA_PUBLIC_URL=https://api.multica.example.com
 | GitHub | `GITHUB_APP_PRIVATE_KEY` | 與 App ID 配套的完整 PEM 私鑰，用途同上 |
 | 飛書 | `MULTICA_LARK_SECRET_KEY` | base64 編碼的 32 位元組憑據加密金鑰 |
 | Slack | `MULTICA_SLACK_SECRET_KEY` | base64 編碼的 32 位元組 token 加密金鑰 |
-| AI 設定 | `MULTICA_AI_SECRET_KEY` | base64 編碼的 32 位元組金鑰，用來加密工作區 AI 設定中的 key；未設定時 AI 設定頁無法儲存，訊息潤飾不可用 |
+| AI 設定 | `MULTICA_AI_SECRET_KEY` | base64 編碼的 32 位元組金鑰，用來加密工作區 AI 設定中的 key；未設定時 AI 設定頁無法儲存，訊息潤飾不可用。請保持不變：遺失或更換後，已儲存的 AI key 將無法解密 |
 | Telegram | `MULTICA_TELEGRAM_SECRET_KEY` | base64 編碼的 32 位元組 Bot token 加密金鑰 |
 | Composio | `COMPOSIO_API_KEY` | 啟用 Composio 工具連線 |
 | Composio | `COMPOSIO_CALLBACK_BASE_URL` | 回撥 API 地址；可回退到 `MULTICA_PUBLIC_URL` |

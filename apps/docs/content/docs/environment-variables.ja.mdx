@@ -185,7 +185,7 @@ allowlist の正確な判定順序は[ログインとサインアップ](/auth-s
 | GitHub | `GITHUB_APP_PRIVATE_KEY` | App ID と対になる完全な PEM 秘密鍵。用途は同上 |
 | Lark | `MULTICA_LARK_SECRET_KEY` | base64 エンコードされた 32 バイトの資格情報暗号化キー |
 | Slack | `MULTICA_SLACK_SECRET_KEY` | base64 エンコードされた 32 バイトの token 暗号化キー |
-| AI 設定 | `MULTICA_AI_SECRET_KEY` | ワークスペースの AI 設定の key を暗号化する、base64 エンコードされた 32 バイトのキー。未設定の場合、AI 設定ページは保存できず、メッセージの推敲も使えません |
+| AI 設定 | `MULTICA_AI_SECRET_KEY` | ワークスペースの AI 設定の key を暗号化する、base64 エンコードされた 32 バイトのキー。未設定の場合、AI 設定ページは保存できず、メッセージの推敲も使えません。紛失・変更すると保存済みの AI key を復号できなくなるため、固定してください |
 | Telegram | `MULTICA_TELEGRAM_SECRET_KEY` | base64 エンコードされた 32 バイトの Bot token 暗号化キー |
 | Composio | `COMPOSIO_API_KEY` | Composio ツール接続を有効化 |
 | Composio | `COMPOSIO_CALLBACK_BASE_URL` | コールバック API アドレス。`MULTICA_PUBLIC_URL` にフォールバック可能 |
