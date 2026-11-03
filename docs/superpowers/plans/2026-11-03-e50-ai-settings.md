@@ -1,14 +1,16 @@
-# E-50 AI 設定與對話優化：後端 Implementation Plan
+# E-50 AI 設定與對話優化（前後端） Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 工作區管理員能設定、測試、加密儲存一組「對話 AI」，任何成員能呼叫伺服器把一段文字依前文優化；附可選的 llama.cpp 部署套件。
+**Goal:** 工作區管理員在「AI 設定」頁設定、測試、加密儲存一組「對話 AI」；任何成員在六個輸入框按「對話優化」，看左右對照、可重新產生、採用後才換進輸入框；附可選的 llama.cpp 部署套件。
 
 **Architecture:** 新增 `server/internal/aisettings` 套件，負責資料表讀寫、金鑰加解密（`secretbox`，主金鑰 `MULTICA_AI_SECRET_KEY`）與依工作區設定建出 `*llm.Client`。Handler 只做權限、解析與回應；所有模型呼叫照舊經過 `server/pkg/llm`。對話優化在送出前把 @提及、連結、行內程式碼換成佔位符，回來後還原，佔位符少了就整次失敗，不把壞掉的文字交給使用者。
 
-**Tech Stack:** Go（Chi、sqlc、pgx）、PostgreSQL、`server/pkg/llm`（OpenAI Go SDK）、`server/internal/util/secretbox`、Docker Compose（llama.cpp `llama-server`）。
+前端：`packages/core` 加 API 方法、zod schema、Query hooks；`packages/views` 加共用的 AI 設定頁與對話優化按鈕／對照視窗，網頁版與桌面版各自接路由；六個輸入框共用同一組按鈕與視窗，用編輯器的 `getMarkdown()` 讀、`adoptContent()` 換。
 
-**Spec:** `docs/superpowers/specs/2026-11-03-ai-settings-and-message-polish-design.md`（Multica E-49）。前端是 E-51，另一份計畫。
+**Tech Stack:** Go（Chi、sqlc、pgx）、PostgreSQL、`server/pkg/llm`（OpenAI Go SDK）、`server/internal/util/secretbox`、Docker Compose（llama.cpp `llama-server`）；TypeScript、React、TanStack Query、zod、Base UI（`@multica/ui`）、react-i18next、Vitest。
+
+**Spec:** `docs/superpowers/specs/2026-11-03-ai-settings-and-message-polish-design.md`（Multica E-49）。原本的前端計畫 E-51 已併入本計畫（Eddie 2026-11-03 同意）。參考畫面在 `docs/superpowers/specs/images/ai-settings/`。
 
 ## Global Constraints
 
@@ -23,6 +25,8 @@
 - Handler 內 UUID 處理照 AGENTS.md：純 UUID 輸入用 `parseUUIDOrBadRequest`；查詢一律帶 `workspace_id`。
 - 程式碼註解用英文，只寫不明顯的理由與限制。commit 訊息 `feat(E-50): …`／`docs(E-50): …`，結尾附 `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`。
 - 不在計畫範圍內的檔案不修改；不刪測試、不放寬斷言。
+- 前端：UI 讀到的 JSON 一律經 zod schema 與 `parseWithFallback`（`packages/core/api/schema.ts:38`），新 endpoint 補格式錯誤測試；`packages/core` 不用 UI 函式庫；`packages/views` 不定義 store、不用 `next/*`／`react-router-dom`，導覽用 `useNavigation()`；圖示只從 `@multica/ui/icons` 取（用 `Sparkles`）；文字大小用 `--text-*` 語意 token；按鈕與對話框照 `packages/ui/docs/button.md`、`dialog.md`。
+- 文案補齊六種語系（`en`、`fr`、`ja`、`ko`、`zh-Hans`、`zh-Hant`），照 `apps/docs/content/docs/developers/conventions.zh.mdx` 檢查；說明文字預設不寫，只在不明顯的限制處寫（例：沒設主金鑰、換主機要重填金鑰）。
 - 本單無 `.ps1`。
 - 發版由 Eddie 執行（快轉 `release`）；本計畫只開 PR 進 `dev`，AI 不合併、不推 `dev`／`release`／`main`。
 
@@ -31,8 +35,8 @@
 1. **模型把 @提及、連結或程式碼改掉或刪掉**：使用者預期這些原樣保留、還能點。→ Task 4 的 `TestPolishRestoresProtectedSpans`、`TestPolishFailsWhenModelDropsPlaceholder`。
 2. **上游錯誤訊息把金鑰原文帶回來**（OpenAI 401 會回「Incorrect API key provided: sk-…」）：使用者預期畫面上看不到金鑰。→ Task 3 的 `TestAISettingsTestRedactsKeyInUpstreamError`。
 3. **改了端點主機卻沿用舊金鑰**：使用者預期已存的金鑰不會被送到新網址。→ Task 2 的 `TestAISettingsSaveRequiresKeyWhenHostChanges`、Task 3 的 `TestAISettingsTestRequiresKeyWhenHostChanges`。
-4. **伺服器沒設 `MULTICA_AI_SECRET_KEY`**：使用者預期頁面能開但不能存、對話優化不可用、沒有任何外送。→ Task 2 的 `TestAISettingsWithoutSecretKey`、Task 4 的 `TestPolishUnavailableMakesNoUpstreamRequest`。
-5. **一般成員或別人的聊天**：一般成員讀寫設定被擋；用別人的聊天當前文要 404。→ Task 2 的 `TestAISettingsRequiresAdmin`、Task 4 的 `TestPolishRejectsForeignChatSession`。
+4. **沒設主金鑰、一般成員、別人的聊天**：沒設 `MULTICA_AI_SECRET_KEY` 時頁面能開但不能存、按鈕不出現、沒有外送；一般成員讀寫設定被擋、看不到入口；用別人的聊天當前文要 404。→ Task 2 的 `TestAISettingsWithoutSecretKey`、`TestAISettingsRequiresAdmin`，Task 4 的 `TestPolishUnavailableMakesNoUpstreamRequest`、`TestPolishRejectsForeignChatSession`，Task 7 的 `hides the entry for members`、`shows the secret-key notice and disables save`。
+5. **採用後草稿沒同步**：`adoptContent()` 不觸發 `onUpdate`，若不另外同步草稿，建立任務送出的仍是舊描述、重新整理後草稿回到舊文字。使用者預期採用的文字就是送出的文字。→ Task 8 的 `chat sends the adopted text`，Task 9 的 `create-issue submits the adopted description`、`quick-create keeps the adopted prompt`。
 
 ---
 
@@ -52,12 +56,18 @@
 - 修改 `server/cmd/server/router.go`：讀 `MULTICA_AI_SECRET_KEY`、建 service、註冊路由。
 - 新增 `deploy/llama/docker-compose.yml`、`deploy/llama/README.md`。
 - 修改 `.env.example`、`docker-compose.selfhost.yml`、`docker-compose.dockhand.yml`、`apps/docs/content/docs/environment-variables{,.fr,.ja,.ko,.zh,.zh-Hant}.mdx`。
+- 修改 `packages/core/api/client.ts`、`packages/core/api/schemas.ts`、`packages/core/types/workspace.ts`（與 `types/index.ts` 匯出）、`packages/core/workspace/queries.ts`、`packages/core/workspace/mutations.ts`、`packages/core/paths/paths.ts`；測試 `packages/core/api/client.test.ts`、`packages/core/workspace/mutations.test.tsx`。
+- 新增 `packages/views/agents/ai-settings/ai-settings-page.tsx`、`provider-presets.ts`、`ai-settings-page.test.tsx`；修改 `packages/views/agents/components/agents-page.tsx`（入口按鈕）、`packages/views/package.json`（子路徑匯出）。
+- 新增 `apps/web/app/[workspaceSlug]/(dashboard)/agents/ai-settings/page.tsx`；修改 `apps/desktop/src/renderer/src/routes.tsx`（需要時加 `pages/ai-settings-page.tsx` 設標題）。
+- 新增 `packages/views/editor/polish/polish-button.tsx`、`polish-dialog.tsx`、`use-polish.ts`、`polish.test.tsx`；修改六個輸入框：`packages/views/chat/components/chat-input.tsx`、`packages/views/issues/components/comment-input.tsx`、`reply-input.tsx`、`comment-card.tsx`、`packages/views/modals/create-issue.tsx`、`quick-create-issue.tsx`。
+- 修改六種語系的 `packages/views/locales/<locale>/agents.json`、`editor.json`。
 
 ## 驗證環境
 
 - DB 相關測試需要本 worktree 的環境：`make up`（Windows 下若 `make up` 把 API 停掉，照 CONTRIBUTING 手動起資料庫即可，測試只需要資料庫）。
 - 單一套件測試：`make env-exec ARGS="-- bash -c 'cd server && go test ./internal/aisettings/... -count=1'"`；handler 測試把路徑換成 `./internal/handler -run '<名稱>'`。
-- 收尾：`make test`。
+- 前端單檔測試：`pnpm --filter @multica/core exec vitest run <路徑>`、`pnpm --filter @multica/views exec vitest run <路徑>`。
+- 收尾：`make test`、`pnpm typecheck`、`pnpm lint`、`pnpm test`。
 
 ---
 
@@ -226,10 +236,100 @@ func DefaultPrompt() string
 - [ ] 步驟 5.4：`docker compose -f deploy/llama/docker-compose.yml config` 成功；`pnpm --filter docs build` 成功；`git diff --check` 無輸出。
 - [ ] 步驟 5.5：commit `docs(E-50): optional llama.cpp package and AI secret key`。
 
+## Task 6：前端 API、schema 與 Query hooks
+
+**Files:**
+- Modify: `packages/core/api/client.ts`、`packages/core/api/schemas.ts`、`packages/core/types/workspace.ts`、`packages/core/types/index.ts`、`packages/core/workspace/queries.ts`、`packages/core/workspace/mutations.ts`、`packages/core/paths/paths.ts`
+- Test: `packages/core/api/client.test.ts`、`packages/core/workspace/mutations.test.tsx`
+
+**Interfaces:**
+- Consumes: Task 2–4 的 API 契約。
+- Produces：
+  - 型別 `WorkspaceAISettings`（欄位同 Task 2 回應）、`AISettingsInput`（`api_key?: string`）、`AISettingsTestResult = { ok: true } | { ok: false; status: number; message: string }`、`PolishContext = { kind: "chat"; chat_session_id: string } | { kind: "issue"; issue_id: string; thread_comment_id?: string } | { kind: "none" }`。
+  - `ApiClient`：`getAISettings(wsId): Promise<WorkspaceAISettings>`、`updateAISettings(wsId, input: AISettingsInput): Promise<WorkspaceAISettings>`、`testAISettings(wsId, input: AISettingsInput): Promise<AISettingsTestResult>`、`getAISettingsStatus(wsId): Promise<{ polish_available: boolean }>`、`polishText(wsId, text: string, context: PolishContext): Promise<{ text: string }>`。寫法照 `listWorkspaceMcpServers`（client.ts:3103）。`409 api_key_required` 與 `422 polish_lost_spans` 以可辨識的錯誤碼往上丟，讓 UI 顯示對應文案。
+  - schema：`WorkspaceAISettingsSchema`（缺欄位給預設、`provider` 未知值保留字串）、`AISettingsTestResultSchema`、`AISettingsStatusSchema`（解析失敗時 `polish_available:false`）、`PolishResultSchema`。
+  - `workspaceKeys.aiSettings(wsId)`＝`["workspaces", wsId, "ai-settings"]`、`workspaceKeys.aiSettingsStatus(wsId)`＝`["workspaces", wsId, "ai-settings", "status"]`；`workspaceAISettingsOptions(wsId)`、`workspaceAISettingsStatusOptions(wsId)`；`useUpdateAISettings(wsId)`（成功後 invalidate 兩個 key）、`useTestAISettings(wsId)`、`usePolishText(wsId)`。
+  - `paths.workspace(slug).agentAISettings()`＝`${ws}/agents/ai-settings`，比照現有 `newAgent()` 掛在 agents 底下，不新增頂層路徑段。
+
+- [ ] 步驟 6.1：寫失敗測試：`client.test.ts` 加 `getAISettings falls back when the response is malformed`（回 `{ nope: true }` 時得到 `configured:false`、`secret_key_available:false`）、`getAISettingsStatus treats malformed as unavailable`、`polishText surfaces polish_lost_spans`；`mutations.test.tsx` 加 `useUpdateAISettings invalidates settings and status`。
+- [ ] 步驟 6.2：`pnpm --filter @multica/core exec vitest run api/client.test.ts workspace/mutations.test.tsx`，確認失敗。
+- [ ] 步驟 6.3：實作型別、schema、client 方法、queries、mutations、path。
+- [ ] 步驟 6.4：重跑步驟 6.2 全部通過；`pnpm --filter @multica/core exec tsc --noEmit` 無錯誤。
+- [ ] 步驟 6.5：commit `feat(E-50): client and hooks for workspace AI settings`。
+
+## Task 7：「AI 設定」頁與入口
+
+**Files:**
+- Create: `packages/views/agents/ai-settings/ai-settings-page.tsx`、`provider-presets.ts`、`ai-settings-page.test.tsx`
+- Modify: `packages/views/agents/components/agents-page.tsx`（`PageHeaderBar` 的 `actions`，約 271–277 行）、`packages/views/package.json`、`apps/web/app/[workspaceSlug]/(dashboard)/agents/ai-settings/page.tsx`（新增）、`apps/desktop/src/renderer/src/routes.tsx`、六種語系 `agents.json`
+
+**Interfaces:**
+- Consumes: Task 6 的 hooks、`useCurrentMember(wsId)`（`@multica/core/permissions`）、`useWorkspacePaths()`、`useNavigation()`、技能清單（現有 skills query）。
+- Produces：`export function AISettingsPage()`（子路徑 `@multica/views/agents/ai-settings`）；`PROVIDER_PRESETS: { key: string; baseUrl: string; models: string[] }[]`，`key` 為 Task 2 的 11 個值，`llamacpp` 的 `baseUrl` 是 `http://localhost:8080/v1`、`custom` 是空字串，其餘填各家實際的 OpenAI 相容網址與常用模型（實作時查官方文件確認）。
+
+頁面行為（照規格 A 節與 `docs/superpowers/specs/images/ai-settings/03-settings-mockup.png` 的版面，供應商改下拉）：
+- 頁首：標題、連線狀態（「已連線 · N 分鐘前呼叫過」／「尚未設定」）。
+- 欄位：供應商（Select，換了就帶入該家 `baseUrl` 與模型選項）、模型（可選可打字）、API 端點、API 金鑰（已存時顯示 `••••1234`，留空＝不改；換供應商或主機時欄位標成必填）、關閉思考（Switch）、提示詞（Textarea，空的時候顯示 `default_prompt` 當預設內容，旁邊「還原預設」）、從技能載入（Select 工作區技能，可清除）。
+- 按鈕：「測試」用畫面上的值呼叫 `useTestAISettings`，顯示「連線成功」或狀態碼加訊息；「儲存」呼叫 `useUpdateAISettings`。`409 api_key_required` 時在金鑰欄位顯示錯誤。
+- `secret_key_available:false` 時顯示「伺服器尚未設定加密金鑰」，停用儲存與測試。
+- 非 owner/admin：入口按鈕不顯示；直接開網址時顯示沒有權限的提示（照 `SettingsReadOnlyNotice` 的做法），不呼叫設定 API。
+- 入口：`agents-page.tsx` 的 `actions` 在「新建 AI 代理」左邊加一顆「AI 設定」，點擊 `navigation.push(paths.agentAISettings())`。
+- 路由：網頁版新增 `agents/ai-settings/page.tsx`（`export { AISettingsPage as default } from "@multica/views/agents/ai-settings";`）；桌面版在 `routes.tsx` 的 `agents/:id` 之前加 `{ path: "agents/ai-settings", element: <AISettingsPage />, handle: { title: … } }`。
+
+- [ ] 步驟 7.1：寫失敗測試 `ai-settings-page.test.tsx`（mock `@multica/core/api`）：`hides the entry for members`（member 角色時 agents 頁沒有「AI 設定」按鈕；owner 有）、`switching provider fills the endpoint`（選 llama.cpp 端點變成 `http://localhost:8080/v1`）、`shows last four digits and never the key`、`requires the key after a host change`（API 回 409 時金鑰欄位顯示錯誤）、`shows the secret-key notice and disables save`、`test shows status and message on failure`。
+- [ ] 步驟 7.2：`pnpm --filter @multica/views exec vitest run agents/ai-settings`，確認失敗。
+- [ ] 步驟 7.3：實作頁面、presets、入口、兩邊路由、六種語系文案（新 key 放在 `agents.json` 的 `ai_settings` 底下）。
+- [ ] 步驟 7.4：重跑步驟 7.2 全部通過；`pnpm --filter @multica/views exec vitest run locales/parity.test.ts` 通過；`pnpm typecheck` 通過。
+- [ ] 步驟 7.5：commit `feat(E-50): AI settings page for workspace admins`。
+
+## Task 8：對話優化按鈕與對照視窗（聊天、留言、回覆）
+
+**Files:**
+- Create: `packages/views/editor/polish/polish-button.tsx`、`polish-dialog.tsx`、`use-polish.ts`、`polish.test.tsx`
+- Modify: `packages/views/editor/index.ts`（匯出）、`packages/views/chat/components/chat-input.tsx`、`packages/views/issues/components/comment-input.tsx`、`packages/views/issues/components/reply-input.tsx`、六種語系 `editor.json`
+
+**Interfaces:**
+- Consumes: Task 6 的 `workspaceAISettingsStatusOptions`、`usePolishText`、`PolishContext`；`ContentEditorRef` 的 `getMarkdown()`、`adoptContent(markdown)`（`packages/views/editor/content-editor.tsx`）。
+- Produces：
+  - `usePolishAvailable(wsId: string): boolean`（status 查詢，未載入時 `false`）。
+  - `PolishButton(props: { wsId: string; editorRef: RefObject<ContentEditorRef | null>; context: PolishContext; onAdopted?: (markdown: string) => void; disabled?: boolean })`：不可用時回 `null`；編輯器空白時停用；圖示 `Sparkles`，aria-label「對話優化」。
+  - `PolishDialog`：左欄原文（唯讀），右欄優化結果；開啟即呼叫一次；「重新產生」再呼叫一次並換掉右欄；「採用」呼叫 `editorRef.current.adoptContent(結果)`、再呼叫 `onAdopted(結果)`、關閉；「取消」關閉不改。等待中右欄顯示載入；失敗在右欄顯示錯誤（`polish_lost_spans` 有專屬文案），可以再重新產生。不自動送出。
+- 接法：按鈕放在各輸入框 `SubmitButton` 左邊。
+  - 聊天：`context` 用 `activeSessionId`（`useChatStore`）；是 `DRAFT_NEW_SESSION` 或空值時用 `{ kind: "none" }`。
+  - 留言：`{ kind: "issue", issue_id: issueId }`。
+  - 回覆：`{ kind: "issue", issue_id: issueId, thread_comment_id: parentId }`。
+  - 三個輸入框的草稿都由 `onAdopted` 寫回各自的草稿狀態（`adoptContent` 不觸發 `onUpdate`）。
+
+- [ ] 步驟 8.1：寫失敗測試 `polish.test.tsx`：`renders nothing when polish is unavailable`、`is disabled for an empty editor`、`shows original and polished side by side`、`regenerate calls the API again and replaces the right side`、`cancel keeps the original`、`adopt replaces the editor content without sending`、`chat sends the adopted text`（採用後按送出，`onSubmit` 收到的是優化後文字）、`reply passes the thread id`。
+- [ ] 步驟 8.2：`pnpm --filter @multica/views exec vitest run editor/polish`，確認失敗。
+- [ ] 步驟 8.3：實作三個檔案、接到三個輸入框、六種語系 `editor.json`（`polish` 底下）。
+- [ ] 步驟 8.4：重跑步驟 8.2 全部通過；三個輸入框既有的測試（同目錄 `*.test.tsx`）照舊通過。
+- [ ] 步驟 8.5：commit `feat(E-50): polish button in chat, comment and reply composers`。
+
+## Task 9：其餘三個輸入框與驗收截圖
+
+**Files:**
+- Modify: `packages/views/issues/components/comment-card.tsx`（`CommentRow` 約 889 行、`CommentCardImpl` 約 1438 行的儲存按鈕旁）、`packages/views/modals/create-issue.tsx`（`createButton` 約 911 行）、`packages/views/modals/quick-create-issue.tsx`（`createButton` 約 617 行）
+- Test: 各檔同目錄既有測試檔加案例
+
+**Interfaces:**
+- Consumes: Task 8 的 `PolishButton`。
+- 接法：
+  - 編輯留言：`{ kind: "issue", issue_id: issueId, thread_comment_id: entry.parent_id ?? entry.id }`，`editorRef` 用 `edit.editorRef`。
+  - 建立任務：`{ kind: "none" }`，`editorRef` 用 `descEditorRef`，`onAdopted={(md) => setManual({ description: md })}`。
+  - 快速建立：`{ kind: "none" }`，`onAdopted` 同時更新 `setAgent({ prompt: md })` 與 `hasContent`。
+
+- [ ] 步驟 9.1：寫失敗測試：`edit comment shows the polish button`、`create-issue submits the adopted description`（採用後按建立，送出的 description 是優化後文字）、`quick-create keeps the adopted prompt`（採用後草稿的 prompt 是優化後文字、建立鈕可按）。
+- [ ] 步驟 9.2：`pnpm --filter @multica/views exec vitest run issues/components/comment-card modals/create-issue modals/quick-create-issue`，確認失敗。
+- [ ] 步驟 9.3：接上三個輸入框。
+- [ ] 步驟 9.4：重跑步驟 9.2 全部通過；`pnpm typecheck`、`pnpm lint`、`pnpm test`、`make test` 全綠。
+- [ ] 步驟 9.5：依規格驗收 1–10 在本機實際操作，截圖放 PR 描述（用隔離的桌面版設定 `MULTICA_DESKTOP_CONFIG`，不用正式的 `~/.multica/desktop.json`）；commit `feat(E-50): polish button in edit, create and quick-create`。
+
 ## 完成檢查
 
 - [ ] `make sqlc` 後 `git status` 沒有未提交的產生檔。
 - [ ] `make test` 全綠；`go vet ./...` 無新警告。
 - [ ] `grep -rn "openai-go" server --include=*.go` 只出現在 `server/pkg/llm/`。
-- [ ] 依規格驗收 2、3、7、8、9 用 curl 或前端做完後補截圖（前端驗收在 E-51）。
+- [ ] `pnpm typecheck`、`pnpm lint`、`pnpm test` 全綠。
+- [ ] 規格驗收 1–10 都有截圖。
 - [ ] 開 PR 進 `dev`（`gh pr create --repo TW199501/multica --base dev`），標題帶 `E-50`。
