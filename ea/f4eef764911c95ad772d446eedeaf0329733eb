@@ -1,0 +1,21 @@
+packages/views/editor/polish/polish-dialog.tsx
+  s_aa47a447e01641::t_c8308f7fa14edc 99-101
+packages/views/editor/polish/polish.test.tsx
+  s_aa47a447e01641::t_06d43770cc9415 518-547
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "eaf4eef764911c95ad772d446eedeaf0329733eb",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
