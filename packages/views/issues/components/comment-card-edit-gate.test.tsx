@@ -152,7 +152,6 @@ vi.mock("../../editor", async () => ({
 // The real button needs workspace routing and the AI status query; its
 // adopt flow is covered in editor/polish. This stub records the props the
 // card passes and adopts through the same two calls the real button makes.
-const polishProps = vi.hoisted(() => ({ last: undefined as undefined | { context: unknown; disabled?: boolean } }));
 vi.mock("../../editor/polish/polish-button", () => ({
   WorkspacePolishButton: (props: {
     editorRef: { current: { adoptContent: (md: string) => void } | null };
@@ -160,11 +159,11 @@ vi.mock("../../editor/polish/polish-button", () => ({
     disabled?: boolean;
     onAdopted?: (md: string) => void;
   }) => {
-    polishProps.last = { context: props.context, disabled: props.disabled };
     return (
       <button
         type="button"
         aria-label="Polish message"
+        data-context={JSON.stringify(props.context)}
         disabled={props.disabled}
         onClick={() => {
           props.editorRef.current?.adoptContent("Polished body");
@@ -401,7 +400,21 @@ describe("comment edit — polish", () => {
     renderCard();
     await startEditing();
     expect(editPolishButton()).toBeEnabled();
-    expect(polishProps.last?.context).toEqual({
+    expect(JSON.parse(editPolishButton().getAttribute("data-context")!)).toEqual({
+      kind: "issue",
+      issue_id: "issue-1",
+      thread_comment_id: "comment-1",
+    });
+  });
+
+  it("editing a reply polishes within the thread root", async () => {
+    const reply = { ...entry, id: "reply-1", parent_id: "comment-1", content: "Reply body" } as TimelineEntry;
+    renderCard(undefined, { replies: [reply] });
+    const triggers = document.querySelectorAll('button[aria-haspopup="menu"]');
+    fireEvent.click(triggers[triggers.length - 1]!);
+    fireEvent.click(await screen.findByText("Edit"));
+    await screen.findByTestId("editor");
+    expect(JSON.parse(editPolishButton().getAttribute("data-context")!)).toEqual({
       kind: "issue",
       issue_id: "issue-1",
       thread_comment_id: "comment-1",
