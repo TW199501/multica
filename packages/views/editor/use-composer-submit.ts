@@ -89,7 +89,8 @@ export interface ComposerSubmit {
   submit: () => Promise<void>;
 }
 
-const defaultNormalize = (raw: string) => raw.replace(/(\n\s*)+$/, "").trim();
+/** The `normalize` used when none is passed. */
+export const defaultNormalize = (raw: string) => raw.replace(/(\n\s*)+$/, "").trim();
 
 export function useComposerSubmit(opts: ComposerSubmitOptions): ComposerSubmit {
   const [submitting, setSubmitting] = useState(false);

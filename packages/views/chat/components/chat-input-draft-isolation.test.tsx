@@ -99,6 +99,12 @@ vi.mock("../../editor/attachment-download-context", () => ({
 vi.mock("../../editor/polish/polish-button", () => ({
   WorkspacePolishButton: () => null,
 }));
+vi.mock("../../editor/polish/use-polish-gate", () => ({
+  useWorkspacePolishGate: ({ submit }: { submit: () => Promise<void> }) => ({
+    gatedSubmit: submit,
+    dialog: null,
+  }),
+}));
 
 vi.mock("@tiptap/react", () => ({
   useEditor: (options: {

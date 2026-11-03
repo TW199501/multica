@@ -6,6 +6,8 @@ import { ContentEditor, type ContentEditorRef, useFileDropZone, FileDropOverlay,
 import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
 import { SubmitButton } from "@multica/ui/components/common/submit-button";
 import { WorkspacePolishButton } from "../../editor/polish/polish-button";
+import { useWorkspacePolishGate } from "../../editor/polish/use-polish-gate";
+import { DecisionBar, useComposerDecision } from "../../editor/decision/decision-bar";
 import { Button } from "@multica/ui/components/ui/button";
 import { contentReferencesAttachment, type AgentTask } from "@multica/core/types";
 import { useShortcut } from "@multica/core/shortcuts";
@@ -62,8 +64,11 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
   const [isEmpty, setIsEmpty] = useState(() => !initialDraft?.trim());
   const annotations = useCommentDraftStore((s) => s.getAnnotations(draftKey));
   const composedContent = useMemo(() => composeAnnotatedReply(content, annotations), [content, annotations]);
-  const canSend = annotations.length ? hasReplyIntent(content, annotations) : !isEmpty;
-  const triggerPreview = useCommentTriggerPreview({ issueId, content: canSend ? composedContent : "" });
+  const canSendText = annotations.length ? hasReplyIntent(content, annotations) : !isEmpty;
+  const { decision, setDecision, withDecision, settleSent } = useComposerDecision();
+  // A decision alone is a complete message.
+  const canSend = canSendText || decision !== null;
+  const triggerPreview = useCommentTriggerPreview({ issueId, content: canSendText ? composedContent : "" });
   // Uploads for this composer session (MUL-5181). Owned by the module-level
   // coordinator and persisted in the draft store, so closing/scrolling the
   // composer away no longer drops an in-flight upload — its result lands in the
@@ -161,9 +166,11 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
   const { submitting, submit } = useComposerSubmit({
     editorRef,
     uploadGate: gate,
+    // The decision is appended here rather than in the editor, so a polish
+    // only ever sees what the user typed.
     normalize: (raw) => {
       const current = useCommentDraftStore.getState().getAnnotations(draftKey);
-      return hasReplyIntent(raw, current) ? composeAnnotatedReply(raw, current) : "";
+      return withDecision(hasReplyIntent(raw, current) ? composeAnnotatedReply(raw, current) : "");
     },
     // A top-level comment ends a turn: the caret is dropped rather than kept,
     // so the composer stops reading as "still writing" once the comment is
@@ -199,6 +206,10 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
       });
     },
     onAccepted: () => {
+      const acceptedId = acceptedCommentIdRef.current;
+      settleSent(() => {
+        if (acceptedId) document.getElementById(`comment-${acceptedId}`)?.scrollIntoView({ block: "nearest" });
+      });
       // Success may only consume the entry it submitted (MUL-5181 P0): edits
       // made while the request was in flight — or by a reopened composer after
       // this one unmounted — survive both in the store and in the editor.
@@ -218,6 +229,20 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
       editorScrubbedRef.current = true;
       if (acceptedCommentIdRef.current) onAccepted?.(acceptedCommentIdRef.current);
     },
+  });
+
+  const polishContext = useMemo(() => ({ kind: "issue" as const, issue_id: issueId }), [issueId]);
+  const syncAdopted = (md: string) => {
+    setContent(md);
+    setIsEmpty(!md.trim());
+    setDraft(draftKey, md);
+  };
+  const { gatedSubmit, dialog: polishGateDialog } = useWorkspacePolishGate({
+    context: polishContext,
+    editorRef,
+    submit,
+    onAdopted: syncAdopted,
+    canSend: canSend && !submitting,
   });
 
   return (
@@ -263,7 +288,7 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
             // when text AND attachments are both empty.
             setDraft(draftKey, md);
           }}
-          onSubmit={submit}
+          onSubmit={gatedSubmit}
           onUploadFile={handleUpload}
           onUploadingChange={uploadGate.onUploadingChange}
           debounceMs={100}
@@ -301,64 +326,64 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
           </div>
         </div>
       )}
-      <div className="absolute bottom-1 left-2 right-28 min-w-0">
-        <CommentTriggerChips
-          recipients={recipients}
-          blocked={triggerPreview.blocked}
-          hasAllMembersMention={triggerPreview.hasAllMembersMention}
-          draftContent={composedContent}
-          onActionChange={setAction}
-        />
-      </div>
-      <div className="absolute bottom-1 right-1.5 flex items-center gap-1">
-        <FileUploadButton
-          size="sm"
-          multiple
-          onSelect={(file) => lazy.uploadOrQueue([file])}
-        />
-        <WorkspacePolishButton
-          editorRef={editorRef}
-          context={{ kind: "issue", issue_id: issueId }}
-          disabled={isEmpty || submitting || gate.uploading}
-          onAdopted={(md) => {
-            setContent(md);
-            setIsEmpty(!md.trim());
-            setDraft(draftKey, md);
-          }}
-        />
-        {routing.restartTaskIds.length > 0 ? (
-          <Button
+      <div className="absolute bottom-1 left-2 right-1.5 flex items-center gap-2">
+        <div className="min-w-0 flex-1">
+          <CommentTriggerChips
+            recipients={recipients}
+            blocked={triggerPreview.blocked}
+            hasAllMembersMention={triggerPreview.hasAllMembersMention}
+            draftContent={composedContent}
+            onActionChange={setAction}
+          />
+        </div>
+        <div className="flex shrink-0 items-center gap-1">
+          <FileUploadButton
             size="sm"
-            variant="destructive"
-            className="rounded-full"
-            onClick={submit}
-            disabled={!canSend || submitting || gate.uploading}
-          >
-            {t(($) => $.comment.restart_send)}
-          </Button>
-        ) : <SubmitButton
-          onClick={submit}
-          disabled={!canSend}
-          loading={submitting}
-          busy={gate.uploading}
-          disabledReason={gate.uploading
-            ? tEditor(($) => $.upload.in_progress)
-            : !canSend && annotations.length > 0
-              ? t(($) => $.reply.annotations.intent_hint)
-              : undefined}
-          tooltip={sendShortcut
-            ? (
-              <>
-                {t(($) => $.comment.send_tooltip)}
-                <ShortcutKeycaps shortcut={sendShortcut} decorative />
-              </>
-            )
-            : t(($) => $.comment.send_tooltip)}
-          ariaLabel={gate.uploading
-            ? tEditor(($) => $.upload.in_progress)
-            : t(($) => $.comment.send_tooltip)}
-        />}
+            multiple
+            onSelect={(file) => lazy.uploadOrQueue([file])}
+          />
+          <DecisionBar decision={decision} onDecisionChange={setDecision} disabled={submitting} />
+          <WorkspacePolishButton
+            editorRef={editorRef}
+            context={polishContext}
+            disabled={isEmpty || submitting || gate.uploading}
+            onAdopted={syncAdopted}
+          />
+          {routing.restartTaskIds.length > 0 ? (
+            <Button
+              size="sm"
+              variant="destructive"
+              className="rounded-full"
+              onClick={gatedSubmit}
+              disabled={!canSend || submitting || gate.uploading}
+            >
+              {t(($) => $.comment.restart_send)}
+            </Button>
+          ) : <SubmitButton
+            onClick={gatedSubmit}
+            disabled={!canSend}
+            loading={submitting}
+            busy={gate.uploading}
+            disabledReason={gate.uploading
+              ? tEditor(($) => $.upload.in_progress)
+              : !canSend && annotations.length > 0
+                ? t(($) => $.reply.annotations.intent_hint)
+                : undefined}
+            tooltip={sendShortcut
+              ? (
+                <>
+                  {t(($) => $.comment.send_tooltip)}
+                  <ShortcutKeycaps shortcut={sendShortcut} decorative />
+                </>
+              )
+              : t(($) => $.comment.send_tooltip)}
+            ariaLabel={gate.uploading
+              ? tEditor(($) => $.upload.in_progress)
+              : t(($) => $.comment.send_tooltip)}
+          />}
+        </div>
       </div>
+      {polishGateDialog}
       {isDragOver && <FileDropOverlay />}
     </div>
   );

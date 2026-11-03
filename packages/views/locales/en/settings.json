@@ -198,6 +198,10 @@
       "after_run": "Start after this run",
       "hint": "Sets the default only. You can still change it for any message before sending."
     },
+    "polish_on_send": {
+      "title": "Message polish",
+      "hint": "Sending in chat, comments and replies opens the polish dialog first."
+    },
     "comments_title": "Comments & chat",
     "region_title": "Language & region",
     "appearance_title": "Appearance",

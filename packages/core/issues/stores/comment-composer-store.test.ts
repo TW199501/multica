@@ -23,7 +23,7 @@ beforeAll(() => {
 
 describe("comment composer store", () => {
   beforeEach(() => {
-    useCommentComposerStore.setState({ sticky: true, runningAgentReply: "steer" });
+    useCommentComposerStore.setState({ sticky: true, runningAgentReply: "steer", polishOnSend: false, executionMode: "multi" });
   });
 
   it("toggleSticky flips the preference", () => {
@@ -45,5 +45,24 @@ describe("comment composer store", () => {
     localStorage.setItem("multica_comment_composer", JSON.stringify({ state: { sticky: false }, version: 0 }));
     await useCommentComposerStore.persist.rehydrate();
     expect(useCommentComposerStore.getState()).toMatchObject({ sticky: false, runningAgentReply: "steer" });
+  });
+
+  it("polishOnSend defaults to false and persists", async () => {
+    localStorage.setItem("multica_comment_composer", JSON.stringify({ state: { sticky: true }, version: 0 }));
+    await useCommentComposerStore.persist.rehydrate();
+    expect(useCommentComposerStore.getState().polishOnSend).toBe(false);
+
+    useCommentComposerStore.getState().setPolishOnSend(true);
+    expect(useCommentComposerStore.getState().polishOnSend).toBe(true);
+    expect(JSON.parse(localStorage.getItem("multica_comment_composer")!).state.polishOnSend).toBe(true);
+  });
+
+  it("execution mode defaults to multi and is remembered", async () => {
+    localStorage.setItem("multica_comment_composer", JSON.stringify({ state: { sticky: true }, version: 0 }));
+    await useCommentComposerStore.persist.rehydrate();
+    expect(useCommentComposerStore.getState().executionMode).toBe("multi");
+
+    useCommentComposerStore.getState().setExecutionMode("single");
+    expect(JSON.parse(localStorage.getItem("multica_comment_composer")!).state.executionMode).toBe("single");
   });
 });

@@ -198,5 +198,16 @@
     "error_lost_spans": "Le texte amélioré modifiait des mentions, des liens ou du code ; l'original est conservé.",
     "error_not_configured": "L'amélioration des messages n'est pas configurée pour cet espace de travail. L'original est conservé.",
     "error_failed": "Impossible d'améliorer le message. L'original est conservé."
+  },
+  "decision": {
+    "label": "Décision",
+    "placeholder": "À décider",
+    "approve": "Approuver et lancer",
+    "discuss": "À rediscuter",
+    "execution_label": "Exécution",
+    "single": "Un seul agent",
+    "multi": "Plusieurs agents",
+    "sent": "Décision envoyée : {{label}}",
+    "view": "Voir"
   }
 }

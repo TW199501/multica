@@ -194,5 +194,16 @@
     "error_lost_spans": "優化結果改動了 @提及、連結或程式碼，已保留原文。",
     "error_not_configured": "此工作區尚未設定對話 AI，已保留原文。",
     "error_failed": "優化失敗，已保留原文。"
+  },
+  "decision": {
+    "label": "決議",
+    "placeholder": "請決定",
+    "approve": "核准執行",
+    "discuss": "再議討論",
+    "execution_label": "執行",
+    "single": "單代理執行",
+    "multi": "多代理執行",
+    "sent": "已送出決議：{{label}}",
+    "view": "查看"
   }
 }

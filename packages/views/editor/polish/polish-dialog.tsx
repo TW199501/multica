@@ -28,7 +28,7 @@ export interface PolishDialogProps {
   wsId: string;
   original: string;
   context: PolishContext;
-  /** Called only by the title-bar close button. */
+  /** Called only by the title-bar close button, which `send` mode disables while confirming. */
   onClose: () => void;
   onConfirm: (markdown: string) => void | Promise<void>;
 }
@@ -207,6 +207,8 @@ export function PolishDialog({
               variant="ghost"
               size="icon-sm"
               aria-label={t(($) => $.polish.close)}
+              // A send in flight still lands; closing then would only hide it.
+              disabled={mode === "send" && confirming}
               onClick={onClose}
             >
               <X aria-hidden="true" />

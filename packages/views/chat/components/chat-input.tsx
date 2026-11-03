@@ -14,12 +14,15 @@ import {
   useComposerSubmit,
 } from "../../editor";
 import { PASTE_AS_FILE_THRESHOLD } from "../../editor/paste-as-file";
+import { defaultNormalize } from "../../editor/use-composer-submit";
 import {
   useCoordinatedUploads,
   type UploadDraftBinding,
 } from "../../editor/use-coordinated-uploads";
 import { SubmitButton } from "@multica/ui/components/common/submit-button";
 import { WorkspacePolishButton } from "../../editor/polish/polish-button";
+import { useWorkspacePolishGate } from "../../editor/polish/use-polish-gate";
+import { DecisionBar, useComposerDecision } from "../../editor/decision/decision-bar";
 import { ChatAddMenu } from "./chat-add-menu";
 import { CHAT_COLUMN, CHAT_GUTTER } from "./chat-column";
 import { useChatStore, DRAFT_NEW_SESSION } from "@multica/core/chat";
@@ -229,7 +232,10 @@ export function ChatInput({
   // restored or parked one, or any persisted draft the user typed in another
   // session) still enables the button. A false enable costs nothing: handleSend
   // reads the live editor and bails when it is empty.
-  const hasNothingToSend = isEmpty && !inputDraft.trim();
+  const { decision, setDecision, withDecision, settleSent } = useComposerDecision();
+  // A decision alone is a complete message.
+  const hasNoText = isEmpty && !inputDraft.trim();
+  const hasNothingToSend = hasNoText && decision === null;
   const appliedRestoreIdRef = useRef<string | null>(null);
   const appliedConversationStarterIdRef = useRef<number | null>(null);
   const editorKey = editorKeyOverride ?? CHAT_COMPOSER_EDITOR_KEY;
@@ -446,6 +452,20 @@ export function ChatInput({
   // stale `true` behind for the next one.
   const editorScrubbedRef = useRef(false);
 
+  // The message list is a sibling surface the composer does not own; the
+  // nearest enclosing one is the conversation this composer belongs to.
+  const scrollToLatestMessage = useCallback(() => {
+    let node = composerRef.current?.parentElement ?? null;
+    while (node) {
+      const list = node.querySelector<HTMLElement>("[data-tab-scroll-root]");
+      if (list) {
+        list.scrollTo({ top: list.scrollHeight });
+        return;
+      }
+      node = node.parentElement;
+    }
+  }, []);
+
   const { submitting, submit } = useComposerSubmit({
     editorRef,
     uploadGate: gate,
@@ -454,6 +474,10 @@ export function ChatInput({
     // the same place), except when the commit left the editor alone — see
     // `editorScrubbedRef`.
     afterAccepted: () => (editorScrubbedRef.current ? "refocus" : "none"),
+    // The decision is appended here rather than in the editor, so a polish
+    // only ever sees what the user typed.
+    normalize: (raw) => withDecision(defaultNormalize(raw)),
+    onAccepted: () => settleSent(scrollToLatestMessage),
     onSubmit: async (content: string): Promise<boolean> => {
       editorScrubbedRef.current = false;
       // These states disable the SubmitButton, but Mod+Enter bypasses it — so a
@@ -555,6 +579,29 @@ export function ChatInput({
     },
   });
 
+  // Embedded surfaces keep their own session outside the global selection, so
+  // the active session would be the wrong conversation for them.
+  const polishSessionId = draftKeyOverride ? null : activeSessionId;
+  const polishContext = useMemo<PolishContext>(
+    () =>
+      polishSessionId && polishSessionId !== DRAFT_NEW_SESSION
+        ? { kind: "chat", chat_session_id: polishSessionId }
+        : { kind: "none" },
+    [polishSessionId],
+  );
+  const syncAdopted = (md: string) => {
+    commitDraft(editorDraftKeyRef.current, md);
+    setIsEmpty(!md.trim());
+  };
+  const { gatedSubmit, dialog: polishGateDialog } = useWorkspacePolishGate({
+    context: polishContext,
+    editorRef,
+    submit,
+    onAdopted: syncAdopted,
+    canSend:
+      !submitting && !disabled && !noAgent && !(isRunning && !allowSubmitWhileRunning),
+  });
+
   // Consume each click once, including clicks while sending or uploading:
   // replaying later could send after the user switches session or agent.
   // Keep existing text and attachments intact. Flush first so the draft check
@@ -630,13 +677,6 @@ export function ChatInput({
     !submitting &&
     !isProjectUpdating;
   const selectedProject = projects.find((project) => project.id === projectId);
-  // Embedded surfaces keep their own session outside the global selection, so
-  // the active session would be the wrong conversation for them.
-  const polishSessionId = draftKeyOverride ? null : activeSessionId;
-  const polishContext: PolishContext =
-    polishSessionId && polishSessionId !== DRAFT_NEW_SESSION
-      ? { kind: "chat", chat_session_id: polishSessionId }
-      : { kind: "none" };
 
   return (
     <div
@@ -731,7 +771,7 @@ export function ChatInput({
               // upload's own completion dispatch.
               commitDraft(editorDraftKeyRef.current, md);
             }}
-            onSubmit={submit}
+            onSubmit={gatedSubmit}
             onUploadFile={uploadEnabled ? handleUpload : undefined}
             pasteAsFileThreshold={PASTE_AS_FILE_THRESHOLD}
             onUploadingChange={uploadGate.onUploadingChange}
@@ -749,73 +789,78 @@ export function ChatInput({
             showBubbleMenu
           />
         </div>
-        {(uploadEnabled || projectSelectionEnabled || leftAdornment) && (
-          <div className="absolute bottom-1.5 left-1.5 flex items-center gap-1">
-            {(uploadEnabled || projectSelectionEnabled) && (
-              <ChatAddMenu
-                onSelectFile={uploadEnabled
-                  ? (file) => editorRef.current?.uploadFile(file)
+        <div className="absolute bottom-1 left-1.5 right-1.5 flex items-center gap-1">
+          {(uploadEnabled || projectSelectionEnabled || leftAdornment) && (
+            <div className="flex min-w-0 items-center gap-1">
+              {(uploadEnabled || projectSelectionEnabled) && (
+                <ChatAddMenu
+                  onSelectFile={uploadEnabled
+                    ? (file) => editorRef.current?.uploadFile(file)
+                    : undefined}
+                  projects={projects}
+                  projectId={projectId}
+                  onSelectProject={projectSelectionEnabled ? onProjectChange : undefined}
+                  projectContextUnsupported={projectContextUnsupported}
+                />
+              )}
+              {leftAdornment}
+            </div>
+          )}
+          <div className="ml-auto flex shrink-0 items-center gap-1">
+            <DecisionBar
+              decision={decision}
+              onDecisionChange={setDecision}
+              disabled={submitting || !!disabled || !!noAgent}
+            />
+            <WorkspacePolishButton
+              editorRef={editorRef}
+              context={polishContext}
+              disabled={hasNoText || submitting || gate.uploading || !!disabled || !!noAgent}
+              onAdopted={syncAdopted}
+            />
+            <SubmitButton
+              onClick={gatedSubmit}
+              disabled={hasNothingToSend || submitting || !!disabled || !!noAgent}
+              loading={submitting}
+              busy={gate.uploading}
+              // Queue-capable runs reuse this one action slot: an empty composer
+              // offers Stop, while live content swaps it to Queue Send. Older
+              // servers cannot accept follow-ups, so they remain stop-only. An
+              // upload blocks submit, so it also falls back to Stop rather than
+              // removing chat's only cancellation path; the attachment node
+              // remains the visible upload-progress surface in the editor.
+              running={
+                !!isRunning &&
+                (!allowSubmitWhileRunning || hasNothingToSend || gate.uploading)
+              }
+              onStop={onStop}
+              // While blocked, the placeholder copy is exactly the reason.
+              disabledReason={gate.uploading
+                ? tEditor(($) => $.upload.in_progress)
+                : disabled || noAgent
+                  ? placeholder
                   : undefined}
-                projects={projects}
-                projectId={projectId}
-                onSelectProject={projectSelectionEnabled ? onProjectChange : undefined}
-                projectContextUnsupported={projectContextUnsupported}
-              />
-            )}
-            {leftAdornment}
-          </div>
-        )}
-        <div className="absolute bottom-1 right-1.5 flex items-center gap-1">
-          <WorkspacePolishButton
-            editorRef={editorRef}
-            context={polishContext}
-            disabled={hasNothingToSend || submitting || gate.uploading || !!disabled || !!noAgent}
-            onAdopted={(md) => {
-              commitDraft(editorDraftKeyRef.current, md);
-              setIsEmpty(!md.trim());
-            }}
-          />
-          <SubmitButton
-            onClick={submit}
-            disabled={hasNothingToSend || submitting || !!disabled || !!noAgent}
-            loading={submitting}
-            busy={gate.uploading}
-            // Queue-capable runs reuse this one action slot: an empty composer
-            // offers Stop, while live content swaps it to Queue Send. Older
-            // servers cannot accept follow-ups, so they remain stop-only. An
-            // upload blocks submit, so it also falls back to Stop rather than
-            // removing chat's only cancellation path; the attachment node
-            // remains the visible upload-progress surface in the editor.
-            running={
-              !!isRunning &&
-              (!allowSubmitWhileRunning || hasNothingToSend || gate.uploading)
-            }
-            onStop={onStop}
-            // While blocked, the placeholder copy is exactly the reason.
-            disabledReason={gate.uploading
-              ? tEditor(($) => $.upload.in_progress)
-              : disabled || noAgent
-                ? placeholder
-                : undefined}
-            tooltip={isRunning
-              ? t(($) => $.input.queue_send_tooltip)
-              : sendShortcut
-                ? (
-                  <>
-                    {t(($) => $.input.send_tooltip)}
-                    <ShortcutKeycaps shortcut={sendShortcut} decorative />
-                  </>
-                )
-                : t(($) => $.input.send_tooltip)}
-            ariaLabel={gate.uploading
-              ? tEditor(($) => $.upload.in_progress)
-              : isRunning
+              tooltip={isRunning
                 ? t(($) => $.input.queue_send_tooltip)
-              : t(($) => $.input.send_tooltip)}
-            stopTooltip={t(($) => $.input.stop_tooltip)}
-            stopAriaLabel={t(($) => $.input.stop_tooltip)}
-          />
+                : sendShortcut
+                  ? (
+                    <>
+                      {t(($) => $.input.send_tooltip)}
+                      <ShortcutKeycaps shortcut={sendShortcut} decorative />
+                    </>
+                  )
+                  : t(($) => $.input.send_tooltip)}
+              ariaLabel={gate.uploading
+                ? tEditor(($) => $.upload.in_progress)
+                : isRunning
+                  ? t(($) => $.input.queue_send_tooltip)
+                : t(($) => $.input.send_tooltip)}
+              stopTooltip={t(($) => $.input.stop_tooltip)}
+              stopAriaLabel={t(($) => $.input.stop_tooltip)}
+            />
+          </div>
         </div>
+        {polishGateDialog}
         {uploadEnabled && isDragOver && <FileDropOverlay />}
       </div>
     </div>

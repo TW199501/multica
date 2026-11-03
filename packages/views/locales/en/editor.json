@@ -198,5 +198,16 @@
     "error_lost_spans": "The polished text changed mentions, links or code, so the original is kept.",
     "error_not_configured": "Message polish isn't set up for this workspace. The original is kept.",
     "error_failed": "Couldn't polish the message. The original is kept."
+  },
+  "decision": {
+    "label": "Decision",
+    "placeholder": "Decide",
+    "approve": "Approve and start",
+    "discuss": "Discuss further",
+    "execution_label": "Execution",
+    "single": "Single agent",
+    "multi": "Multiple agents",
+    "sent": "Decision sent: {{label}}",
+    "view": "View"
   }
 }
