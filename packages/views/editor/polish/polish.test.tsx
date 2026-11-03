@@ -578,3 +578,34 @@ describe("PolishDialog", () => {
     expect(screen.getByText("優化後")).toBeInTheDocument();
   });
 });
+
+describe("PolishDialog display text", () => {
+  it("shows links as labels, hides cards, and restores both on confirm", async () => {
+    const card = "!file[a.txt](http://x/a.txt)";
+    const original = `[@Bot](mention://agent/a1) see [E50-1](mention://issue/i1)
+
+${card}`;
+    apiPolishText.mockResolvedValue({
+      text: `[@Bot](mention://agent/a1) please see [E50-1](mention://issue/i1)
+
+${card}`,
+    });
+    const { onConfirm } = renderDialog({ original });
+
+    const dialog = screen.getByRole("dialog", { name: "Polish message" });
+    expect((within(dialog).getByLabelText("Before") as HTMLTextAreaElement).value).toBe("@Bot see E50-1");
+    await waitFor(() => expect(afterTextarea().value).toBe("@Bot please see E50-1"));
+    expect(apiPolishText).toHaveBeenCalledWith("ws-1", original, ISSUE_CONTEXT);
+
+    fireEvent.change(afterTextarea(), { target: { value: "E50-1 first, @Bot" } });
+    fireEvent.click(screen.getByRole("button", { name: "Use" }));
+
+    await waitFor(() =>
+      expect(onConfirm).toHaveBeenCalledWith(
+        `[E50-1](mention://issue/i1) first, [@Bot](mention://agent/a1)
+
+${card}`,
+      ),
+    );
+  });
+});

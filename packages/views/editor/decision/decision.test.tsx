@@ -237,7 +237,7 @@ describe("DecisionBar in composers", () => {
 
       await waitFor(() => expect(send).toHaveBeenCalled());
       await waitFor(() => expect(trigger).toHaveTextContent("請決定"));
-      expect(screen.getByRole("combobox", { name: "執行" })).toHaveTextContent("多代理執行");
+      expect(screen.queryByRole("combobox", { name: "執行" })).not.toBeInTheDocument();
     });
   }
 
@@ -263,21 +263,33 @@ describe("DecisionBar in composers", () => {
     expect(send.mock.calls[0]?.[0]).toBe(`Hello world.\n\n${APPROVE_MULTI}`);
   });
 
-  it("execution mode defaults to multi and is remembered", async () => {
+  it("execution mode shows only for approve, defaults to multi and is remembered", async () => {
     const user = userEvent.setup();
     const send = vi.fn().mockResolvedValue("comment-1");
     comment.render(send);
-    expect(screen.getByRole("combobox", { name: "執行" })).toHaveTextContent("多代理執行");
+    expect(screen.queryByRole("combobox", { name: "執行" })).not.toBeInTheDocument();
+
+    await typeInto(comment, "go");
+    await choose(user, "決議", "核准執行");
+    const execution = screen.getByRole("combobox", { name: "執行" });
+    expect(execution).toHaveTextContent("多代理執行");
+    expect(execution).toHaveClass("text-muted-foreground");
 
     await choose(user, "執行", "單代理執行");
     expect(useCommentComposerStore.getState().executionMode).toBe("single");
     expect(JSON.parse(localStorage.getItem("multica_comment_composer")!).state.executionMode).toBe("single");
 
-    await typeInto(comment, "go");
+    await choose(user, "決議", "再議討論");
+    expect(screen.queryByRole("combobox", { name: "執行" })).not.toBeInTheDocument();
     await choose(user, "決議", "核准執行");
+
     fireEvent.click(composerSendButton());
     await waitFor(() => expect(send).toHaveBeenCalled());
     expect(send.mock.calls[0]?.[0]).toBe(`go\n\n${APPROVE_SINGLE}`);
+    expect(screen.queryByRole("combobox", { name: "執行" })).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByTestId("editor"), { target: { value: "again" } });
+    await choose(user, "決議", "核准執行");
     expect(screen.getByRole("combobox", { name: "執行" })).toHaveTextContent("單代理執行");
   });
 

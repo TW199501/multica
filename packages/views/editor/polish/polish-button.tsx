@@ -4,6 +4,7 @@ import { useState, type RefObject } from "react";
 import { Sparkles } from "@multica/ui/icons";
 import { Button } from "@multica/ui/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@multica/ui/components/ui/tooltip";
+import { cn } from "@multica/ui/lib/utils";
 import { useCurrentWorkspace } from "@multica/core/paths";
 import type { PolishContext } from "@multica/core/types";
 import type { ContentEditorRef } from "../content-editor";
@@ -64,7 +65,10 @@ export function PolishButton({ wsId, editorRef, context, onAdopted, disabled }: 
             />
           }
         >
-          <Sparkles aria-hidden="true" />
+          <Sparkles
+            aria-hidden="true"
+            className={cn(original !== null && "animate-pulse [animation-duration:1.8s]")}
+          />
         </TooltipTrigger>
         <TooltipContent side="top">{label}</TooltipContent>
       </Tooltip>

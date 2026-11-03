@@ -20,9 +20,12 @@ export interface DecisionBarProps {
   disabled?: boolean;
 }
 
-const TRIGGER_CLASS = "h-7 w-auto gap-1 rounded-full px-2.5 text-caption";
+const TRIGGER_CLASS = "h-7 w-auto gap-1 rounded-full px-2.5 text-caption font-normal";
 
-/** Decision and execution pickers for chat, comment and reply composers. */
+/**
+ * Decision picker for chat, comment and reply composers. The execution picker
+ * only appears once the decision is "approve", the one decision it applies to.
+ */
 export function DecisionBar({ decision, onDecisionChange, disabled }: DecisionBarProps) {
   const { t } = useT("editor");
   const executionMode = useCommentComposerStore((s) => s.executionMode);
@@ -71,31 +74,33 @@ export function DecisionBar({ decision, onDecisionChange, disabled }: DecisionBa
           ))}
         </SelectContent>
       </Select>
-      <Select
-        items={modeItems}
-        value={executionMode}
-        disabled={disabled}
-        onValueChange={(next) => {
-          if (next && next !== executionMode) setExecutionMode(next as ExecutionMode);
-        }}
-      >
-        <SelectTrigger
-          size="sm"
-          className={TRIGGER_CLASS}
-          aria-label={t(($) => $.decision.execution_label)}
+      {decision === "approve" && (
+        <Select
+          items={modeItems}
+          value={executionMode}
+          disabled={disabled}
+          onValueChange={(next) => {
+            if (next && next !== executionMode) setExecutionMode(next as ExecutionMode);
+          }}
         >
-          <SelectValue>
-            {modeItems.find((item) => item.value === executionMode)?.label}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent align="end">
-          {modeItems.map((item) => (
-            <SelectItem key={item.value} value={item.value}>
-              {item.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+          <SelectTrigger
+            size="sm"
+            className={cn(TRIGGER_CLASS, "text-muted-foreground")}
+            aria-label={t(($) => $.decision.execution_label)}
+          >
+            <SelectValue>
+              {modeItems.find((item) => item.value === executionMode)?.label}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent align="end">
+            {modeItems.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
     </>
   );
 }

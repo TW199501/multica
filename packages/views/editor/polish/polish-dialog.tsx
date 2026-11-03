@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState, type PointerEvent } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type PointerEvent } from "react";
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
-import { Loader2, X } from "@multica/ui/icons";
+import { Sparkles, X } from "@multica/ui/icons";
 import { Button } from "@multica/ui/components/ui/button";
 import { Textarea } from "@multica/ui/components/ui/textarea";
 import {
@@ -18,6 +18,7 @@ import type { PolishContext } from "@multica/core/types";
 import { usePolishText } from "@multica/core/workspace/mutations";
 import { useT } from "../../i18n";
 import { clampDialogOffset, type DialogOffset } from "./clamp-dialog-offset";
+import { fromDisplayText, toDisplayText } from "./display-text";
 
 export type PolishDialogMode = "adopt" | "send";
 
@@ -69,7 +70,9 @@ export function PolishDialog({
   const { mutateAsync: polishText } = usePolishText(wsId);
   const beforeId = useId();
   const afterId = useId();
-  const [polished, setPolished] = useState(original);
+  // Both columns show the readable form; links and cards return on confirm.
+  const view = useMemo(() => toDisplayText(original), [original]);
+  const [polished, setPolished] = useState(view.text);
   const [error, setError] = useState<PolishError | null>(null);
   const [loading, setLoading] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -91,7 +94,7 @@ export function PolishDialog({
     polishText({ text, context: ctx }).then(
       (result) => {
         if (id !== requestRef.current) return;
-        setPolished(result.text);
+        setPolished(toDisplayText(result.text).text);
         setLoading(false);
       },
       (err: unknown) => {
@@ -110,7 +113,7 @@ export function PolishDialog({
       requestRef.current += 1;
       return;
     }
-    setPolished(inputRef.current.original);
+    setPolished(toDisplayText(inputRef.current.original).text);
     setConfirming(false);
     setOffset({ x: 0, y: 0 });
     runPolish();
@@ -141,7 +144,7 @@ export function PolishDialog({
   const confirm = async () => {
     setConfirming(true);
     try {
-      await onConfirm(polished);
+      await onConfirm(fromDisplayText(polished, view.map));
     } catch {
       // The caller reports its own failure; staying open lets the user retry.
     } finally {
@@ -226,7 +229,7 @@ export function PolishDialog({
               <Textarea
                 id={beforeId}
                 readOnly
-                value={original}
+                value={view.text}
                 className="min-h-48 flex-1 resize-none text-muted-foreground"
               />
             </div>
@@ -235,7 +238,7 @@ export function PolishDialog({
                 {t(($) => $.polish.after)}
               </label>
               {errorText && (
-                <p role="alert" className="text-caption text-destructive">
+                <p role="alert" className="text-right text-caption text-destructive">
                   {errorText}
                 </p>
               )}
@@ -244,7 +247,7 @@ export function PolishDialog({
                   role="status"
                   className="flex min-h-48 flex-1 items-center justify-center gap-2 rounded-lg border border-input text-caption text-muted-foreground"
                 >
-                  <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                  <Sparkles className="size-4 animate-pulse [animation-duration:1.8s]" aria-hidden="true" />
                   {t(($) => $.polish.loading)}
                 </div>
               ) : (
