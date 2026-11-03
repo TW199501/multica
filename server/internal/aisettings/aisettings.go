@@ -245,7 +245,8 @@ func DefaultPrompt() string {
 	return "You polish a short message written by a user. " +
 		"Fix typos and make the meaning clearer. " +
 		"Do not change the original meaning and do not add any content. " +
-		"Reply in the same language as the original text. " +
+		"Reply in the same language and writing system as the original text: " +
+		"Traditional Chinese stays Traditional Chinese, never converted to Simplified. " +
 		"Output only the polished text, with no preface, quotes or explanation. " +
 		"Keep every placeholder of the form ⟦n⟧ exactly as written."
 }
