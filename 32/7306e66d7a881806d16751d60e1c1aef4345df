@@ -1,0 +1,31 @@
+.env.example
+  s_aa47a447e01641::t_6fe34f875de182 671-674
+apps/docs/content/docs/environment-variables.fr.mdx
+  s_aa47a447e01641::t_f3edc1a0081cbf 224
+apps/docs/content/docs/environment-variables.ja.mdx
+  s_aa47a447e01641::t_23585425342ef7 227
+apps/docs/content/docs/environment-variables.ko.mdx
+  s_aa47a447e01641::t_c9115079ed0780 227
+apps/docs/content/docs/environment-variables.mdx
+  s_aa47a447e01641::t_f09e3ee2c2ba0f 227
+apps/docs/content/docs/environment-variables.zh-Hant.mdx
+  s_aa47a447e01641::t_00030c307161dc 227
+apps/docs/content/docs/environment-variables.zh.mdx
+  s_aa47a447e01641::t_8261b6623abe88 227
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "327306e66d7a881806d16751d60e1c1aef4345df",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
