@@ -525,3 +525,19 @@ func withDefaultTimeout(ctx context.Context) (context.Context, context.CancelFun
 // compile-time assertion that option.HTTPClient is satisfied by *http.Client so
 // callers can pass a plain *http.Client as the test seam.
 var _ option.HTTPClient = (*http.Client)(nil)
+
+// UpstreamError reports the HTTP status and the upstream's own error message
+// when err came from the model endpoint answering with an error. ok is false
+// for every other failure (transport errors, cancellation, local errors). The
+// SDK's Error() text is never used because it embeds the request URL.
+func UpstreamError(err error) (status int, message string, ok bool) {
+	var apiErr *openai.Error
+	if !errors.As(err, &apiErr) {
+		return 0, "", false
+	}
+	message = strings.TrimSpace(apiErr.Message)
+	if message == "" {
+		message = http.StatusText(apiErr.StatusCode)
+	}
+	return apiErr.StatusCode, message, true
+}

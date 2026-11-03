@@ -7,7 +7,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync/atomic"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/go-chi/chi/v5"
 
@@ -50,6 +52,7 @@ func aiSettingsRouter(t *testing.T, withKey bool) http.Handler {
 			r.Use(middleware.RequireWorkspaceRoleFromURL(testHandler.Queries, "id", "owner", "admin"))
 			r.Get("/ai-settings", testHandler.GetAISettings)
 			r.Put("/ai-settings", testHandler.PutAISettings)
+			r.Post("/ai-settings/test", testHandler.CheckAISettings)
 		})
 	})
 	return router
@@ -239,5 +242,83 @@ func TestAISettingsClearKeyForSelfHosted(t *testing.T) {
 	}
 	if m := decodeAI(t, rec); m["api_key_set"] != false {
 		t.Errorf("api_key_set = %v", m["api_key_set"])
+	}
+}
+
+// aiUpstreamStub records how many requests reach it and answers with a fixed
+// status; a non-200 body echoes msg inside the OpenAI error envelope.
+func aiUpstreamStub(t *testing.T, status int, msg string) (*httptest.Server, *int32) {
+	t.Helper()
+	var hits int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		atomic.AddInt32(&hits, 1)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(status)
+		if status != http.StatusOK {
+			b, _ := json.Marshal(map[string]any{"error": map[string]any{"message": msg}})
+			_, _ = w.Write(b)
+			return
+		}
+		_, _ = w.Write([]byte(`{"id":"c","object":"chat.completion","choices":[{"index":0,"message":{"role":"assistant","content":"ok"},"finish_reason":"stop"}]}`))
+	}))
+	t.Cleanup(srv.Close)
+	return srv, &hits
+}
+
+func TestAISettingsTestSucceeds(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	srv := stubLLMCompletion(t, http.StatusOK, "ok")
+	rec := aiCall(t, router, http.MethodPost, "/test", testUserID, map[string]any{
+		"provider": "custom", "base_url": srv.URL, "model": "m", "api_key": "sk-test-1234",
+	})
+	if rec.Code != http.StatusOK {
+		t.Fatalf("code %d %s", rec.Code, rec.Body.String())
+	}
+	if m := decodeAI(t, rec); m["ok"] != true {
+		t.Errorf("body: %s", rec.Body.String())
+	}
+}
+
+func TestAISettingsTestRedactsKeyInUpstreamError(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	key := "sk-secret-abcdef123456"
+	srv, hits := aiUpstreamStub(t, http.StatusUnauthorized, "Incorrect API key provided: "+key+". "+strings.Repeat("x", 400))
+	rec := aiCall(t, router, http.MethodPost, "/test", testUserID, map[string]any{
+		"provider": "custom", "base_url": srv.URL, "model": "m", "api_key": key,
+	})
+	if rec.Code != http.StatusOK {
+		t.Fatalf("code %d %s", rec.Code, rec.Body.String())
+	}
+	if strings.Contains(rec.Body.String(), key) {
+		t.Fatalf("key leaked: %s", rec.Body.String())
+	}
+	m := decodeAI(t, rec)
+	if m["ok"] != false || m["status"] != float64(401) {
+		t.Fatalf("body: %s", rec.Body.String())
+	}
+	msg, _ := m["message"].(string)
+	if !strings.Contains(msg, "***") || utf8.RuneCountInString(msg) > 200 {
+		t.Errorf("message %q", msg)
+	}
+	if got := atomic.LoadInt32(hits); got != 1 {
+		t.Errorf("upstream hits = %d, want 1 (no retries)", got)
+	}
+}
+
+func TestAISettingsTestRequiresKeyWhenHostChanges(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	seed := map[string]any{"provider": "openai", "base_url": "https://api.openai.com/v1", "model": "m", "api_key": "sk-test-9876"}
+	if rec := aiCall(t, router, http.MethodPut, "", testUserID, seed); rec.Code != http.StatusOK {
+		t.Fatalf("seed: %d %s", rec.Code, rec.Body.String())
+	}
+	srv, hits := aiUpstreamStub(t, http.StatusOK, "")
+	rec := aiCall(t, router, http.MethodPost, "/test", testUserID, map[string]any{
+		"provider": "openai", "base_url": srv.URL, "model": "m",
+	})
+	if rec.Code != http.StatusConflict || decodeAI(t, rec)["error"] != "api_key_required" {
+		t.Fatalf("want 409 api_key_required, got %d %s", rec.Code, rec.Body.String())
+	}
+	if got := atomic.LoadInt32(hits); got != 0 {
+		t.Errorf("stub received %d requests, want 0", got)
 	}
 }

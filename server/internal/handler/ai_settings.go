@@ -1,12 +1,14 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"log/slog"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
@@ -14,6 +16,7 @@ import (
 
 	"github.com/multica-ai/multica/server/internal/aisettings"
 	db "github.com/multica-ai/multica/server/pkg/db/generated"
+	"github.com/multica-ai/multica/server/pkg/llm"
 )
 
 var aiSettingsProviders = map[string]struct{}{
@@ -177,4 +180,104 @@ func (h *Handler) GetAISettingsStatus(w http.ResponseWriter, r *http.Request) {
 		available = found
 	}
 	writeJSON(w, http.StatusOK, map[string]bool{"polish_available": available})
+}
+
+const (
+	aiSettingsTestTimeout    = 20 * time.Second
+	aiSettingsTestMaxMessage = 200
+)
+
+// redactAndCap hides the key inside an upstream message and truncates it to
+// max runes; providers often echo the offending key back.
+func redactAndCap(msg, key string, max int) string {
+	if key != "" {
+		msg = strings.ReplaceAll(msg, key, "***")
+	}
+	if r := []rune(msg); len(r) > max {
+		msg = string(r[:max])
+	}
+	return msg
+}
+
+// CheckAISettings sends one tiny request with the unsaved values so the admin
+// can verify the endpoint before saving. It never stores anything.
+func (h *Handler) CheckAISettings(w http.ResponseWriter, r *http.Request) {
+	workspaceID, ok := parseUUIDOrBadRequest(w, chi.URLParam(r, "id"), "workspace id")
+	if !ok {
+		return
+	}
+	if !h.aiSettingsKeyAvailable() {
+		writeError(w, http.StatusServiceUnavailable, "secret_key_missing")
+		return
+	}
+	var req aiSettingsRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+	req.Provider = strings.TrimSpace(req.Provider)
+	req.BaseURL = strings.TrimSpace(req.BaseURL)
+	req.Model = strings.TrimSpace(req.Model)
+	if _, known := aiSettingsProviders[req.Provider]; !known {
+		writeError(w, http.StatusBadRequest, "unknown provider")
+		return
+	}
+	if u, err := url.Parse(req.BaseURL); err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Hostname() == "" {
+		writeError(w, http.StatusBadRequest, "base_url must be an http(s) URL")
+		return
+	}
+	in := aisettings.Input{
+		Provider:        req.Provider,
+		BaseURL:         req.BaseURL,
+		Model:           req.Model,
+		DisableThinking: req.DisableThinking,
+		APIKey:          req.APIKey,
+		ClearAPIKey:     req.ClearAPIKey,
+	}
+	key, err := h.AISettings.ResolveKey(r.Context(), workspaceID, in)
+	switch {
+	case errors.Is(err, aisettings.ErrKeyRequired):
+		writeError(w, http.StatusConflict, "api_key_required")
+		return
+	case errors.Is(err, aisettings.ErrSecretKeyMissing):
+		writeError(w, http.StatusServiceUnavailable, "secret_key_missing")
+		return
+	case err != nil:
+		slog.Error("ai settings: resolve key failed", "error", err)
+		writeError(w, http.StatusInternalServerError, "failed to test AI settings")
+		return
+	}
+
+	noRetries, err := llm.Retries(0)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "failed to test AI settings")
+		return
+	}
+	client := llm.New(llm.Config{
+		APIKey:          key,
+		BaseURL:         in.BaseURL,
+		DefaultModel:    in.Model,
+		DisableThinking: in.DisableThinking,
+		MaxRetries:      noRetries,
+	})
+	ctx, cancel := context.WithTimeout(r.Context(), aiSettingsTestTimeout)
+	defer cancel()
+	if _, err := client.GenerateText(ctx, in.Model, "", "Reply with the single word: ok"); err != nil {
+		status, msg, isUpstream := llm.UpstreamError(err)
+		if !isUpstream {
+			// Transport failure: status 0 means the endpoint was not reachable.
+			// The error text can contain the base URL, so it is not returned.
+			status, msg = 0, "could not reach the endpoint"
+			if errors.Is(err, context.DeadlineExceeded) {
+				msg = "the endpoint did not answer in time"
+			}
+		}
+		writeJSON(w, http.StatusOK, map[string]any{
+			"ok":      false,
+			"status":  status,
+			"message": redactAndCap(msg, key, aiSettingsTestMaxMessage),
+		})
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{"ok": true})
 }

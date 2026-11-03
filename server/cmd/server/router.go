@@ -1875,6 +1875,7 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 					r.Use(middleware.RequireWorkspaceRoleFromURL(queries, "id", "owner", "admin"))
 					r.Get("/ai-settings", h.GetAISettings)
 					r.Put("/ai-settings", h.PutAISettings)
+					r.Post("/ai-settings/test", h.CheckAISettings)
 				})
 
 				// Slack integration (MUL-3666). Same admin/member split as
