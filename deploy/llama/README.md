@@ -24,10 +24,10 @@ Multica server can reach.
 
 ## Connect Multica
 
-1. In Multica, open **AI 代理 → AI 設定** (AI agents, AI settings) as a workspace admin.
-2. Choose the self-hosted **llama.cpp** provider.
+1. In Multica, open **Agents → AI settings** as a workspace admin.
+2. Choose the **Self-hosted (llama.cpp)** provider.
 3. Enter `http://<host>:8080/v1` as the endpoint and leave the key empty.
-4. For Qwen3-style models, tick **disable thinking** so replies are not delayed by a reasoning pass.
+4. For Qwen3-style models, turn on **Disable thinking** so replies are not delayed by a reasoning pass.
 5. Run the connection test, then save.
 
 Saving requires `MULTICA_AI_SECRET_KEY` to be set on the Multica server.

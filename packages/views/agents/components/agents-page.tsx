@@ -72,6 +72,7 @@ import {
 } from "../../layout/collection-page";
 import { availabilityConfig } from "../presence";
 import { AgentRowActions } from "./agent-row-actions";
+import { AISettingsEntryButton } from "../ai-settings/ai-settings-entry";
 import {
   AgentListToolbar,
   countActiveFilterDimensions,
@@ -269,11 +270,14 @@ function PageHeaderBar({
         label: t(($) => $.page.learn_more),
       }}
       actions={
-        <CollectionPageHeaderAction
-          icon={Plus}
-          label={t(($) => $.page.new_agent)}
-          onClick={onCreate}
-        />
+        <>
+          <AISettingsEntryButton />
+          <CollectionPageHeaderAction
+            icon={Plus}
+            label={t(($) => $.page.new_agent)}
+            onClick={onCreate}
+          />
+        </>
       }
     />
   );

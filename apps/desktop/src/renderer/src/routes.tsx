@@ -27,6 +27,7 @@ import {
 } from "@multica/views/agents";
 import { DesktopChooseRuntimePage } from "./components/desktop-choose-runtime-page";
 import { AgentCreatedPage } from "./pages/agent-created-page";
+import { AISettingsPage } from "@multica/views/agents/ai-settings";
 import { SquadsPage, SquadDetailPage as SquadDetailPageView } from "@multica/views/squads/components";
 import { InboxPage } from "@multica/views/inbox";
 import { ChatPage } from "@multica/views/chat";
@@ -218,6 +219,11 @@ export const appRoutes: RouteObject[] = [
             path: "agents/new/ai/:sessionId",
             element: <AiBuilderSessionPage />,
             handle: { title: "Create Agent" },
+          },
+          {
+            path: "agents/ai-settings",
+            element: <AISettingsPage />,
+            handle: { title: "AI settings" },
           },
           {
             path: "agents/:id",
