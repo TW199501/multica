@@ -1,0 +1,33 @@
+packages/views/editor/polish/clamp-dialog-offset.ts
+  s_aa47a447e01641::t_93fb247cfb4558 1-37
+packages/views/editor/polish/clamp-dialog-offset.test.ts
+  s_aa47a447e01641::t_6a58396f665baa 1-61
+packages/views/chat/components/chat-input.tsx
+  s_aa47a447e01641::t_9f6720d431d268 772
+packages/views/editor/polish/polish-button.tsx
+  s_aa47a447e01641::t_8d68e512db2e73 24,38-40,44-46
+packages/views/editor/polish/polish-dialog.tsx
+  s_aa47a447e01641::t_1a109cb6910772 20,73,75-76,115-136,161-166,190,198
+packages/views/editor/polish/polish.test.tsx
+  s_aa47a447e01641::t_f82d73f4aa75c9 16-22,70,77,82,110,214,233-234,343-403
+packages/views/issues/components/comment-input.tsx
+  s_aa47a447e01641::t_abd3dc7f6ec770 322
+packages/views/issues/components/reply-input.tsx
+  s_aa47a447e01641::t_448bbcf6a637b9 327
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a6fcca1f7a69bae6f86978145cd2dc839d10802f",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
