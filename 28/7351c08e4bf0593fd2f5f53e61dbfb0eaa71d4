@@ -1,0 +1,45 @@
+packages/core/api/client.test.ts
+  s_aa47a447e01641::t_7868bcd6d758f1 5,3174-3281
+packages/core/api/client.ts
+  s_aa47a447e01641::t_94c23a23fb244f 67-70,473-478,632-643,3168-3217
+packages/core/api/schemas.ts
+  s_aa47a447e01641::t_6847ea8cf28b5f 95,97,3645-3685
+packages/core/paths/consistency.test.ts
+  s_c8093cab7df936::t_e80684818c6ef3 22
+packages/core/paths/paths.ts
+  s_aa47a447e01641::t_1b9a414e56975b 39
+packages/core/types/index.ts
+  s_aa47a447e01641::t_b01afef35d9e7d 112
+packages/core/types/workspace.ts
+  s_aa47a447e01641::t_98d4850dc89a2f 48-85
+packages/core/workspace/mutations.test.tsx
+  s_aa47a447e01641::t_89b155526fadf4 15,392-423
+packages/core/workspace/mutations.ts
+  s_aa47a447e01641::t_d95b2ad762e744 3,171-193
+packages/core/workspace/queries.ts
+  s_aa47a447e01641::t_3226e7c1276dc8 23-24,209-225
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "287351c08e4bf0593fd2f5f53e61dbfb0eaa71d4",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    },
+    "s_c8093cab7df936": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2add35a2-542f-486f-b376-622e8a2301f3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
