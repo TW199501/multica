@@ -1,0 +1,32 @@
+packages/views/editor/polish/display-text.test.ts
+  s_aa47a447e01641::t_c863c22c384db2 39-41
+  s_aa47a447e01641::t_aae04a1b936964 37-38
+  s_aa47a447e01641::t_5c11a9e280afbe 42-44
+  s_aa47a447e01641::t_52ef7659e9cac5 3
+packages/views/editor/polish/display-text.ts
+  s_aa47a447e01641::t_aa42f722ad6c7b 44-48
+packages/views/editor/polish/polish-button.tsx
+  s_aa47a447e01641::t_9d98dcf1f435bb 12,53
+packages/views/editor/polish/polish-dialog.tsx
+  s_aa47a447e01641::t_a9e350693e8cd8 277
+packages/views/editor/polish/polish.test.tsx
+  s_aa47a447e01641::t_9eb7b48b999000 7,609-643,647,649,663
+packages/views/editor/polish/use-polish-gate.tsx
+  s_aa47a447e01641::t_db3f0a440762ed 8,84,98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "42caea6a94809cb06e2b513a370c08d6b42b8c4e",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
