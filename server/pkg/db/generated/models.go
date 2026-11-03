@@ -1774,6 +1774,22 @@ type Workspace struct {
 	AttributionFailClosed bool `json:"attribution_fail_closed"`
 }
 
+type WorkspaceAiSetting struct {
+	WorkspaceID     pgtype.UUID        `json:"workspace_id"`
+	Provider        string             `json:"provider"`
+	BaseUrl         string             `json:"base_url"`
+	Model           string             `json:"model"`
+	ApiKeySealed    []byte             `json:"api_key_sealed"`
+	ApiKeyLast4     string             `json:"api_key_last4"`
+	DisableThinking bool               `json:"disable_thinking"`
+	Prompt          string             `json:"prompt"`
+	PromptSkillID   pgtype.UUID        `json:"prompt_skill_id"`
+	LastCalledAt    pgtype.Timestamptz `json:"last_called_at"`
+	UpdatedBy       pgtype.UUID        `json:"updated_by"`
+	CreatedAt       pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt       pgtype.Timestamptz `json:"updated_at"`
+}
+
 type WorkspaceInvitation struct {
 	ID            pgtype.UUID        `json:"id"`
 	WorkspaceID   pgtype.UUID        `json:"workspace_id"`
