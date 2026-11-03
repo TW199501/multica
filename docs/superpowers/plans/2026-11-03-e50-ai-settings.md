@@ -61,7 +61,7 @@
 - 新增 `apps/web/app/[workspaceSlug]/(dashboard)/agents/ai-settings/page.tsx`；修改 `apps/desktop/src/renderer/src/routes.tsx`（需要時加 `pages/ai-settings-page.tsx` 設標題）。
 - 新增 `packages/views/editor/polish/polish-button.tsx`、`polish-dialog.tsx`、`use-polish.ts`、`polish.test.tsx`；修改六個輸入框：`packages/views/chat/components/chat-input.tsx`、`packages/views/issues/components/comment-input.tsx`、`reply-input.tsx`、`comment-card.tsx`、`packages/views/modals/create-issue.tsx`、`quick-create-issue.tsx`。
 - 修改六種語系的 `packages/views/locales/<locale>/agents.json`、`editor.json`、`settings.json`。
-- 修改 `packages/core/issues/stores/comment-composer-store.ts`、`packages/views/settings/components/preferences-tab.tsx`；新增 `packages/views/editor/polish/use-polish-gate.ts`、`packages/views/editor/decision/decision-bar.tsx`。
+- 修改 `packages/core/issues/stores/comment-composer-store.ts`、`packages/views/settings/components/preferences-tab.tsx`；新增 `packages/views/editor/polish/use-polish-gate.ts`、`packages/views/editor/decision/decision.ts`、`decision-bar.tsx`。
 
 ## 驗證環境
 
@@ -332,11 +332,11 @@ func DefaultPrompt() string
 - [ ] 步驟 9.4：重跑步驟 9.2 全部通過。
 - [ ] 步驟 9.5：commit `feat(E-50): polish button in edit, create and quick-create`。
 
-## Task 10：「對話優化」開關、送出前攔截與決議下拉（聊天、留言、回覆）
+## Task 10：「對話優化」開關、送出前攔截、決議與執行下拉（聊天、留言、回覆）
 
 **Files:**
 - Modify: `packages/core/issues/stores/comment-composer-store.ts`（與其測試）、`packages/views/settings/components/preferences-tab.tsx`（「評論與聊天」卡片）、六種語系 `settings.json`、`editor.json`
-- Create: `packages/views/editor/polish/use-polish-gate.ts`、`use-polish-gate.test.tsx`、`packages/views/editor/decision/decision-bar.tsx`、`decision-bar.test.tsx`
+- Create: `packages/views/editor/polish/use-polish-gate.ts`、`use-polish-gate.test.tsx`、`packages/views/editor/decision/decision.ts`、`decision-bar.tsx`、`decision.test.tsx`
 - Modify: `packages/views/chat/components/chat-input.tsx`、`packages/views/issues/components/comment-input.tsx`、`packages/views/issues/components/reply-input.tsx`
 
 **Interfaces:**
@@ -348,14 +348,15 @@ func DefaultPrompt() string
     - 開關關、不可用、或編輯器空白時，`gatedSubmit` 直接呼叫 `submit`。
     - 否則開 `mode="send"` 的 `PolishDialog`；「送出」時依序 `adoptContent(右欄)`、`onAdopted(右欄)`、`submit()`，再關閉。原本 `submit` 會帶的附件、收件代理的選擇（含「本次不會開始」）、插話／本輪結束後都照舊，因為走的是同一個 `submit`。
     - X 關閉時什麼都不送。
-  - `DECISIONS`：`approve`（標籤「核准執行」）、`discuss`（標籤「再議討論」）；`EXECUTION_MODES`：`single`（標籤「單代理執行（token 少）」）、`multi`（標籤「多代理執行」）。`buildDecisionText(decision, mode): string`：`approve` 回兩行文字：第一行 `計畫已核准`，第二行 `執行方式：多代理執行（Subagent-driven）` 或 `執行方式：單代理執行（Native）`，以 `\n` 分隔；`discuss` 回 `再議討論`。送出的文字是固定中文，任何語系都不翻譯（門禁比對中文原文）；標籤走 `editor.json` 的 `decision` 底下並翻譯。
-  - `useCommentComposerStore` 新增 `executionMode: "single" | "multi"`（預設 `"multi"`，存在本機）與 `setExecutionMode`。
-  - `DecisionBar(props: { onPick: (text: string) => Promise<void>; disabled?: boolean })`：依序渲染標題「決議」、決議 `Select`（預設空白、淡色提示字「請決定」，`editor.json` 的 `decision.placeholder`）、執行 `Select`（值綁 `executionMode`）；選了決議就以 `buildDecisionText` 呼叫 `onPick`，成功後決議回到空白。
+  - 型別 `Decision = "approve" | "discuss"`、`ExecutionMode = "single" | "multi"`。
+  - `appendDecision(content: string, decision: Decision | null, mode: ExecutionMode): string`（`packages/views/editor/decision/decision.ts`）：`decision` 為 `null` 回原文；否則在原文後空一行加上 `決議：核准執行` 與 `執行：多代理執行`／`執行：單代理執行`，或 `決議：再議討論`；原文空白時只回決議那幾行。這幾行是固定中文、任何語系都不翻譯（門禁比對中文原文），不含「」或（）。
+  - `useCommentComposerStore` 新增 `executionMode: ExecutionMode`（預設 `"multi"`，存在本機）與 `setExecutionMode`。
+  - `DecisionBar(props: { decision: Decision | null; onDecisionChange: (d: Decision | null) => void; disabled?: boolean })`：兩個 `Select`。決議：預設 `null`，以淡色（muted 語意 token）顯示提示字 請決定，選項 核准執行、再議討論；執行：值綁 `executionMode`，選項 單代理執行、多代理執行。標籤走 `editor.json` 的 `decision` 底下並翻譯，標籤也不加符號。選了不會送出。
 - 接法：
   - 三個輸入框的送出鍵 `onClick` 與編輯器的送出快捷鍵（Enter 或 Ctrl+Enter）都改呼叫 `gatedSubmit`，並把 `dialog` 渲染在輸入框旁。
-  - `DecisionBar` 放在對話優化按鈕左邊；`onPick` 直接呼叫各輸入框原本傳給 `useComposerSubmit` 的 `onSubmit(text)`：不讀編輯器、不經 `usePolishGate`、不清空輸入框；收件代理的選擇照輸入框目前的設定。送出成功後用現有的 toast 顯示「已送出：<決議標籤>」（`editor.json` 的 `decision.sent`），附「查看」動作，捲到新留言（留言用 `comment-<id>` 錨點的既有捲動方式，聊天捲到訊息列表底部）。
+  - 各輸入框以本地 `useState<Decision | null>` 保存決議，`DecisionBar` 放在對話優化按鈕左邊。傳給 `useComposerSubmit` 的 `onSubmit` 包一層：`(content) => onSubmit(appendDecision(content, decision, executionMode))`，所以直接送出與從優化視窗送出都會附上，而優化視窗右欄只有使用者打的字。有選決議時，輸入框空白也允許送出。送出成功後決議設回 `null`；若有決議，用現有的 toast 顯示「已送出決議：<標籤>」（`editor.json` 的 `decision.sent`），附「查看」動作，捲到新留言（留言用 `comment-<id>` 錨點的既有捲動方式，聊天捲到訊息列表底部）。
 
-- [ ] 步驟 10.1：寫失敗測試：`polishOnSend defaults to false and persists`（store）、`preferences shows the polish switch only when available`、`gate submits directly when off`、`gate opens the dialog instead of sending when on`、`enter key is gated too`、`send from the dialog submits the edited text with the recipient choices`（收件代理設成「本次不會開始」時，送出的請求仍帶 `suppress_agent_ids`）、`closing the dialog sends nothing`、`approve sends the exact two-line text without opening the dialog`（開關打開時選「核准執行」＋「多代理執行」，送出內容剛好是 `buildDecisionText("approve", "multi")` 的兩行文字）、`discuss sends 再議討論`、`decision keeps the draft`（輸入框原本的文字還在）、`decision shows the muted placeholder and resets after sending`、`execution mode defaults to multi and is remembered`、`decision toasts with a view action`。
+- [ ] 步驟 10.1：寫失敗測試：`polishOnSend defaults to false and persists`（store）、`preferences shows the polish switch only when available`、`gate submits directly when off`、`gate opens the dialog instead of sending when on`、`enter key is gated too`、`send from the dialog submits the edited text with the recipient choices`（收件代理設成「本次不會開始」時，送出的請求仍帶 `suppress_agent_ids`）、`closing the dialog sends nothing`、`appendDecision adds the exact lines`（`approve`＋`multi` 得到原文、空行、`決議：核准執行`、`執行：多代理執行`；`discuss` 只加 `決議：再議討論`；`null` 原樣；結果不含「」（））、`selecting a decision does not send`、`send appends the decision`、`send from the polish dialog appends the decision after the polished text`（送給優化 API 的文字不含決議）、`empty text with a decision can be sent`、`decision shows the muted placeholder and resets after sending`、`execution mode defaults to multi and is remembered`、`decision toasts with a view action`。
 - [ ] 步驟 10.2：`pnpm --filter @multica/core exec vitest run issues/stores` 與 `pnpm --filter @multica/views exec vitest run editor/polish editor/decision settings/components/preferences-tab`，確認失敗。
 - [ ] 步驟 10.3：實作 store 欄位、偏好設定列、`usePolishGate`、`DecisionBar`、接到三個輸入框、六種語系 `settings.json` 與 `editor.json`。
 - [ ] 步驟 10.4：重跑步驟 10.2 全部通過；`pnpm typecheck`、`pnpm lint`、`pnpm test`、`make test` 全綠。
