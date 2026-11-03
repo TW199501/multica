@@ -332,11 +332,11 @@ func DefaultPrompt() string
 - [ ] 步驟 9.4：重跑步驟 9.2 全部通過。
 - [ ] 步驟 9.5：commit `feat(E-50): polish button in edit, create and quick-create`。
 
-## Task 10：「對話優化」開關與送出前攔截（聊天、留言、回覆）
+## Task 10：「對話優化」開關、送出前攔截與固定用語（聊天、留言、回覆）
 
 **Files:**
-- Modify: `packages/core/issues/stores/comment-composer-store.ts`（與其測試）、`packages/views/settings/components/preferences-tab.tsx`（「評論與聊天」卡片）、六種語系 `settings.json`
-- Create: `packages/views/editor/polish/use-polish-gate.ts`、`use-polish-gate.test.tsx`
+- Modify: `packages/core/issues/stores/comment-composer-store.ts`（與其測試）、`packages/views/settings/components/preferences-tab.tsx`（「評論與聊天」卡片）、六種語系 `settings.json`、`editor.json`
+- Create: `packages/views/editor/polish/use-polish-gate.ts`、`use-polish-gate.test.tsx`、`packages/views/editor/quick-reply/quick-reply-menu.tsx`、`quick-reply-menu.test.tsx`
 - Modify: `packages/views/chat/components/chat-input.tsx`、`packages/views/issues/components/comment-input.tsx`、`packages/views/issues/components/reply-input.tsx`
 
 **Interfaces:**
@@ -348,13 +348,17 @@ func DefaultPrompt() string
     - 開關關、不可用、或編輯器空白時，`gatedSubmit` 直接呼叫 `submit`。
     - 否則開 `mode="send"` 的 `PolishDialog`；「送出」時依序 `adoptContent(右欄)`、`onAdopted(右欄)`、`submit()`，再關閉。原本 `submit` 會帶的附件、收件代理的選擇（含「本次不會開始」）、插話／本輪結束後都照舊，因為走的是同一個 `submit`。
     - X 關閉時什麼都不送。
-- 接法：三個輸入框的送出鍵 `onClick` 與編輯器的送出快捷鍵（Enter 或 Ctrl+Enter）都改呼叫 `gatedSubmit`，並把 `dialog` 渲染在輸入框旁。
+  - `QUICK_REPLIES = ["計畫已核准", "規格已定案", "有意見，討論中"] as const`：送出的文字固定是這三個中文字串，任何語系都不翻譯（門禁比對的是中文原文）；選單標籤也直接顯示這三個字串。
+  - `QuickReplyMenu(props: { onPick: (text: string) => Promise<void>; disabled?: boolean })`：送出鍵旁的下拉選單，圖示從 `@multica/ui/icons` 取現有的（例如 `Check`），aria-label 走 `editor.json` 的 `quick_reply.label`。
+- 接法：
+  - 三個輸入框的送出鍵 `onClick` 與編輯器的送出快捷鍵（Enter 或 Ctrl+Enter）都改呼叫 `gatedSubmit`，並把 `dialog` 渲染在輸入框旁。
+  - `QuickReplyMenu` 的 `onPick` 直接呼叫各輸入框原本傳給 `useComposerSubmit` 的 `onSubmit(text)`：不讀編輯器、不經 `usePolishGate`、不清空輸入框；收件代理的選擇照輸入框目前的設定。
 
-- [ ] 步驟 10.1：寫失敗測試：`polishOnSend defaults to false and persists`（store）、`preferences shows the polish switch only when available`、`gate submits directly when off`、`gate opens the dialog instead of sending when on`、`enter key is gated too`、`send from the dialog submits the edited text with the recipient choices`（收件代理設成「本次不會開始」時，送出的請求仍帶 `suppress_agent_ids`）、`closing the dialog sends nothing`。
-- [ ] 步驟 10.2：`pnpm --filter @multica/core exec vitest run issues/stores` 與 `pnpm --filter @multica/views exec vitest run editor/polish settings/components/preferences-tab`，確認失敗。
-- [ ] 步驟 10.3：實作 store 欄位、偏好設定列、`usePolishGate`、接到三個輸入框、六種語系 `settings.json`。
+- [ ] 步驟 10.1：寫失敗測試：`polishOnSend defaults to false and persists`（store）、`preferences shows the polish switch only when available`、`gate submits directly when off`、`gate opens the dialog instead of sending when on`、`enter key is gated too`、`send from the dialog submits the edited text with the recipient choices`（收件代理設成「本次不會開始」時，送出的請求仍帶 `suppress_agent_ids`）、`closing the dialog sends nothing`、`quick reply sends the exact text without opening the dialog`（開關打開時選「計畫已核准」，送出內容剛好是「計畫已核准」）、`quick reply keeps the draft`（輸入框原本的文字還在）。
+- [ ] 步驟 10.2：`pnpm --filter @multica/core exec vitest run issues/stores` 與 `pnpm --filter @multica/views exec vitest run editor/polish editor/quick-reply settings/components/preferences-tab`，確認失敗。
+- [ ] 步驟 10.3：實作 store 欄位、偏好設定列、`usePolishGate`、`QuickReplyMenu`、接到三個輸入框、六種語系 `settings.json` 與 `editor.json`。
 - [ ] 步驟 10.4：重跑步驟 10.2 全部通過；`pnpm typecheck`、`pnpm lint`、`pnpm test`、`make test` 全綠。
-- [ ] 步驟 10.5：依規格驗收 1–13 在本機實際操作並截圖放 PR 描述（用隔離的桌面版設定 `MULTICA_DESKTOP_CONFIG`，不用正式的 `~/.multica/desktop.json`）；commit `feat(E-50): polish before sending when the preference is on`。
+- [ ] 步驟 10.5：依規格驗收 1–14 在本機實際操作並截圖放 PR 描述（用隔離的桌面版設定 `MULTICA_DESKTOP_CONFIG`，不用正式的 `~/.multica/desktop.json`）；commit `feat(E-50): polish before sending when the preference is on`。
 
 ## 完成檢查
 
@@ -362,5 +366,5 @@ func DefaultPrompt() string
 - [ ] `make test` 全綠；`go vet ./...` 無新警告。
 - [ ] `grep -rn "openai-go" server --include=*.go` 只出現在 `server/pkg/llm/`。
 - [ ] `pnpm typecheck`、`pnpm lint`、`pnpm test` 全綠。
-- [ ] 規格驗收 1–13 都有截圖。
+- [ ] 規格驗收 1–14 都有截圖。
 - [ ] 開 PR 進 `dev`（`gh pr create --repo TW199501/multica --base dev`），標題帶 `E-50`。
