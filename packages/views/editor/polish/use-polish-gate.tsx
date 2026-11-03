@@ -5,7 +5,7 @@ import { useCommentComposerStore } from "@multica/core/issues/stores";
 import { useCurrentWorkspace } from "@multica/core/paths";
 import type { PolishContext } from "@multica/core/types";
 import type { ContentEditorRef } from "../content-editor";
-import { PolishDialog } from "./polish-dialog";
+import { PolishDialog, type PolishDialogMode } from "./polish-dialog";
 import { usePolishAvailable } from "./use-polish";
 
 export interface PolishGateOptions {
@@ -18,8 +18,8 @@ export interface PolishGateOptions {
   onAdopted?: (markdown: string) => void;
   /**
    * False while the composer cannot send (in flight, read-only, busy agent).
-   * The send is then passed straight to `submit`, which refuses it, instead
-   * of opening a dialog whose send would do nothing.
+   * A send is then passed straight to `submit`, which refuses it, and the
+   * polish button opens the dialog with "use" instead of "send".
    */
   canSend?: boolean;
   /** True when a send without text still says something (a chosen decision). */
@@ -29,13 +29,25 @@ export interface PolishGateOptions {
 export interface PolishGate {
   /** Use for the send button and the editor's send shortcut. */
   gatedSubmit: () => Promise<void>;
+  /** Use for the composer's polish button: its dialog sends like the send button. */
+  openPolish: () => void;
+  /** True while the dialog is open. */
+  polishing: boolean;
   dialog: ReactNode;
 }
 
+interface OpenDialog {
+  original: string;
+  mode: PolishDialogMode;
+  /** True when a send opened it, so the dialog says how to turn that off. */
+  fromSend: boolean;
+}
+
 /**
- * With the "polish before sending" preference on, sends open the polish
- * dialog instead of going out; its send puts the polished text into the
- * editor and runs the composer's own submit.
+ * The polish dialog of a sending composer. With the "polish before sending"
+ * preference on, sends open it instead of going out; the polish button opens
+ * it too. Its send puts the polished text into the editor and runs the
+ * composer's own submit, so attachments, mentions and the decision go with it.
  */
 export function usePolishGate({
   wsId,
@@ -48,8 +60,7 @@ export function usePolishGate({
 }: PolishGateOptions): PolishGate {
   const polishOnSend = useCommentComposerStore((s) => s.polishOnSend);
   const available = usePolishAvailable(wsId);
-  // The text captured when the dialog opened; null while closed.
-  const [original, setOriginal] = useState<string | null>(null);
+  const [opened, setOpened] = useState<OpenDialog | null>(null);
   const stateRef = useRef({ polishOnSend, available, canSend, submit, onAdopted, open: false });
   stateRef.current = {
     polishOnSend,
@@ -57,7 +68,7 @@ export function usePolishGate({
     canSend,
     submit,
     onAdopted,
-    open: original !== null,
+    open: opened !== null,
   };
 
   const gatedSubmit = useCallback(async () => {
@@ -75,36 +86,46 @@ export function usePolishGate({
       await state.submit();
       return;
     }
-    setOriginal(markdown);
+    setOpened({ original: markdown, mode: "send", fromSend: true });
   }, [editorRef]);
 
-  const send = useCallback(
+  const openPolish = useCallback(() => {
+    const state = stateRef.current;
+    if (state.open || !state.available) return;
+    const editor = editorRef.current;
+    const markdown = editor?.getMarkdown() ?? "";
+    if (!markdown.trim() || editor?.hasActiveUploads()) return;
+    setOpened({ original: markdown, mode: state.canSend ? "send" : "adopt", fromSend: false });
+  }, [editorRef]);
+
+  const confirm = useCallback(
     async (markdown: string) => {
       // Replacing the document mid-upload would drop the upload's placeholder
       // node and strand the file; keep the dialog open until it settles.
       if (editorRef.current?.hasActiveUploads()) return;
       editorRef.current?.adoptContent(markdown);
       stateRef.current.onAdopted?.(markdown);
-      await stateRef.current.submit();
-      setOriginal(null);
+      if (opened?.mode === "send") await stateRef.current.submit();
+      setOpened(null);
     },
-    [editorRef],
+    [editorRef, opened?.mode],
   );
 
   const dialog = (
     <PolishDialog
-      open={original !== null}
-      mode="send"
+      open={opened !== null}
+      mode={opened?.mode ?? "send"}
       wsId={wsId}
-      original={original ?? ""}
+      original={opened?.original ?? ""}
       context={context}
-      onClose={() => setOriginal(null)}
-      onConfirm={send}
-      allowEmpty={allowEmptySend}
+      onClose={() => setOpened(null)}
+      onConfirm={confirm}
+      allowEmpty={opened?.mode === "send" && allowEmptySend}
+      showTurnOffHint={opened?.fromSend ?? false}
     />
   );
 
-  return { gatedSubmit, dialog };
+  return { gatedSubmit, openPolish, polishing: opened !== null, dialog };
 }
 
 /** usePolishGate for composers, bound to the workspace of the current route. */

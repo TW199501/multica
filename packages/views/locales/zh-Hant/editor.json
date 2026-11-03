@@ -200,7 +200,7 @@
     "placeholder": "請決定",
     "approve": "核准執行",
     "discuss": "再議討論",
-    "execution_label": "執行",
+    "execution_label": "AI 執行方式",
     "single": "單代理執行",
     "multi": "多代理執行",
     "sent": "已送出決議：{{label}}",

@@ -34,6 +34,8 @@ export interface PolishDialogProps {
   onConfirm: (markdown: string) => void | Promise<void>;
   /** Lets the confirm button take a blank right column; off, blank text cannot be confirmed. */
   allowEmpty?: boolean;
+  /** Shows how to turn off polish-on-send; only true when a send opened the dialog. */
+  showTurnOffHint?: boolean;
 }
 
 type PolishError = "lost_spans" | "not_configured" | "failed";
@@ -65,6 +67,7 @@ export function PolishDialog({
   onClose,
   onConfirm,
   allowEmpty = false,
+  showTurnOffHint = mode === "send",
 }: PolishDialogProps) {
   const { t } = useT("editor");
   const { mutateAsync: polishText } = usePolishText(wsId);
@@ -263,7 +266,7 @@ export function PolishDialog({
           <DialogFooter className="sm:items-center sm:justify-between">
             <div className="flex flex-col gap-0.5 text-caption text-muted-foreground">
               <p>{t(($) => $.polish.disclaimer)}</p>
-              {mode === "send" && <p>{t(($) => $.polish.turn_off_hint)}</p>}
+              {showTurnOffHint && <p>{t(($) => $.polish.turn_off_hint)}</p>}
             </div>
             <div className="flex shrink-0 justify-end gap-2">
               <Button variant="outline" onClick={runPolish} disabled={busy}>

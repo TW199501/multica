@@ -204,7 +204,7 @@
     "placeholder": "À décider",
     "approve": "Approuver et lancer",
     "discuss": "À rediscuter",
-    "execution_label": "Exécution",
+    "execution_label": "Exécution IA",
     "single": "Un seul agent",
     "multi": "Plusieurs agents",
     "sent": "Décision envoyée : {{label}}",

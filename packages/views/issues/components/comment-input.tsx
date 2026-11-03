@@ -245,7 +245,7 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
     setIsEmpty(!md.trim());
     setDraft(draftKey, md);
   };
-  const { gatedSubmit, dialog: polishGateDialog } = useWorkspacePolishGate({
+  const polishGate = useWorkspacePolishGate({
     context: polishContext,
     editorRef,
     submit,
@@ -253,6 +253,7 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
     canSend: canSend && !submitting && !gate.uploading,
     allowEmptySend: decision !== null,
   });
+  const { gatedSubmit, dialog: polishGateDialog } = polishGate;
 
   return (
     <div
@@ -357,6 +358,7 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
             context={polishContext}
             disabled={isEmpty || submitting || gate.uploading}
             onAdopted={syncAdopted}
+          gate={polishGate}
           />
           {routing.restartTaskIds.length > 0 ? (
             <Button

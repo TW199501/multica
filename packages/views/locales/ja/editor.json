@@ -200,7 +200,7 @@
     "placeholder": "決定してください",
     "approve": "承認して実行",
     "discuss": "再検討",
-    "execution_label": "実行方法",
+    "execution_label": "AI 実行方式",
     "single": "単一エージェントで実行",
     "multi": "複数エージェントで実行",
     "sent": "決定を送信しました：{{label}}",

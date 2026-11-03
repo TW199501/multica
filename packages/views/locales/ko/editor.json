@@ -200,7 +200,7 @@
     "placeholder": "결정하세요",
     "approve": "승인 후 실행",
     "discuss": "다시 논의",
-    "execution_label": "실행 방식",
+    "execution_label": "AI 실행 방식",
     "single": "단일 에이전트 실행",
     "multi": "다중 에이전트 실행",
     "sent": "결정을 보냈습니다: {{label}}",

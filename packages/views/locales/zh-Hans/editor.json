@@ -200,7 +200,7 @@
     "placeholder": "请决定",
     "approve": "核准执行",
     "discuss": "再议讨论",
-    "execution_label": "执行",
+    "execution_label": "AI 执行方式",
     "single": "单智能体执行",
     "multi": "多智能体执行",
     "sent": "已发送决议：{{label}}",

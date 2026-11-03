@@ -237,7 +237,7 @@ describe("DecisionBar in composers", () => {
 
       await waitFor(() => expect(send).toHaveBeenCalled());
       await waitFor(() => expect(trigger).toHaveTextContent("請決定"));
-      expect(screen.queryByRole("combobox", { name: "執行" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("combobox", { name: "AI 執行方式" })).not.toBeInTheDocument();
     });
   }
 
@@ -267,30 +267,30 @@ describe("DecisionBar in composers", () => {
     const user = userEvent.setup();
     const send = vi.fn().mockResolvedValue("comment-1");
     comment.render(send);
-    expect(screen.queryByRole("combobox", { name: "執行" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("combobox", { name: "AI 執行方式" })).not.toBeInTheDocument();
 
     await typeInto(comment, "go");
     await choose(user, "決議", "核准執行");
-    const execution = screen.getByRole("combobox", { name: "執行" });
+    const execution = screen.getByRole("combobox", { name: "AI 執行方式" });
     expect(execution).toHaveTextContent("多代理執行");
     expect(execution).toHaveClass("text-muted-foreground");
 
-    await choose(user, "執行", "單代理執行");
+    await choose(user, "AI 執行方式", "單代理執行");
     expect(useCommentComposerStore.getState().executionMode).toBe("single");
     expect(JSON.parse(localStorage.getItem("multica_comment_composer")!).state.executionMode).toBe("single");
 
     await choose(user, "決議", "再議討論");
-    expect(screen.queryByRole("combobox", { name: "執行" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("combobox", { name: "AI 執行方式" })).not.toBeInTheDocument();
     await choose(user, "決議", "核准執行");
 
     fireEvent.click(composerSendButton());
     await waitFor(() => expect(send).toHaveBeenCalled());
     expect(send.mock.calls[0]?.[0]).toBe(`go\n\n${APPROVE_SINGLE}`);
-    expect(screen.queryByRole("combobox", { name: "執行" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("combobox", { name: "AI 執行方式" })).not.toBeInTheDocument();
 
     fireEvent.change(screen.getByTestId("editor"), { target: { value: "again" } });
     await choose(user, "決議", "核准執行");
-    expect(screen.getByRole("combobox", { name: "執行" })).toHaveTextContent("單代理執行");
+    expect(screen.getByRole("combobox", { name: "AI 執行方式" })).toHaveTextContent("單代理執行");
   });
 
   it("decision toasts with a view action", async () => {
@@ -436,7 +436,7 @@ describe("chat decisions across restores and sessions", () => {
 
     await waitFor(() => expect(editorValue()).toBe("hello"));
     expect(screen.getByRole("combobox", { name: "決議" })).toHaveTextContent("核准執行");
-    expect(screen.getByRole("combobox", { name: "執行" })).toHaveTextContent("單代理執行");
+    expect(screen.getByRole("combobox", { name: "AI 執行方式" })).toHaveTextContent("單代理執行");
     expect(mockChatState.inputDrafts["session-1"]).toBe("hello");
 
     fireEvent.click(composerSendButton());

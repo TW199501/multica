@@ -257,7 +257,7 @@ function ReplyInput({
     setIsEmpty(!md.trim());
     if (draftKey) setDraft(draftKey, md);
   };
-  const { gatedSubmit, dialog: polishGateDialog } = useWorkspacePolishGate({
+  const polishGate = useWorkspacePolishGate({
     context: polishContext,
     editorRef,
     submit,
@@ -265,6 +265,7 @@ function ReplyInput({
     canSend: canSend && !submitting && !gate.uploading,
     allowEmptySend: decision !== null,
   });
+  const { gatedSubmit, dialog: polishGateDialog } = polishGate;
 
   const avatarSize: AvatarSize = size === "sm" ? "sm" : "md";
 
@@ -372,6 +373,7 @@ function ReplyInput({
               context={polishContext}
               disabled={isEmpty || submitting || gate.uploading || targetMissing}
               onAdopted={syncAdopted}
+            gate={polishGate}
             />
             {routing.restartTaskIds.length > 0 ? (
               <Button

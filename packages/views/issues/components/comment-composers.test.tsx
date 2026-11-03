@@ -417,9 +417,10 @@ describe("comment composers", () => {
     activateComposer("comment-composer-shell");
     expect(screen.getByPlaceholderText("Leave a comment...")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Attach file" })).toBeInTheDocument();
-    // Attach + send; the decision pickers are comboboxes, not expand controls.
+    // Attach + send; the decision picker is a combobox, not an expand control.
+    // The AI execution picker only appears once a decision is approve.
     expect(container.querySelectorAll("button:not([role='combobox'])")).toHaveLength(2);
-    expect(screen.getAllByRole("combobox")).toHaveLength(2);
+    expect(screen.getAllByRole("combobox")).toHaveLength(1);
 
     const shell = screen.getByTestId("drop-zone");
     expect(shell.className).not.toMatch(/max-h-/);
@@ -433,9 +434,10 @@ describe("comment composers", () => {
     activateComposer("reply-composer-shell");
     expect(screen.getByPlaceholderText("Leave a reply...")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Attach file" })).toBeInTheDocument();
-    // Attach + send; the decision pickers are comboboxes, not expand controls.
+    // Attach + send; the decision picker is a combobox, not an expand control.
+    // The AI execution picker only appears once a decision is approve.
     expect(container.querySelectorAll("button:not([role='combobox'])")).toHaveLength(2);
-    expect(screen.getAllByRole("combobox")).toHaveLength(2);
+    expect(screen.getAllByRole("combobox")).toHaveLength(1);
 
     const shell = screen.getByTestId("drop-zone");
     expect(shell.className).not.toMatch(/max-h-/);

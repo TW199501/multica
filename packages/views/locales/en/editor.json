@@ -204,7 +204,7 @@
     "placeholder": "Decide",
     "approve": "Approve and start",
     "discuss": "Discuss further",
-    "execution_label": "Execution",
+    "execution_label": "AI execution",
     "single": "Single agent",
     "multi": "Multiple agents",
     "sent": "Decision sent: {{label}}",

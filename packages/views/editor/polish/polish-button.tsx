@@ -24,9 +24,15 @@ export interface PolishButtonProps {
   onAdopted?: (markdown: string) => void;
   /** Pass true while the editor is empty, an upload is in flight, or the composer cannot send. */
   disabled?: boolean;
+  /**
+   * The composer's polish gate. When given, the button opens the gate's
+   * dialog, whose button sends; without it the button keeps its own "use"
+   * dialog (editing a comment, creating an issue).
+   */
+  gate?: { openPolish: () => void; polishing: boolean };
 }
 
-export function PolishButton({ wsId, editorRef, context, onAdopted, disabled }: PolishButtonProps) {
+export function PolishButton({ wsId, editorRef, context, onAdopted, disabled, gate }: PolishButtonProps) {
   const { t } = useT("editor");
   const available = usePolishAvailable(wsId);
   // The text captured when the dialog opened; null while closed.
@@ -35,7 +41,12 @@ export function PolishButton({ wsId, editorRef, context, onAdopted, disabled }: 
   if (!available) return null;
 
   const label = t(($) => $.polish.button);
+  const polishing = gate ? gate.polishing : original !== null;
   const openDialog = () => {
+    if (gate) {
+      gate.openPolish();
+      return;
+    }
     const editor = editorRef.current;
     const markdown = editor?.getMarkdown() ?? "";
     if (!markdown.trim() || editor?.hasActiveUploads()) return;
@@ -67,13 +78,13 @@ export function PolishButton({ wsId, editorRef, context, onAdopted, disabled }: 
         >
           <Sparkles
             aria-hidden="true"
-            className={cn(original !== null && "animate-pulse [animation-duration:1.8s]")}
+            className={cn(polishing && "animate-pulse [animation-duration:1.8s]")}
           />
         </TooltipTrigger>
         <TooltipContent side="top">{label}</TooltipContent>
       </Tooltip>
       <PolishDialog
-        open={original !== null}
+        open={!gate && original !== null}
         mode="adopt"
         wsId={wsId}
         original={original ?? ""}

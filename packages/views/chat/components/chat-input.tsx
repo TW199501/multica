@@ -601,7 +601,7 @@ export function ChatInput({
     commitDraft(editorDraftKeyRef.current, md);
     setIsEmpty(!md.trim());
   };
-  const { gatedSubmit, dialog: polishGateDialog } = useWorkspacePolishGate({
+  const polishGate = useWorkspacePolishGate({
     context: polishContext,
     editorRef,
     submit,
@@ -611,6 +611,7 @@ export function ChatInput({
       !(isRunning && !allowSubmitWhileRunning),
     allowEmptySend: decision !== null,
   });
+  const { gatedSubmit, dialog: polishGateDialog } = polishGate;
 
   // Consume each click once, including clicks while sending or uploading:
   // replaying later could send after the user switches session or agent.
@@ -833,6 +834,7 @@ export function ChatInput({
               context={polishContext}
               disabled={hasNoText || submitting || gate.uploading || !!disabled || !!noAgent}
               onAdopted={syncAdopted}
+              gate={polishGate}
             />
             <SubmitButton
               onClick={gatedSubmit}

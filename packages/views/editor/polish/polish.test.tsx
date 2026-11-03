@@ -263,22 +263,25 @@ describe("PolishButton", () => {
     expect(button).toBeEnabled();
   });
 
-  it("comment adopts the polished text into its draft", async () => {
-    renderUi(<CommentInput issueId="issue-1" onSubmit={vi.fn().mockResolvedValue(true)} />);
+  it("comment polish button sends the polished text", async () => {
+    const send = vi.fn().mockResolvedValue(true);
+    renderUi(<CommentInput issueId="issue-1" onSubmit={send} />);
     fireEvent.click(screen.getByTestId("comment-composer-shell"));
     fireEvent.change(await screen.findByTestId("editor"), { target: { value: "hello wrld" } });
 
     fireEvent.click(await screen.findByRole("button", { name: "Polish message" }));
+    const dialog = await screen.findByRole("dialog", { name: "Polish message" });
     await waitFor(() => expect(afterTextarea().value).toBe("Hello world."));
     expect(apiPolishText).toHaveBeenCalledWith("ws-1", "hello wrld", ISSUE_CONTEXT);
-    fireEvent.click(screen.getByRole("button", { name: "Use" }));
+    expect(within(dialog).queryByRole("button", { name: "Use" })).not.toBeInTheDocument();
+    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
 
+    await waitFor(() => expect(send).toHaveBeenCalled());
+    expect(send.mock.calls[0]?.[0]).toBe("Hello world.");
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-    expect((screen.getByTestId("editor") as HTMLTextAreaElement).value).toBe("Hello world.");
-    expect(useCommentDraftStore.getState().getDraft("new:issue-1")).toBe("Hello world.");
   });
 
-  it("chat sends the adopted text", async () => {
+  it("chat polish button sends the polished text", async () => {
     const chat = useChatStore.getState() as unknown as { activeSessionId: string | null; inputDrafts: Record<string, string> };
     chat.activeSessionId = "session-1";
     const onSend = vi.fn().mockResolvedValue(true);
@@ -291,14 +294,11 @@ describe("PolishButton", () => {
       kind: "chat",
       chat_session_id: "session-1",
     });
-    fireEvent.click(screen.getByRole("button", { name: "Use" }));
-    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-    // A refresh restores the draft store, so it must hold the adopted text too.
-    expect(chat.inputDrafts["session-1"]).toBe("Hello world.");
-
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    const dialog = screen.getByRole("dialog", { name: "Polish message" });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
     await waitFor(() => expect(onSend).toHaveBeenCalled());
     expect(onSend.mock.calls[0]?.[0]).toBe("Hello world.");
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
   });
 
   it("chat without a created session polishes without context", async () => {
@@ -311,7 +311,8 @@ describe("PolishButton", () => {
     );
   });
 
-  it("reply passes the thread id", async () => {
+  it("reply passes the thread id and sends", async () => {
+    const send = vi.fn().mockResolvedValue("reply-1");
     renderUi(
       <ReplyInput
         issueId="issue-1"
@@ -319,7 +320,7 @@ describe("PolishButton", () => {
         avatarType="member"
         avatarId="user-1"
         draftKey="reply:issue-1:comment-1"
-        onSubmit={vi.fn().mockResolvedValue("reply-1")}
+        onSubmit={send}
       />,
     );
     fireEvent.click(screen.getByTestId("reply-composer-shell"));
@@ -334,10 +335,36 @@ describe("PolishButton", () => {
       }),
     );
     await waitFor(() => expect(afterTextarea().value).toBe("Hello world."));
-    fireEvent.click(screen.getByRole("button", { name: "Use" }));
-    await waitFor(() =>
-      expect(useCommentDraftStore.getState().getDraft("reply:issue-1:comment-1")).toBe("Hello world."),
+    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    await waitFor(() => expect(send).toHaveBeenCalled());
+    expect(send.mock.calls[0]?.[0]).toBe("Hello world.");
+  });
+
+  it("reply polish keeps the attachment out of the dialog and sends it", async () => {
+    const card = "!file[a.txt](http://x/a.txt)";
+    apiPolishText.mockResolvedValue({ text: `Hello world.\n\n${card}` });
+    const send = vi.fn().mockResolvedValue("reply-1");
+    renderUi(
+      <ReplyInput
+        issueId="issue-1"
+        parentId="comment-1"
+        avatarType="member"
+        avatarId="user-1"
+        draftKey="reply:issue-1:comment-1"
+        onSubmit={send}
+      />,
     );
+    fireEvent.click(screen.getByTestId("reply-composer-shell"));
+    fireEvent.change(await screen.findByTestId("editor"), { target: { value: `hello wrld\n\n${card}` } });
+
+    fireEvent.click(await screen.findByRole("button", { name: "Polish message" }));
+    const dialog = await screen.findByRole("dialog", { name: "Polish message" });
+    expect((within(dialog).getByLabelText("Before") as HTMLTextAreaElement).value).toBe("hello wrld");
+    await waitFor(() => expect(afterTextarea().value).toBe("Hello world."));
+    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
+
+    await waitFor(() => expect(send).toHaveBeenCalled());
+    expect(send.mock.calls[0]?.[0]).toBe(`Hello world.\n\n${card}`);
   });
 
   const composers = [
