@@ -41,6 +41,11 @@ export function toDisplayText(markdown: string): DisplayText {
   return { text, map: { hidden, links } };
 }
 
+/** True when the draft has words to polish, not only attachments. */
+export function hasPolishableText(markdown: string): boolean {
+  return toDisplayText(markdown).text.length > 0;
+}
+
 export function fromDisplayText(text: string, map: DisplayMap): string {
   // Each link takes the first occurrence of its label that no earlier link
   // took, wherever the edit moved it.

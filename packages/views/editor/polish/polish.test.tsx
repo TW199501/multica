@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { ApiError } from "@multica/core/api";
 import { WorkspaceSlugProvider } from "@multica/core/paths";
-import { useCommentDraftStore } from "@multica/core/issues/stores";
+import { useCommentComposerStore, useCommentDraftStore } from "@multica/core/issues/stores";
 import type { SupportedLocale } from "@multica/core/i18n";
 import type { PolishContext } from "@multica/core/types";
 import { renderWithI18n } from "../../test/i18n";
@@ -606,16 +606,47 @@ describe("PolishDialog", () => {
   });
 });
 
+describe("PolishDialog attachments only", () => {
+  it("sends an attachment-only draft without opening the dialog", async () => {
+    useCommentComposerStore.setState({ polishOnSend: true });
+    try {
+      const card = "!file[a.txt](http://x/a.txt)";
+      const send = vi.fn().mockResolvedValue(true);
+      renderUi(<CommentInput issueId="issue-1" onSubmit={send} />);
+      fireEvent.click(screen.getByTestId("comment-composer-shell"));
+      fireEvent.change(await screen.findByTestId("editor"), { target: { value: card } });
+      await screen.findByRole("button", { name: "Polish message" });
+
+      fireEvent.click(screen.getByRole("button", { name: "Polish message" }));
+      expect(screen.queryByRole("dialog", { name: "Polish message" })).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole("button", { name: "Send" }));
+      await waitFor(() => expect(send).toHaveBeenCalled());
+      expect(send.mock.calls[0]?.[0]).toBe(card);
+      expect(apiPolishText).not.toHaveBeenCalled();
+    } finally {
+      useCommentComposerStore.setState({ polishOnSend: false });
+    }
+  });
+
+  it("still sends the attachment when the right column is cleared", async () => {
+    const card = "!file[a.txt](http://x/a.txt)";
+    const { onConfirm } = renderDialog({ original: `hello wrld\n\n${card}` });
+    await waitFor(() => expect(afterTextarea().value).toBe("Hello world."));
+    fireEvent.change(afterTextarea(), { target: { value: "" } });
+    const use = screen.getByRole("button", { name: "Use" });
+    expect(use).toBeEnabled();
+    fireEvent.click(use);
+    await waitFor(() => expect(onConfirm).toHaveBeenCalledWith(card));
+  });
+});
+
 describe("PolishDialog display text", () => {
   it("shows links as labels, hides cards, and restores both on confirm", async () => {
     const card = "!file[a.txt](http://x/a.txt)";
-    const original = `[@Bot](mention://agent/a1) see [E50-1](mention://issue/i1)
-
-${card}`;
+    const original = `[@Bot](mention://agent/a1) see [E50-1](mention://issue/i1)\n\n${card}`;
     apiPolishText.mockResolvedValue({
-      text: `[@Bot](mention://agent/a1) please see [E50-1](mention://issue/i1)
-
-${card}`,
+      text: `[@Bot](mention://agent/a1) please see [E50-1](mention://issue/i1)\n\n${card}`,
     });
     const { onConfirm } = renderDialog({ original });
 
@@ -629,9 +660,7 @@ ${card}`,
 
     await waitFor(() =>
       expect(onConfirm).toHaveBeenCalledWith(
-        `[E50-1](mention://issue/i1) first, [@Bot](mention://agent/a1)
-
-${card}`,
+        `[E50-1](mention://issue/i1) first, [@Bot](mention://agent/a1)\n\n${card}`,
       ),
     );
   });

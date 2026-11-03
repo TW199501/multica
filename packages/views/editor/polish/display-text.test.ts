@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { fromDisplayText, toDisplayText } from "./display-text";
+import { fromDisplayText, hasPolishableText, toDisplayText } from "./display-text";
 
 const AGENT = "[@E50 驗收代理](mention://agent/419a4055-2a7f-473c-ab72-ab437b950e4d)";
 const ISSUE = "[E50-1](mention://issue/01a1a1eb-3d2d-7139-afd5-e19ec6b0bffe)";
@@ -31,6 +31,14 @@ describe("toDisplayText", () => {
   it("leaves ordinary links and inline images alone", () => {
     const md = "see [docs](https://example.com) and ![x](https://example.com/x.png) inline";
     expect(toDisplayText(md).text).toBe(md);
+  });
+});
+
+describe("hasPolishableText", () => {
+  it("is false for a draft holding only attachments", () => {
+    expect(hasPolishableText(`${FILE}\n\n${IMAGE}\n\n`)).toBe(false);
+    expect(hasPolishableText("   ")).toBe(false);
+    expect(hasPolishableText(`hi\n\n${FILE}`)).toBe(true);
   });
 });
 

@@ -5,6 +5,7 @@ import { useCommentComposerStore } from "@multica/core/issues/stores";
 import { useCurrentWorkspace } from "@multica/core/paths";
 import type { PolishContext } from "@multica/core/types";
 import type { ContentEditorRef } from "../content-editor";
+import { hasPolishableText } from "./display-text";
 import { PolishDialog, type PolishDialogMode } from "./polish-dialog";
 import { usePolishAvailable } from "./use-polish";
 
@@ -80,7 +81,7 @@ export function usePolishGate({
       !state.polishOnSend ||
       !state.available ||
       !state.canSend ||
-      !markdown.trim() ||
+      !hasPolishableText(markdown) ||
       editor?.hasActiveUploads()
     ) {
       await state.submit();
@@ -94,7 +95,7 @@ export function usePolishGate({
     if (state.open || !state.available) return;
     const editor = editorRef.current;
     const markdown = editor?.getMarkdown() ?? "";
-    if (!markdown.trim() || editor?.hasActiveUploads()) return;
+    if (!hasPolishableText(markdown) || editor?.hasActiveUploads()) return;
     setOpened({ original: markdown, mode: state.canSend ? "send" : "adopt", fromSend: false });
   }, [editorRef]);
 

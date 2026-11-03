@@ -9,6 +9,7 @@ import { useCurrentWorkspace } from "@multica/core/paths";
 import type { PolishContext } from "@multica/core/types";
 import type { ContentEditorRef } from "../content-editor";
 import { useT } from "../../i18n";
+import { hasPolishableText } from "./display-text";
 import { PolishDialog } from "./polish-dialog";
 import { usePolishAvailable } from "./use-polish";
 
@@ -49,7 +50,7 @@ export function PolishButton({ wsId, editorRef, context, onAdopted, disabled, ga
     }
     const editor = editorRef.current;
     const markdown = editor?.getMarkdown() ?? "";
-    if (!markdown.trim() || editor?.hasActiveUploads()) return;
+    if (!hasPolishableText(markdown) || editor?.hasActiveUploads()) return;
     setOriginal(markdown);
   };
   const adopt = (markdown: string) => {

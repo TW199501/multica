@@ -274,7 +274,7 @@ export function PolishDialog({
               </Button>
               <Button
                 onClick={() => void confirm()}
-                disabled={busy || (!allowEmpty && !polished.trim())}
+                disabled={busy || (!allowEmpty && !fromDisplayText(polished, view.map))}
                 aria-busy={confirming || undefined}
                 className={cn(confirming && "cursor-wait")}
               >
