@@ -1,0 +1,104 @@
+packages/views/issues/components/comment-input.tsx
+  s_aa47a447e01641::t_b71217831a9ebe 169-170,173
+  s_aa47a447e01641::t_2589d8f3838ef3 234-247
+  s_aa47a447e01641::t_77ded6043e1d06 330-340,342-363
+  s_aa47a447e01641::t_1373060a94aaaa 379-380
+  s_aa47a447e01641::t_90b3fe1890005d 67-70
+  s_aa47a447e01641::t_df2be31394fd20 9-10
+  s_aa47a447e01641::t_e0707b386acf7e 71
+  s_aa47a447e01641::t_f39bbb025afb0d 209-212,291,329,364-378,381-384,386
+packages/views/editor/polish/polish-dialog.tsx
+  s_aa47a447e01641::t_7eb7166bdab392 31
+  s_aa47a447e01641::t_6f6419f40cca25 210-211
+packages/views/editor/polish/use-polish-gate.test.tsx
+  s_aa47a447e01641::t_cf1aecbbe0c30c 1-317
+packages/views/settings/components/preferences-tab.tsx
+  s_aa47a447e01641::t_26a9899b11248b 106
+  s_aa47a447e01641::t_60046f64853286 53,55
+  s_aa47a447e01641::t_afe6d42f14ee5a 342-364
+packages/views/editor/polish/use-polish-gate.tsx
+  s_aa47a447e01641::t_05b2e93b637a14 1-110
+packages/views/editor/decision/decision.test.tsx
+  s_aa47a447e01641::t_354ef357d3b063 1-320
+packages/views/chat/components/chat-input.tsx
+  s_aa47a447e01641::t_d2dfca09c4ed71 17
+  s_aa47a447e01641::t_8bc9e714396a0e 24-25
+  s_aa47a447e01641::t_a53ff4bbd45912 455-468
+  s_aa47a447e01641::t_b245577a581234 477-478,480
+  s_aa47a447e01641::t_edcc9c485a07e6 237-238
+  s_aa47a447e01641::t_44e31ab9f6ebfe 235-236
+  s_aa47a447e01641::t_4f1fc91808496e 479
+  s_aa47a447e01641::t_5052b385823fff 582-604
+  s_aa47a447e01641::t_c2e68d89e43e9d 774,792-841,843,845-861,863
+packages/views/editor/use-composer-submit.ts
+  s_aa47a447e01641::t_ce4e5e286d4158 92-93
+packages/views/chat/components/chat-input.test.tsx
+  s_aa47a447e01641::t_52c3327d7d2e67 198-204
+packages/views/editor/decision/decision-bar.tsx
+  s_aa47a447e01641::t_b9f4eaae0369cb 1-156
+packages/views/editor/decision/decision.ts
+  s_aa47a447e01641::t_2cbd00300a70cd 1-32
+packages/views/issues/components/reply-input.tsx
+  s_aa47a447e01641::t_a9dc84260e5fd6 339-349,351-376
+  s_aa47a447e01641::t_0cdd8663ef08fe 384,396-397
+  s_aa47a447e01641::t_a97e469d5f0ed9 10-11
+  s_aa47a447e01641::t_1863ed10e8c1e9 172-173,175,177
+  s_aa47a447e01641::t_d55e6684ede683 215-218
+  s_aa47a447e01641::t_c946506f08bf45 94-98
+  s_aa47a447e01641::t_07867bb04bcf14 241-257
+  s_aa47a447e01641::t_db2dcb95fbeda1 273,304,338,377-383,385-395,399
+packages/core/issues/stores/comment-composer-store.test.ts
+  s_aa47a447e01641::t_84dcbed482f803 26,49-67
+packages/core/issues/stores/comment-composer-store.ts
+  s_aa47a447e01641::t_bc15dac793d548 13-18,24-28,33-34,37-38,46-47,50-51
+packages/core/issues/stores/index.ts
+  s_aa47a447e01641::t_6b3105c056c435 29-33
+packages/views/chat/components/chat-input-draft-isolation.test.tsx
+  s_aa47a447e01641::t_1921cd00a6d445 102-107
+packages/views/issues/components/comment-composers.test.tsx
+  s_aa47a447e01641::t_5caaefad43da20 420-422,436-438
+packages/views/locales/en/editor.json
+  s_aa47a447e01641::t_a7f28689205280 201-211
+packages/views/locales/en/settings.json
+  s_aa47a447e01641::t_85430f12a1538e 201-204
+packages/views/locales/fr/editor.json
+  s_aa47a447e01641::t_52db6d66ca7b9f 201-211
+packages/views/locales/fr/settings.json
+  s_aa47a447e01641::t_29f841376f3055 201-204
+packages/views/locales/ja/editor.json
+  s_aa47a447e01641::t_432ab5421c2bcf 197-207
+packages/views/locales/ja/settings.json
+  s_aa47a447e01641::t_6bcb3891cc6f39 199-202
+packages/views/locales/ko/editor.json
+  s_aa47a447e01641::t_e26372ee6ddc1f 197-207
+packages/views/locales/ko/settings.json
+  s_aa47a447e01641::t_8e3e035fde67b3 199-202
+packages/views/locales/zh-Hans/editor.json
+  s_aa47a447e01641::t_0f99639bd62595 197-207
+packages/views/locales/zh-Hans/settings.json
+  s_aa47a447e01641::t_4a3d46647e89b8 199-202
+packages/views/locales/zh-Hant/editor.json
+  s_aa47a447e01641::t_a66ee9d944b6a0 197-207
+packages/views/locales/zh-Hant/settings.json
+  s_aa47a447e01641::t_75536daf80bda0 199-202
+packages/views/settings/components/preferences-tab.test.tsx
+  s_aa47a447e01641::t_75e50776e20305 1,14,30-32,79,126-128,130-134,368,370-386
+packages/views/test/composer-mocks.tsx
+  s_aa47a447e01641::t_43d55bfb3538ac 1-140
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5d7368c7ff43e66856a9b24f60d805dfe7885c1c",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
