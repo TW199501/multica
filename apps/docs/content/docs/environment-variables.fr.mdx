@@ -185,6 +185,7 @@ Les limites de débit d'authentification nécessitent `REDIS_URL` ; sans cette v
 | GitHub | `GITHUB_APP_PRIVATE_KEY` | Clé privée PEM complète associée à l'App ID ; mêmes usages que ci-dessus |
 | Lark | `MULTICA_LARK_SECRET_KEY` | Clé de chiffrement des identifiants de 32 octets, encodée en Base64 |
 | Slack | `MULTICA_SLACK_SECRET_KEY` | Clé de chiffrement des jetons de 32 octets, encodée en Base64 |
+| Paramètres IA | `MULTICA_AI_SECRET_KEY` | Clé de 32 octets encodée en Base64 qui chiffre la clé des paramètres IA de l'espace de travail ; sans elle, la page des paramètres IA ne peut pas enregistrer et l'amélioration des messages est indisponible |
 | Telegram | `MULTICA_TELEGRAM_SECRET_KEY` | Clé de chiffrement du jeton du bot de 32 octets, encodée en Base64 |
 | Composio | `COMPOSIO_API_KEY` | Active les connexions d'outils Composio |
 | Composio | `COMPOSIO_CALLBACK_BASE_URL` | URL de l'API de rappel ; peut se rabattre sur `MULTICA_PUBLIC_URL` |
@@ -219,6 +220,8 @@ Deux fonctionnalités utilisent cette couche, et chacune envoie du contenu de di
 - **Questions de suivi** (les boutons de suggestion sous la réponse d'un agent) — la fin de la conversation : jusqu'à 6 messages, la réponse à laquelle les questions font suite étant tronquée à 3 000 caractères et chaque message plus ancien à 800.
 
 Lorsque la clé d'API et l'URL de base sont toutes deux vides, cette couche est désactivée et n'effectue aucune requête en amont — aucune des deux fonctionnalités ci-dessus n'envoie quoi que ce soit. C'est la configuration prise en charge lorsque votre politique n'autorise pas cette couche à envoyer du contenu de discussion hors du déploiement : les sessions de discussion conservent le titre que le client dérive du premier message, les boutons de questions de suivi n'apparaissent pas, et tout le reste fonctionne normalement.
+
+L'amélioration des messages et le test de connexion des paramètres IA n'utilisent pas `MULTICA_LLM_*`. Ils utilisent le endpoint configuré par un administrateur de l'espace de travail sur la page des paramètres IA, stocké chiffré avec `MULTICA_AI_SECRET_KEY` ; un espace de travail sans paramètres obtient une erreur, jamais un repli sur les variables ci-dessus. L'amélioration envoie le brouillon en cours de rédaction (jusqu'à 8 000 caractères, les mentions, liens et blocs de code étant remplacés par des marqueurs) ainsi que le contexte tel quel, sans masquage : pour une discussion, jusqu'à 6 messages visibles de la propre discussion de l'appelant ; pour une issue, son titre (jusqu'à 200 caractères), sa description (jusqu'à 2 000) et jusqu'à 6 commentaires, ou jusqu'à 6 d'un même fil. Chaque message de contexte est tronqué à 800 caractères. Le test de connexion envoie une seule invite courte et fixe, sans contenu utilisateur.
 
 <Callout type="info">
 Ceci ne concerne que la couche d'assistance. L'exécution d'un agent suit un chemin de données distinct : lorsqu'un agent répond dans une discussion, votre daemon exécute l'outil de codage IA de cet agent avec les propres identifiants de l'outil, et ne lui transmet pas les paramètres `MULTICA_LLM_*` ci-dessus. (Les variables de connexion à Multica propres à l'exécution, dont l'agent a besoin, sont injectées séparément par le daemon.) Vider les variables ci-dessus n'a aucun effet sur ce chemin — contrôlez-le via la configuration du runtime de l'agent.
