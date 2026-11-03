@@ -41,6 +41,8 @@ type Input struct {
 	DisableThinking                  bool
 	PromptSkillID                    pgtype.UUID
 	APIKey                           *string
+	// ClearAPIKey drops the stored key (keyless endpoints); a non-empty APIKey wins.
+	ClearAPIKey bool
 }
 
 type Service struct {
@@ -107,8 +109,8 @@ func newKey(in Input) (string, bool) {
 
 func last4(key string) string {
 	r := []rune(key)
-	if len(r) <= 4 {
-		return string(r)
+	if len(r) < 8 {
+		return ""
 	}
 	return string(r[len(r)-4:])
 }
@@ -148,6 +150,8 @@ func (s *Service) Save(ctx context.Context, workspaceID, userID pgtype.UUID, in 
 		}
 		params.ApiKeySealed = sealed
 		params.ApiKeyLast4 = last4(key)
+	} else if in.ClearAPIKey {
+		params.ClearKey = true
 	} else if found && len(row.ApiKeySealed) > 0 && !sameTarget(row, in) {
 		return Settings{}, ErrKeyRequired
 	}
@@ -167,6 +171,9 @@ func (s *Service) ResolveKey(ctx context.Context, workspaceID pgtype.UUID, in In
 	row, found, err := s.existing(ctx, workspaceID)
 	if err != nil {
 		return "", err
+	}
+	if in.ClearAPIKey {
+		return "", nil
 	}
 	if !found || len(row.ApiKeySealed) == 0 {
 		return "", nil

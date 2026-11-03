@@ -4,7 +4,8 @@ WHERE workspace_id = $1;
 
 -- name: UpsertWorkspaceAISettings :one
 -- api_key_sealed / api_key_last4 are only overwritten when a new sealed key is
--- supplied, so saving without a key keeps the stored one.
+-- supplied, so saving without a key keeps the stored one; clear_key wipes it
+-- (a new key in the same call wins, so callers pass clear_key=false then).
 INSERT INTO workspace_ai_settings (
     workspace_id, provider, base_url, model, api_key_sealed, api_key_last4,
     disable_thinking, prompt, prompt_skill_id, updated_by
@@ -16,9 +17,10 @@ ON CONFLICT (workspace_id) DO UPDATE SET
     provider         = EXCLUDED.provider,
     base_url         = EXCLUDED.base_url,
     model            = EXCLUDED.model,
-    api_key_sealed   = COALESCE(EXCLUDED.api_key_sealed, workspace_ai_settings.api_key_sealed),
-    api_key_last4    = CASE WHEN EXCLUDED.api_key_sealed IS NULL
-                            THEN workspace_ai_settings.api_key_last4
+    api_key_sealed   = CASE WHEN sqlc.arg('clear_key')::boolean THEN NULL
+                            ELSE COALESCE(EXCLUDED.api_key_sealed, workspace_ai_settings.api_key_sealed) END,
+    api_key_last4    = CASE WHEN sqlc.arg('clear_key')::boolean THEN ''
+                            WHEN EXCLUDED.api_key_sealed IS NULL THEN workspace_ai_settings.api_key_last4
                             ELSE EXCLUDED.api_key_last4 END,
     disable_thinking = EXCLUDED.disable_thinking,
     prompt           = EXCLUDED.prompt,

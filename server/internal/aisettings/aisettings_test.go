@@ -200,3 +200,58 @@ func TestDefaultPromptKeepsPlaceholders(t *testing.T) {
 		t.Fatalf("DefaultPrompt missing placeholder rule: %q", p)
 	}
 }
+
+func TestSaveClearsKeyForKeylessProvider(t *testing.T) {
+	ctx := context.Background()
+	svc := NewService(db.New(testPool), newBox(t))
+	ws := newWorkspace(t)
+	if _, err := svc.Save(ctx, ws, newUser(), Input{
+		Provider: "openai", BaseURL: "https://api.openai.com/v1", APIKey: strPtr("sk-abcdef1234"),
+	}); err != nil {
+		t.Fatal(err)
+	}
+	self := Input{Provider: "llamacpp", BaseURL: "http://localhost:8080/v1"}
+	if _, err := svc.Save(ctx, ws, newUser(), self); !errors.Is(err, ErrKeyRequired) {
+		t.Fatalf("without ClearAPIKey err = %v, want ErrKeyRequired", err)
+	}
+	self.ClearAPIKey = true
+	if key, err := svc.ResolveKey(ctx, ws, self); err != nil || key != "" {
+		t.Fatalf("ResolveKey = %q, %v", key, err)
+	}
+	if _, err := svc.Save(ctx, ws, newUser(), self); err != nil {
+		t.Fatalf("Save with ClearAPIKey: %v", err)
+	}
+	got, _, err := svc.Get(ctx, ws)
+	if err != nil || got.APIKeySet || got.APIKeyLast4 != "" {
+		t.Fatalf("after clear: %+v, %v", got, err)
+	}
+	client, _, err := svc.ClientFor(ctx, ws)
+	if err != nil || !client.Enabled() {
+		t.Fatalf("ClientFor: %v", err)
+	}
+}
+
+func TestNewKeyWinsOverClear(t *testing.T) {
+	ctx := context.Background()
+	svc := NewService(db.New(testPool), newBox(t))
+	ws := newWorkspace(t)
+	in := Input{Provider: "openai", BaseURL: "https://api.openai.com/v1", APIKey: strPtr("sk-abcdef1234"), ClearAPIKey: true}
+	got, err := svc.Save(ctx, ws, newUser(), in)
+	if err != nil || !got.APIKeySet || got.APIKeyLast4 != "1234" {
+		t.Fatalf("Save: %+v, %v", got, err)
+	}
+	if key, err := svc.ResolveKey(ctx, ws, in); err != nil || key != "sk-abcdef1234" {
+		t.Fatalf("ResolveKey = %q, %v", key, err)
+	}
+}
+
+func TestShortKeyIsNotExposedAsLast4(t *testing.T) {
+	for _, k := range []string{"abcd", "abcdefg"} {
+		if got := last4(k); got != "" {
+			t.Errorf("last4(%q) = %q, want empty", k, got)
+		}
+	}
+	if got := last4("abcdefgh"); got != "efgh" {
+		t.Errorf("last4 = %q", got)
+	}
+}

@@ -59,9 +59,10 @@ ON CONFLICT (workspace_id) DO UPDATE SET
     provider         = EXCLUDED.provider,
     base_url         = EXCLUDED.base_url,
     model            = EXCLUDED.model,
-    api_key_sealed   = COALESCE(EXCLUDED.api_key_sealed, workspace_ai_settings.api_key_sealed),
-    api_key_last4    = CASE WHEN EXCLUDED.api_key_sealed IS NULL
-                            THEN workspace_ai_settings.api_key_last4
+    api_key_sealed   = CASE WHEN $11::boolean THEN NULL
+                            ELSE COALESCE(EXCLUDED.api_key_sealed, workspace_ai_settings.api_key_sealed) END,
+    api_key_last4    = CASE WHEN $11::boolean THEN ''
+                            WHEN EXCLUDED.api_key_sealed IS NULL THEN workspace_ai_settings.api_key_last4
                             ELSE EXCLUDED.api_key_last4 END,
     disable_thinking = EXCLUDED.disable_thinking,
     prompt           = EXCLUDED.prompt,
@@ -82,10 +83,12 @@ type UpsertWorkspaceAISettingsParams struct {
 	UpdatedBy       pgtype.UUID `json:"updated_by"`
 	ApiKeySealed    []byte      `json:"api_key_sealed"`
 	ApiKeyLast4     string      `json:"api_key_last4"`
+	ClearKey        bool        `json:"clear_key"`
 }
 
 // api_key_sealed / api_key_last4 are only overwritten when a new sealed key is
-// supplied, so saving without a key keeps the stored one.
+// supplied, so saving without a key keeps the stored one; clear_key wipes it
+// (a new key in the same call wins, so callers pass clear_key=false then).
 func (q *Queries) UpsertWorkspaceAISettings(ctx context.Context, arg UpsertWorkspaceAISettingsParams) (WorkspaceAiSetting, error) {
 	row := q.db.QueryRow(ctx, upsertWorkspaceAISettings,
 		arg.WorkspaceID,
@@ -98,6 +101,7 @@ func (q *Queries) UpsertWorkspaceAISettings(ctx context.Context, arg UpsertWorks
 		arg.UpdatedBy,
 		arg.ApiKeySealed,
 		arg.ApiKeyLast4,
+		arg.ClearKey,
 	)
 	var i WorkspaceAiSetting
 	err := row.Scan(
