@@ -64,6 +64,10 @@ import type {
   Workspace,
   WorkspaceRepo,
   WorkspaceMcpServer,
+  WorkspaceAISettings,
+  AISettingsInput,
+  AISettingsTestResult,
+  PolishContext,
   MemberWithUser,
   User,
   Skill,
@@ -466,6 +470,12 @@ import {
   EMPTY_ISSUE_VIEW_PREFERENCE,
   EMPTY_PLUGIN_INSTALLATION,
   EMPTY_WORKSPACE_MCP_SERVER,
+  EMPTY_WORKSPACE_AI_SETTINGS,
+  FAILED_AI_SETTINGS_TEST_RESULT,
+  WorkspaceAISettingsSchema,
+  AISettingsTestResultSchema,
+  AISettingsStatusSchema,
+  PolishResultSchema,
   EMPTY_PLUGIN_INSTALLATION_LIST,
   EMPTY_PLUGIN_PREVIEW,
   EMPTY_PLUGIN_PACKAGE,
@@ -614,6 +624,18 @@ function assertIssueCreatePropertiesSnapshot(
 export function errorCode(err: unknown): string | undefined {
   if (err instanceof ApiError && err.body && typeof err.body === "object") {
     const code = (err.body as { code?: unknown }).code;
+    if (typeof code === "string" && code.length > 0) return code;
+  }
+  return undefined;
+}
+
+// aiErrorCode returns the machine-readable code the AI settings and polish
+// endpoints put in the error body ("api_key_required", "secret_key_missing",
+// "ai_not_configured", "polish_lost_spans", "upstream_failed"). These
+// handlers use the `error` field itself as the code.
+export function aiErrorCode(err: unknown): string | undefined {
+  if (err instanceof ApiError && err.body && typeof err.body === "object") {
+    const code = (err.body as { error?: unknown }).error;
     if (typeof code === "string" && code.length > 0) return code;
   }
   return undefined;
@@ -3141,6 +3163,56 @@ export class ApiClient {
     return parseWithFallback(raw, WorkspaceMcpServerSchema, EMPTY_WORKSPACE_MCP_SERVER, {
       endpoint: "PUT /api/workspaces/{id}/mcp-servers/{serverId}",
     });
+  }
+
+  async getAISettings(workspaceId: string): Promise<WorkspaceAISettings> {
+    const raw = await this.fetch<unknown>(`/api/workspaces/${workspaceId}/ai-settings`);
+    return parseWithFallback(raw, WorkspaceAISettingsSchema, EMPTY_WORKSPACE_AI_SETTINGS, {
+      endpoint: "GET /api/workspaces/{id}/ai-settings",
+    });
+  }
+
+  /** Throws ApiError; branch on aiErrorCode(): api_key_required, secret_key_missing. */
+  async updateAISettings(workspaceId: string, input: AISettingsInput): Promise<WorkspaceAISettings> {
+    const raw = await this.fetch<unknown>(`/api/workspaces/${workspaceId}/ai-settings`, {
+      method: "PUT",
+      body: JSON.stringify(input),
+    });
+    return parseWithFallback(raw, WorkspaceAISettingsSchema, EMPTY_WORKSPACE_AI_SETTINGS, {
+      endpoint: "PUT /api/workspaces/{id}/ai-settings",
+    });
+  }
+
+  /** An upstream failure comes back as `{ ok: false }`; a missing key throws api_key_required. */
+  async testAISettings(workspaceId: string, input: AISettingsInput): Promise<AISettingsTestResult> {
+    const raw = await this.fetch<unknown>(`/api/workspaces/${workspaceId}/ai-settings/test`, {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+    return parseWithFallback(raw, AISettingsTestResultSchema, FAILED_AI_SETTINGS_TEST_RESULT, {
+      endpoint: "POST /api/workspaces/{id}/ai-settings/test",
+    });
+  }
+
+  async getAISettingsStatus(workspaceId: string): Promise<{ polish_available: boolean }> {
+    const raw = await this.fetch<unknown>(`/api/workspaces/${workspaceId}/ai-settings/status`);
+    return parseWithFallback(raw, AISettingsStatusSchema, { polish_available: false }, {
+      endpoint: "GET /api/workspaces/{id}/ai-settings/status",
+    });
+  }
+
+  /** Throws ApiError; branch on aiErrorCode(): ai_not_configured, polish_lost_spans, upstream_failed. */
+  async polishText(
+    workspaceId: string,
+    text: string,
+    context: PolishContext,
+  ): Promise<{ text: string }> {
+    const raw = await this.fetch<unknown>(`/api/workspaces/${workspaceId}/ai/polish`, {
+      method: "POST",
+      body: JSON.stringify({ text, context }),
+    });
+    // No usable fallback: returning the input would look like a successful polish.
+    return parseSearchIndexResponse<{ text: string }>(raw, PolishResultSchema, "POST /api/workspaces/{id}/ai/polish");
   }
 
   /** Removes a library entry and every assignment to it. */

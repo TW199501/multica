@@ -92,7 +92,9 @@ import type {
   TimelineEntry,
   User,
   WebhookDelivery,
+  WorkspaceAISettings,
   WorkspaceMcpServer,
+  AISettingsTestResult,
 } from "../types";
 import type { CloudRuntimeNode } from "../runtimes/cloud-runtime";
 import type { CreateFeedbackResponse } from "../feedback/types";
@@ -3639,6 +3641,47 @@ export const EMPTY_WORKSPACE_MCP_SERVER: WorkspaceMcpServer = {
   created_at: "",
   updated_at: "",
 };
+
+export const WorkspaceAISettingsSchema = z.object({
+  secret_key_available: z.boolean().default(false),
+  configured: z.boolean().default(false),
+  // A plain string so a provider added by a newer server still parses.
+  provider: z.string().default(""),
+  base_url: z.string().default(""),
+  model: z.string().default(""),
+  disable_thinking: z.boolean().default(false),
+  prompt: z.string().default(""),
+  default_prompt: z.string().default(""),
+  prompt_skill_id: z.string().nullable().default(null).catch(null),
+  api_key_set: z.boolean().default(false),
+  api_key_last4: z.string().default(""),
+  last_called_at: z.string().nullable().default(null).catch(null),
+});
+
+export const EMPTY_WORKSPACE_AI_SETTINGS: WorkspaceAISettings = WorkspaceAISettingsSchema.parse({});
+
+export const AISettingsTestResultSchema = z.discriminatedUnion("ok", [
+  z.object({ ok: z.literal(true) }),
+  z.object({
+    ok: z.literal(false),
+    status: z.number().default(0),
+    message: z.string().default(""),
+  }),
+]);
+
+export const FAILED_AI_SETTINGS_TEST_RESULT: AISettingsTestResult = {
+  ok: false,
+  status: 0,
+  message: "",
+};
+
+export const AISettingsStatusSchema = z.object({
+  polish_available: z.boolean().catch(false).default(false),
+});
+
+export const PolishResultSchema = z.object({
+  text: z.string(),
+});
 
 // Share links. Introduced with the workspace share-link invite flow; schemas
 // mirror the API responses so malformed payloads fall back to safe defaults.

@@ -36,6 +36,7 @@ function workspaceScoped(slug: string) {
     agents: () => `${ws}/agents`,
     // Step 1 of agent creation: choose where the agent runs.
     newAgent: () => `${ws}/agents/new`,
+    agentAISettings: () => `${ws}/agents/ai-settings`,
     // Step 2: configure the agent on the chosen runtime. A real route so a
     // half-filled form survives a refresh and can be linked to directly.
     newAgentManual: () => `${ws}/agents/new/manual`,

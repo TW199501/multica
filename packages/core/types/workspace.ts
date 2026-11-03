@@ -45,6 +45,44 @@ export interface WorkspaceMcpServer {
   updated_at: string;
 }
 
+/** Workspace-level LLM settings. The API key is write-only; only its presence and last 4 characters come back. */
+export interface WorkspaceAISettings {
+  secret_key_available: boolean;
+  configured: boolean;
+  /** Kept as a string so a provider added by a newer server still renders. */
+  provider: string;
+  base_url: string;
+  model: string;
+  disable_thinking: boolean;
+  prompt: string;
+  default_prompt: string;
+  prompt_skill_id: string | null;
+  api_key_set: boolean;
+  api_key_last4: string;
+  last_called_at: string | null;
+}
+
+export interface AISettingsInput {
+  provider: string;
+  base_url: string;
+  model: string;
+  disable_thinking: boolean;
+  prompt: string;
+  prompt_skill_id: string | null;
+  /** Omit to keep the stored key. */
+  api_key?: string;
+  clear_api_key?: boolean;
+}
+
+export type AISettingsTestResult =
+  | { ok: true }
+  | { ok: false; status: number; message: string };
+
+export type PolishContext =
+  | { kind: "chat"; chat_session_id: string }
+  | { kind: "issue"; issue_id: string; thread_comment_id?: string }
+  | { kind: "none" };
+
 export interface Member {
   id: string;
   workspace_id: string;

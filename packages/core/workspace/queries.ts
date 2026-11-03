@@ -20,6 +20,8 @@ export const workspaceKeys = {
     ["workspaces", wsId, "squads", squadId, "members-status"] as const,
   skills: (wsId: string) => ["workspaces", wsId, "skills"] as const,
   assigneeFrequency: (wsId: string) => ["workspaces", wsId, "assignee-frequency"] as const,
+  aiSettings: (wsId: string) => ["workspaces", wsId, "ai-settings"] as const,
+  aiSettingsStatus: (wsId: string) => ["workspaces", wsId, "ai-settings", "status"] as const,
   mcpServers: (wsId: string) => ["workspaces", wsId, "mcp-servers"] as const,
 };
 
@@ -200,6 +202,23 @@ export function workspaceMcpServersOptions(wsId: string) {
   return queryOptions({
     queryKey: workspaceKeys.mcpServers(wsId),
     queryFn: () => api.listWorkspaceMcpServers(wsId),
+    enabled: wsId !== "",
+  });
+}
+
+export function workspaceAISettingsOptions(wsId: string) {
+  return queryOptions({
+    queryKey: workspaceKeys.aiSettings(wsId),
+    queryFn: () => api.getAISettings(wsId),
+    enabled: wsId !== "",
+  });
+}
+
+/** Whether message polish is usable; readable by plain members, unlike the settings. */
+export function workspaceAISettingsStatusOptions(wsId: string) {
+  return queryOptions({
+    queryKey: workspaceKeys.aiSettingsStatus(wsId),
+    queryFn: () => api.getAISettingsStatus(wsId),
     enabled: wsId !== "",
   });
 }
