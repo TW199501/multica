@@ -3268,6 +3268,27 @@ describe("ApiClient workspace AI settings", () => {
     expect(aiErrorCode(error)).toBe("polish_lost_spans");
   });
 
+  it("polishText rejects a malformed success body", async () => {
+    stubJSON({ nope: true });
+
+    await expect(
+      new ApiClient("https://api.example.test").polishText("ws-1", "x", { kind: "none" }),
+    ).rejects.toThrow(/Malformed response/);
+  });
+
+  it("updateAISettings falls back to safe empty settings when malformed", async () => {
+    stubJSON({ nope: true });
+
+    const result = await new ApiClient("https://api.example.test")
+      .updateAISettings("ws-1", { provider: "openai" } as never);
+
+    expect(result.configured).toBe(false);
+    expect(result.secret_key_available).toBe(false);
+    expect(result.api_key_set).toBe(false);
+    expect(result.api_key_last4).toBe("");
+    expect(result.prompt_skill_id).toBeNull();
+  });
+
   it("updateAISettings surfaces api_key_required", async () => {
     stubJSON({ error: "api_key_required" }, 409);
 
