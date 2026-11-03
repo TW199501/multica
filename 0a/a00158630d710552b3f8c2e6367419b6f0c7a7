@@ -1,0 +1,25 @@
+server/internal/aisettings/aisettings.go
+  s_aa47a447e01641::t_1afe0a13f39eeb 44-45,112-113,153-154,175-177
+server/internal/aisettings/aisettings_test.go
+  s_aa47a447e01641::t_47516a319fdb01 203-257
+server/pkg/db/generated/workspace_ai_settings.sql.go
+  s_aa47a447e01641::t_18e51b32b711a2 62-65,86,90-91,104
+server/pkg/db/queries/workspace_ai_settings.sql
+  s_aa47a447e01641::t_73a4e245adbf0a 7-8,20-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0aa00158630d710552b3f8c2e6367419b6f0c7a7",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
