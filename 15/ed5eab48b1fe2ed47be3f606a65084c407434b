@@ -1,0 +1,25 @@
+server/internal/handler/workspace_delete_ai_settings_test.go
+  s_aa47a447e01641::t_c5f2e37d74f6d8 1-64
+server/internal/handler/workspace_delete_manifest_test.go
+  s_aa47a447e01641::t_88c493fa8f7952 107
+server/pkg/db/generated/workspace.sql.go
+  s_aa47a447e01641::t_4371d7af0d8a45 159-161
+server/pkg/db/queries/workspace.sql
+  s_aa47a447e01641::t_c60bbeb7b5aef5 202-204
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "15ed5eab48b1fe2ed47be3f606a65084c407434b",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
