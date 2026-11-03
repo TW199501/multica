@@ -1,0 +1,52 @@
+packages/views/editor/polish/polish-button.tsx
+  s_aa47a447e01641::t_5b7635105fdd19 81,87
+  s_aa47a447e01641::t_1a2ee150d566c7 27-32,35,44,46-49
+packages/views/editor/polish/polish-dialog.tsx
+  s_aa47a447e01641::t_a1ad410bbf9f7c 70
+  s_aa47a447e01641::t_ae87e465f8ee47 269
+  s_aa47a447e01641::t_d1066d4cde14fb 37-38
+packages/views/editor/polish/use-polish-gate.tsx
+  s_aa47a447e01641::t_88eec0aa0e48d4 8,21-22,32-35,39-45,47-50,63,71,89-98,101,108-109,111,116-117,119,121-124,128
+docs/superpowers/specs/2026-11-03-ai-settings-and-message-polish-design.md
+  s_aa47a447e01641::t_8fec1f2812ec08 61,80,97,158,169,176
+packages/views/chat/components/chat-input.tsx
+  s_aa47a447e01641::t_406776a2827945 604,614,837
+packages/views/editor/decision/decision.test.tsx
+  s_aa47a447e01641::t_c73b106f8bf67c 240,270,274,278,283,289,293,439
+packages/views/editor/polish/polish.test.tsx
+  s_aa47a447e01641::t_d2ec997a9fc362 266-268,273,276-277,279-280,284,297-298,301,314-315,323,338-355,357-367
+packages/views/issues/components/comment-composers.test.tsx
+  s_aa47a447e01641::t_83e5f6649cfceb 420-421,423,437-438,440
+packages/views/issues/components/comment-input.tsx
+  s_aa47a447e01641::t_1e23334bcebf42 248,256,361
+packages/views/issues/components/reply-input.tsx
+  s_aa47a447e01641::t_bee9f3baf94745 260,268,376
+packages/views/locales/en/editor.json
+  s_aa47a447e01641::t_8d9928e4422d6c 207
+packages/views/locales/fr/editor.json
+  s_aa47a447e01641::t_ed9613c55d4574 207
+packages/views/locales/ja/editor.json
+  s_aa47a447e01641::t_22a72aa2e937ba 203
+packages/views/locales/ko/editor.json
+  s_aa47a447e01641::t_ebd583f4ad4466 203
+packages/views/locales/zh-Hans/editor.json
+  s_aa47a447e01641::t_d1d0bb0071101f 203
+packages/views/locales/zh-Hant/editor.json
+  s_aa47a447e01641::t_33122f8c9cdf4a 203
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "23d2e552be54a57443e98e9eebb2d44865f65272",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
