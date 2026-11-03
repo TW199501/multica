@@ -96,8 +96,9 @@ export function PolishDialog({
       },
       (err: unknown) => {
         if (id !== requestRef.current) return;
-        // The original stays usable so a failed polish never blocks the user.
-        setPolished(text);
+        // The right column already holds the original (set on open) until a
+        // result or an edit replaces it, so leaving it untouched shows the
+        // original after a first failure and keeps earlier work after a retry.
         setError(polishError(err));
         setLoading(false);
       },

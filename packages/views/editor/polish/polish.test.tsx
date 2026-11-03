@@ -515,6 +515,36 @@ describe("PolishDialog", () => {
     await waitFor(() => expect(onConfirm).toHaveBeenCalledWith("hello wrld"));
   });
 
+  it("a failed regenerate keeps the previous result", async () => {
+    apiPolishText
+      .mockResolvedValueOnce({ text: "First try." })
+      .mockRejectedValueOnce(new ApiError("upstream", 502, "Bad Gateway", { error: "upstream_failed" }));
+    renderDialog();
+    await waitFor(() => expect(afterTextarea().value).toBe("First try."));
+
+    fireEvent.click(screen.getByRole("button", { name: "Polish" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Couldn't polish");
+    expect(afterTextarea().value).toBe("First try.");
+    expect(screen.getByRole("button", { name: "Polish" })).toBeEnabled();
+  });
+
+  it("a failed regenerate keeps the user's edits", async () => {
+    apiPolishText
+      .mockResolvedValueOnce({ text: "First try." })
+      .mockRejectedValueOnce(new ApiError("lost", 422, "Unprocessable Entity", { error: "polish_lost_spans" }));
+    const { onConfirm } = renderDialog();
+    await waitFor(() => expect(afterTextarea().value).toBe("First try."));
+    fireEvent.change(afterTextarea(), { target: { value: "My own wording." } });
+
+    fireEvent.click(screen.getByRole("button", { name: "Polish" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("mentions, links or code");
+    expect(afterTextarea().value).toBe("My own wording.");
+    fireEvent.click(screen.getByRole("button", { name: "Use" }));
+    await waitFor(() => expect(onConfirm).toHaveBeenCalledWith("My own wording."));
+  });
+
   it("explains a polish that dropped protected spans", async () => {
     apiPolishText.mockRejectedValueOnce(
       new ApiError("lost", 422, "Unprocessable Entity", { error: "polish_lost_spans" }),
