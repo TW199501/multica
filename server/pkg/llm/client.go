@@ -340,6 +340,7 @@ func New(cfg Config) *Client {
 	if cfg.HTTPClient != nil {
 		opts = append(opts, option.WithHTTPClient(cfg.HTTPClient))
 	}
+	opts = append(opts, option.WithMiddleware(normalizeUpstreamError))
 
 	defaultModel := strings.TrimSpace(cfg.DefaultModel)
 	if defaultModel == "" {
