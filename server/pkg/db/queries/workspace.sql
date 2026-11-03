@@ -199,6 +199,9 @@ cleared_agent_mcp_bindings AS (
 cleared_workspace_mcp_servers AS (
     DELETE FROM workspace_mcp_server WHERE workspace_id = $1
 ),
+cleared_workspace_ai_settings AS (
+    DELETE FROM workspace_ai_settings WHERE workspace_id = $1
+),
 deleted_pending_check_suites AS (
     DELETE FROM github_pending_check_suite WHERE workspace_id = $1
 ),
