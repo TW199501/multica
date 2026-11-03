@@ -1,0 +1,27 @@
+server/pkg/llm/client.go
+  s_aa47a447e01641::t_aec0b88d42b830 215
+  s_aa47a447e01641::t_87cb9665f1fc4e 84-85,112,195-214,216-226,307-309,314-315
+server/pkg/llm/client_test.go
+  s_aa47a447e01641::t_1df0cc92adb4f0 67-163
+  s_aa47a447e01641::t_c18ee4fda41927 11
+server/internal/aisettings/aisettings.go
+  s_aa47a447e01641::t_64fa70427dc936 238-239
+server/internal/aisettings/aisettings_test.go
+  s_aa47a447e01641::t_49bcb9e17274ec 9-11,261-324
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ae1ad0f3ed0eb3aae364148f5f6c34fab8e80b7b",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
