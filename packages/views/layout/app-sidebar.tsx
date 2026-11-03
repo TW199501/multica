@@ -83,6 +83,7 @@ import { ProjectIcon } from "../projects/components/project-icon";
 import { routeIconForPath } from "./route-icon-components";
 import { RouteDataPrefetch } from "./route-data-prefetch";
 import { useT } from "../i18n";
+import { DockedSidebarTabs, dockedSectionBody, useDockedSidebarSection } from "./docked-sidebar-sections";
 import {
   useShortcut,
 } from "@multica/core/shortcuts";
@@ -436,6 +437,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassName, headerStyle }: AppSidebarProps = {}) {
   const { t } = useT("layout");
+  const dockedSection = useDockedSidebarSection();
   const { pathname, push } = useNavigation();
   const user = useAuthStore((s) => s.user);
   const userId = useAuthStore((s) => s.user?.id);
@@ -453,7 +455,10 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
   // pinned items, the workspace switcher's programmatic push, and anything
   // added later. `setOpenMobile` is a no-op on desktop, where the sheet is not
   // the sidebar's rendering at all.
-  const { setOpenMobile } = useSidebar();
+  const { setOpenMobile, isCompact } = useSidebar();
+  // Docked layout: the floating chat preference is off and the sidebar is a
+  // permanent column (on compact screens it is a sheet and stays as before).
+  const docked = useChatStore((s) => s.floatingChatEnabled === false) && !isCompact;
   useEffect(() => {
     setOpenMobile(false);
   }, [pathname, setOpenMobile]);
@@ -770,8 +775,10 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
+        {docked && <DockedSidebarTabs active={dockedSection} />}
 
         {/* Navigation */}
+        {docked && dockedSection !== "menu" ? dockedSectionBody(dockedSection) : (
         <SidebarContent ref={sidebarScrollRef} style={sidebarFadeStyle}>
           <SidebarGroup>
             <SidebarGroupContent>
@@ -911,6 +918,7 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
+        )}
 
         <SidebarFooter className="p-2">
           <SidebarMenu className="gap-0.5">

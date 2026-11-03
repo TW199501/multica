@@ -14,7 +14,7 @@ vi.mock("@multica/core/chat", () => {
 });
 
 vi.mock("@multica/core/paths", () => ({
-  useWorkspacePaths: () => ({ chat: () => "/acme/chat" }),
+  useWorkspacePaths: () => ({ chat: () => "/acme/chat", settings: () => "/acme/settings" }),
 }));
 
 vi.mock("@multica/ui/hooks/use-mobile", () => ({
@@ -64,6 +64,14 @@ describe("DockedChatLayout", () => {
     expect(chat.compareDocumentPosition(page) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(page.closest("[data-slot='docked-page']")).not.toBeNull();
     expect(screen.getByRole("separator")).toBeInTheDocument();
+  });
+
+  it("keeps Settings in the middle and moves the conversation to the right", () => {
+    renderAt("/acme/settings");
+
+    const chat = screen.getByTestId("chat-window");
+    const page = screen.getByTestId("route-page");
+    expect(page.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("leaves the page alone while floating chat is on", () => {
