@@ -1,0 +1,25 @@
+docs/superpowers/specs/2026-11-03-ai-settings-and-message-polish-design.md
+  s_aa47a447e01641::t_4a579c778d862f 159
+  s_aa47a447e01641::t_610540553f44de 70-80
+  s_aa47a447e01641::t_c0d2ba54058571 127
+docs/superpowers/plans/2026-11-03-e50-ai-settings.md
+  s_aa47a447e01641::t_7dde4c29fb50ba 351-355,357-359,361
+  s_aa47a447e01641::t_20b9e150733c87 335,338-339
+  s_aa47a447e01641::t_2f4bb15cfc70d0 369
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "869cf70f826b1aa81a8cff6dd19b9d82ad82b4b1",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
