@@ -281,3 +281,76 @@ func TestPolishUpstreamErrorReturnsStatusOnly(t *testing.T) {
 		t.Errorf("upstream message leaked: %s", rec.Body.String())
 	}
 }
+
+func TestPolishRejectsChatWhenCreatorLostAgentAccess(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	srv, hits, _ := polishStub(t, "Hello.")
+	seedPolishSettings(t, router, srv.URL)
+
+	memberID := dbfx.User(t, "Polish Lost Access", "polish-lost-access@example.com")
+	dbfx.Member(t, testWorkspaceID, memberID, "member")
+	// Private agent owned by someone else: the member may no longer read it.
+	agentID := dbfx.Agent(t, "Polish private agent", "")
+	chatID := dbfx.ChatSession(t, agentID, testutil.Cols{"creator_id": memberID})
+	dbfx.Insert(t, "chat_message", testutil.Cols{"chat_session_id": chatID, "role": "user", "content": "earlier words"})
+
+	rec := polishCall(t, router, memberID, map[string]any{
+		"text":    "hello",
+		"context": map[string]any{"kind": "chat", "chat_session_id": chatID},
+	})
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("want 404, got %d %s", rec.Code, rec.Body.String())
+	}
+	if got := atomic.LoadInt32(hits); got != 0 {
+		t.Errorf("upstream hits = %d", got)
+	}
+}
+
+func TestPolishChatContextSkipsHiddenMessages(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	srv, _, lastUser := polishStub(t, "Hello.")
+	seedPolishSettings(t, router, srv.URL)
+
+	agentID := dbfx.Agent(t, "Polish hidden chat agent", "")
+	chatID := dbfx.ChatSession(t, agentID)
+	dbfx.Insert(t, "chat_message", testutil.Cols{"chat_session_id": chatID, "role": "user", "content": "hidden-kickoff", "message_kind": "onboarding_kickoff"})
+	dbfx.Insert(t, "chat_message", testutil.Cols{"chat_session_id": chatID, "role": "user", "content": "hidden-command", "message_kind": "channel_command"})
+	dbfx.Insert(t, "chat_message", testutil.Cols{"chat_session_id": chatID, "role": "assistant", "content": "visible-answer"})
+
+	rec := polishCall(t, router, testUserID, map[string]any{
+		"text":    "hello",
+		"context": map[string]any{"kind": "chat", "chat_session_id": chatID},
+	})
+	if rec.Code != http.StatusOK {
+		t.Fatalf("code %d %s", rec.Code, rec.Body.String())
+	}
+	got := lastUser()
+	if !strings.Contains(got, "visible-answer") {
+		t.Errorf("visible message missing: %q", got)
+	}
+	for _, hidden := range []string{"hidden-kickoff", "hidden-command"} {
+		if strings.Contains(got, hidden) {
+			t.Errorf("hidden message %q sent: %q", hidden, got)
+		}
+	}
+}
+
+func TestPolishCapsIssueTitle(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	srv, _, lastUser := polishStub(t, "Hello.")
+	seedPolishSettings(t, router, srv.URL)
+	title := strings.Repeat("t", 200) + "TITLE-TAIL"
+	issueID := dbfx.Issue(t, title)
+
+	rec := polishCall(t, router, testUserID, map[string]any{
+		"text":    "hello",
+		"context": map[string]any{"kind": "issue", "issue_id": issueID},
+	})
+	if rec.Code != http.StatusOK {
+		t.Fatalf("code %d %s", rec.Code, rec.Body.String())
+	}
+	got := lastUser()
+	if strings.Contains(got, "TITLE-TAIL") || !strings.Contains(got, strings.Repeat("t", 200)) {
+		t.Errorf("title not capped at 200 runes: %q", got)
+	}
+}

@@ -51,6 +51,26 @@ func TestProtectCoversFencedCodeAndIsDeterministic(t *testing.T) {
 	}
 }
 
+func TestProtectEditorLinkForms(t *testing.T) {
+	cases := []string{
+		"!file[a.pdf](/api/attachments/1/download)",
+		`[@A\[B\]](mention://agent/x)`,
+		`!file[report\[final\].pdf](/api/attachments/2/download)`,
+		"![shot.png](/api/attachments/3/download)",
+	}
+	for _, span := range cases {
+		text := "see " + span + " now"
+		masked, spans := Protect(text)
+		if masked != "see ⟦1⟧ now" || len(spans) != 1 || spans[0] != span {
+			t.Errorf("%s: masked %q spans %q", span, masked, spans)
+			continue
+		}
+		if got, err := Restore(masked, spans); err != nil || got != text {
+			t.Errorf("%s: Restore = %q, %v", span, got, err)
+		}
+	}
+}
+
 func TestProtectWithoutSpans(t *testing.T) {
 	masked, spans := Protect("plain text")
 	if masked != "plain text" || len(spans) != 0 {

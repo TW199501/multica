@@ -1,8 +1,9 @@
 // Package llm is a thin, reusable wrapper around the official OpenAI Go SDK
 // (github.com/openai/openai-go). It exists so the rest of the server has a
 // single, well-typed entry point for "just call an LLM" needs that do NOT
-// require the full agent runtime — currently chat auto-titling and chat
-// follow-up questions (MUL-4238).
+// require the full agent runtime — chat auto-titling and chat follow-up
+// questions (MUL-4238), configured by MULTICA_LLM_*, and the workspace AI
+// connection test and message polish (E-50), configured per workspace.
 //
 // # Scope: the assist layer, not every model call in the product
 //
@@ -36,6 +37,8 @@
 // TestDocumentedConsumersAreTheOnlyCallers fails until a new call site is
 // reflected here.
 //
+// Deployment consumers, configured by MULTICA_LLM_*:
+//
 //   - Chat auto-titling — server/internal/handler/chat_title.go. Sends the
 //     first user message of a new chat session, verbatim and uncapped.
 //     Attachments are never included.
@@ -44,14 +47,21 @@
 //     Sends the tail of the conversation: up to 6 messages, the reply being
 //     answered capped at 3000 runes (2000 head + 1000 tail) and each older
 //     message at 800.
+//
+// Workspace consumers, configured by a workspace admin in AI settings and
+// independent of MULTICA_LLM_*:
+//
 //   - AI settings connection test — server/internal/handler/ai_settings.go
 //     (CheckAISettings). Uses the workspace's own settings, not MULTICA_LLM_*;
 //     sends one fixed short prompt, no user content.
 //   - Message polish — server/internal/handler/ai_polish.go. Uses the
-//     workspace's own settings (not MULTICA_LLM_*); sends the text the user is
-//     writing (up to 8000 characters) and up to 6 context messages, each capped
-//     at 800 characters, with an issue description capped at 2000; links and
-//     code are replaced with placeholders before sending.
+//     workspace's own settings (not MULTICA_LLM_*). Sends the draft the user is
+//     writing (up to 8000 characters), with mentions, links and code in the
+//     draft replaced by placeholders. Also sends context as-is (not masked):
+//     for a chat, up to 6 visible messages of the caller's own chat; for an
+//     issue, its title (capped at 200 characters), its description (capped at
+//     2000) and up to 6 comments, or up to 6 of one thread. Each context
+//     message is capped at 800 characters.
 //
 // Request shape beyond the prompts is deployment-controlled and lives in
 // Config: MaxRetries (transport budget) and DisableThinking, which appends
@@ -61,15 +71,20 @@
 // reject unknown body fields, so the knob is opt-in per deployment and off by
 // default.
 //
-// Both consumers send private chat content, which is why an unconfigured
-// deployment making zero upstream requests is a contract rather than a side
-// effect: New with no API key and no base URL returns a disabled client whose
-// every call fails with ErrNotConfigured before an HTTP request is ever built,
-// and both consumers check Enabled() before doing any work
-// (TestUnconfiguredClientMakesZeroUpstreamRequests). An operator who must not
-// let THIS layer send chat content leaves MULTICA_LLM_API_KEY and
-// MULTICA_LLM_BASE_URL empty; the product stays whole (client-derived chat
-// titles, no follow-up question buttons).
+// Both deployment consumers send private chat content, which is why an
+// unconfigured deployment making zero upstream requests is a contract rather
+// than a side effect: New with no API key and no base URL returns a disabled
+// client whose every call fails with ErrNotConfigured before an HTTP request is
+// ever built, and both deployment consumers check Enabled() before doing any
+// work (TestUnconfiguredClientMakesZeroUpstreamRequests). Leaving
+// MULTICA_LLM_API_KEY and MULTICA_LLM_BASE_URL empty stops only those two; the
+// product stays whole (client-derived chat titles, no follow-up question
+// buttons).
+//
+// The workspace consumers do not read MULTICA_LLM_*. They send content
+// whenever a workspace admin has configured AI settings, to the endpoint the
+// admin chose, and send nothing for a workspace without settings (or when the
+// server has no MULTICA_AI_SECRET_KEY to open stored keys).
 //
 // The wrapper is intentionally small:
 //

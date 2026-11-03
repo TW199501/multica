@@ -24,6 +24,7 @@ const (
 	polishContextMessages     = 6
 	polishContextMessageRunes = 800
 	polishDescriptionRunes    = 2000
+	polishTitleRunes          = 200
 	// Upper bound on one thread's rows read from the database; only the newest
 	// polishContextMessages of them are sent.
 	polishThreadRowLimit = 500
@@ -103,7 +104,7 @@ func (h *Handler) PolishText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	header, turns, err := h.polishContextTurns(r.Context(), w, workspaceID, userID, req.Context)
+	header, turns, err := h.polishContextTurns(r, w, workspaceID, userID, req.Context)
 	if errors.Is(err, errPolishNotFound) {
 		return
 	}
@@ -170,32 +171,42 @@ func (h *Handler) polishSystemPrompt(ctx context.Context, workspaceID pgtype.UUI
 // polishContextTurns loads the conversation the draft answers. On a missing or
 // foreign source it writes the 404 (or 400 for a malformed id) and returns
 // errPolishNotFound.
-func (h *Handler) polishContextTurns(ctx context.Context, w http.ResponseWriter, workspaceID pgtype.UUID, userID string, pc polishContext) (string, []polishTurn, error) {
+func (h *Handler) polishContextTurns(r *http.Request, w http.ResponseWriter, workspaceID pgtype.UUID, userID string, pc polishContext) (string, []polishTurn, error) {
 	switch pc.Kind {
 	case "chat":
-		return h.polishChatTurns(ctx, w, workspaceID, userID, pc.ChatSessionID)
+		return h.polishChatTurns(r, w, workspaceID, userID, pc.ChatSessionID)
 	case "issue":
-		return h.polishIssueTurns(ctx, w, workspaceID, pc.IssueID, pc.ThreadCommentID)
+		return h.polishIssueTurns(r.Context(), w, workspaceID, pc.IssueID, pc.ThreadCommentID)
 	}
 	return "", nil, nil
 }
 
-func (h *Handler) polishChatTurns(ctx context.Context, w http.ResponseWriter, workspaceID pgtype.UUID, userID, rawID string) (string, []polishTurn, error) {
-	sessionID, ok := parseUUIDOrBadRequest(w, rawID, "chat_session_id")
-	if !ok {
+// polishGateWriter swallows the chat gate's own response so that every denial
+// (not owner, lost agent access, hidden session) can be answered with one 404.
+type polishGateWriter struct{ header http.Header }
+
+func (g *polishGateWriter) Header() http.Header         { return g.header }
+func (g *polishGateWriter) Write(b []byte) (int, error) { return len(b), nil }
+func (g *polishGateWriter) WriteHeader(int)             {}
+
+func (h *Handler) polishChatTurns(r *http.Request, w http.ResponseWriter, workspaceID pgtype.UUID, userID, rawID string) (string, []polishTurn, error) {
+	if _, ok := parseUUIDOrBadRequest(w, rawID, "chat_session_id"); !ok {
 		return "", nil, errPolishNotFound
 	}
-	session, err := h.Queries.GetChatSessionInWorkspace(ctx, db.GetChatSessionInWorkspaceParams{ID: sessionID, WorkspaceID: workspaceID})
-	if errors.Is(err, pgx.ErrNoRows) || (err == nil && uuidToString(session.CreatorID) != userID) {
+	gate := &polishGateWriter{header: http.Header{}}
+	session, ok := h.gatePublicChatSessionForUser(gate, r, userID, uuidToString(workspaceID), rawID)
+	if !ok {
 		writeError(w, http.StatusNotFound, "chat session not found")
 		return "", nil, errPolishNotFound
 	}
+	// Over-fetch so hidden messages removed below do not shrink the window.
+	page, err := h.Queries.ListChatMessagesPage(r.Context(), db.ListChatMessagesPageParams{ChatSessionID: session.ID, Limit: 2 * polishContextMessages})
 	if err != nil {
 		return "", nil, err
 	}
-	msgs, err := h.Queries.ListChatMessagesPage(ctx, db.ListChatMessagesPageParams{ChatSessionID: session.ID, Limit: polishContextMessages})
-	if err != nil {
-		return "", nil, err
+	msgs := visibleChatMessages(page)
+	if len(msgs) > polishContextMessages {
+		msgs = msgs[:polishContextMessages]
 	}
 	turns := make([]polishTurn, 0, len(msgs))
 	// The page is newest first; the prompt reads oldest first.
@@ -222,7 +233,7 @@ func (h *Handler) polishIssueTurns(ctx context.Context, w http.ResponseWriter, w
 	if err != nil {
 		return "", nil, err
 	}
-	header := "ISSUE TITLE: " + strings.TrimSpace(issue.Title) + "\n"
+	header := "ISSUE TITLE: " + truncatePolishRunes(strings.TrimSpace(issue.Title), polishTitleRunes) + "\n"
 	if d := strings.TrimSpace(issue.Description.String); d != "" {
 		header += "ISSUE DESCRIPTION: " + truncatePolishRunes(d, polishDescriptionRunes) + "\n"
 	}

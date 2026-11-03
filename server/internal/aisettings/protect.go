@@ -19,7 +19,9 @@ var protectPattern = regexp.MustCompile(
 	"(?s:```.*?(?:```|\\z))" + // fenced code block (an unclosed fence runs to the end)
 		"|``[^\\n]*?``" + // inline code with double backticks
 		"|`[^`\\n]+`" + // inline code
-		"|!?\\[[^\\[\\]\\n]*\\]\\([^()\\n]*\\)" + // markdown link or image, incl. mention://
+		// Markdown link, image or file card (!file[...]), incl. mention://; the
+		// editor backslash-escapes brackets inside labels.
+		"|(?:!file|!)?\\[(?:\\\\.|[^\\[\\]\\\\\\n])*\\]\\([^()\\n]*\\)" +
 		"|https?://\\S+" + // bare URL
 		"|⟦\\d+⟧", // literal placeholder
 )
