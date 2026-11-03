@@ -6,6 +6,9 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 
@@ -254,4 +257,68 @@ func TestShortKeyIsNotExposedAsLast4(t *testing.T) {
 	if got := last4("abcdefgh"); got != "efgh" {
 		t.Errorf("last4 = %q", got)
 	}
+}
+
+// operatorEnvHost records the headers of the one request a workspace client makes.
+func operatorEnvHost(t *testing.T) (*httptest.Server, *http.Header) {
+	t.Helper()
+	t.Setenv("OPENAI_API_KEY", "sk-operator-secret")
+	t.Setenv("OPENAI_ORG_ID", "org-x")
+	t.Setenv("OPENAI_PROJECT_ID", "proj-x")
+	var got http.Header
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got = r.Header.Clone()
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, `{"id":"c","object":"chat.completion","choices":[{"index":0,"message":{"role":"assistant","content":"ok"},"finish_reason":"stop"}]}`)
+	}))
+	t.Cleanup(srv.Close)
+	return srv, &got
+}
+
+func callWorkspaceClient(t *testing.T, svc *Service, ws pgtype.UUID) {
+	t.Helper()
+	client, _, err := svc.ClientFor(context.Background(), ws)
+	if err != nil {
+		t.Fatalf("ClientFor: %v", err)
+	}
+	if _, err := client.GenerateText(context.Background(), "", "", "hi"); err != nil {
+		t.Fatalf("GenerateText: %v", err)
+	}
+}
+
+func assertNoOrgOrProject(t *testing.T, h http.Header) {
+	t.Helper()
+	for _, name := range []string{"OpenAI-Organization", "OpenAI-Project"} {
+		if _, ok := h[name]; ok {
+			t.Fatalf("%s leaked to the workspace host: %q", name, h.Get(name))
+		}
+	}
+}
+
+func TestKeylessWorkspaceClientSendsNoOperatorCredentials(t *testing.T) {
+	srv, got := operatorEnvHost(t)
+	svc := NewService(db.New(testPool), newBox(t))
+	ws := newWorkspace(t)
+	if _, err := svc.Save(context.Background(), ws, newUser(), Input{Provider: "llamacpp", BaseURL: srv.URL}); err != nil {
+		t.Fatal(err)
+	}
+	callWorkspaceClient(t, svc, ws)
+	if auth := got.Get("Authorization"); auth != "" {
+		t.Fatalf("keyless workspace client sent Authorization %q", auth)
+	}
+	assertNoOrgOrProject(t, *got)
+}
+
+func TestKeyedWorkspaceClientSendsOnlyItsOwnKey(t *testing.T) {
+	srv, got := operatorEnvHost(t)
+	svc := NewService(db.New(testPool), newBox(t))
+	ws := newWorkspace(t)
+	if _, err := svc.Save(context.Background(), ws, newUser(), Input{Provider: "custom", BaseURL: srv.URL, APIKey: strPtr("sk-workspace-key")}); err != nil {
+		t.Fatal(err)
+	}
+	callWorkspaceClient(t, svc, ws)
+	if auth := got.Get("Authorization"); auth != "Bearer sk-workspace-key" {
+		t.Fatalf("Authorization = %q, want only the workspace key", auth)
+	}
+	assertNoOrgOrProject(t, *got)
 }

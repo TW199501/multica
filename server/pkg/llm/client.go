@@ -81,6 +81,8 @@
 // product stays whole (client-derived chat titles, no follow-up question
 // buttons).
 //
+// Workspace clients never read OPENAI_* env vars (Config.IgnoreEnvironment).
+//
 // The workspace consumers do not read MULTICA_LLM_*. They send content
 // whenever a workspace admin has configured AI settings, to the endpoint the
 // admin chose, and send nothing for a workspace without settings (or when the
@@ -107,6 +109,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -189,6 +192,38 @@ type Config struct {
 	// HTTPClient, when set, replaces the SDK's default transport. Primarily a
 	// test seam.
 	HTTPClient option.HTTPClient
+	// IgnoreEnvironment makes the client use only this Config: the SDK's
+	// OPENAI_* environment defaults (API key, admin key, organization, project,
+	// custom headers, base URL) are all overridden. Workspace clients set it so
+	// operator credentials never reach a host a workspace admin typed.
+	IgnoreEnvironment bool
+}
+
+// openAIDefaultBaseURL is the SDK's production endpoint, pinned explicitly for
+// IgnoreEnvironment clients so OPENAI_BASE_URL cannot redirect them.
+const openAIDefaultBaseURL = "https://api.openai.com/v1/"
+
+// environmentOverrides neutralises every option openai.NewClient derives from
+// OPENAI_* variables. Header deletions come first because deleting
+// Authorization marks a header override, which the WithAPIKey after it clears.
+func environmentOverrides(apiKey string) []option.RequestOption {
+	opts := []option.RequestOption{
+		option.WithHeaderDel("OpenAI-Organization"),
+		option.WithHeaderDel("OpenAI-Project"),
+	}
+	if custom, ok := os.LookupEnv("OPENAI_CUSTOM_HEADERS"); ok {
+		for _, line := range strings.Split(custom, "\n") {
+			if colon := strings.Index(line, ":"); colon >= 0 {
+				if name := strings.TrimSpace(line[:colon]); name != "" {
+					opts = append(opts, option.WithHeaderDel(name))
+				}
+			}
+		}
+	}
+	return append(opts,
+		option.WithAdminAPIKey(""),
+		option.WithAPIKey(apiKey),
+	)
 }
 
 // DefaultMaxRetries is the retry budget used when Config.MaxRetries is unset.
@@ -269,11 +304,15 @@ type Client struct {
 // is simply not set up on a given deployment).
 func New(cfg Config) *Client {
 	opts := make([]option.RequestOption, 0, 4)
-	if key := strings.TrimSpace(cfg.APIKey); key != "" {
+	if cfg.IgnoreEnvironment {
+		opts = append(opts, environmentOverrides(strings.TrimSpace(cfg.APIKey))...)
+	} else if key := strings.TrimSpace(cfg.APIKey); key != "" {
 		opts = append(opts, option.WithAPIKey(key))
 	}
 	if base := strings.TrimSpace(cfg.BaseURL); base != "" {
 		opts = append(opts, option.WithBaseURL(base))
+	} else if cfg.IgnoreEnvironment {
+		opts = append(opts, option.WithBaseURL(openAIDefaultBaseURL))
 	}
 	retry := RetryBudget{
 		MaxRetries:     DefaultMaxRetries,

@@ -235,6 +235,8 @@ func ClientFromInput(in Input, apiKey string, retries *llm.RetryOverride) *llm.C
 		BaseURL:         in.BaseURL,
 		DefaultModel:    in.Model,
 		DisableThinking: in.DisableThinking,
+		// The host is admin-chosen, so the server's OPENAI_* credentials must not follow.
+		IgnoreEnvironment: true,
 	})
 }
 
