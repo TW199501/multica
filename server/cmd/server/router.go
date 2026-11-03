@@ -20,6 +20,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 
+	"github.com/multica-ai/multica/server/internal/aisettings"
 	"github.com/multica-ai/multica/server/internal/analytics"
 	"github.com/multica-ai/multica/server/internal/auth"
 	"github.com/multica-ai/multica/server/internal/cloudruntime"
@@ -792,6 +793,21 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 	// installation is a bring-your-own-app (BYO) install carrying its OWN
 	// app-level token, so a per-installation Slack Factory is registered and the
 	// Supervisor drives one Socket Mode connection per installation (like Feishu).
+	// Workspace AI settings. The service is always built so admins can open the
+	// page; without MULTICA_AI_SECRET_KEY it cannot save or use a key.
+	var aiBox *secretbox.Box
+	if aiKey, err := secretbox.LoadKey("MULTICA_AI_SECRET_KEY"); err == nil {
+		if b, err := secretbox.New(aiKey); err == nil {
+			aiBox = b
+		}
+	}
+	h.AISettings = aisettings.NewService(queries, aiBox)
+	if aiBox != nil {
+		slog.Info("ai settings enabled")
+	} else {
+		slog.Info("ai settings: secret key missing")
+	}
+
 	if slackKey, err := secretbox.LoadKey("MULTICA_SLACK_SECRET_KEY"); err == nil {
 		box, err := secretbox.New(slackKey)
 		if err != nil {
@@ -1849,6 +1865,16 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 					// terminal failure.
 					r.Post("/lark/install/begin", h.BeginLarkInstall)
 					r.Get("/lark/install/{sessionId}/status", h.GetLarkInstallStatus)
+				})
+
+				r.Group(func(r chi.Router) {
+					r.Use(middleware.RequireWorkspaceMemberFromURL(queries, "id"))
+					r.Get("/ai-settings/status", h.GetAISettingsStatus)
+				})
+				r.Group(func(r chi.Router) {
+					r.Use(middleware.RequireWorkspaceRoleFromURL(queries, "id", "owner", "admin"))
+					r.Get("/ai-settings", h.GetAISettings)
+					r.Put("/ai-settings", h.PutAISettings)
 				})
 
 				// Slack integration (MUL-3666). Same admin/member split as
