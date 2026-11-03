@@ -1,0 +1,29 @@
+packages/views/issues/components/comment-card-edit-gate.test.tsx
+  s_aa47a447e01641::t_68a8d083d86d0e 2,152-177,394-432
+packages/views/issues/components/comment-card.tsx
+  s_aa47a447e01641::t_bb12b26506d47d 37,464-470,582,897-902,1453-1458
+packages/views/modals/create-issue.test.tsx
+  s_aa47a447e01641::t_4cb24b9312bac6 390-393,465-485,858-876
+packages/views/modals/create-issue.tsx
+  s_aa47a447e01641::t_94a01ed46f3de8 92,1491-1496
+packages/views/modals/quick-create-issue.test.tsx
+  s_aa47a447e01641::t_817070147c5a92 364-367,412-432,673-690
+packages/views/modals/quick-create-issue.tsx
+  s_aa47a447e01641::t_ee0f96051330ae 87,925-933
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "21d3866f9d6d0ba6ac066a693f4bd38dd1b14199",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
