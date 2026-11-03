@@ -1,0 +1,35 @@
+packages/views/chat/docked-chat-layout.tsx
+  s_aa47a447e01641::t_d8eaa2d2ab23ba 1-66
+packages/views/chat/docked-chat-layout.test.tsx
+  s_aa47a447e01641::t_5651db3b0b8bc7 1-96
+apps/desktop/src/renderer/src/components/desktop-layout.test.tsx
+  s_aa47a447e01641::t_7f9c4c4995afea 99-102
+apps/desktop/src/renderer/src/components/desktop-layout.tsx
+  s_aa47a447e01641::t_209823b821e500 21,297-299
+apps/desktop/src/renderer/src/components/desktop-layout.workspace-gate.test.tsx
+  s_aa47a447e01641::t_0a9679701ef790 110
+apps/web/app/[workspaceSlug]/(dashboard)/layout.tsx
+  s_aa47a447e01641::t_26fb704a1802e8 8,32
+packages/views/chat/components/chat-window.tsx
+  s_aa47a447e01641::t_710285e5b662d1 97-106,109-111,746,756-763,778,803-805,833,861,899
+packages/views/chat/index.ts
+  s_aa47a447e01641::t_7d36ea4a03da0e 3
+packages/views/package.json
+  s_aa47a447e01641::t_20ef149cd57188 52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d82485e3c2d156fcb0b8f539587a002ba37ed3e0",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
