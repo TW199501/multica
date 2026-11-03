@@ -771,6 +771,21 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 		slog.Info("lark integration disabled (MULTICA_LARK_SECRET_KEY not set)")
 	}
 
+	// Workspace AI settings. The service is always built so admins can open the
+	// page; without MULTICA_AI_SECRET_KEY it cannot save or use a key.
+	var aiBox *secretbox.Box
+	if aiKey, err := secretbox.LoadKey("MULTICA_AI_SECRET_KEY"); err == nil {
+		if b, err := secretbox.New(aiKey); err == nil {
+			aiBox = b
+		}
+	}
+	h.AISettings = aisettings.NewService(queries, aiBox)
+	if aiBox != nil {
+		slog.Info("ai settings enabled")
+	} else {
+		slog.Info("ai settings: secret key missing")
+	}
+
 	// Slack integration. Multi-tenant B2 model (MUL-3666): Multica hosts ONE
 	// Slack app, workspaces self-install via OAuth, and inbound runs on a single
 	// deployment-level Socket Mode connection routed by team_id — replacing the
@@ -793,21 +808,6 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 	// installation is a bring-your-own-app (BYO) install carrying its OWN
 	// app-level token, so a per-installation Slack Factory is registered and the
 	// Supervisor drives one Socket Mode connection per installation (like Feishu).
-	// Workspace AI settings. The service is always built so admins can open the
-	// page; without MULTICA_AI_SECRET_KEY it cannot save or use a key.
-	var aiBox *secretbox.Box
-	if aiKey, err := secretbox.LoadKey("MULTICA_AI_SECRET_KEY"); err == nil {
-		if b, err := secretbox.New(aiKey); err == nil {
-			aiBox = b
-		}
-	}
-	h.AISettings = aisettings.NewService(queries, aiBox)
-	if aiBox != nil {
-		slog.Info("ai settings enabled")
-	} else {
-		slog.Info("ai settings: secret key missing")
-	}
-
 	if slackKey, err := secretbox.LoadKey("MULTICA_SLACK_SECRET_KEY"); err == nil {
 		box, err := secretbox.New(slackKey)
 		if err != nil {
