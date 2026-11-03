@@ -1,0 +1,29 @@
+server/internal/handler/ai_polish_test.go
+  s_aa47a447e01641::t_da2db654db6998 15
+  s_aa47a447e01641::t_984f0ebcf18848 4
+  s_4d9bfb92d78af8::t_d56bc668b0f09c 359-467
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "905dafd0a9eaa0d5412c22c2bab520f32b5dc9c5",
+  "prompts": {},
+  "sessions": {
+    "s_4d9bfb92d78af8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a6ea0d1c825dae02b",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    },
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
