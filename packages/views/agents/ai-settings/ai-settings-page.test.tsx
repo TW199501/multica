@@ -265,4 +265,63 @@ describe("AISettingsPage", () => {
     });
     expect(input).not.toHaveProperty("api_key");
   });
+  it("lists no blank provider for an unconfigured workspace", async () => {
+    const user = userEvent.setup();
+    mocks.api.getAISettings.mockResolvedValue(
+      settings({
+        configured: false,
+        provider: "",
+        base_url: "",
+        model: "",
+        api_key_set: false,
+        api_key_last4: "",
+      }),
+    );
+    renderUi(<AISettingsPage />);
+    await screen.findByLabelText(/API key/);
+    await user.click(screen.getByRole("combobox", { name: "Provider" }));
+    const options = await screen.findAllByRole("option");
+    expect(options.length).toBeGreaterThan(0);
+    for (const option of options) {
+      expect(option.textContent?.trim()).not.toBe("");
+    }
+  });
+
+  it("shows the loaded-model placeholder only for keyless providers", async () => {
+    const user = userEvent.setup();
+    renderUi(<AISettingsPage />);
+    const model = await screen.findByLabelText("Model");
+    expect(model).not.toHaveAttribute("placeholder");
+    await user.click(screen.getByRole("combobox", { name: "Provider" }));
+    await user.click(
+      await screen.findByRole("option", { name: "Self-hosted (llama.cpp)" }),
+    );
+    expect(screen.getByLabelText("Model")).toHaveAttribute(
+      "placeholder",
+      "Empty uses the server's loaded model",
+    );
+  });
+
+  it("disables the prompt while a skill supplies it", async () => {
+    mocks.api.getAISettings.mockResolvedValue(
+      settings({ prompt_skill_id: "skill-1" }),
+    );
+    mocks.api.listSkills.mockResolvedValue([{ id: "skill-1", name: "Style guide" }]);
+    renderUi(<AISettingsPage />);
+    const prompt = await screen.findByLabelText("Prompt");
+    expect(prompt).toBeDisabled();
+    expect(
+      screen.getByText("The selected skill's content is used instead of this prompt."),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Restore default" })).toBeDisabled();
+  });
+
+  it("keeps the prompt editable without a skill", async () => {
+    renderUi(<AISettingsPage />);
+    const prompt = await screen.findByLabelText("Prompt");
+    expect(prompt).toBeEnabled();
+    expect(
+      screen.queryByText("The selected skill's content is used instead of this prompt."),
+    ).toBeNull();
+  });
 });

@@ -1067,6 +1067,7 @@
     "restore_default": "기본값 복원",
     "load_from_skill": "스킬에서 불러오기",
     "no_skill": "없음",
+    "prompt_from_skill": "이 프롬프트 대신 선택한 스킬의 내용을 사용합니다.",
     "test": "테스트",
     "save": "저장",
     "test_ok": "연결에 성공했습니다",

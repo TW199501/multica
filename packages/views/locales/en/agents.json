@@ -1094,6 +1094,7 @@
     "restore_default": "Restore default",
     "load_from_skill": "Load from skill",
     "no_skill": "None",
+    "prompt_from_skill": "The selected skill's content is used instead of this prompt.",
     "test": "Test",
     "save": "Save",
     "test_ok": "Connection succeeded",

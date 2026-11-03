@@ -1067,6 +1067,7 @@
     "restore_default": "還原預設",
     "load_from_skill": "從技能載入",
     "no_skill": "無",
+    "prompt_from_skill": "將使用所選技能的內容代替此提示詞。",
     "test": "測試",
     "save": "儲存",
     "test_ok": "連線成功",

@@ -1094,6 +1094,7 @@
     "restore_default": "Rétablir par défaut",
     "load_from_skill": "Charger depuis une compétence",
     "no_skill": "Aucune",
+    "prompt_from_skill": "Le contenu de la compétence choisie remplace ce prompt.",
     "test": "Tester",
     "save": "Enregistrer",
     "test_ok": "Connexion réussie",

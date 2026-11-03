@@ -1067,6 +1067,7 @@
     "restore_default": "デフォルトに戻す",
     "load_from_skill": "スキルから読み込む",
     "no_skill": "なし",
+    "prompt_from_skill": "このプロンプトの代わりに、選択したスキルの内容を使います。",
     "test": "テスト",
     "save": "保存",
     "test_ok": "接続に成功しました",

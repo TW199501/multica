@@ -152,14 +152,19 @@ function AISettingsForm({
     hostOf(baseUrl) !== hostOf(settings.base_url);
   const keyRequired = !keyless && (!settings.api_key_set || targetChanged);
   const blocked = !settings.secret_key_available;
+  const promptFromSkill = skillId !== null;
 
   const providerItems = useMemo(() => {
     const items = PROVIDER_PRESETS.map((p) => ({
       value: p.key,
       label: t(($) => $.ai_settings.providers[p.key as ProviderKey]),
     }));
-    // A provider id added by a newer server still has to render.
-    if (!items.some((i) => i.value === settings.provider)) {
+    // A provider id added by a newer server still has to render; an
+    // unconfigured workspace has no provider yet.
+    if (
+      settings.provider &&
+      !items.some((i) => i.value === settings.provider)
+    ) {
       items.push({ value: settings.provider, label: settings.provider });
     }
     return items;
@@ -207,6 +212,8 @@ function AISettingsForm({
     setKeyError(false);
     try {
       await update.mutateAsync(buildInput());
+      // The mutation cache would otherwise keep the typed key in its variables.
+      update.reset();
       setApiKey("");
       toast.success(t(($) => $.ai_settings.saved_toast));
     } catch (err) {
@@ -223,6 +230,7 @@ function AISettingsForm({
     setTestResult(null);
     try {
       setTestResult(await test.mutateAsync(buildInput()));
+      test.reset();
     } catch (err) {
       if (aiErrorCode(err) === "api_key_required") setKeyError(true);
       else toast.error(t(($) => $.ai_settings.test_request_failed));
@@ -273,7 +281,9 @@ function AISettingsForm({
         <Input
           id="ai-model"
           list="ai-model-options"
-          placeholder={t(($) => $.ai_settings.model_placeholder)}
+          placeholder={
+            keyless ? t(($) => $.ai_settings.model_placeholder) : undefined
+          }
           value={model}
           onChange={(e) => setModel(e.target.value)}
         />
@@ -335,13 +345,24 @@ function AISettingsForm({
           id="ai-prompt"
           rows={8}
           value={prompt}
+          disabled={promptFromSkill}
+          aria-describedby={promptFromSkill ? "ai-prompt-from-skill" : undefined}
           onChange={(e) => setPrompt(e.target.value)}
         />
+        {promptFromSkill ? (
+          <p
+            id="ai-prompt-from-skill"
+            className="text-caption text-muted-foreground"
+          >
+            {t(($) => $.ai_settings.prompt_from_skill)}
+          </p>
+        ) : null}
         <div>
           <Button
             type="button"
             variant="ghost"
             size="sm"
+            disabled={promptFromSkill}
             onClick={() => setPrompt(settings.default_prompt)}
           >
             {t(($) => $.ai_settings.restore_default)}

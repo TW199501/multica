@@ -1067,6 +1067,7 @@
     "restore_default": "恢复默认",
     "load_from_skill": "从技能加载",
     "no_skill": "无",
+    "prompt_from_skill": "将使用所选技能的内容代替此提示词。",
     "test": "测试",
     "save": "保存",
     "test_ok": "连接成功",
