@@ -1,0 +1,39 @@
+server/internal/aisettings/aisettings.go
+  s_aa47a447e01641::t_678f4c6640fa1d 1-241
+server/internal/aisettings/aisettings_test.go
+  s_aa47a447e01641::t_9d445c80a88c42 1-202
+server/migrations/595_workspace_ai_settings.down.sql
+  s_aa47a447e01641::t_062c209a25de0c 1
+server/migrations/595_workspace_ai_settings.up.sql
+  s_aa47a447e01641::t_a17edb10cf898f 1-20
+server/migrations/596_workspace_ai_settings_pkey_index.down.sql
+  s_aa47a447e01641::t_7ab7eb3aa131d8 1
+server/migrations/596_workspace_ai_settings_pkey_index.up.sql
+  s_aa47a447e01641::t_c3ba90460cb3f5 1
+server/migrations/597_workspace_ai_settings_primary_key.down.sql
+  s_aa47a447e01641::t_dbac8bd6aed23c 1
+server/migrations/597_workspace_ai_settings_primary_key.up.sql
+  s_aa47a447e01641::t_27e7ef62e5fa7e 1-2
+server/pkg/db/generated/models.go
+  s_aa47a447e01641::t_3e5231f2dc4148 1777-1792
+server/pkg/db/generated/workspace_ai_settings.sql.go
+  s_aa47a447e01641::t_a57a68601fc50e 1-119
+server/pkg/db/queries/workspace_ai_settings.sql
+  s_aa47a447e01641::t_6ea294787082d0 1-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e3b0a6bcdfaab634fdd004f508ded88ecabc266b",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
