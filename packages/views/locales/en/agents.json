@@ -1100,6 +1100,9 @@
     "test_failed": "{{status}} · {{message}}",
     "test_request_failed": "Couldn't run the connection test",
     "saved_toast": "AI settings saved",
-    "save_failed_toast": "Couldn't save AI settings"
+    "save_failed_toast": "Couldn't save AI settings",
+    "load_failed": "Couldn't load AI settings",
+    "retry": "Retry",
+    "model_placeholder": "Empty uses the server's loaded model"
   }
 }

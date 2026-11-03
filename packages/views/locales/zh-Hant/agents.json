@@ -1073,6 +1073,9 @@
     "test_failed": "{{status}} · {{message}}",
     "test_request_failed": "無法執行連線測試",
     "saved_toast": "已儲存 AI 設定",
-    "save_failed_toast": "無法儲存 AI 設定"
+    "save_failed_toast": "無法儲存 AI 設定",
+    "load_failed": "無法載入 AI 設定",
+    "retry": "重試",
+    "model_placeholder": "留空則使用伺服器已載入的模型"
   }
 }

@@ -158,6 +158,7 @@ describe("AISettingsPage", () => {
     expect(input).toMatchObject({
       provider: "llamacpp",
       base_url: "http://localhost:8080/v1",
+      model: "",
       clear_api_key: true,
     });
     expect(input.api_key).toBeUndefined();
@@ -211,5 +212,16 @@ describe("AISettingsPage", () => {
     await screen.findByLabelText(/API key/);
     await user.click(screen.getByRole("button", { name: "Test" }));
     expect(await screen.findByText("Connection succeeded")).toBeInTheDocument();
+  });
+
+  it("shows an error with retry when settings fail to load", async () => {
+    const user = userEvent.setup();
+    mocks.api.getAISettings.mockRejectedValueOnce(new Error("boom"));
+    renderUi(<AISettingsPage />);
+    expect(await screen.findByText("Couldn't load AI settings")).toBeInTheDocument();
+    expect(mocks.api.getAISettings).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole("button", { name: "Retry" }));
+    expect(await screen.findByLabelText(/API key/)).toBeInTheDocument();
+    expect(mocks.api.getAISettings).toHaveBeenCalledTimes(2);
   });
 });

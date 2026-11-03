@@ -3,7 +3,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Loader2, Sparkles } from "@multica/ui/icons";
+import { AlertCircle, Loader2, Sparkles } from "@multica/ui/icons";
 import { Button } from "@multica/ui/components/ui/button";
 import { Input } from "@multica/ui/components/ui/input";
 import { Label } from "@multica/ui/components/ui/label";
@@ -32,7 +32,10 @@ import {
   useTestAISettings,
   useUpdateAISettings,
 } from "@multica/core/workspace/mutations";
-import { CollectionPageHeader } from "../../layout/collection-page";
+import {
+  CollectionPageHeader,
+  CollectionPageState,
+} from "../../layout/collection-page";
 import { PAGE_GUTTER, PAGE_RAIL } from "../../layout/page-header";
 import { SettingsReadOnlyNotice } from "../../settings/components/settings-layout";
 import { useT, useTimeAgo } from "../../i18n";
@@ -86,6 +89,22 @@ export function AISettingsPage() {
             memberLoading ? null : <SettingsReadOnlyNotice wsId={wsId} />
           ) : settingsQuery.data ? (
             <AISettingsForm wsId={wsId} settings={settingsQuery.data} />
+          ) : settingsQuery.isError ? (
+            <CollectionPageState
+              role="alert"
+              tone="destructive"
+              icon={AlertCircle}
+              title={t(($) => $.ai_settings.load_failed)}
+              actions={
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => void settingsQuery.refetch()}
+                >
+                  {t(($) => $.ai_settings.retry)}
+                </Button>
+              }
+            />
           ) : (
             <Loader2 className="size-4 animate-spin text-muted-foreground" />
           )}
@@ -252,6 +271,7 @@ function AISettingsForm({
         <Input
           id="ai-model"
           list="ai-model-options"
+          placeholder={t(($) => $.ai_settings.model_placeholder)}
           value={model}
           onChange={(e) => setModel(e.target.value)}
         />

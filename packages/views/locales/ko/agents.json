@@ -1073,6 +1073,9 @@
     "test_failed": "{{status}} · {{message}}",
     "test_request_failed": "연결 테스트를 실행할 수 없습니다",
     "saved_toast": "AI 설정을 저장했습니다",
-    "save_failed_toast": "AI 설정을 저장할 수 없습니다"
+    "save_failed_toast": "AI 설정을 저장할 수 없습니다",
+    "load_failed": "AI 설정을 불러올 수 없습니다",
+    "retry": "다시 시도",
+    "model_placeholder": "비워 두면 서버에 로드된 모델을 사용합니다"
   }
 }

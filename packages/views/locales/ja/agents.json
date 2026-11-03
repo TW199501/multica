@@ -1073,6 +1073,9 @@
     "test_failed": "{{status}} · {{message}}",
     "test_request_failed": "接続テストを実行できませんでした",
     "saved_toast": "AI 設定を保存しました",
-    "save_failed_toast": "AI 設定を保存できませんでした"
+    "save_failed_toast": "AI 設定を保存できませんでした",
+    "load_failed": "AI 設定を読み込めませんでした",
+    "retry": "再試行",
+    "model_placeholder": "空欄の場合はサーバーが読み込んだモデルを使用します"
   }
 }

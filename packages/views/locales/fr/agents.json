@@ -1100,6 +1100,9 @@
     "test_failed": "{{status}} · {{message}}",
     "test_request_failed": "Impossible d'exécuter le test de connexion",
     "saved_toast": "Paramètres IA enregistrés",
-    "save_failed_toast": "Impossible d'enregistrer les paramètres IA"
+    "save_failed_toast": "Impossible d'enregistrer les paramètres IA",
+    "load_failed": "Impossible de charger les paramètres IA",
+    "retry": "Réessayer",
+    "model_placeholder": "Vide : utilise le modèle chargé sur le serveur"
   }
 }
