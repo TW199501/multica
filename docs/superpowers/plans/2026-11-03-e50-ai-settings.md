@@ -349,12 +349,12 @@ func DefaultPrompt() string
     - 否則開 `mode="send"` 的 `PolishDialog`；「送出」時依序 `adoptContent(右欄)`、`onAdopted(右欄)`、`submit()`，再關閉。原本 `submit` 會帶的附件、收件代理的選擇（含「本次不會開始」）、插話／本輪結束後都照舊，因為走的是同一個 `submit`。
     - X 關閉時什麼都不送。
   - `QUICK_REPLIES = ["計畫已核准", "規格已定案", "有意見，討論中"] as const`：送出的文字固定是這三個中文字串，任何語系都不翻譯（門禁比對的是中文原文）；選單標籤也直接顯示這三個字串。
-  - `QuickReplyMenu(props: { onPick: (text: string) => Promise<void>; disabled?: boolean })`：送出鍵旁的下拉選單，圖示從 `@multica/ui/icons` 取現有的（例如 `Check`），aria-label 走 `editor.json` 的 `quick_reply.label`。
+  - `QuickReplyMenu(props: { onPick: (text: string) => Promise<void>; disabled?: boolean })`：送出鍵旁的下拉選單（`Select`），預設空白、以淡色（muted 語意 token）顯示提示字「請決定」（`editor.json` 的 `quick_reply.placeholder`，各語系翻譯），選完送出後回到空白；aria-label 走 `quick_reply.label`。
 - 接法：
   - 三個輸入框的送出鍵 `onClick` 與編輯器的送出快捷鍵（Enter 或 Ctrl+Enter）都改呼叫 `gatedSubmit`，並把 `dialog` 渲染在輸入框旁。
   - `QuickReplyMenu` 的 `onPick` 直接呼叫各輸入框原本傳給 `useComposerSubmit` 的 `onSubmit(text)`：不讀編輯器、不經 `usePolishGate`、不清空輸入框；收件代理的選擇照輸入框目前的設定。
 
-- [ ] 步驟 10.1：寫失敗測試：`polishOnSend defaults to false and persists`（store）、`preferences shows the polish switch only when available`、`gate submits directly when off`、`gate opens the dialog instead of sending when on`、`enter key is gated too`、`send from the dialog submits the edited text with the recipient choices`（收件代理設成「本次不會開始」時，送出的請求仍帶 `suppress_agent_ids`）、`closing the dialog sends nothing`、`quick reply sends the exact text without opening the dialog`（開關打開時選「計畫已核准」，送出內容剛好是「計畫已核准」）、`quick reply keeps the draft`（輸入框原本的文字還在）。
+- [ ] 步驟 10.1：寫失敗測試：`polishOnSend defaults to false and persists`（store）、`preferences shows the polish switch only when available`、`gate submits directly when off`、`gate opens the dialog instead of sending when on`、`enter key is gated too`、`send from the dialog submits the edited text with the recipient choices`（收件代理設成「本次不會開始」時，送出的請求仍帶 `suppress_agent_ids`）、`closing the dialog sends nothing`、`quick reply sends the exact text without opening the dialog`（開關打開時選「計畫已核准」，送出內容剛好是「計畫已核准」）、`quick reply keeps the draft`（輸入框原本的文字還在）、`quick reply shows the muted placeholder and resets after sending`。
 - [ ] 步驟 10.2：`pnpm --filter @multica/core exec vitest run issues/stores` 與 `pnpm --filter @multica/views exec vitest run editor/polish editor/quick-reply settings/components/preferences-tab`，確認失敗。
 - [ ] 步驟 10.3：實作 store 欄位、偏好設定列、`usePolishGate`、`QuickReplyMenu`、接到三個輸入框、六種語系 `settings.json` 與 `editor.json`。
 - [ ] 步驟 10.4：重跑步驟 10.2 全部通過；`pnpm typecheck`、`pnpm lint`、`pnpm test`、`make test` 全綠。
