@@ -49,7 +49,7 @@ function DockedChatLayoutForWorkspace({ children }: { children: ReactNode }) {
 
   const conversation = (
     <ResizablePanel key="conversation" id="conversation" defaultSize="50%" minSize="30%">
-      <div className={pageFirst ? "h-full border-l" : "h-full border-r"}>
+      <div className={pageFirst ? "h-full border-l pb-[30px]" : "h-full border-r pb-[30px]"}>
         <ChatWindow variant="docked" />
       </div>
     </ResizablePanel>

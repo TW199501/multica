@@ -920,7 +920,7 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
         </SidebarContent>
         )}
 
-        <SidebarFooter className="p-2">
+        <SidebarFooter className={docked ? "p-2 pb-[30px]" : "p-2"}>
           <SidebarMenu className="gap-0.5">
             {utilityNav.map((item) => {
               const href = p[item.key]();
