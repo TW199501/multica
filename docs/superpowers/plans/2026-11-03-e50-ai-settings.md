@@ -60,7 +60,8 @@
 - 新增 `packages/views/agents/ai-settings/ai-settings-page.tsx`、`provider-presets.ts`、`ai-settings-page.test.tsx`；修改 `packages/views/agents/components/agents-page.tsx`（入口按鈕）、`packages/views/package.json`（子路徑匯出）。
 - 新增 `apps/web/app/[workspaceSlug]/(dashboard)/agents/ai-settings/page.tsx`；修改 `apps/desktop/src/renderer/src/routes.tsx`（需要時加 `pages/ai-settings-page.tsx` 設標題）。
 - 新增 `packages/views/editor/polish/polish-button.tsx`、`polish-dialog.tsx`、`use-polish.ts`、`polish.test.tsx`；修改六個輸入框：`packages/views/chat/components/chat-input.tsx`、`packages/views/issues/components/comment-input.tsx`、`reply-input.tsx`、`comment-card.tsx`、`packages/views/modals/create-issue.tsx`、`quick-create-issue.tsx`。
-- 修改六種語系的 `packages/views/locales/<locale>/agents.json`、`editor.json`。
+- 修改六種語系的 `packages/views/locales/<locale>/agents.json`、`editor.json`、`settings.json`。
+- 修改 `packages/core/issues/stores/comment-composer-store.ts`、`packages/views/settings/components/preferences-tab.tsx`；新增 `packages/views/editor/polish/use-polish-gate.ts`。
 
 ## 驗證環境
 
@@ -282,7 +283,7 @@ func DefaultPrompt() string
 - [ ] 步驟 7.4：重跑步驟 7.2 全部通過；`pnpm --filter @multica/views exec vitest run locales/parity.test.ts` 通過；`pnpm typecheck` 通過。
 - [ ] 步驟 7.5：commit `feat(E-50): AI settings page for workspace admins`。
 
-## Task 8：對話優化按鈕與對照視窗（聊天、留言、回覆）
+## Task 8：優化視窗與手動按鈕（聊天、留言、回覆）
 
 **Files:**
 - Create: `packages/views/editor/polish/polish-button.tsx`、`polish-dialog.tsx`、`use-polish.ts`、`polish.test.tsx`
@@ -292,21 +293,27 @@ func DefaultPrompt() string
 - Consumes: Task 6 的 `workspaceAISettingsStatusOptions`、`usePolishText`、`PolishContext`；`ContentEditorRef` 的 `getMarkdown()`、`adoptContent(markdown)`（`packages/views/editor/content-editor.tsx`）。
 - Produces：
   - `usePolishAvailable(wsId: string): boolean`（status 查詢，未載入時 `false`）。
-  - `PolishButton(props: { wsId: string; editorRef: RefObject<ContentEditorRef | null>; context: PolishContext; onAdopted?: (markdown: string) => void; disabled?: boolean })`：不可用時回 `null`；編輯器空白時停用；圖示 `Sparkles`，aria-label「對話優化」。
-  - `PolishDialog`：左欄原文（唯讀），右欄優化結果；開啟即呼叫一次；「重新產生」再呼叫一次並換掉右欄；「採用」呼叫 `editorRef.current.adoptContent(結果)`、再呼叫 `onAdopted(結果)`、關閉；「取消」關閉不改。等待中右欄顯示載入；失敗在右欄顯示錯誤（`polish_lost_spans` 有專屬文案），可以再重新產生。不自動送出。
+  - `PolishDialog(props: { open: boolean; mode: "adopt" | "send"; wsId: string; original: string; context: PolishContext; onClose: () => void; onConfirm: (markdown: string) => void | Promise<void> })`：
+    - 標題列只有標題與 X；只有 X 會呼叫 `onClose`。Esc 與點視窗外面都不關閉（Base UI `onOpenChange` 對這兩種原因不處理）。
+    - 背景遮罩不模糊；視窗置中，拖動標題列可以移動。
+    - 左欄「優化前」唯讀；右欄「優化後」可編輯（純文字 Markdown 編輯，`Textarea` 即可）。
+    - 開啟即呼叫一次 `usePolishText`；底部「優化」再呼叫一次並換掉右欄；第二顆按鈕 `mode="adopt"` 時是「採用」、`mode="send"` 時是「送出」，按下以右欄目前的文字呼叫 `onConfirm`。等待中第二顆按鈕停用。
+    - 失敗時右欄放原文、上方顯示錯誤（`polish_lost_spans` 有專屬文案），仍可按「優化」或第二顆按鈕。
+    - 底部說明「AI 代理可能會出錯。」；`mode="send"` 時再加「如果想自己決定要不要優化，請到偏好設定 → 評論與聊天，關閉對話優化。」
+  - `PolishButton(props: { wsId: string; editorRef: RefObject<ContentEditorRef | null>; context: PolishContext; onAdopted?: (markdown: string) => void; disabled?: boolean })`：不可用時回 `null`；編輯器空白時停用；圖示 `Sparkles`，aria-label「對話優化」；開 `mode="adopt"` 的視窗，`onConfirm` 呼叫 `adoptContent`、`onAdopted`、關閉。
 - 接法：按鈕放在各輸入框 `SubmitButton` 左邊。
   - 聊天：`context` 用 `activeSessionId`（`useChatStore`）；是 `DRAFT_NEW_SESSION` 或空值時用 `{ kind: "none" }`。
   - 留言：`{ kind: "issue", issue_id: issueId }`。
   - 回覆：`{ kind: "issue", issue_id: issueId, thread_comment_id: parentId }`。
   - 三個輸入框的草稿都由 `onAdopted` 寫回各自的草稿狀態（`adoptContent` 不觸發 `onUpdate`）。
 
-- [ ] 步驟 8.1：寫失敗測試 `polish.test.tsx`：`renders nothing when polish is unavailable`、`is disabled for an empty editor`、`shows original and polished side by side`、`regenerate calls the API again and replaces the right side`、`cancel keeps the original`、`adopt replaces the editor content without sending`、`chat sends the adopted text`（採用後按送出，`onSubmit` 收到的是優化後文字）、`reply passes the thread id`。
+- [ ] 步驟 8.1：寫失敗測試 `polish.test.tsx`：`renders nothing when polish is unavailable`、`is disabled for an empty editor`、`shows original and polished side by side`、`polish again replaces the right side`、`right side is editable and adopt uses the edited text`、`escape and outside click do not close`、`close button keeps the original`、`failure keeps the original on the right and shows the error`、`send mode shows the turn-off hint`、`chat sends the adopted text`（採用後按送出，`onSubmit` 收到的是優化後文字）、`reply passes the thread id`。
 - [ ] 步驟 8.2：`pnpm --filter @multica/views exec vitest run editor/polish`，確認失敗。
 - [ ] 步驟 8.3：實作三個檔案、接到三個輸入框、六種語系 `editor.json`（`polish` 底下）。
 - [ ] 步驟 8.4：重跑步驟 8.2 全部通過；三個輸入框既有的測試（同目錄 `*.test.tsx`）照舊通過。
-- [ ] 步驟 8.5：commit `feat(E-50): polish button in chat, comment and reply composers`。
+- [ ] 步驟 8.5：commit `feat(E-50): polish dialog and button in chat, comment and reply`。
 
-## Task 9：其餘三個輸入框與驗收截圖
+## Task 9：其餘三個輸入框的手動按鈕
 
 **Files:**
 - Modify: `packages/views/issues/components/comment-card.tsx`（`CommentRow` 約 889 行、`CommentCardImpl` 約 1438 行的儲存按鈕旁）、`packages/views/modals/create-issue.tsx`（`createButton` 約 911 行）、`packages/views/modals/quick-create-issue.tsx`（`createButton` 約 617 行）
@@ -322,8 +329,32 @@ func DefaultPrompt() string
 - [ ] 步驟 9.1：寫失敗測試：`edit comment shows the polish button`、`create-issue submits the adopted description`（採用後按建立，送出的 description 是優化後文字）、`quick-create keeps the adopted prompt`（採用後草稿的 prompt 是優化後文字、建立鈕可按）。
 - [ ] 步驟 9.2：`pnpm --filter @multica/views exec vitest run issues/components/comment-card modals/create-issue modals/quick-create-issue`，確認失敗。
 - [ ] 步驟 9.3：接上三個輸入框。
-- [ ] 步驟 9.4：重跑步驟 9.2 全部通過；`pnpm typecheck`、`pnpm lint`、`pnpm test`、`make test` 全綠。
-- [ ] 步驟 9.5：依規格驗收 1–10 在本機實際操作，截圖放 PR 描述（用隔離的桌面版設定 `MULTICA_DESKTOP_CONFIG`，不用正式的 `~/.multica/desktop.json`）；commit `feat(E-50): polish button in edit, create and quick-create`。
+- [ ] 步驟 9.4：重跑步驟 9.2 全部通過。
+- [ ] 步驟 9.5：commit `feat(E-50): polish button in edit, create and quick-create`。
+
+## Task 10：「對話優化」開關與送出前攔截（聊天、留言、回覆）
+
+**Files:**
+- Modify: `packages/core/issues/stores/comment-composer-store.ts`（與其測試）、`packages/views/settings/components/preferences-tab.tsx`（「評論與聊天」卡片）、六種語系 `settings.json`
+- Create: `packages/views/editor/polish/use-polish-gate.ts`、`use-polish-gate.test.tsx`
+- Modify: `packages/views/chat/components/chat-input.tsx`、`packages/views/issues/components/comment-input.tsx`、`packages/views/issues/components/reply-input.tsx`
+
+**Interfaces:**
+- Consumes: Task 8 的 `PolishDialog`、`usePolishAvailable`。
+- Produces：
+  - `useCommentComposerStore` 新增 `polishOnSend: boolean`（預設 `false`，跟 `runningAgentReply` 一樣存在本機）與 `setPolishOnSend(value: boolean)`。
+  - 偏好設定「評論與聊天」卡片新增一列 `PolishOnSendRow`（Switch），只有 `usePolishAvailable(wsId)` 為真時顯示。
+  - `usePolishGate(opts: { wsId: string; context: PolishContext; editorRef: RefObject<ContentEditorRef | null>; submit: () => Promise<void>; onAdopted?: (markdown: string) => void }): { gatedSubmit: () => Promise<void>; dialog: ReactNode }`：
+    - 開關關、不可用、或編輯器空白時，`gatedSubmit` 直接呼叫 `submit`。
+    - 否則開 `mode="send"` 的 `PolishDialog`；「送出」時依序 `adoptContent(右欄)`、`onAdopted(右欄)`、`submit()`，再關閉。原本 `submit` 會帶的附件、收件代理的選擇（含「本次不會開始」）、插話／本輪結束後都照舊，因為走的是同一個 `submit`。
+    - X 關閉時什麼都不送。
+- 接法：三個輸入框的送出鍵 `onClick` 與編輯器的送出快捷鍵（Enter 或 Ctrl+Enter）都改呼叫 `gatedSubmit`，並把 `dialog` 渲染在輸入框旁。
+
+- [ ] 步驟 10.1：寫失敗測試：`polishOnSend defaults to false and persists`（store）、`preferences shows the polish switch only when available`、`gate submits directly when off`、`gate opens the dialog instead of sending when on`、`enter key is gated too`、`send from the dialog submits the edited text with the recipient choices`（收件代理設成「本次不會開始」時，送出的請求仍帶 `suppress_agent_ids`）、`closing the dialog sends nothing`。
+- [ ] 步驟 10.2：`pnpm --filter @multica/core exec vitest run issues/stores` 與 `pnpm --filter @multica/views exec vitest run editor/polish settings/components/preferences-tab`，確認失敗。
+- [ ] 步驟 10.3：實作 store 欄位、偏好設定列、`usePolishGate`、接到三個輸入框、六種語系 `settings.json`。
+- [ ] 步驟 10.4：重跑步驟 10.2 全部通過；`pnpm typecheck`、`pnpm lint`、`pnpm test`、`make test` 全綠。
+- [ ] 步驟 10.5：依規格驗收 1–13 在本機實際操作並截圖放 PR 描述（用隔離的桌面版設定 `MULTICA_DESKTOP_CONFIG`，不用正式的 `~/.multica/desktop.json`）；commit `feat(E-50): polish before sending when the preference is on`。
 
 ## 完成檢查
 
@@ -331,5 +362,5 @@ func DefaultPrompt() string
 - [ ] `make test` 全綠；`go vet ./...` 無新警告。
 - [ ] `grep -rn "openai-go" server --include=*.go` 只出現在 `server/pkg/llm/`。
 - [ ] `pnpm typecheck`、`pnpm lint`、`pnpm test` 全綠。
-- [ ] 規格驗收 1–10 都有截圖。
+- [ ] 規格驗收 1–13 都有截圖。
 - [ ] 開 PR 進 `dev`（`gh pr create --repo TW199501/multica --base dev`），標題帶 `E-50`。
