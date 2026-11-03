@@ -1,0 +1,40 @@
+server/pkg/llm/client.go
+  s_aa47a447e01641::t_c765e671980bb5 4-6
+  s_aa47a447e01641::t_7a814c4c77b023 50-53,58-64
+  s_aa47a447e01641::t_6707d9593139b2 40-41
+  s_aa47a447e01641::t_e3f1a66b00ef56 74-87
+server/internal/handler/ai_polish.go
+  s_aa47a447e01641::t_d5de7938f83ffa 236
+  s_aa47a447e01641::t_49f96c4a568b06 186-190
+  s_75483cb3a5b1e0::t_27d791405a2a02 27,107,174,177,179,184-185,191-193,196-198,202-203,207-209
+server/internal/aisettings/protect_test.go
+  s_aa47a447e01641::t_82e8202b835a0e 54-73
+server/internal/aisettings/protect.go
+  s_aa47a447e01641::t_1f7b373c5b46d5 22-24
+server/internal/handler/ai_polish_test.go
+  s_aa47a447e01641::t_f3ba01c76e7a62 284-356
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5217810f20c9bb1ef0958cce84ca540e0d905860",
+  "prompts": {},
+  "sessions": {
+    "s_75483cb3a5b1e0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8f747dfc-62e9-469f-9ac9-e95a8b1c0501",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    },
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
