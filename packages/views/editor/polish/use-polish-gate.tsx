@@ -22,6 +22,8 @@ export interface PolishGateOptions {
    * of opening a dialog whose send would do nothing.
    */
   canSend?: boolean;
+  /** True when a send without text still says something (a chosen decision). */
+  allowEmptySend?: boolean;
 }
 
 export interface PolishGate {
@@ -42,6 +44,7 @@ export function usePolishGate({
   submit,
   onAdopted,
   canSend = true,
+  allowEmptySend = false,
 }: PolishGateOptions): PolishGate {
   const polishOnSend = useCommentComposerStore((s) => s.polishOnSend);
   const available = usePolishAvailable(wsId);
@@ -97,6 +100,7 @@ export function usePolishGate({
       context={context}
       onClose={() => setOriginal(null)}
       onConfirm={send}
+      allowEmpty={allowEmptySend}
     />
   );
 

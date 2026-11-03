@@ -112,8 +112,13 @@ function useDecisionLabel() {
 export interface ComposerDecision {
   decision: Decision | null;
   setDecision: (decision: Decision | null) => void;
-  /** Use inside the composer's `normalize`, so every send path carries it. */
-  withDecision: (content: string) => string;
+  /** The remembered execution mode the decision is sent with. */
+  executionMode: ExecutionMode;
+  /**
+   * Use inside the composer's `normalize`, so every send path carries it.
+   * `include: false` sends the text alone (a send the user did not compose).
+   */
+  withDecision: (content: string, include?: boolean) => string;
   /**
    * Call once the server accepted the send: clears the decision and, when
    * one went out with it, announces it with a "view" action.
@@ -121,22 +126,35 @@ export interface ComposerDecision {
   settleSent: (onView: () => void) => void;
 }
 
-export function useComposerDecision(): ComposerDecision {
+/**
+ * The decision belongs to what is being composed: when `scopeKey` changes
+ * (chat switching sessions in the same composer) it starts over unset.
+ */
+export function useComposerDecision(scopeKey = ""): ComposerDecision {
   const { t } = useT("editor");
   const decisionLabel = useDecisionLabel();
-  const [decision, setDecision] = useState<Decision | null>(null);
+  const executionMode = useCommentComposerStore((s) => s.executionMode);
+  const [scoped, setScoped] = useState<{ key: string; decision: Decision | null }>({
+    key: scopeKey,
+    decision: null,
+  });
+  if (scoped.key !== scopeKey) setScoped({ key: scopeKey, decision: null });
+  const decision = scoped.key === scopeKey ? scoped.decision : null;
   const decisionRef = useRef(decision);
   decisionRef.current = decision;
+  const scopeKeyRef = useRef(scopeKey);
+  scopeKeyRef.current = scopeKey;
   // What the latest submit attempt carried; read back when it is accepted.
   const sentRef = useRef<Decision | null>(null);
 
-  const withDecision = useCallback((content: string) => {
-    sentRef.current = decisionRef.current;
-    return appendDecision(
-      content,
-      decisionRef.current,
-      useCommentComposerStore.getState().executionMode,
-    );
+  const setDecision = useCallback((next: Decision | null) => {
+    setScoped({ key: scopeKeyRef.current, decision: next });
+  }, []);
+
+  const withDecision = useCallback((content: string, include = true) => {
+    const current = include ? decisionRef.current : null;
+    sentRef.current = current;
+    return appendDecision(content, current, useCommentComposerStore.getState().executionMode);
   }, []);
 
   const settleSent = useCallback(
@@ -149,8 +167,8 @@ export function useComposerDecision(): ComposerDecision {
         action: { label: t(($) => $.decision.view), onClick: onView },
       });
     },
-    [decisionLabel, t],
+    [decisionLabel, setDecision, t],
   );
 
-  return { decision, setDecision, withDecision, settleSent };
+  return { decision, setDecision, executionMode, withDecision, settleSent };
 }

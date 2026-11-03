@@ -31,6 +31,8 @@ export interface PolishDialogProps {
   /** Called only by the title-bar close button, which `send` mode disables while confirming. */
   onClose: () => void;
   onConfirm: (markdown: string) => void | Promise<void>;
+  /** Lets the confirm button take a blank right column; off, blank text cannot be confirmed. */
+  allowEmpty?: boolean;
 }
 
 type PolishError = "lost_spans" | "not_configured" | "failed";
@@ -61,6 +63,7 @@ export function PolishDialog({
   context,
   onClose,
   onConfirm,
+  allowEmpty = false,
 }: PolishDialogProps) {
   const { t } = useT("editor");
   const { mutateAsync: polishText } = usePolishText(wsId);
@@ -264,7 +267,7 @@ export function PolishDialog({
               </Button>
               <Button
                 onClick={() => void confirm()}
-                disabled={busy}
+                disabled={busy || (!allowEmpty && !polished.trim())}
                 aria-busy={confirming || undefined}
                 className={cn(confirming && "cursor-wait")}
               >

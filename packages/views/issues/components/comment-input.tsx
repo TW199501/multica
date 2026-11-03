@@ -8,6 +8,7 @@ import { SubmitButton } from "@multica/ui/components/common/submit-button";
 import { WorkspacePolishButton } from "../../editor/polish/polish-button";
 import { useWorkspacePolishGate } from "../../editor/polish/use-polish-gate";
 import { DecisionBar, useComposerDecision } from "../../editor/decision/decision-bar";
+import { appendDecision } from "../../editor/decision/decision";
 import { Button } from "@multica/ui/components/ui/button";
 import { contentReferencesAttachment, type AgentTask } from "@multica/core/types";
 import { useShortcut } from "@multica/core/shortcuts";
@@ -65,10 +66,15 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
   const annotations = useCommentDraftStore((s) => s.getAnnotations(draftKey));
   const composedContent = useMemo(() => composeAnnotatedReply(content, annotations), [content, annotations]);
   const canSendText = annotations.length ? hasReplyIntent(content, annotations) : !isEmpty;
-  const { decision, setDecision, withDecision, settleSent } = useComposerDecision();
+  const { decision, setDecision, executionMode, withDecision, settleSent } = useComposerDecision();
   // A decision alone is a complete message.
   const canSend = canSendText || decision !== null;
-  const triggerPreview = useCommentTriggerPreview({ issueId, content: canSendText ? composedContent : "" });
+  // The preview reads what will be sent, so a decision-only comment still
+  // shows (and routes) its recipients.
+  const previewContent = decision
+    ? appendDecision(canSendText ? composedContent : "", decision, executionMode)
+    : canSendText ? composedContent : "";
+  const triggerPreview = useCommentTriggerPreview({ issueId, content: previewContent });
   // Uploads for this composer session (MUL-5181). Owned by the module-level
   // coordinator and persisted in the draft store, so closing/scrolling the
   // composer away no longer drops an in-flight upload — its result lands in the
@@ -206,9 +212,11 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
       });
     },
     onAccepted: () => {
+      // The host's accepted handler already lands on a posted comment the way
+      // its timeline scrolls; the toast's view action reuses it.
       const acceptedId = acceptedCommentIdRef.current;
       settleSent(() => {
-        if (acceptedId) document.getElementById(`comment-${acceptedId}`)?.scrollIntoView({ block: "nearest" });
+        if (acceptedId) onAccepted?.(acceptedId);
       });
       // Success may only consume the entry it submitted (MUL-5181 P0): edits
       // made while the request was in flight — or by a reopened composer after
@@ -242,7 +250,8 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
     editorRef,
     submit,
     onAdopted: syncAdopted,
-    canSend: canSend && !submitting,
+    canSend: canSend && !submitting && !gate.uploading,
+    allowEmptySend: decision !== null,
   });
 
   return (

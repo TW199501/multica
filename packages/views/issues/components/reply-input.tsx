@@ -9,6 +9,7 @@ import { SubmitButton } from "@multica/ui/components/common/submit-button";
 import { WorkspacePolishButton } from "../../editor/polish/polish-button";
 import { useWorkspacePolishGate } from "../../editor/polish/use-polish-gate";
 import { DecisionBar, useComposerDecision } from "../../editor/decision/decision-bar";
+import { appendDecision } from "../../editor/decision/decision";
 import { Button } from "@multica/ui/components/ui/button";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { contentReferencesAttachment, type AgentTask } from "@multica/core/types";
@@ -92,10 +93,17 @@ function ReplyInput({
   const annotations = useCommentDraftStore((s) => draftKey ? s.getAnnotations(draftKey) : EMPTY_REPLY_ANNOTATIONS);
   const composedContent = useMemo(() => composeAnnotatedReply(content, annotations), [content, annotations]);
   const canSendText = !targetMissing && (annotations.length ? hasReplyIntent(content, annotations) : !isEmpty);
-  const { decision, setDecision, withDecision, settleSent } = useComposerDecision();
+  const { decision, setDecision, executionMode, withDecision, settleSent } = useComposerDecision();
   // A decision alone is a complete message.
   const canSend = canSendText || (!targetMissing && decision !== null);
-  const triggerPreview = useCommentTriggerPreview({ issueId, parentId, content: canSendText ? composedContent : "" });
+  // The preview reads what will be sent, so a decision-only reply still
+  // shows (and routes) its recipients.
+  const previewContent = targetMissing
+    ? ""
+    : decision
+      ? appendDecision(canSendText ? composedContent : "", decision, executionMode)
+      : canSendText ? composedContent : "";
+  const triggerPreview = useCommentTriggerPreview({ issueId, parentId, content: previewContent });
   // Uploads for this reply session (MUL-5181) — owned by the coordinator. With
   // a draftKey they persist in the draft store so scroll-out/close no longer
   // drops an in-flight upload; without one (no persistence context) they fall
@@ -212,9 +220,11 @@ function ReplyInput({
       });
     },
     onAccepted: () => {
+      // The host's accepted handler already lands on a posted comment the way
+      // its timeline scrolls; the toast's view action reuses it.
       const acceptedId = acceptedCommentIdRef.current;
       settleSent(() => {
-        if (acceptedId) document.getElementById(`comment-${acceptedId}`)?.scrollIntoView({ block: "nearest" });
+        if (acceptedId) onAccepted?.(acceptedId);
       });
       // Success may only consume the entry it submitted — see CommentInput.
       if (draftKey) {
@@ -252,7 +262,8 @@ function ReplyInput({
     editorRef,
     submit,
     onAdopted: syncAdopted,
-    canSend: canSend && !submitting,
+    canSend: canSend && !submitting && !gate.uploading,
+    allowEmptySend: decision !== null,
   });
 
   const avatarSize: AvatarSize = size === "sm" ? "sm" : "md";

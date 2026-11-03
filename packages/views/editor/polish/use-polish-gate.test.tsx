@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { WorkspaceSlugProvider } from "@multica/core/paths";
 import { useCommentComposerStore, useCommentDraftStore } from "@multica/core/issues/stores";
 import { renderWithI18n } from "../../test/i18n";
@@ -45,7 +45,7 @@ vi.mock("../../projects/components/project-picker", () => ({
 vi.mock("..", async () => (await import("../../test/composer-mocks")).editorModule());
 vi.mock("@multica/core/chat", async () => (await import("../../test/composer-mocks")).chatModule());
 
-import { mockChatState, resetComposerMocks } from "../../test/composer-mocks";
+import { mockChatState, mockEditorState, resetComposerMocks } from "../../test/composer-mocks";
 import { ChatInput } from "../../chat/components/chat-input";
 import { CommentInput } from "../../issues/components/comment-input";
 import { ReplyInput } from "../../issues/components/reply-input";
@@ -314,4 +314,41 @@ describe("usePolishGate", () => {
     pending.resolve("comment-9");
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
   });
+
+  it("cannot send a blank right column without a decision", async () => {
+    const send = vi.fn().mockResolvedValue("comment-9");
+    renderUi(<CommentInput issueId="issue-1" onSubmit={send} />);
+    await typeInto(composers[1]!, "hello wrld");
+    await screen.findByRole("button", { name: "Polish message" });
+
+    fireEvent.click(composerSendButton());
+    const dialog = await waitForPolished("Hello world.");
+    fireEvent.change(within(dialog).getByLabelText("After"), { target: { value: "  " } });
+
+    const confirm = within(dialog).getByRole("button", { name: "Send" });
+    expect(confirm).toBeDisabled();
+    fireEvent.click(confirm);
+    expect(send).not.toHaveBeenCalled();
+    expect(useCommentDraftStore.getState().getDraft("new:issue-1")).toBe("hello wrld");
+  });
+
+  for (const composer of composers) {
+    it(`an upload in progress sends straight to the composer instead of opening the dialog (${composer.name})`, async () => {
+      const send = vi.fn().mockResolvedValue("comment-1");
+      composer.render(send);
+      const editor = await typeInto(composer, "hello wrld");
+      await screen.findByRole("button", { name: "Polish message" });
+      act(() => {
+        mockEditorState.uploading = true;
+        mockEditorState.notifyUploading?.(true);
+      });
+
+      fireEvent.keyDown(editor, { key: "Enter" });
+      await Promise.resolve();
+
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+      expect(apiPolishText).not.toHaveBeenCalled();
+      expect(send).not.toHaveBeenCalled();
+    });
+  }
 });

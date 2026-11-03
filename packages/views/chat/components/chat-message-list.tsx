@@ -58,6 +58,7 @@ import {
 } from "../lib/copy-text";
 import { stripChatQuickActionsProtocol } from "../lib/quick-actions";
 import { useT } from "../../i18n";
+import { CHAT_SCROLL_TO_LATEST_EVENT } from "./chat-scroll-request";
 
 // ─── Public component ────────────────────────────────────────────────────
 
@@ -210,6 +211,12 @@ export function ChatMessageList({
     pinToLiveEnd,
     active,
   );
+  // The composer's "view" action after a send lands here.
+  useEffect(() => {
+    if (!scrollContainerEl) return;
+    scrollContainerEl.addEventListener(CHAT_SCROLL_TO_LATEST_EVENT, pinToLiveEnd);
+    return () => scrollContainerEl.removeEventListener(CHAT_SCROLL_TO_LATEST_EVENT, pinToLiveEnd);
+  }, [scrollContainerEl, pinToLiveEnd]);
   // Soft edge fade hinting more content above/below. Kept small so it barely
   // grazes full-bleed previews (image / HTML) at the edges.
   const fadeStyle = useScrollFade(scrollRef, 16);
@@ -316,6 +323,8 @@ export function ChatMessageList({
     <div
       ref={setScrollContainerRef}
       data-tab-scroll-root
+      // Matches CHAT_MESSAGE_LIST_ATTR, the composer's scroll-request target.
+      data-chat-message-list=""
       style={fadeStyle}
       // The gutter lives on the scroll container, so it applies once to the
       // whole list — rows, header, footer — and the scrollbar still rides the

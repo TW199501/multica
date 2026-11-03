@@ -23,6 +23,9 @@ import { SubmitButton } from "@multica/ui/components/common/submit-button";
 import { WorkspacePolishButton } from "../../editor/polish/polish-button";
 import { useWorkspacePolishGate } from "../../editor/polish/use-polish-gate";
 import { DecisionBar, useComposerDecision } from "../../editor/decision/decision-bar";
+import { splitDecision } from "../../editor/decision/decision";
+import { useCommentComposerStore } from "@multica/core/issues/stores";
+import { requestChatScrollToLatest } from "./chat-scroll-request";
 import { ChatAddMenu } from "./chat-add-menu";
 import { CHAT_COLUMN, CHAT_GUTTER } from "./chat-column";
 import { useChatStore, DRAFT_NEW_SESSION } from "@multica/core/chat";
@@ -232,7 +235,9 @@ export function ChatInput({
   // restored or parked one, or any persisted draft the user typed in another
   // session) still enables the button. A false enable costs nothing: handleSend
   // reads the live editor and bails when it is empty.
-  const { decision, setDecision, withDecision, settleSent } = useComposerDecision();
+  // Keyed by the draft slot: the editor instance outlives a session switch,
+  // and a decision picked for one conversation must not go out in another.
+  const { decision, setDecision, withDecision, settleSent } = useComposerDecision(draftKey);
   // A decision alone is a complete message.
   const hasNoText = isEmpty && !inputDraft.trim();
   const hasNothingToSend = hasNoText && decision === null;
@@ -414,16 +419,24 @@ export function ChatInput({
       return;
     }
     appliedRestoreIdRef.current = restoreDraftRequest.id;
-    setInputDraft(draftKey, restoreDraftRequest.content);
+    // A restored send carries the decision block it went out with. Hand the
+    // block back to the pickers so the editor holds only what the user typed.
+    const restored = splitDecision(restoreDraftRequest.content);
+    if (restored.decision) {
+      setDecision(restored.decision);
+      if (restored.mode) useCommentComposerStore.getState().setExecutionMode(restored.mode);
+    }
+    setInputDraft(draftKey, restored.text);
     // Restores carry completed server rows — stage them as uploaded entries.
     setInputDraftAttachments(
       draftKey,
       (restoreDraftRequest.attachments ?? []).map(attachmentToDraftUpload),
     );
-    setIsEmpty(!restoreDraftRequest.content.trim());
+    setIsEmpty(!restored.text.trim());
     onRestoreDraftApplied?.();
   }, [
     draftKey,
+    setDecision,
     inputDraft,
     draftUploads,
     onRestoreDraftApplied,
@@ -452,19 +465,14 @@ export function ChatInput({
   // stale `true` behind for the next one.
   const editorScrubbedRef = useRef(false);
 
-  // The message list is a sibling surface the composer does not own; the
-  // nearest enclosing one is the conversation this composer belongs to.
+  // The message list is a sibling the composer does not own; ask the one in
+  // this conversation's surface to pin its newest message.
   const scrollToLatestMessage = useCallback(() => {
-    let node = composerRef.current?.parentElement ?? null;
-    while (node) {
-      const list = node.querySelector<HTMLElement>("[data-tab-scroll-root]");
-      if (list) {
-        list.scrollTo({ top: list.scrollHeight });
-        return;
-      }
-      node = node.parentElement;
-    }
+    requestChatScrollToLatest(composerRef.current);
   }, []);
+  // Set only around the conversation starter's submit, which sends a prompt
+  // the user did not compose — the pickers' decision stays for their own.
+  const omitDecisionRef = useRef(false);
 
   const { submitting, submit } = useComposerSubmit({
     editorRef,
@@ -476,7 +484,7 @@ export function ChatInput({
     afterAccepted: () => (editorScrubbedRef.current ? "refocus" : "none"),
     // The decision is appended here rather than in the editor, so a polish
     // only ever sees what the user typed.
-    normalize: (raw) => withDecision(defaultNormalize(raw)),
+    normalize: (raw) => withDecision(defaultNormalize(raw), !omitDecisionRef.current),
     onAccepted: () => settleSent(scrollToLatestMessage),
     onSubmit: async (content: string): Promise<boolean> => {
       editorScrubbedRef.current = false;
@@ -599,7 +607,9 @@ export function ChatInput({
     submit,
     onAdopted: syncAdopted,
     canSend:
-      !submitting && !disabled && !noAgent && !(isRunning && !allowSubmitWhileRunning),
+      !submitting && !gate.uploading && !disabled && !noAgent &&
+      !(isRunning && !allowSubmitWhileRunning),
+    allowEmptySend: decision !== null,
   });
 
   // Consume each click once, including clicks while sending or uploading:
@@ -636,7 +646,10 @@ export function ChatInput({
     commitDraft(draftKey, conversationStarterRequest.content);
     editorRef.current?.adoptContent(conversationStarterRequest.content);
     setIsEmpty(!conversationStarterRequest.content.trim());
+    // normalize runs synchronously at the start of submit, before any await.
+    omitDecisionRef.current = true;
     void submit();
+    omitDecisionRef.current = false;
   }, [
     allowSubmitWhileRunning,
     commitDraft,
@@ -789,9 +802,12 @@ export function ChatInput({
             showBubbleMenu
           />
         </div>
-        <div className="absolute bottom-1 left-1.5 right-1.5 flex items-center gap-1">
+        {/* The row spans the bar; only its clusters take clicks, so the gap
+            between them still reaches the editor surface. They stay inert
+            under the surface's no-agent lock. */}
+        <div className="pointer-events-none absolute bottom-1 left-1.5 right-1.5 flex items-center gap-1">
           {(uploadEnabled || projectSelectionEnabled || leftAdornment) && (
-            <div className="flex min-w-0 items-center gap-1">
+            <div className={cn("flex min-w-0 items-center gap-1", !noAgent && "pointer-events-auto")}>
               {(uploadEnabled || projectSelectionEnabled) && (
                 <ChatAddMenu
                   onSelectFile={uploadEnabled
@@ -806,7 +822,7 @@ export function ChatInput({
               {leftAdornment}
             </div>
           )}
-          <div className="ml-auto flex shrink-0 items-center gap-1">
+          <div className={cn("ml-auto flex shrink-0 items-center gap-1", !noAgent && "pointer-events-auto")}>
             <DecisionBar
               decision={decision}
               onDecisionChange={setDecision}
