@@ -1,0 +1,23 @@
+server/internal/aisettings/aisettings.go
+  s_aa47a447e01641::t_210f3d0d251dba 214,216,218,229-231,233
+server/internal/handler/ai_settings.go
+  s_aa47a447e01641::t_eecbd416b99846 256
+server/internal/handler/ai_settings_test.go
+  s_aa47a447e01641::t_0c5197d26454ed 7,13,272,282-284,330-387
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4ffdc96df00ec36057880a32b86071b550627135",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
