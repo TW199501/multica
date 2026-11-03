@@ -1,0 +1,53 @@
+packages/views/editor/polish/polish-dialog.tsx
+  s_aa47a447e01641::t_2e6dbb6a3e92fd 116-117
+  s_aa47a447e01641::t_324c56cb013f7e 1-115,118-248
+packages/views/editor/polish/polish-button.tsx
+  s_aa47a447e01641::t_9d1460364a8a46 1-84
+packages/views/editor/polish/polish.test.tsx
+  s_aa47a447e01641::t_fd55d7481a391b 1-415,420-423,427-476
+  s_aa47a447e01641::t_f9dd27f990899d 416-419,424-426
+packages/views/editor/polish/use-polish.ts
+  s_aa47a447e01641::t_e5d6e0c2ba7368 1-10
+packages/views/chat/components/chat-input-draft-isolation.test.tsx
+  s_aa47a447e01641::t_22e8ffac761461 97-102
+packages/views/chat/components/chat-input.test.tsx
+  s_aa47a447e01641::t_9cd304f3292c3b 193-198
+packages/views/chat/components/chat-input.tsx
+  s_aa47a447e01641::t_5034cf231b0050 22,31,633-639,769-777
+packages/views/editor/index.ts
+  s_aa47a447e01641::t_6b6c5ae86a1b50 49-59
+packages/views/issues/components/comment-input.tsx
+  s_aa47a447e01641::t_1e2f53a9ef04e9 8,319-328
+packages/views/issues/components/issue-detail.test.tsx
+  s_aa47a447e01641::t_d7fed772fed0dd 90-94
+packages/views/issues/components/reply-input.tsx
+  s_aa47a447e01641::t_82e8825064c907 9,324-333
+packages/views/locales/en/editor.json
+  s_aa47a447e01641::t_4bea95e8ac9716 185-200
+packages/views/locales/fr/editor.json
+  s_aa47a447e01641::t_8848e81ca0209f 185-200
+packages/views/locales/ja/editor.json
+  s_aa47a447e01641::t_48839d79cb0290 181-196
+packages/views/locales/ko/editor.json
+  s_aa47a447e01641::t_44ff24aec7672a 181-196
+packages/views/locales/zh-Hans/editor.json
+  s_aa47a447e01641::t_8b596b7dbcc245 181-196
+packages/views/locales/zh-Hant/editor.json
+  s_aa47a447e01641::t_864db58b60d3b0 181-196
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dc9a5d727cfba0fc0e1e5cd9a0aac40df59c83e3",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
