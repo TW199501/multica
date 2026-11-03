@@ -387,6 +387,10 @@ vi.mock("../editor", async () => {
           if (inFlightRef.current === 0) onUploadingChange?.(false);
         }
       },
+      adoptContent: (markdown: string) => {
+        valueRef.current = markdown;
+        setValue(markdown);
+      },
       hasActiveUploads: () => inFlightRef.current > 0,
       // Placeholder rebuild contract: the real handle draws a card for an
       // upload the document is not showing and reports whether it landed.
@@ -457,6 +461,27 @@ vi.mock("../editor", async () => {
     TitleEditor,
   };
 });
+
+// The real button needs workspace routing and the AI status query; its adopt
+// flow is covered in editor/polish. This stub adopts through the same two
+// calls the real button makes: the editor handle, then onAdopted.
+vi.mock("../editor/polish/polish-button", () => ({
+  WorkspacePolishButton: (props: {
+    editorRef: { current: { adoptContent: (md: string) => void } | null };
+    disabled?: boolean;
+    onAdopted?: (md: string) => void;
+  }) => (
+    <button
+      type="button"
+      aria-label="Polish message"
+      data-disabled={props.disabled ? "true" : "false"}
+      onClick={() => {
+        props.editorRef.current?.adoptContent("Polished text");
+        props.onAdopted?.("Polished text");
+      }}
+    />
+  ),
+}));
 
 vi.mock("../issues/components", () => ({
   StatusIcon: ({ status }: { status: string }) => <span data-testid="status-icon">{status}</span>,
@@ -828,6 +853,25 @@ describe("CreateIssueModal", () => {
 
     expect(mockPush).toHaveBeenCalledWith("/ws-test/issues/issue-123");
     expect(mockToastDismiss).toHaveBeenCalledWith("toast-1");
+  });
+
+  it("create-issue submits the adopted description", async () => {
+    const user = userEvent.setup();
+    renderModal(<CreateIssueModal onClose={vi.fn()} />);
+
+    fireEvent.change(screen.getByPlaceholderText("Issue title"), { target: { value: "Polish me" } });
+    fireEvent.change(screen.getByPlaceholderText("Add description..."), { target: { value: "rough text" } });
+    mockSetManual.mockClear();
+    await user.click(screen.getByRole("button", { name: "Polish message" }));
+
+    // The draft store gets the adopted text too: adoptContent fires no onUpdate.
+    expect(mockSetManual).toHaveBeenCalledWith({ description: "Polished text" });
+    await user.click(screen.getByRole("button", { name: "Create Issue" }));
+    await waitFor(() =>
+      expect(mockCreateIssue).toHaveBeenCalledWith(
+        expect.objectContaining({ title: "Polish me", description: "Polished text" }),
+      ),
+    );
   });
 
   it("starts a fresh create from todo without a remembered stage", async () => {

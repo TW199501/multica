@@ -89,6 +89,7 @@ import {
   parseWithFallback,
 } from "@multica/core/api";
 import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
+import { WorkspacePolishButton } from "../editor/polish/polish-button";
 import { BorderBeam } from "@multica/ui/components/common/border-beam";
 import { ClearablePillButton, PillButton } from "../common/pill-button";
 import { ActorAvatar } from "../common/actor-avatar";
@@ -1486,6 +1487,12 @@ export function ManualCreatePanel({
                   size="sm"
                   multiple
                   onSelect={(file) => descEditorRef.current?.uploadFile(file)}
+                />
+                <WorkspacePolishButton
+                  editorRef={descEditorRef}
+                  context={{ kind: "none" }}
+                  disabled={gate.uploading || submitting || !draft.manual.description.trim()}
+                  onAdopted={(md) => setManual({ description: md })}
                 />
               </div>
               <TooltipHint label={t(($) => $.create_issue.switch_to_agent_tooltip)}>

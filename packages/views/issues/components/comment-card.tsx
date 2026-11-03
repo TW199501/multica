@@ -34,6 +34,7 @@ import { useLocale, useTimeAgo } from "../../i18n";
 import { ContentEditor, type ContentEditorRef, ReadonlyContent, useFileDropZone, FileDropOverlay, Attachment as AttachmentRenderer, AttachmentDownloadProvider, useUploadGate, useComposerSubmit } from "../../editor";
 import { useCommentUploads } from "./use-comment-uploads";
 import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
+import { WorkspacePolishButton } from "../../editor/polish/polish-button";
 import { api, dispatchReasonCode, errorCode } from "@multica/core/api";
 import { ReplyInput } from "./reply-input";
 import { CommentTriggerChips } from "./comment-trigger-chips";
@@ -460,6 +461,13 @@ function useEditAttachmentState(
     setRevisionConflict(false);
   };
 
+  // `adoptContent` does not fire the editor's onUpdate, so the polished text
+  // is written to the content state and the edit draft here.
+  const adoptPolished = (markdown: string) => {
+    setContent(markdown);
+    setDraft(draftKey, markdown);
+  };
+
   // Await-then-render save (MUL-5181): shared submit contract, with the edit-
   // only concerns folded into onSubmit — the cancel-race guard, the no-op
   // short-circuit, and the failure toast. The hook owns the empty guard,
@@ -571,6 +579,7 @@ function useEditAttachmentState(
     saveEdit,
     revisionConflict,
     adoptServerVersion,
+    adoptPolished,
   };
 }
 
@@ -884,6 +893,12 @@ function CommentRow({
                 size="sm"
                 multiple
                 onSelect={(file) => edit.editorRef.current?.uploadFile(file)}
+              />
+              <WorkspacePolishButton
+                editorRef={edit.editorRef}
+                context={{ kind: "issue", issue_id: issueId, thread_comment_id: entry.parent_id ?? entry.id }}
+                disabled={edit.saving || edit.uploading || !edit.content.trim()}
+                onAdopted={edit.adoptPolished}
               />
               <Button size="sm" variant="ghost" onClick={edit.cancelEdit} disabled={edit.saving}>{t(($) => $.comment.cancel_edit)}</Button>
               <Button
@@ -1435,6 +1450,12 @@ function CommentCardImpl({
                     />
                   </div>
                   <div className="flex items-center gap-2">
+                    <WorkspacePolishButton
+                      editorRef={edit.editorRef}
+                      context={{ kind: "issue", issue_id: issueId, thread_comment_id: entry.parent_id ?? entry.id }}
+                      disabled={edit.saving || edit.uploading || !edit.content.trim()}
+                      onAdopted={edit.adoptPolished}
+                    />
                     <Button size="sm" variant="ghost" onClick={edit.cancelEdit} disabled={edit.saving}>{t(($) => $.comment.cancel_edit)}</Button>
                     <Button
                       size="sm"
