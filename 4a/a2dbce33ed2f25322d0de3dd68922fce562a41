@@ -1,0 +1,23 @@
+server/internal/aisettings/protect.go
+  s_aa47a447e01641::t_7fa8d4e092fafb 26,28
+  s_aa47a447e01641::t_038407ea646f7e 24-25
+  s_aa47a447e01641::t_85df07dc445f17 15-16,18,36-43,46-60
+server/internal/aisettings/protect_test.go
+  s_aa47a447e01641::t_7fcebca384c15a 97-147
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4aa2dbce33ed2f25322d0de3dd68922fce562a41",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
