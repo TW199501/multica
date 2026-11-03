@@ -1,0 +1,43 @@
+server/cmd/server/router.go
+  s_aa47a447e01641::t_673cef7604d34c 1878
+server/internal/handler/ai_settings.go
+  s_aa47a447e01641::t_02aaf9afec74e4 4,11,19,184-283
+server/internal/handler/ai_settings_test.go
+  s_dbbd04417a44e5::t_77c5dcd78492ea 10,12,55,247-324
+server/pkg/llm/client.go
+  s_aa47a447e01641::t_176d5c27771069 528-543
+server/pkg/llm/upstream_error_test.go
+  s_3698d0df7e9128::t_039af242f86fa5 1-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7a67f7790e6d6314ed27d88e80cb109558d6c5fa",
+  "prompts": {},
+  "sessions": {
+    "s_3698d0df7e9128": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8da5871a-cb54-42a2-884c-f32aa9c0da6c",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    },
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    },
+    "s_dbbd04417a44e5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "95184286-f325-4f2b-b58c-3d9aaaf90ea9",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
