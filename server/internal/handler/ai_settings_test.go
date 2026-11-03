@@ -49,6 +49,7 @@ func aiSettingsRouter(t *testing.T, withKey bool) http.Handler {
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.RequireWorkspaceMemberFromURL(testHandler.Queries, "id"))
 			r.Get("/ai-settings/status", testHandler.GetAISettingsStatus)
+			r.Post("/ai/polish", testHandler.PolishText)
 		})
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.RequireWorkspaceRoleFromURL(testHandler.Queries, "id", "owner", "admin"))

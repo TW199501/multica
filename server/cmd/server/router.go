@@ -1870,6 +1870,7 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 				r.Group(func(r chi.Router) {
 					r.Use(middleware.RequireWorkspaceMemberFromURL(queries, "id"))
 					r.Get("/ai-settings/status", h.GetAISettingsStatus)
+					r.Post("/ai/polish", h.PolishText)
 				})
 				r.Group(func(r chi.Router) {
 					r.Use(middleware.RequireWorkspaceRoleFromURL(queries, "id", "owner", "admin"))

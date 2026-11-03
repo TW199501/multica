@@ -44,6 +44,14 @@
 //     Sends the tail of the conversation: up to 6 messages, the reply being
 //     answered capped at 3000 runes (2000 head + 1000 tail) and each older
 //     message at 800.
+//   - AI settings connection test — server/internal/handler/ai_settings.go
+//     (CheckAISettings). Uses the workspace's own settings, not MULTICA_LLM_*;
+//     sends one fixed short prompt, no user content.
+//   - Message polish — server/internal/handler/ai_polish.go. Uses the
+//     workspace's own settings (not MULTICA_LLM_*); sends the text the user is
+//     writing (up to 8000 characters) and up to 6 context messages, each capped
+//     at 800 characters, with an issue description capped at 2000; links and
+//     code are replaced with placeholders before sending.
 //
 // Request shape beyond the prompts is deployment-controlled and lives in
 // Config: MaxRetries (transport budget) and DisableThinking, which appends
