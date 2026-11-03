@@ -211,12 +211,11 @@ func (s *Service) ClientFor(ctx context.Context, workspaceID pgtype.UUID) (*llm.
 	if err != nil {
 		return nil, Settings{}, err
 	}
-	client := llm.New(llm.Config{
-		APIKey:          key,
+	client := ClientFromInput(Input{
 		BaseURL:         row.BaseUrl,
-		DefaultModel:    row.Model,
+		Model:           row.Model,
 		DisableThinking: row.DisableThinking,
-	})
+	}, key, nil)
 	if !client.Enabled() {
 		return nil, Settings{}, ErrNotConfigured
 	}
@@ -227,9 +226,11 @@ func (s *Service) TouchCalled(ctx context.Context, workspaceID pgtype.UUID) erro
 	return s.q.TouchWorkspaceAISettingsCalledAt(ctx, workspaceID)
 }
 
-// ClientFromInput builds a client from unsaved input, for the connection test.
-func ClientFromInput(in Input, apiKey string) *llm.Client {
+// ClientFromInput is the single place a workspace client is built, from stored
+// or unsaved input. retries nil keeps the llm default.
+func ClientFromInput(in Input, apiKey string, retries *llm.RetryOverride) *llm.Client {
 	return llm.New(llm.Config{
+		MaxRetries:      retries,
 		APIKey:          apiKey,
 		BaseURL:         in.BaseURL,
 		DefaultModel:    in.Model,

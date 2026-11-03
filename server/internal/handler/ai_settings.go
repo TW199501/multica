@@ -253,13 +253,7 @@ func (h *Handler) CheckAISettings(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "failed to test AI settings")
 		return
 	}
-	client := llm.New(llm.Config{
-		APIKey:          key,
-		BaseURL:         in.BaseURL,
-		DefaultModel:    in.Model,
-		DisableThinking: in.DisableThinking,
-		MaxRetries:      noRetries,
-	})
+	client := aisettings.ClientFromInput(in, key, noRetries)
 	ctx, cancel := context.WithTimeout(r.Context(), aiSettingsTestTimeout)
 	defer cancel()
 	if _, err := client.GenerateText(ctx, in.Model, "", "Reply with the single word: ok"); err != nil {

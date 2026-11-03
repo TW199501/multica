@@ -4,11 +4,13 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/json"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"sync/atomic"
 	"testing"
+	"time"
 	"unicode/utf8"
 
 	"github.com/go-chi/chi/v5"
@@ -267,7 +269,7 @@ func aiUpstreamStub(t *testing.T, status int, msg string) (*httptest.Server, *in
 
 func TestAISettingsTestSucceeds(t *testing.T) {
 	router := aiSettingsRouter(t, true)
-	srv := stubLLMCompletion(t, http.StatusOK, "ok")
+	srv, hits := aiUpstreamStub(t, http.StatusOK, "")
 	rec := aiCall(t, router, http.MethodPost, "/test", testUserID, map[string]any{
 		"provider": "custom", "base_url": srv.URL, "model": "m", "api_key": "sk-test-1234",
 	})
@@ -276,6 +278,9 @@ func TestAISettingsTestSucceeds(t *testing.T) {
 	}
 	if m := decodeAI(t, rec); m["ok"] != true {
 		t.Errorf("body: %s", rec.Body.String())
+	}
+	if got := atomic.LoadInt32(hits); got != 1 {
+		t.Errorf("stub received %d requests, want 1", got)
 	}
 }
 
@@ -320,5 +325,63 @@ func TestAISettingsTestRequiresKeyWhenHostChanges(t *testing.T) {
 	}
 	if got := atomic.LoadInt32(hits); got != 0 {
 		t.Errorf("stub received %d requests, want 0", got)
+	}
+}
+
+func TestAISettingsTestRequiresAdmin(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	memberID := dbfx.User(t, "AI Test Member", "ai-test-member@example.com")
+	dbfx.Member(t, testWorkspaceID, memberID, "member")
+	srv, hits := aiUpstreamStub(t, http.StatusOK, "")
+	rec := aiCall(t, router, http.MethodPost, "/test", memberID, map[string]any{
+		"provider": "custom", "base_url": srv.URL, "model": "m", "api_key": "sk-test-1234",
+	})
+	if rec.Code != http.StatusForbidden {
+		t.Fatalf("member POST: %d", rec.Code)
+	}
+	if got := atomic.LoadInt32(hits); got != 0 {
+		t.Errorf("stub received %d requests, want 0", got)
+	}
+}
+
+func TestAISettingsTestUnreachableEndpoint(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	baseURL := "http://" + ln.Addr().String() + "/v1"
+	_ = ln.Close()
+	key := "sk-unreachable-abcdef"
+	rec := aiCall(t, router, http.MethodPost, "/test", testUserID, map[string]any{
+		"provider": "custom", "base_url": baseURL, "model": "m", "api_key": key,
+	})
+	if rec.Code != http.StatusOK {
+		t.Fatalf("code %d %s", rec.Code, rec.Body.String())
+	}
+	m := decodeAI(t, rec)
+	if m["ok"] != false || m["status"] != float64(0) || m["message"] != "could not reach the endpoint" {
+		t.Fatalf("body: %s", rec.Body.String())
+	}
+	body := rec.Body.String()
+	if strings.Contains(body, ln.Addr().String()) || strings.Contains(body, key) {
+		t.Errorf("response leaks url or key: %s", body)
+	}
+}
+
+func TestAISettingsTestDoesNotTouchLastCalledAt(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	srv, _ := aiUpstreamStub(t, http.StatusOK, "")
+	body := map[string]any{"provider": "custom", "base_url": srv.URL, "model": "m", "api_key": "sk-test-1234"}
+	if rec := aiCall(t, router, http.MethodPut, "", testUserID, body); rec.Code != http.StatusOK {
+		t.Fatalf("seed: %d %s", rec.Code, rec.Body.String())
+	}
+	if rec := aiCall(t, router, http.MethodPost, "/test", testUserID, body); rec.Code != http.StatusOK || decodeAI(t, rec)["ok"] != true {
+		t.Fatalf("test: %d %s", rec.Code, rec.Body.String())
+	}
+	var last *time.Time
+	dbfx.QueryRow(t, `SELECT last_called_at FROM workspace_ai_settings WHERE workspace_id = $1`, testWorkspaceID).Scan(&last)
+	if last != nil {
+		t.Errorf("last_called_at = %v, want NULL", last)
 	}
 }
