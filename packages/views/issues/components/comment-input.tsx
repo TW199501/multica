@@ -319,7 +319,7 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
         <WorkspacePolishButton
           editorRef={editorRef}
           context={{ kind: "issue", issue_id: issueId }}
-          disabled={isEmpty || submitting}
+          disabled={isEmpty || submitting || gate.uploading}
           onAdopted={(md) => {
             setContent(md);
             setIsEmpty(!md.trim());

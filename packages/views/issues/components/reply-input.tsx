@@ -324,7 +324,7 @@ function ReplyInput({
           <WorkspacePolishButton
             editorRef={editorRef}
             context={{ kind: "issue", issue_id: issueId, thread_comment_id: parentId }}
-            disabled={isEmpty || submitting || targetMissing}
+            disabled={isEmpty || submitting || gate.uploading || targetMissing}
             onAdopted={(md) => {
               setContent(md);
               setIsEmpty(!md.trim());

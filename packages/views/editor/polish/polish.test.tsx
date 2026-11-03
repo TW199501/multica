@@ -13,6 +13,13 @@ import type { ContentEditorRef } from "../content-editor";
 const apiGetAISettingsStatus = vi.hoisted(() => vi.fn());
 const apiPolishText = vi.hoisted(() => vi.fn());
 const apiListWorkspaces = vi.hoisted(() => vi.fn());
+// Drives the mock editor's upload state the way a real paste would: the
+// document reports an uploading node and tells the host through
+// onUploadingChange.
+const editorUpload = vi.hoisted(() => ({
+  active: false,
+  notify: undefined as ((uploading: boolean) => void) | undefined,
+}));
 
 vi.mock("@multica/core/api", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@multica/core/api")>()),
@@ -60,16 +67,19 @@ vi.mock("..", async () => ({
       value,
       onUpdate,
       onReady,
+      onUploadingChange,
       placeholder,
     }: {
       defaultValue?: string;
       value?: string;
       onUpdate?: (markdown: string) => void;
       onReady?: () => void;
+      onUploadingChange?: (uploading: boolean) => void;
       placeholder?: string;
     },
     ref: Ref<unknown>,
   ) {
+    editorUpload.notify = onUploadingChange;
     const initial = value ?? defaultValue ?? "";
     const valueRef = useRef(initial);
     const [text, setText] = useState(initial);
@@ -97,7 +107,7 @@ vi.mock("..", async () => ({
       focusAtCoords: () => {},
       blur: () => {},
       uploadFile: () => {},
-      hasActiveUploads: () => false,
+      hasActiveUploads: () => editorUpload.active,
       insertUploadPlaceholder: () => true,
       settleUploadPlaceholder: () => false,
       insertMarkdownAtEnd: () => true,
@@ -201,6 +211,7 @@ function fakeEditorRef(markdown: string) {
   const handle = {
     getMarkdown: vi.fn(() => markdown),
     adoptContent: vi.fn(),
+    hasActiveUploads: vi.fn(() => false),
   };
   return {
     handle,
@@ -219,6 +230,8 @@ beforeEach(() => {
   apiPolishText.mockResolvedValue({ text: "Hello world." });
   apiListWorkspaces.mockReset();
   apiListWorkspaces.mockResolvedValue([WORKSPACE]);
+  editorUpload.active = false;
+  editorUpload.notify = undefined;
   localStorage.clear();
   useCommentDraftStore.setState({ drafts: {} });
   const chat = useChatStore.getState() as unknown as {
@@ -325,6 +338,67 @@ describe("PolishButton", () => {
     await waitFor(() =>
       expect(useCommentDraftStore.getState().getDraft("reply:issue-1:comment-1")).toBe("Hello world."),
     );
+  });
+
+  const composers = [
+    {
+      name: "chat",
+      render: () => renderUi(<ChatInput onSend={vi.fn()} agentName="Multica" />),
+    },
+    {
+      name: "comment",
+      shell: "comment-composer-shell",
+      render: () => renderUi(<CommentInput issueId="issue-1" onSubmit={vi.fn().mockResolvedValue(true)} />),
+    },
+    {
+      name: "reply",
+      shell: "reply-composer-shell",
+      render: () =>
+        renderUi(
+          <ReplyInput
+            issueId="issue-1"
+            parentId="comment-1"
+            avatarType="member"
+            avatarId="user-1"
+            draftKey="reply:issue-1:comment-1"
+            onSubmit={vi.fn().mockResolvedValue("reply-1")}
+          />,
+        ),
+    },
+  ];
+  for (const composer of composers) {
+    it(`${composer.name} disables polish while an upload is in flight`, async () => {
+      composer.render();
+      if (composer.shell) fireEvent.click(screen.getByTestId(composer.shell));
+      fireEvent.change(await screen.findByTestId("editor"), { target: { value: "hello" } });
+      const button = await screen.findByRole("button", { name: "Polish message" });
+      expect(button).toBeEnabled();
+
+      act(() => {
+        editorUpload.active = true;
+        editorUpload.notify?.(true);
+      });
+      expect(button).toBeDisabled();
+
+      act(() => {
+        editorUpload.active = false;
+        editorUpload.notify?.(false);
+      });
+      expect(button).toBeEnabled();
+    });
+  }
+
+  it("does not adopt while the editor is uploading", async () => {
+    const { ref, handle } = fakeEditorRef("hello wrld");
+    renderUi(<PolishButton wsId="ws-1" editorRef={ref} context={ISSUE_CONTEXT} />);
+
+    fireEvent.click(await screen.findByRole("button", { name: "Polish message" }));
+    await waitFor(() => expect(afterTextarea().value).toBe("Hello world."));
+    handle.hasActiveUploads.mockReturnValue(true);
+    fireEvent.click(screen.getByRole("button", { name: "Use" }));
+
+    expect(handle.adoptContent).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 
   it("adopt replaces the editor content and closes", async () => {

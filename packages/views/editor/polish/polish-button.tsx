@@ -21,7 +21,7 @@ export interface PolishButtonProps {
    * their own draft here.
    */
   onAdopted?: (markdown: string) => void;
-  /** Pass true while the editor is empty or the composer cannot send. */
+  /** Pass true while the editor is empty, an upload is in flight, or the composer cannot send. */
   disabled?: boolean;
 }
 
@@ -35,11 +35,15 @@ export function PolishButton({ wsId, editorRef, context, onAdopted, disabled }: 
 
   const label = t(($) => $.polish.button);
   const openDialog = () => {
-    const markdown = editorRef.current?.getMarkdown() ?? "";
-    if (!markdown.trim()) return;
+    const editor = editorRef.current;
+    const markdown = editor?.getMarkdown() ?? "";
+    if (!markdown.trim() || editor?.hasActiveUploads()) return;
     setOriginal(markdown);
   };
   const adopt = (markdown: string) => {
+    // Replacing the document mid-upload would drop the upload's placeholder
+    // node and strand the file; keep the dialog open until it settles.
+    if (editorRef.current?.hasActiveUploads()) return;
     editorRef.current?.adoptContent(markdown);
     onAdopted?.(markdown);
     setOriginal(null);

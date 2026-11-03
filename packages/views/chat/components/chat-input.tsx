@@ -769,7 +769,7 @@ export function ChatInput({
           <WorkspacePolishButton
             editorRef={editorRef}
             context={polishContext}
-            disabled={hasNothingToSend || submitting || !!disabled || !!noAgent}
+            disabled={hasNothingToSend || submitting || gate.uploading || !!disabled || !!noAgent}
             onAdopted={(md) => {
               commitDraft(editorDraftKeyRef.current, md);
               setIsEmpty(!md.trim());

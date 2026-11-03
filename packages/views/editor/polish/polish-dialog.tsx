@@ -17,6 +17,7 @@ import { aiErrorCode } from "@multica/core/api";
 import type { PolishContext } from "@multica/core/types";
 import { usePolishText } from "@multica/core/workspace/mutations";
 import { useT } from "../../i18n";
+import { clampDialogOffset, type DialogOffset } from "./clamp-dialog-offset";
 
 export type PolishDialogMode = "adopt" | "send";
 
@@ -69,8 +70,10 @@ export function PolishDialog({
   const [error, setError] = useState<PolishError | null>(null);
   const [loading, setLoading] = useState(false);
   const [confirming, setConfirming] = useState(false);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [offset, setOffset] = useState<DialogOffset>({ x: 0, y: 0 });
   const dragRef = useRef<DragStart | null>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const titleBarRef = useRef<HTMLDivElement>(null);
   // Bumped per request and on close, so a slow response never overwrites a
   // newer one or lands in a dialog that has since been reopened.
   const requestRef = useRef(0);
@@ -109,6 +112,28 @@ export function PolishDialog({
     runPolish();
   }, [open, runPolish]);
 
+  // The title bar holds the only way to close the dialog, so it must never
+  // leave the viewport — pointer capture keeps reporting moves past its edges.
+  const keepOnScreen = useCallback((next: DialogOffset): DialogOffset => {
+    const popup = popupRef.current;
+    if (!popup) return next;
+    const rect = popup.getBoundingClientRect();
+    return clampDialogOffset(next, {
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
+      dialogWidth: rect.width,
+      dialogHeight: rect.height,
+      titleBarHeight: titleBarRef.current?.offsetHeight ?? 0,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const onResize = () => setOffset((current) => keepOnScreen(current));
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [open, keepOnScreen]);
+
   const confirm = async () => {
     setConfirming(true);
     try {
@@ -133,10 +158,12 @@ export function PolishDialog({
   const drag = (event: PointerEvent<HTMLDivElement>) => {
     const start = dragRef.current;
     if (!start) return;
-    setOffset({
-      x: start.offsetX + event.clientX - start.pointerX,
-      y: start.offsetY + event.clientY - start.pointerY,
-    });
+    setOffset(
+      keepOnScreen({
+        x: start.offsetX + event.clientX - start.pointerX,
+        y: start.offsetY + event.clientY - start.pointerY,
+      }),
+    );
   };
   const endDrag = () => {
     dragRef.current = null;
@@ -160,6 +187,7 @@ export function PolishDialog({
       <DialogPortal>
         <DialogOverlay className="supports-backdrop-filter:backdrop-blur-none" />
         <DialogPrimitive.Popup
+          ref={popupRef}
           data-slot="dialog-content"
           // Position through left/top rather than transform so dragging does
           // not fight the centring translate and the open/close animation.
@@ -167,6 +195,7 @@ export function PolishDialog({
           className="fixed z-50 flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-4xl -translate-x-1/2 -translate-y-1/2 flex-col gap-4 overflow-hidden rounded-xl bg-surface-raised p-4 text-body text-popover-foreground shadow-[var(--floating-shadow)] ring-1 ring-surface-border outline-none data-open:duration-[var(--dialog-enter-duration)] data-closed:duration-[var(--dialog-exit-duration)] data-open:ease-[var(--dialog-enter-easing)] data-closed:ease-[var(--dialog-exit-easing)] motion-reduce:animate-none! data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0"
         >
           <div
+            ref={titleBarRef}
             className="-mx-4 -mt-4 flex cursor-move touch-none items-center justify-between gap-2 border-b border-surface-border py-2 pr-2 pl-4 select-none"
             onPointerDown={startDrag}
             onPointerMove={drag}
