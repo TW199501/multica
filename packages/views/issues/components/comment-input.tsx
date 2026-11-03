@@ -5,6 +5,7 @@ import { cn } from "@multica/ui/lib/utils";
 import { ContentEditor, type ContentEditorRef, useFileDropZone, FileDropOverlay, useLazyEditor, useUploadGate, useComposerSubmit } from "../../editor";
 import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
 import { SubmitButton } from "@multica/ui/components/common/submit-button";
+import { WorkspacePolishButton } from "../../editor/polish/polish-button";
 import { Button } from "@multica/ui/components/ui/button";
 import { contentReferencesAttachment, type AgentTask } from "@multica/core/types";
 import { useShortcut } from "@multica/core/shortcuts";
@@ -314,6 +315,16 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
           size="sm"
           multiple
           onSelect={(file) => lazy.uploadOrQueue([file])}
+        />
+        <WorkspacePolishButton
+          editorRef={editorRef}
+          context={{ kind: "issue", issue_id: issueId }}
+          disabled={isEmpty || submitting}
+          onAdopted={(md) => {
+            setContent(md);
+            setIsEmpty(!md.trim());
+            setDraft(draftKey, md);
+          }}
         />
         {routing.restartTaskIds.length > 0 ? (
           <Button

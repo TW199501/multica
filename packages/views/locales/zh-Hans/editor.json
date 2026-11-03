@@ -178,5 +178,21 @@
     "clear_filter": "清除筛选",
     "no_matches": "没有匹配的行",
     "close": "关闭"
+  },
+  "polish": {
+    "button": "对话优化",
+    "title": "对话优化",
+    "close": "关闭",
+    "before": "优化前",
+    "after": "优化后",
+    "loading": "优化中…",
+    "regenerate": "优化",
+    "adopt": "采用",
+    "send": "发送",
+    "disclaimer": "AI 智能体可能会出错。",
+    "turn_off_hint": "如果想自己决定要不要优化，请到偏好设置 → 评论与聊天，关闭对话优化。",
+    "error_lost_spans": "优化结果改动了 @提及、链接或代码，已保留原文。",
+    "error_not_configured": "此工作区尚未设置对话 AI，已保留原文。",
+    "error_failed": "优化失败，已保留原文。"
   }
 }

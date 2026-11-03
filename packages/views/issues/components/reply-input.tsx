@@ -6,6 +6,7 @@ import { useRef, useState, useEffect, useMemo } from "react";
 import { ContentEditor, type ContentEditorRef, useFileDropZone, FileDropOverlay, useLazyEditor, useUploadGate, useComposerSubmit } from "../../editor";
 import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
 import { SubmitButton } from "@multica/ui/components/common/submit-button";
+import { WorkspacePolishButton } from "../../editor/polish/polish-button";
 import { Button } from "@multica/ui/components/ui/button";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { contentReferencesAttachment, type AgentTask } from "@multica/core/types";
@@ -319,6 +320,16 @@ function ReplyInput({
             size="sm"
             multiple
             onSelect={(file) => lazy.uploadOrQueue([file])}
+          />
+          <WorkspacePolishButton
+            editorRef={editorRef}
+            context={{ kind: "issue", issue_id: issueId, thread_comment_id: parentId }}
+            disabled={isEmpty || submitting || targetMissing}
+            onAdopted={(md) => {
+              setContent(md);
+              setIsEmpty(!md.trim());
+              if (draftKey) setDraft(draftKey, md);
+            }}
           />
           {routing.restartTaskIds.length > 0 ? (
             <Button

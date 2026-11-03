@@ -19,6 +19,7 @@ import {
   type UploadDraftBinding,
 } from "../../editor/use-coordinated-uploads";
 import { SubmitButton } from "@multica/ui/components/common/submit-button";
+import { WorkspacePolishButton } from "../../editor/polish/polish-button";
 import { ChatAddMenu } from "./chat-add-menu";
 import { CHAT_COLUMN, CHAT_GUTTER } from "./chat-column";
 import { useChatStore, DRAFT_NEW_SESSION } from "@multica/core/chat";
@@ -27,7 +28,7 @@ import { createLogger } from "@multica/core/logger";
 import { useShortcut } from "@multica/core/shortcuts";
 import { ShortcutKeycaps } from "../../common/shortcut-keycaps";
 import type { MentionItem } from "../../editor/extensions/mention-suggestion";
-import type { Attachment, Project } from "@multica/core/types";
+import type { Attachment, PolishContext, Project } from "@multica/core/types";
 import { ProjectPicker } from "../../projects/components/project-picker";
 import { ClearablePillButton } from "../../common/pill-button";
 import { useT } from "../../i18n";
@@ -629,6 +630,13 @@ export function ChatInput({
     !submitting &&
     !isProjectUpdating;
   const selectedProject = projects.find((project) => project.id === projectId);
+  // Embedded surfaces keep their own session outside the global selection, so
+  // the active session would be the wrong conversation for them.
+  const polishSessionId = draftKeyOverride ? null : activeSessionId;
+  const polishContext: PolishContext =
+    polishSessionId && polishSessionId !== DRAFT_NEW_SESSION
+      ? { kind: "chat", chat_session_id: polishSessionId }
+      : { kind: "none" };
 
   return (
     <div
@@ -758,6 +766,15 @@ export function ChatInput({
           </div>
         )}
         <div className="absolute bottom-1 right-1.5 flex items-center gap-1">
+          <WorkspacePolishButton
+            editorRef={editorRef}
+            context={polishContext}
+            disabled={hasNothingToSend || submitting || !!disabled || !!noAgent}
+            onAdopted={(md) => {
+              commitDraft(editorDraftKeyRef.current, md);
+              setIsEmpty(!md.trim());
+            }}
+          />
           <SubmitButton
             onClick={submit}
             disabled={hasNothingToSend || submitting || !!disabled || !!noAgent}

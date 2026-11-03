@@ -182,5 +182,21 @@
     "clear_filter": "Effacer le filtre",
     "no_matches": "Aucune ligne correspondante",
     "close": "Fermer"
+  },
+  "polish": {
+    "button": "Améliorer le message",
+    "title": "Améliorer le message",
+    "close": "Fermer",
+    "before": "Avant",
+    "after": "Après",
+    "loading": "Amélioration…",
+    "regenerate": "Améliorer",
+    "adopt": "Utiliser",
+    "send": "Envoyer",
+    "disclaimer": "Les agents IA peuvent se tromper.",
+    "turn_off_hint": "Pour décider vous-même d'améliorer ou non, désactivez l'amélioration des messages dans Préférences → Commentaires et discussion.",
+    "error_lost_spans": "Le texte amélioré modifiait des mentions, des liens ou du code ; l'original est conservé.",
+    "error_not_configured": "L'amélioration des messages n'est pas configurée pour cet espace de travail. L'original est conservé.",
+    "error_failed": "Impossible d'améliorer le message. L'original est conservé."
   }
 }
