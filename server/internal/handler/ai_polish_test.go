@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/multica-ai/multica/server/internal/aisettings"
 	"github.com/multica-ai/multica/server/internal/testutil"
 )
 
@@ -352,5 +354,114 @@ func TestPolishCapsIssueTitle(t *testing.T) {
 	got := lastUser()
 	if strings.Contains(got, "TITLE-TAIL") || !strings.Contains(got, strings.Repeat("t", 200)) {
 		t.Errorf("title not capped at 200 runes: %q", got)
+	}
+}
+
+// systemPromptStub answers every completion with "ok" and keeps the last
+// system message it received.
+func systemPromptStub(t *testing.T) (*httptest.Server, func() string) {
+	t.Helper()
+	var (
+		mu   sync.Mutex
+		last string
+	)
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		raw, _ := io.ReadAll(r.Body)
+		var body struct {
+			Messages []struct {
+				Role    string `json:"role"`
+				Content string `json:"content"`
+			} `json:"messages"`
+		}
+		_ = json.Unmarshal(raw, &body)
+		mu.Lock()
+		for _, m := range body.Messages {
+			if m.Role == "system" {
+				last = m.Content
+			}
+		}
+		mu.Unlock()
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, `{"id":"c","object":"chat.completion","choices":[{"index":0,"finish_reason":"stop","message":{"role":"assistant","content":"ok"}}]}`)
+	}))
+	t.Cleanup(srv.Close)
+	return srv, func() string {
+		mu.Lock()
+		defer mu.Unlock()
+		return last
+	}
+}
+
+func insertPromptSkill(t *testing.T, content string) string {
+	t.Helper()
+	var skillID string
+	if err := testPool.QueryRow(context.Background(), `
+		INSERT INTO skill (workspace_id, name, description, content, config, created_by)
+		VALUES ($1, 'Polish Prompt Skill', '', $2, '{}'::jsonb, $3) RETURNING id
+	`, testWorkspaceID, content, testUserID).Scan(&skillID); err != nil {
+		t.Fatalf("skill fixture: %v", err)
+	}
+	t.Cleanup(func() { _, _ = testPool.Exec(context.Background(), `DELETE FROM skill WHERE id = $1`, skillID) })
+	return skillID
+}
+
+func polishSystemPromptFor(t *testing.T, router http.Handler, last func() string) string {
+	t.Helper()
+	rec := polishCall(t, router, testUserID, map[string]any{"text": "幫忙看", "context": map[string]any{"kind": "none"}})
+	if rec.Code != http.StatusOK {
+		t.Fatalf("polish: %d %s", rec.Code, rec.Body.String())
+	}
+	return last()
+}
+
+func TestPolishUsesPromptSkillContent(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	srv, last := systemPromptStub(t)
+	const skillContent = "You are the workspace style guide. Prefer short sentences."
+	skillID := insertPromptSkill(t, skillContent)
+	if rec := aiCall(t, router, http.MethodPut, "", testUserID, map[string]any{
+		"provider": "custom", "base_url": srv.URL, "model": "m", "api_key": "sk-test-1234",
+		"prompt": "stored prompt", "prompt_skill_id": skillID,
+	}); rec.Code != http.StatusOK {
+		t.Fatalf("save settings: %d %s", rec.Code, rec.Body.String())
+	}
+
+	system := polishSystemPromptFor(t, router, last)
+	if !strings.HasPrefix(system, skillContent) {
+		t.Fatalf("system prompt does not start with the skill content: %q", system)
+	}
+	if !strings.Contains(system, polishPlaceholderRule) {
+		t.Fatalf("system prompt lost the placeholder rule: %q", system)
+	}
+	if strings.Contains(system, "stored prompt") {
+		t.Fatalf("stored prompt used although a skill is set: %q", system)
+	}
+
+	// A deleted skill falls back to the stored prompt.
+	if _, err := testPool.Exec(context.Background(), `DELETE FROM skill WHERE id = $1`, skillID); err != nil {
+		t.Fatal(err)
+	}
+	system = polishSystemPromptFor(t, router, last)
+	if !strings.HasPrefix(system, "stored prompt") || !strings.Contains(system, polishPlaceholderRule) {
+		t.Fatalf("deleted skill did not fall back to the stored prompt: %q", system)
+	}
+}
+
+func TestPolishDeletedSkillWithoutPromptUsesDefault(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	srv, last := systemPromptStub(t)
+	skillID := insertPromptSkill(t, "temporary skill")
+	if rec := aiCall(t, router, http.MethodPut, "", testUserID, map[string]any{
+		"provider": "custom", "base_url": srv.URL, "model": "m", "api_key": "sk-test-1234",
+		"prompt_skill_id": skillID,
+	}); rec.Code != http.StatusOK {
+		t.Fatalf("save settings: %d %s", rec.Code, rec.Body.String())
+	}
+	if _, err := testPool.Exec(context.Background(), `DELETE FROM skill WHERE id = $1`, skillID); err != nil {
+		t.Fatal(err)
+	}
+	system := polishSystemPromptFor(t, router, last)
+	if !strings.HasPrefix(system, aisettings.DefaultPrompt()) || !strings.Contains(system, polishPlaceholderRule) {
+		t.Fatalf("deleted skill without a stored prompt did not use the default: %q", system)
 	}
 }
