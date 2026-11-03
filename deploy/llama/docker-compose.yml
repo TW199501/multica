@@ -1,14 +1,19 @@
 # Optional self-hosted model server for Multica's AI settings (OpenAI-compatible
-# API on port 8080). This file runs llama.cpp only; Multica itself is deployed
-# separately. See README.md.
+# API). This file runs llama.cpp only; Multica itself is deployed separately.
+# The model folder and file are yours to choose; see .env.example and README.md.
 services:
   llama:
     # Floating tag: no versioned server-bNNNN tag could be verified to exist.
     image: ghcr.io/ggml-org/llama.cpp:server
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "${LLAMA_PORT:-8080}:8080"
     volumes:
-      - ./models:/models:ro
-    # Replace model.gguf with the file you downloaded into ./models.
-    command: ["--host", "0.0.0.0", "--port", "8080", "-m", "/models/model.gguf"]
+      - "${LLAMA_MODELS_DIR:?Set LLAMA_MODELS_DIR to the folder that holds your GGUF model files}:/models:ro"
+    command:
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8080"
+      - "-m"
+      - "/models/${LLAMA_MODEL:?Set LLAMA_MODEL to the GGUF file name inside LLAMA_MODELS_DIR}"
