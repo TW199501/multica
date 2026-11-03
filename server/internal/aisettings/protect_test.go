@@ -94,3 +94,54 @@ func TestRestoreFailsOnMissingOrDuplicate(t *testing.T) {
 		}
 	}
 }
+
+func TestProtectBareIssueIdentifiers(t *testing.T) {
+	text := "修好 MUL-123 和 E-45，再看(ABC9-7)。"
+	masked, spans := Protect(text)
+	if want := "修好 ⟦1⟧ 和 ⟦2⟧，再看(⟦3⟧)。"; masked != want {
+		t.Fatalf("masked = %q, want %q", masked, want)
+	}
+	if strings.Join(spans, ",") != "MUL-123,E-45,ABC9-7" {
+		t.Fatalf("spans = %q", spans)
+	}
+	if got, err := Restore(masked, spans); err != nil || got != text {
+		t.Fatalf("Restore = %q, %v", got, err)
+	}
+}
+
+// Same boundaries as IDENTIFIER_RE in packages/ui/markdown/issue-identifiers.ts:
+// no [A-Za-z0-9_-] on either side, and lowercase prefixes are not identifiers.
+func TestProtectIgnoresNonIdentifiers(t *testing.T) {
+	for _, text := range []string{"xMUL-1", "MUL-1x", "_MUL-1", "MUL-1_", "a-MUL-1", "MUL-1-2", "mul-1", "MUL-", "-1"} {
+		if masked, spans := Protect(text); masked != text || len(spans) != 0 {
+			t.Errorf("%q: masked %q spans %q", text, masked, spans)
+		}
+	}
+}
+
+func TestProtectKeepsIdentifierInsideItsSpan(t *testing.T) {
+	cases := []string{
+		"[MUL-1](mention://issue/MUL-1)",
+		"https://app.example/acme/issues/MUL-1",
+		"`MUL-1`",
+		"[see MUL-1](https://en.wikipedia.org/wiki/Foo_(MUL-1))",
+	}
+	for _, span := range cases {
+		text := "看 " + span + " 吧"
+		masked, spans := Protect(text)
+		if masked != "看 ⟦1⟧ 吧" || len(spans) != 1 || spans[0] != span {
+			t.Errorf("%s: masked %q spans %q", span, masked, spans)
+		}
+	}
+}
+
+func TestProtectLinkWithBalancedParensInDestination(t *testing.T) {
+	text := "see [w](https://en.wikipedia.org/wiki/Foo_(bar)) now"
+	masked, spans := Protect(text)
+	if masked != "see ⟦1⟧ now" || len(spans) != 1 || spans[0] != "[w](https://en.wikipedia.org/wiki/Foo_(bar))" {
+		t.Fatalf("masked %q spans %q", masked, spans)
+	}
+	if got, err := Restore(masked, spans); err != nil || got != text {
+		t.Fatalf("Restore = %q, %v", got, err)
+	}
+}
