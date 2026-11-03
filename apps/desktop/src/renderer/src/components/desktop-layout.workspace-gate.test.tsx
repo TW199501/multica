@@ -107,6 +107,7 @@ vi.mock("@multica/views/search", () => ({
 
 vi.mock("@multica/views/chat", () => ({
   FloatingChat: () => <div data-testid="floating-chat" />,
+  DockedChatLayout: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
 
 vi.mock("./tab-bar", () => ({ TabBar: () => null }));
