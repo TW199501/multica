@@ -168,6 +168,37 @@ describe("SettingsPage in the docked layout", () => {
     expect(within(host).getByRole("navigation", { name: "Settings" })).toBeInTheDocument();
     host.remove();
   });
+
+  it("shows its navigation in the page while the docked sidebar is collapsed", () => {
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    useDockedLayoutStore.setState({ layoutActive: true, settingsNavTarget: host });
+    renderWithI18n(
+      <SidebarProvider defaultOpen={false}>
+        <SettingsPage />
+      </SidebarProvider>,
+    );
+
+    expect(within(host).queryByRole("navigation", { name: "Settings" })).toBeNull();
+    const nav = screen.getByRole("navigation", { name: "Settings" });
+    expect(host.contains(nav)).toBe(false);
+    host.remove();
+  });
+
+  it("moves the navigation back to the sidebar once it expands", () => {
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    useDockedLayoutStore.setState({ layoutActive: true, settingsNavTarget: host });
+    renderWithI18n(
+      <SidebarProvider defaultOpen>
+        <SettingsPage />
+      </SidebarProvider>,
+    );
+
+    expect(within(host).getByRole("navigation", { name: "Settings" })).toBeInTheDocument();
+    expect(screen.getAllByRole("navigation", { name: "Settings" })).toHaveLength(1);
+    host.remove();
+  });
 });
 
 describe("SettingsPage Plugin feature flag", () => {

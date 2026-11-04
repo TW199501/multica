@@ -38,6 +38,7 @@ import {
 import { resolvePublicFileUrl } from "@multica/core/workspace/avatar-url";
 import { ActorAvatar } from "@multica/ui/components/common/actor-avatar";
 import { TooltipHint } from "@multica/ui/components/common/tooltip-hint";
+import { useSidebarSafe } from "@multica/ui/components/ui/sidebar";
 import { cn } from "@multica/ui/lib/utils";
 import { resolveSettingsLocation, settingsHref } from "./settings-navigation";
 import { AppLink, useNavigation } from "../../navigation";
@@ -112,9 +113,12 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
   const { role } = useCurrentMember(workspace?.id ?? "");
   const isMember = role === "member";
   const navigation = useNavigation();
-  const dockedNavTarget = useDockedLayoutStore((s) => s.settingsNavTarget);
+  const settingsNavTarget = useDockedLayoutStore((s) => s.settingsNavTarget);
   // The docked layout keeps settings navigation in the sidebar only.
   const dockedLayout = useDockedLayoutStore((s) => s.layoutActive);
+  // A collapsed sidebar is off screen, so the navigation falls back to the page.
+  const sidebarCollapsed = useSidebarSafe()?.state === "collapsed";
+  const dockedNavTarget = sidebarCollapsed ? null : settingsNavTarget;
   // In the docked sidebar the navigation matches the main menu's rows.
   const inSidebar = dockedNavTarget !== null;
   const pluginsEnabled = useFeatureEnabled(PLUGINS_V1_FLAG, false);
@@ -563,7 +567,7 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background md:flex-row">
       {dockedNav}
-      {!dockedNav && !dockedLayout && (
+      {!dockedNav && !(dockedLayout && !sidebarCollapsed) && (
       <aside className="shrink-0 border-b border-surface-border md:flex md:w-60 md:flex-col md:border-b-0 md:border-r">
         <div className="flex h-16 shrink-0 items-center gap-1 px-4 md:px-5">
           <CollapsedNavTrigger />
