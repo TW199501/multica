@@ -1,0 +1,21 @@
+packages/core/paths/reserved-slugs.ts
+  s_aa47a447e01641::t_1dc510c06e26cf 91
+server/internal/handler/reserved_slugs.json
+  s_aa47a447e01641::t_c3e40cb5edc46c 82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c38720d8ac111ec557a75060234326ff8680f07d",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
