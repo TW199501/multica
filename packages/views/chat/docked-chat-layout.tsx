@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useLayoutEffect, type ReactNode } from "react";
 import { useDefaultLayout } from "react-resizable-panels";
 import { useChatStore } from "@multica/core/chat";
 import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
@@ -78,12 +78,12 @@ function DockedChatLayoutForWorkspace({
   const setShellDocked = useDockedLayoutStore((s) => s.setShellDocked);
   const setPageElement = useDockedLayoutStore((s) => s.setPageElement);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setShellDocked(shellDocked);
     return () => setShellDocked(false);
   }, [shellDocked, setShellDocked]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setLayoutActive(active);
     return () => setLayoutActive(false);
   }, [active, setLayoutActive]);
