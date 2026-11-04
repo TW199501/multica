@@ -86,4 +86,19 @@ describe("docked sidebar sections", () => {
     expect(screen.getByRole("tab", { name: "Settings" })).toHaveAttribute("aria-selected", "true");
     expect(useDockedLayoutStore.getState().settingsNavTarget).toBeInstanceOf(HTMLElement);
   });
+
+  it("lets the menu and projects tabs open while on the settings route", () => {
+    const { push } = renderAt("/acme/settings");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Menu" }));
+    expect(screen.getByRole("tab", { name: "Menu" })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByTestId("menu")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Projects" }));
+    expect(screen.getByText("No repository connected yet.")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Settings" }));
+    expect(screen.getByRole("tab", { name: "Settings" })).toHaveAttribute("aria-selected", "true");
+    expect(push).not.toHaveBeenCalled();
+  });
 });

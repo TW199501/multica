@@ -752,6 +752,8 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
               </DropdownMenu>
             </SidebarMenuItem>
           </SidebarMenu>
+          {docked && <DockedSidebarTabs active={dockedSection} />}
+          {(!docked || dockedSection === "menu") && (
           <SidebarMenu>
             {searchSlot && (
               <SidebarMenuItem>
@@ -774,8 +776,8 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
+          )}
         </SidebarHeader>
-        {docked && <DockedSidebarTabs active={dockedSection} />}
 
         {/* Navigation */}
         {docked && dockedSection !== "menu" ? dockedSectionBody(dockedSection) : (

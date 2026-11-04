@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useDockedLayoutStore, type DockedSidebarSection } from "@multica/core/chat/docked-layout-store";
 import { useWorkspacePaths } from "@multica/core/paths";
 import { cn } from "@multica/ui/lib/utils";
@@ -14,8 +14,9 @@ function isUnder(pathname: string, base: string): boolean {
 }
 
 /**
- * The section the docked sidebar shows. The settings route always shows the
- * settings section; leaving it returns to the menu.
+ * The section the docked sidebar shows. Entering the settings route opens the
+ * settings section; the other tabs stay selectable while on it, and leaving
+ * the route returns to the menu.
  */
 export function useDockedSidebarSection(): DockedSidebarSection {
   const { pathname } = useNavigation();
@@ -23,21 +24,31 @@ export function useDockedSidebarSection(): DockedSidebarSection {
   const section = useDockedLayoutStore((s) => s.sidebarSection);
   const setSection = useDockedLayoutStore((s) => s.setSidebarSection);
   const onSettings = isUnder(pathname, settingsPath);
+  const [enteredSettings, setEnteredSettings] = useState(false);
 
   useEffect(() => {
-    if (onSettings && section !== "settings") setSection("settings");
-    if (!onSettings && section === "settings") setSection("menu");
-  }, [onSettings, section, setSection]);
+    if (onSettings && !enteredSettings) {
+      setEnteredSettings(true);
+      setSection("settings");
+    }
+    if (!onSettings) {
+      if (enteredSettings) setEnteredSettings(false);
+      if (section === "settings") setSection("menu");
+    }
+  }, [onSettings, enteredSettings, section, setSection]);
 
-  return onSettings ? "settings" : section === "settings" ? "menu" : section;
+  if (onSettings && !enteredSettings) return "settings";
+  if (!onSettings && section === "settings") return "menu";
+  return section;
 }
 
 /** Tab strip above the sidebar content: menu, project tree, settings. */
 export function DockedSidebarTabs({ active }: { active: DockedSidebarSection }) {
   const { t } = useT("layout");
-  const { push } = useNavigation();
+  const { push, pathname } = useNavigation();
   const settingsPath = useWorkspacePaths().settings();
   const setSection = useDockedLayoutStore((s) => s.setSidebarSection);
+  const onSettings = isUnder(pathname, settingsPath);
   const label = (section: DockedSidebarSection) =>
     section === "menu"
       ? t(($) => $.docked.menu)
@@ -46,7 +57,7 @@ export function DockedSidebarTabs({ active }: { active: DockedSidebarSection }) 
         : t(($) => $.docked.settings);
 
   return (
-    <div role="tablist" aria-label={t(($) => $.docked.sections)} className="flex gap-1 px-2 pb-2">
+    <div role="tablist" aria-label={t(($) => $.docked.sections)} className="flex gap-1">
       {SECTIONS.map((section) => (
         <button
           key={section}
@@ -55,7 +66,7 @@ export function DockedSidebarTabs({ active }: { active: DockedSidebarSection }) 
           aria-selected={active === section}
           onClick={() => {
             setSection(section);
-            if (section === "settings" && active !== "settings") push(settingsPath);
+            if (section === "settings" && !onSettings) push(settingsPath);
           }}
           className={cn(
             "h-7 min-w-0 flex-1 whitespace-nowrap rounded-md px-1 text-caption transition-colors focus-visible:outline-2 focus-visible:outline-ring",
