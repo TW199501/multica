@@ -60,7 +60,7 @@ function DockedChatLayoutForWorkspace({
     isUnder(pathname, base),
   );
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
-    id: pageFirst ? "multica_docked_chat_layout_page_first_v2" : "multica_docked_chat_layout",
+    id: pageFirst ? "multica_docked_chat_layout_page_first_v3" : "multica_docked_chat_layout_v2",
   });
   const active = !floating && !isMobile && !isFloatingChatRouteSuppressed(pathname, wsPaths.chat());
   const setLayoutActive = useDockedLayoutStore((s) => s.setLayoutActive);
@@ -79,7 +79,7 @@ function DockedChatLayoutForWorkspace({
     <ResizablePanel
       key="conversation"
       id="conversation"
-      defaultSize={pageFirst ? "45%" : "50%"}
+      defaultSize="32%"
       minSize="30%"
     >
       <div className={pageFirst ? "h-full border-l pb-[30px]" : "h-full border-r pb-[30px]"}>
@@ -88,7 +88,7 @@ function DockedChatLayoutForWorkspace({
     </ResizablePanel>
   );
   const page = (
-    <ResizablePanel key="page" id="page" defaultSize={pageFirst ? "55%" : "50%"} minSize="25%">
+    <ResizablePanel key="page" id="page" defaultSize="68%" minSize="25%">
       <div
         ref={setPageElement}
         data-slot="docked-page"
