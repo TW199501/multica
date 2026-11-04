@@ -19,8 +19,9 @@ export interface DockedChatLayoutProps {
   /** False until the shell has a resolved workspace; the page then renders alone. */
   enabled?: boolean;
   /**
-   * Extra routes (besides the built-in page-first ones) whose page takes the middle column, with
-   * the conversation on the right; matched as the path or its sub-paths.
+   * Extra routes (besides the built-in page-first ones) whose page takes the
+   * middle column, with the conversation on the right; matched as the path or
+   * its sub-paths.
    */
   pageFirstPaths?: readonly string[];
   children: ReactNode;
@@ -30,8 +31,8 @@ export interface DockedChatLayoutProps {
  * With the floating chat preference off, the conversation gets its own column
  * in the middle and the current page moves to a resizable column on the right;
  * on Settings, Inbox, the AI team pages, Usage and `pageFirstPaths` the page
- * stays in the middle and the conversation takes the right. With it on, on the Chat tab and on small screens, the page renders as
- * before.
+ * stays in the middle and the conversation takes the right. With it on, on
+ * the Chat tab and on small screens, the page renders as before.
  */
 export function DockedChatLayout({ enabled = true, pageFirstPaths, children }: DockedChatLayoutProps) {
   if (!enabled) return <>{children}</>;
