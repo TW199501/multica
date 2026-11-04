@@ -17,28 +17,45 @@ import { isFloatingChatRouteSuppressed } from "./floating-chat-visibility";
 export interface DockedChatLayoutProps {
   /** False until the shell has a resolved workspace; the page then renders alone. */
   enabled?: boolean;
+  /**
+   * Extra routes (besides Settings) whose page takes the middle column, with
+   * the conversation on the right; matched as the path or its sub-paths.
+   */
+  pageFirstPaths?: readonly string[];
   children: ReactNode;
 }
 
 /**
  * With the floating chat preference off, the conversation gets its own column
  * in the middle and the current page moves to a resizable column on the right;
- * on Settings the page stays in the middle and the conversation takes the
- * right. With it on, on the Chat tab and on small screens, the page renders as
+ * on Settings and on `pageFirstPaths` the page stays in the middle and the
+ * conversation takes the right. With it on, on the Chat tab and on small screens, the page renders as
  * before.
  */
-export function DockedChatLayout({ enabled = true, children }: DockedChatLayoutProps) {
+export function DockedChatLayout({ enabled = true, pageFirstPaths, children }: DockedChatLayoutProps) {
   if (!enabled) return <>{children}</>;
-  return <DockedChatLayoutForWorkspace>{children}</DockedChatLayoutForWorkspace>;
+  return (
+    <DockedChatLayoutForWorkspace pageFirstPaths={pageFirstPaths}>{children}</DockedChatLayoutForWorkspace>
+  );
 }
 
-function DockedChatLayoutForWorkspace({ children }: { children: ReactNode }) {
+function isUnder(pathname: string, base: string): boolean {
+  return pathname === base || pathname.startsWith(`${base}/`);
+}
+
+function DockedChatLayoutForWorkspace({
+  pageFirstPaths = [],
+  children,
+}: {
+  pageFirstPaths?: readonly string[];
+  children: ReactNode;
+}) {
   const floating = useChatStore((s) => s.floatingChatEnabled);
   const { pathname } = useNavigation();
   const wsPaths = useWorkspacePaths();
   const isMobile = useIsMobile();
   const settingsPath = wsPaths.settings();
-  const pageFirst = pathname === settingsPath || pathname.startsWith(`${settingsPath}/`);
+  const pageFirst = [settingsPath, ...pageFirstPaths].some((base) => isUnder(pathname, base));
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
     id: pageFirst ? "multica_docked_chat_layout_page_first" : "multica_docked_chat_layout",
   });
@@ -62,8 +79,8 @@ function DockedChatLayoutForWorkspace({ children }: { children: ReactNode }) {
     </ResizablePanel>
   );
 
-  // Settings keeps its content in the middle and moves the conversation to
-  // the third column; every other page sits beside the conversation.
+  // Page-first routes keep their content in the middle and move the
+  // conversation to the third column; every other page sits beside it.
   return (
     <ResizablePanelGroup
       key={pageFirst ? "page-first" : "conversation-first"}

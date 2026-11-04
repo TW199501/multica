@@ -294,7 +294,10 @@ export function DesktopShell() {
                       used to have no navigation feedback at all — a click just
                       froze until the destination committed (MUL-6404). */}
                   <NavigationProgress />
-                  <DockedChatLayout enabled={Boolean(slug)}>
+                  <DockedChatLayout
+                    enabled={Boolean(slug)}
+                    pageFirstPaths={slug ? [`/${slug}/browser`] : undefined}
+                  >
                     <TabContent />
                   </DockedChatLayout>
                   <BrowserLayer />

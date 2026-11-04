@@ -29,7 +29,7 @@ vi.mock("./components/chat-window", () => ({
 
 const { DockedChatLayout } = await import("./docked-chat-layout");
 
-function renderAt(pathname: string, enabled?: boolean) {
+function renderAt(pathname: string, enabled?: boolean, pageFirstPaths?: string[]) {
   const navigation: NavigationAdapter = {
     push: vi.fn(),
     replace: vi.fn(),
@@ -41,7 +41,7 @@ function renderAt(pathname: string, enabled?: boolean) {
   };
   return render(
     <NavigationProvider value={navigation}>
-      <DockedChatLayout enabled={enabled}>
+      <DockedChatLayout enabled={enabled} pageFirstPaths={pageFirstPaths}>
         <div data-testid="route-page">page</div>
       </DockedChatLayout>
     </NavigationProvider>,
@@ -68,6 +68,14 @@ describe("DockedChatLayout", () => {
 
   it("keeps Settings in the middle and moves the conversation to the right", () => {
     renderAt("/acme/settings");
+
+    const chat = screen.getByTestId("chat-window");
+    const page = screen.getByTestId("route-page");
+    expect(page.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("puts a page-first route such as the desktop browser in the middle", () => {
+    renderAt("/acme/browser", undefined, ["/acme/browser"]);
 
     const chat = screen.getByTestId("chat-window");
     const page = screen.getByTestId("route-page");
