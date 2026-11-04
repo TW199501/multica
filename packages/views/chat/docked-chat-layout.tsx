@@ -70,6 +70,9 @@ function DockedChatLayoutForWorkspace({
     wsPaths.usage(),
     ...pageFirstPaths,
   ].some((base) => isUnder(pathname, base));
+  // Pages carry split panes of their own (issue properties, the Inbox list
+  // beside an issue), so the page column never shrinks below what they need.
+  const pageMinSize = isUnder(pathname, wsPaths.inbox()) ? "780px" : "540px";
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
     id: pageFirst ? "multica_docked_chat_layout_page_first_v3" : "multica_docked_chat_layout_v2",
   });
@@ -106,7 +109,7 @@ function DockedChatLayoutForWorkspace({
     </ResizablePanel>
   );
   const page = (
-    <ResizablePanel key="page" id="page" defaultSize="68%" minSize="25%">
+    <ResizablePanel key="page" id="page" defaultSize="68%" minSize={pageMinSize}>
       <div
         ref={setPageElement}
         data-slot="docked-page"
@@ -123,7 +126,7 @@ function DockedChatLayoutForWorkspace({
     <ResizablePanelGroup
       key={pageFirst ? "page-first" : "conversation-first"}
       orientation="horizontal"
-      className="flex-1 min-h-0"
+      className="min-h-0 min-w-0 flex-1 overflow-hidden"
       defaultLayout={defaultLayout}
       onLayoutChanged={onLayoutChanged}
     >

@@ -140,7 +140,22 @@ describe("DockedChatLayout", () => {
     renderAt("/acme/issues");
 
     expect(panelProps.conversation?.minSize).toBe("360px");
-    expect(panelProps.page?.minSize).toBe("25%");
+  });
+
+  it("keeps the page wide enough for its own split panes", () => {
+    renderAt("/acme/issues");
+    expect(panelProps.page?.minSize).toBe("540px");
+  });
+
+  it("gives the Inbox room for its list beside an open issue", () => {
+    renderAt("/acme/inbox");
+    expect(panelProps.page?.minSize).toBe("780px");
+  });
+
+  it("clips the docked columns to the outer frame", () => {
+    const { container } = renderAt("/acme/issues");
+    const group = container.querySelector("[data-slot='resizable-panel-group']");
+    expect(group).toHaveClass("min-w-0", "overflow-hidden");
   });
 
   it("leaves the bottom spacing to the status bar under the shell", () => {
