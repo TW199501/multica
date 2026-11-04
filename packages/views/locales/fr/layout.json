@@ -69,5 +69,12 @@
       "title": "Rejoignez notre Discord",
       "dismiss": "Ignorer"
     }
+  },
+  "docked": {
+    "sections": "Sections de la barre latérale",
+    "menu": "Menu",
+    "projects": "Projets",
+    "settings": "Paramètres",
+    "projects_empty": "Aucun dépôt connecté pour l'instant."
   }
 }

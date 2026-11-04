@@ -96,7 +96,10 @@ vi.mock("@multica/views/search", () => ({
   SearchCommand: () => null,
   SearchTrigger: () => null,
 }));
-vi.mock("@multica/views/chat", () => ({ FloatingChat: () => null }));
+vi.mock("@multica/views/chat", () => ({
+  FloatingChat: () => null,
+  DockedChatLayout: ({ children }: { children: ReactNode }) => <>{children}</>,
+}));
 vi.mock("./tab-bar", () => ({ TabBar: () => null }));
 vi.mock("./window-overlay", () => ({ WindowOverlay: () => null }));
 

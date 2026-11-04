@@ -1,0 +1,104 @@
+// @vitest-environment jsdom
+
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { NavigationProvider, type NavigationAdapter } from "../navigation";
+
+const chatState = { floatingChatEnabled: false };
+const layout = { mobile: false };
+
+vi.mock("@multica/core/chat", () => {
+  const useChatStore = <T,>(selector: (s: typeof chatState) => T) => selector(chatState);
+  useChatStore.getState = () => chatState;
+  return { useChatStore };
+});
+
+vi.mock("@multica/core/paths", () => ({
+  useWorkspacePaths: () => ({ chat: () => "/acme/chat", settings: () => "/acme/settings" }),
+}));
+
+vi.mock("@multica/ui/hooks/use-mobile", () => ({
+  useIsMobile: () => layout.mobile,
+}));
+
+vi.mock("./components/chat-window", () => ({
+  ChatWindow: ({ variant }: { variant?: string }) => (
+    <div data-testid="chat-window" data-variant={variant ?? "floating"} />
+  ),
+}));
+
+const { DockedChatLayout } = await import("./docked-chat-layout");
+
+function renderAt(pathname: string, enabled?: boolean) {
+  const navigation: NavigationAdapter = {
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+    pathname,
+    searchParams: new URLSearchParams(),
+    hash: "",
+    getShareableUrl: (path) => path,
+  };
+  return render(
+    <NavigationProvider value={navigation}>
+      <DockedChatLayout enabled={enabled}>
+        <div data-testid="route-page">page</div>
+      </DockedChatLayout>
+    </NavigationProvider>,
+  );
+}
+
+beforeEach(() => {
+  chatState.floatingChatEnabled = false;
+  layout.mobile = false;
+  localStorage.clear();
+});
+
+describe("DockedChatLayout", () => {
+  it("puts the conversation in the middle and the page on the right when floating chat is off", () => {
+    renderAt("/acme/issues");
+
+    const chat = screen.getByTestId("chat-window");
+    const page = screen.getByTestId("route-page");
+    expect(chat).toHaveAttribute("data-variant", "docked");
+    expect(chat.compareDocumentPosition(page) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(page.closest("[data-slot='docked-page']")).not.toBeNull();
+    expect(screen.getByRole("separator")).toBeInTheDocument();
+  });
+
+  it("keeps Settings in the middle and moves the conversation to the right", () => {
+    renderAt("/acme/settings");
+
+    const chat = screen.getByTestId("chat-window");
+    const page = screen.getByTestId("route-page");
+    expect(page.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("leaves the page alone while floating chat is on", () => {
+    chatState.floatingChatEnabled = true;
+    renderAt("/acme/issues");
+
+    expect(screen.getByTestId("route-page")).toBeInTheDocument();
+    expect(screen.queryByTestId("chat-window")).not.toBeInTheDocument();
+  });
+
+  it("leaves the Chat tab alone, which already shows the conversation full-page", () => {
+    renderAt("/acme/chat");
+
+    expect(screen.queryByTestId("chat-window")).not.toBeInTheDocument();
+  });
+
+  it("leaves small screens alone", () => {
+    layout.mobile = true;
+    renderAt("/acme/issues");
+
+    expect(screen.queryByTestId("chat-window")).not.toBeInTheDocument();
+  });
+
+  it("renders only the page until the shell has a workspace", () => {
+    renderAt("/acme/issues", false);
+
+    expect(screen.getByTestId("route-page")).toBeInTheDocument();
+    expect(screen.queryByTestId("chat-window")).not.toBeInTheDocument();
+  });
+});

@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import {
   AlarmClock,
   Bell,
@@ -110,6 +112,7 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
   const { role } = useCurrentMember(workspace?.id ?? "");
   const isMember = role === "member";
   const navigation = useNavigation();
+  const dockedNavTarget = useDockedLayoutStore((s) => s.settingsNavTarget);
   const pluginsEnabled = useFeatureEnabled(PLUGINS_V1_FLAG, false);
   const billingEnabled = useFeatureEnabled(
     BILLING_WORKSPACE_SUBSCRIPTIONS_FLAG,
@@ -422,8 +425,128 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
     </div>
   );
 
+  const searchBox = (
+    <div className="relative mx-3 mb-3 hidden shrink-0 md:block">
+      <Search
+        aria-hidden="true"
+        className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+      />
+      <input
+        type="search"
+        value={query}
+        onChange={(event) => {
+          setQuery(event.target.value);
+          setActiveResult(0);
+        }}
+        onKeyDown={(event) => {
+          if (event.nativeEvent.isComposing) return;
+          if (event.key === "ArrowDown") {
+            event.preventDefault();
+            setActiveResult((current) =>
+              Math.min(current + 1, Math.max(results.length - 1, 0)),
+            );
+          } else if (event.key === "ArrowUp") {
+            event.preventDefault();
+            setActiveResult((current) => Math.max(current - 1, 0));
+          } else if (event.key === "Enter") {
+            event.preventDefault();
+            openResult(activeResult);
+          } else if (event.key === "Escape" && query) {
+            event.preventDefault();
+            setQuery("");
+          }
+        }}
+        placeholder={t(($) => $.page.search)}
+        aria-label={t(($) => $.page.search)}
+        aria-controls={query ? "settings-search-results" : undefined}
+        className="h-8 w-full rounded-lg border border-input bg-transparent pl-8 pr-8 text-body outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30 [&::-webkit-search-cancel-button]:hidden"
+      />
+      {query ? (
+        <TooltipHint label={t(($) => $.page.search_clear)}>
+          <button
+            type="button"
+            onClick={() => setQuery("")}
+            aria-label={t(($) => $.page.search_clear)}
+            className="absolute right-1.5 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
+          >
+            <X className="size-3.5" aria-hidden="true" />
+          </button>
+        </TooltipHint>
+      ) : null}
+    </div>
+  );
+  const navList = (
+    <nav
+      aria-label={t(($) => $.page.title)}
+      className="hidden min-h-0 overflow-y-auto px-3 pb-6 md:block"
+    >
+      {query ? (
+        searchResults
+      ) : (
+        <div className="divide-y divide-surface-border">
+          {groups.map((group) => (
+            <section
+              key={group.key}
+              aria-labelledby={`settings-group-${group.key}`}
+              className="py-2.5 first:pt-0"
+            >
+              <h2
+                id={`settings-group-${group.key}`}
+                className="flex h-8 min-w-0 items-center gap-2.5 px-3 text-label font-semibold text-foreground"
+              >
+                <span className="flex size-4 shrink-0 items-center justify-center">
+                  {group.mark}
+                </span>
+                <span className="truncate">{group.label}</span>
+                {group.tag ? (
+                  <span className="ml-auto shrink-0 truncate text-micro font-medium text-muted-foreground">
+                    {group.tag}
+                  </span>
+                ) : null}
+              </h2>
+              {group.subgroups.map((subgroup) => (
+                <div
+                  key={subgroup.key}
+                  role={subgroup.label ? "group" : undefined}
+                  aria-labelledby={
+                    subgroup.label ? `settings-subgroup-${subgroup.key}` : undefined
+                  }
+                >
+                  {subgroup.label ? (
+                    <h3
+                      id={`settings-subgroup-${subgroup.key}`}
+                      className="px-3 pb-1 pt-3 text-caption font-medium text-muted-foreground"
+                    >
+                      {subgroup.label}
+                    </h3>
+                  ) : null}
+                  <ul className="space-y-px">{subgroup.entries.map(navItem)}</ul>
+                </div>
+              ))}
+            </section>
+          ))}
+        </div>
+      )}
+    </nav>
+  );
+
+  // The sidebar's settings section, which exists only in the docked layout,
+  // shows this navigation; the page then keeps only its content.
+  const dockedNav =
+    dockedNavTarget
+      ? createPortal(
+          <div className="flex min-h-0 flex-1 flex-col pt-1">
+            {searchBox}
+            {navList}
+          </div>,
+          dockedNavTarget,
+        )
+      : null;
+
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background md:flex-row">
+      {dockedNav}
+      {!dockedNav && (
       <aside className="shrink-0 border-b border-surface-border md:flex md:w-60 md:flex-col md:border-b-0 md:border-r">
         <div className="flex h-16 shrink-0 items-center gap-1 px-4 md:px-5">
           <CollapsedNavTrigger />
@@ -457,107 +580,10 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
             )}
           </select>
         </div>
-        <div className="relative mx-3 mb-3 hidden shrink-0 md:block">
-          <Search
-            aria-hidden="true"
-            className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-          />
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => {
-              setQuery(event.target.value);
-              setActiveResult(0);
-            }}
-            onKeyDown={(event) => {
-              if (event.nativeEvent.isComposing) return;
-              if (event.key === "ArrowDown") {
-                event.preventDefault();
-                setActiveResult((current) =>
-                  Math.min(current + 1, Math.max(results.length - 1, 0)),
-                );
-              } else if (event.key === "ArrowUp") {
-                event.preventDefault();
-                setActiveResult((current) => Math.max(current - 1, 0));
-              } else if (event.key === "Enter") {
-                event.preventDefault();
-                openResult(activeResult);
-              } else if (event.key === "Escape" && query) {
-                event.preventDefault();
-                setQuery("");
-              }
-            }}
-            placeholder={t(($) => $.page.search)}
-            aria-label={t(($) => $.page.search)}
-            aria-controls={query ? "settings-search-results" : undefined}
-            className="h-8 w-full rounded-lg border border-input bg-transparent pl-8 pr-8 text-body outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30 [&::-webkit-search-cancel-button]:hidden"
-          />
-          {query ? (
-            <TooltipHint label={t(($) => $.page.search_clear)}>
-              <button
-                type="button"
-                onClick={() => setQuery("")}
-                aria-label={t(($) => $.page.search_clear)}
-                className="absolute right-1.5 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
-              >
-                <X className="size-3.5" aria-hidden="true" />
-              </button>
-            </TooltipHint>
-          ) : null}
-        </div>
-        <nav
-          aria-label={t(($) => $.page.title)}
-          className="hidden min-h-0 overflow-y-auto px-3 pb-6 md:block"
-        >
-          {query ? (
-            searchResults
-          ) : (
-            <div className="divide-y divide-surface-border">
-              {groups.map((group) => (
-                <section
-                  key={group.key}
-                  aria-labelledby={`settings-group-${group.key}`}
-                  className="py-2.5 first:pt-0"
-                >
-                  <h2
-                    id={`settings-group-${group.key}`}
-                    className="flex h-8 min-w-0 items-center gap-2.5 px-3 text-label font-semibold text-foreground"
-                  >
-                    <span className="flex size-4 shrink-0 items-center justify-center">
-                      {group.mark}
-                    </span>
-                    <span className="truncate">{group.label}</span>
-                    {group.tag ? (
-                      <span className="ml-auto shrink-0 truncate text-micro font-medium text-muted-foreground">
-                        {group.tag}
-                      </span>
-                    ) : null}
-                  </h2>
-                  {group.subgroups.map((subgroup) => (
-                    <div
-                      key={subgroup.key}
-                      role={subgroup.label ? "group" : undefined}
-                      aria-labelledby={
-                        subgroup.label ? `settings-subgroup-${subgroup.key}` : undefined
-                      }
-                    >
-                      {subgroup.label ? (
-                        <h3
-                          id={`settings-subgroup-${subgroup.key}`}
-                          className="px-3 pb-1 pt-3 text-caption font-medium text-muted-foreground"
-                        >
-                          {subgroup.label}
-                        </h3>
-                      ) : null}
-                      <ul className="space-y-px">{subgroup.entries.map(navItem)}</ul>
-                    </div>
-                  ))}
-                </section>
-              ))}
-            </div>
-          )}
-        </nav>
+        {searchBox}
+        {navList}
       </aside>
+      )}
       <div
         ref={contentRef}
         key={`${active.value}:${location.integration ?? ""}`}

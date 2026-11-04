@@ -69,5 +69,12 @@
       "title": "加入 Discord",
       "dismiss": "关闭"
     }
+  },
+  "docked": {
+    "sections": "侧边栏分区",
+    "menu": "菜单",
+    "projects": "项目目录",
+    "settings": "设置",
+    "projects_empty": "尚未连接代码仓库。"
   }
 }

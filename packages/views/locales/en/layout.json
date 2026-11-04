@@ -69,5 +69,12 @@
       "title": "Join our Discord",
       "dismiss": "Dismiss"
     }
+  },
+  "docked": {
+    "sections": "Sidebar sections",
+    "menu": "Menu",
+    "projects": "Projects",
+    "settings": "Settings",
+    "projects_empty": "No repository connected yet."
   }
 }

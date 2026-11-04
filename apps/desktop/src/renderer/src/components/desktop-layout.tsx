@@ -18,7 +18,7 @@ import {
   NavigationProgress,
 } from "@multica/views/layout";
 import { SearchCommand, SearchTrigger } from "@multica/views/search";
-import { FloatingChat } from "@multica/views/chat";
+import { DockedChatLayout, FloatingChat } from "@multica/views/chat";
 import { WorkspaceSlugProvider, paths, useCurrentWorkspace } from "@multica/core/paths";
 import { workspaceListOptions } from "@multica/core/workspace";
 import {
@@ -294,7 +294,9 @@ export function DesktopShell() {
                       used to have no navigation feedback at all — a click just
                       froze until the destination committed (MUL-6404). */}
                   <NavigationProgress />
-                  <TabContent />
+                  <DockedChatLayout enabled={Boolean(slug)}>
+                    <TabContent />
+                  </DockedChatLayout>
                   <BrowserLayer />
                   {slug && <FloatingChat />}
                 </MainCanvas>
