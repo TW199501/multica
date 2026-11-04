@@ -56,8 +56,10 @@ describe("TabLimitDialog", () => {
   });
 
   it("takes the tab count in its title from TAB_LIMIT", () => {
-    for (const lng of Object.keys(RESOURCES) as (keyof typeof RESOURCES)[]) {
-      expect(RESOURCES[lng].settings.desktop.tab_bar.limit_title).toContain("{{count}}");
+    type Settings = { desktop: { tab_bar: { limit_title: string } } };
+    for (const bundle of Object.values(RESOURCES)) {
+      const settings = (bundle as { settings: Settings }).settings;
+      expect(settings.desktop.tab_bar.limit_title).toContain("{{count}}");
     }
   });
 
