@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import type { Workspace } from "@multica/core/types";
 import { workspaceListOptions } from "@multica/core/workspace";
 
@@ -75,6 +76,44 @@ describe("BrowserLayer", () => {
     rerender(view("/acme/browser"));
     expect(screen.getByTestId("pane-acme")).toBe(acme);
     expect(acme.dataset.active).toBe("true");
+  });
+
+  describe("in the docked chat layout", () => {
+    beforeEach(() => {
+      vi.stubGlobal(
+        "ResizeObserver",
+        class {
+          observe() {}
+          disconnect() {}
+        },
+      );
+    });
+    afterEach(() => {
+      useDockedLayoutStore.setState({ pageElement: null });
+      vi.restoreAllMocks();
+      vi.unstubAllGlobals();
+    });
+
+    it("covers only the docked page column", () => {
+      const rect = (left: number, top: number, width: number, height: number) =>
+        ({ left, top, width, height, x: left, y: top, right: left + width, bottom: top + height, toJSON() {} }) as DOMRect;
+      const page = document.createElement("div");
+      vi.spyOn(page, "getBoundingClientRect").mockReturnValue(rect(300, 50, 800, 600));
+      vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
+        return this === page ? rect(300, 50, 800, 600) : rect(100, 40, 1400, 700);
+      });
+      useDockedLayoutStore.setState({ pageElement: page });
+
+      const { view } = setup();
+      render(view("/acme/browser"));
+
+      const panes = screen.getByTestId("pane-acme").parentElement!.parentElement!;
+      expect(panes.style.left).toBe("200px");
+      expect(panes.style.top).toBe("10px");
+      expect(panes.style.width).toBe("800px");
+      expect(panes.style.height).toBe("600px");
+      expect(panes.closest("[data-browser-frame]")!.className).toContain("pointer-events-none");
+    });
   });
 
   it("drops panes of deleted workspaces", () => {

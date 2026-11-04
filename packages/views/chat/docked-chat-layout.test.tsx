@@ -15,7 +15,11 @@ vi.mock("@multica/core/chat", () => {
 });
 
 vi.mock("@multica/core/paths", () => ({
-  useWorkspacePaths: () => ({ chat: () => "/acme/chat", settings: () => "/acme/settings" }),
+  useWorkspacePaths: () => ({
+    chat: () => "/acme/chat",
+    inbox: () => "/acme/inbox",
+    settings: () => "/acme/settings",
+  }),
 }));
 
 vi.mock("@multica/ui/hooks/use-mobile", () => ({
@@ -64,11 +68,20 @@ describe("DockedChatLayout", () => {
     expect(chat).toHaveAttribute("data-variant", "docked");
     expect(chat.compareDocumentPosition(page) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(page.closest("[data-slot='docked-page']")).not.toBeNull();
+    expect(useDockedLayoutStore.getState().pageElement).toBe(page.closest("[data-slot='docked-page']"));
     expect(screen.getByRole("separator")).toBeInTheDocument();
   });
 
   it("keeps Settings in the middle and moves the conversation to the right", () => {
     renderAt("/acme/settings");
+
+    const chat = screen.getByTestId("chat-window");
+    const page = screen.getByTestId("route-page");
+    expect(page.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("keeps the Inbox in the middle and moves the conversation to the right", () => {
+    renderAt("/acme/inbox");
 
     const chat = screen.getByTestId("chat-window");
     const page = screen.getByTestId("route-page");

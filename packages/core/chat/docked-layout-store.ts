@@ -17,6 +17,12 @@ interface DockedLayoutState {
   /** True while the docked layout is on screen. */
   layoutActive: boolean;
   setLayoutActive: (active: boolean) => void;
+  /**
+   * The docked page column, for overlays drawn outside it (the desktop
+   * browser) that must cover only that column.
+   */
+  pageElement: HTMLElement | null;
+  setPageElement: (element: HTMLElement | null) => void;
 }
 
 export const useDockedLayoutStore = create<DockedLayoutState>()((set) => ({
@@ -26,4 +32,6 @@ export const useDockedLayoutStore = create<DockedLayoutState>()((set) => ({
   setSettingsNavTarget: (settingsNavTarget) => set({ settingsNavTarget }),
   layoutActive: false,
   setLayoutActive: (layoutActive) => set({ layoutActive }),
+  pageElement: null,
+  setPageElement: (pageElement) => set({ pageElement }),
 }));
