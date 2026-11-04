@@ -974,7 +974,7 @@
       "open_window": "새 창에서 열기",
       "new": "새 탭",
       "pinned_name": "{{title}} (고정됨)",
-      "limit_title": "탭 10개가 열려 있습니다",
+      "limit_title": "탭 {{count}}개가 열려 있습니다",
       "limit_body": "가장 왼쪽의 \"{{title}}\" 탭을 닫고 새 탭을 열까요?",
       "limit_confirm": "닫고 열기"
     },

@@ -10,7 +10,7 @@ import {
 } from "@multica/ui/components/ui/alert-dialog";
 import { useT } from "@multica/views/i18n";
 import { useTabPresentation } from "@multica/views/layout";
-import { useTabStore, type Tab } from "@/stores/tab-store";
+import { TAB_LIMIT, useTabStore, type Tab } from "@/stores/tab-store";
 
 /** Asks to close the leftmost unpinned tab when a new one would pass TAB_LIMIT. */
 export function TabLimitDialog() {
@@ -35,7 +35,9 @@ export function TabLimitDialog() {
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t(($) => $.desktop.tab_bar.limit_title)}</AlertDialogTitle>
+          <AlertDialogTitle>
+            {t(($) => $.desktop.tab_bar.limit_title, { count: TAB_LIMIT })}
+          </AlertDialogTitle>
           {leftmost && <LimitBody tab={leftmost} />}
         </AlertDialogHeader>
         <AlertDialogFooter>

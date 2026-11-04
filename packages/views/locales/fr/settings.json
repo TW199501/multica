@@ -1240,7 +1240,7 @@
       "open_window": "Ouvrir dans une nouvelle fenêtre",
       "new": "Nouvel onglet",
       "pinned_name": "{{title}} (épinglé)",
-      "limit_title": "10 onglets ouverts",
+      "limit_title": "{{count}} onglets ouverts",
       "limit_body": "Fermer « {{title}} », l’onglet le plus à gauche, pour en ouvrir un nouveau ?",
       "limit_confirm": "Fermer et ouvrir"
     },

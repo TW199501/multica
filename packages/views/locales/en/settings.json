@@ -1240,7 +1240,7 @@
       "open_window": "Open as new window",
       "new": "New tab",
       "pinned_name": "{{title}} (pinned)",
-      "limit_title": "10 tabs open",
+      "limit_title": "{{count}} tabs open",
       "limit_body": "Close “{{title}}”, the leftmost tab, to open a new one?",
       "limit_confirm": "Close and open"
     },

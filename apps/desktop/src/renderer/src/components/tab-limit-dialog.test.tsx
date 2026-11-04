@@ -55,6 +55,12 @@ describe("TabLimitDialog", () => {
     ).toBeTruthy();
   });
 
+  it("takes the tab count in its title from TAB_LIMIT", () => {
+    for (const lng of Object.keys(RESOURCES) as (keyof typeof RESOURCES)[]) {
+      expect(RESOURCES[lng].settings.desktop.tab_bar.limit_title).toContain("{{count}}");
+    }
+  });
+
   it("closes the leftmost tab and activates the new one on confirm", async () => {
     fillToLimitAndAskForAnother();
     const leftmost = tabs()[0].id;
