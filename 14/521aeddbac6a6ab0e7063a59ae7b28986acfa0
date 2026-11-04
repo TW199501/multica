@@ -1,0 +1,27 @@
+apps/desktop/src/renderer/src/browser-plugin/browser-layer.test.tsx
+  s_aa47a447e01641::t_a9ec0b8c14b02c 3-4,81-118
+apps/desktop/src/renderer/src/browser-plugin/browser-layer.tsx
+  s_aa47a447e01641::t_47496600ea68ac 1,5,12-44,46-47,53-55,69-88
+packages/core/chat/docked-layout-store.ts
+  s_aa47a447e01641::t_ce740f74991b0d 20-25,35-36
+packages/views/chat/docked-chat-layout.test.tsx
+  s_aa47a447e01641::t_8d78adec60b5a9 18-22,71,83-90
+packages/views/chat/docked-chat-layout.tsx
+  s_aa47a447e01641::t_e39c1780170322 22,32,59-61,67,92-96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "14521aeddbac6a6ab0e7063a59ae7b28986acfa0",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
