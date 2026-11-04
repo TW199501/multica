@@ -734,6 +734,8 @@ export const useTabStore = create<TabStore>()(
         // NavigationAdapter's path-parser should already have filtered
         // these, but belt-and-braces keeps garbage out of the store.
         if (!slug) return;
+        // A limit prompt belongs to the workspace it was raised in.
+        if (get().pendingTabOpen) set({ pendingTabOpen: null });
         const { byWorkspace } = get();
         const existing = byWorkspace[slug];
 

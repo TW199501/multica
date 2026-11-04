@@ -1709,6 +1709,16 @@ describe("tab limit", () => {
     expect(useTabStore.getState().pendingTabOpen).toBeNull();
   });
 
+  it("drops a pending request when the workspace changes", () => {
+    fillToLimit();
+    useTabStore.getState().addTab("/acme/projects", "Projects");
+    expect(useTabStore.getState().pendingTabOpen).not.toBeNull();
+
+    useTabStore.getState().switchWorkspace("butter");
+
+    expect(useTabStore.getState().pendingTabOpen).toBeNull();
+  });
+
   it("cancel leaves the tabs unchanged", () => {
     fillToLimit();
     const before = tabs();
