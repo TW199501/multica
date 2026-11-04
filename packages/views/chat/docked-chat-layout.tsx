@@ -90,7 +90,7 @@ function DockedChatLayoutForWorkspace({
       key="conversation"
       id="conversation"
       defaultSize="32%"
-      minSize="30%"
+      minSize="360px"
     >
       <div className={pageFirst ? "h-full border-l pb-[30px]" : "h-full border-r pb-[30px]"}>
         <ChatWindow variant="docked" />

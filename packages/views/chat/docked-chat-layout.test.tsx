@@ -38,6 +38,19 @@ vi.mock("./components/chat-window", () => ({
   ),
 }));
 
+const panelProps: Record<string, { minSize?: unknown }> = {};
+
+vi.mock("@multica/ui/components/ui/resizable", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@multica/ui/components/ui/resizable")>();
+  return {
+    ...actual,
+    ResizablePanel: (props: React.ComponentProps<typeof actual.ResizablePanel>) => {
+      if (props.id) panelProps[props.id] = { minSize: props.minSize };
+      return <actual.ResizablePanel {...props} />;
+    },
+  };
+});
+
 const { DockedChatLayout } = await import("./docked-chat-layout");
 
 function renderAt(pathname: string, enabled?: boolean, pageFirstPaths?: string[]) {
@@ -119,6 +132,13 @@ describe("DockedChatLayout", () => {
     const chat = screen.getByTestId("chat-window");
     const page = screen.getByTestId("route-page");
     expect(page.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("never lets the docked conversation shrink below 360px", () => {
+    renderAt("/acme/issues");
+
+    expect(panelProps.conversation?.minSize).toBe("360px");
+    expect(panelProps.page?.minSize).toBe("25%");
   });
 
   it("reports itself active only while the conversation is docked", () => {
