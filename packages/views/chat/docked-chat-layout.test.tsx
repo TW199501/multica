@@ -18,6 +18,11 @@ vi.mock("@multica/core/paths", () => ({
   useWorkspacePaths: () => ({
     chat: () => "/acme/chat",
     inbox: () => "/acme/inbox",
+    agents: () => "/acme/agents",
+    squads: () => "/acme/squads",
+    skills: () => "/acme/skills",
+    runtimes: () => "/acme/runtimes",
+    usage: () => "/acme/usage",
     settings: () => "/acme/settings",
   }),
 }));
@@ -86,6 +91,25 @@ describe("DockedChatLayout", () => {
     const chat = screen.getByTestId("chat-window");
     const page = screen.getByTestId("route-page");
     expect(page.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it.each(["/acme/agents", "/acme/squads/s1", "/acme/skills", "/acme/runtimes", "/acme/usage"])(
+    "keeps the management page %s in the middle",
+    (path) => {
+      renderAt(path);
+
+      const chat = screen.getByTestId("chat-window");
+      const page = screen.getByTestId("route-page");
+      expect(page.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    },
+  );
+
+  it("puts the conversation in the middle on work pages such as issues", () => {
+    renderAt("/acme/projects");
+
+    const chat = screen.getByTestId("chat-window");
+    const page = screen.getByTestId("route-page");
+    expect(chat.compareDocumentPosition(page) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("puts a page-first route such as the desktop browser in the middle", () => {
