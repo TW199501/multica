@@ -1,0 +1,21 @@
+apps/desktop/src/renderer/src/components/tab-limit-dialog.test.tsx
+  s_aa47a447e01641::t_25e3603ae31ff3 43,51-52,69,81
+apps/desktop/src/renderer/src/components/tab-limit-dialog.tsx
+  s_aa47a447e01641::t_4103e53715af9a 2-10,30,36-38,40-43,45-48,58,60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b8f1b8ec466f7ce3236bc89ff81e68ac45bc5641",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
