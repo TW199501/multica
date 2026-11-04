@@ -1,0 +1,37 @@
+packages/views/layout/app-sidebar.tsx
+  s_aa47a447e01641::t_6975c926b6eac3 619-655,820-822,863,876
+packages/views/layout/docked-sidebar-sections.test.tsx
+  s_aa47a447e01641::t_fd996dfa32e8a7 71-74,78-90
+packages/views/layout/docked-sidebar-sections.tsx
+  s_aa47a447e01641::t_0f6b49458bdc7c 4,7-11,91-96,98,100-129,143-147
+packages/views/locales/en/layout.json
+  s_aa47a447e01641::t_345fb3ee74f82a 78-80
+packages/views/locales/fr/layout.json
+  s_aa47a447e01641::t_793dfd7c05b98c 78-80
+packages/views/locales/ja/layout.json
+  s_aa47a447e01641::t_1b7abd6fc0db85 78-80
+packages/views/locales/ko/layout.json
+  s_aa47a447e01641::t_e704cec5b3a229 78-80
+packages/views/locales/zh-Hans/layout.json
+  s_aa47a447e01641::t_be70b1998cc0c1 78-80
+packages/views/locales/zh-Hant/layout.json
+  s_aa47a447e01641::t_64026dc02ba24a 78-80
+packages/views/settings/components/settings-page.tsx
+  s_aa47a447e01641::t_8bbe6d883fa63b 116-117,364-365,367-372,375,436,488,502-507,530-533
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "666464f6b49bf67589fe5a37880a76dafd485bb7",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
