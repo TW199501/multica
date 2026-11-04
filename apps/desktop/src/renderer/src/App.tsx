@@ -52,15 +52,16 @@ const HTML_LANG: Record<SupportedLocale, string> = {
 
 
 /**
- * Cmd/Ctrl+W: close the active tab. When the last real tab is closed
- * (or no tabs/workspace exist — e.g. login page), close the window.
+ * Cmd/Ctrl+W: close the active tab. The main window always keeps at least
+ * one tab, so the last tab is left alone. With no workspace (e.g. login
+ * page) or in a dedicated issue window, close the window instead.
  *
  * Mounted at the App root so every renderer state — including login,
  * loading, onboarding, and runtime-config errors — has a working Cmd+W
  * handler. Without this, states outside the tab shell would swallow the
  * shortcut and do nothing.
  */
-function useCmdWCloseTab() {
+export function useCmdWCloseTab() {
   useEffect(() => {
     return window.desktopAPI.onCloseActiveTab(() => {
       if (window.desktopAPI.windowContext?.kind === "issue") {
@@ -75,11 +76,7 @@ function useCmdWCloseTab() {
         return;
       }
       const group = byWorkspace[activeWorkspaceSlug];
-      if (!group || group.tabs.length <= 1) {
-        // Last tab (or no tabs) — close the window.
-        window.desktopAPI.closeWindow();
-        return;
-      }
+      if (!group || group.tabs.length <= 1) return;
       // Multiple tabs — close the active one.
       store.closeActiveTab();
     });
