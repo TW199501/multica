@@ -1,0 +1,39 @@
+apps/desktop/src/renderer/src/components/tab-limit-dialog.test.tsx
+  s_aa47a447e01641::t_3710c620270d2d 1-97
+apps/desktop/src/renderer/src/components/tab-limit-dialog.tsx
+  s_aa47a447e01641::t_9a5ab3e09b4e8f 1-63
+apps/desktop/src/renderer/src/components/desktop-layout.tsx
+  s_aa47a447e01641::t_e6a9df5f7f9cc3 42,312
+apps/desktop/src/renderer/src/stores/tab-store.test.ts
+  s_aa47a447e01641::t_355db1da7dcf40 14,1599-1722
+apps/desktop/src/renderer/src/stores/tab-store.ts
+  s_aa47a447e01641::t_368b9ad38b3f00 137-151,179-184,198-199,206-209,211-218,730,814,818-825,827-833,835-853,1215-1220,1398-1526
+packages/views/locales/en/settings.json
+  s_aa47a447e01641::t_94dff8f5ae9cad 1242-1245
+packages/views/locales/fr/settings.json
+  s_aa47a447e01641::t_26a36d3ce1403c 1242-1245
+packages/views/locales/ja/settings.json
+  s_aa47a447e01641::t_bd595e23222ecd 1236-1239
+packages/views/locales/ko/settings.json
+  s_aa47a447e01641::t_251ecd9d752e32 976-979
+packages/views/locales/zh-Hans/settings.json
+  s_aa47a447e01641::t_1830be7c31ce38 1236-1239
+packages/views/locales/zh-Hant/settings.json
+  s_aa47a447e01641::t_29e6c0cb35bf1a 1236-1239
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "909bf658679ed7e166bd0768c24067ec3064a717",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
