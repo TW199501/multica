@@ -68,8 +68,24 @@ describe("docked sidebar sections", () => {
 
     fireEvent.click(screen.getByRole("tab", { name: "Projects" }));
 
-    expect(screen.getByText("No repository connected yet.")).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Pinned" })).toHaveTextContent("Nothing pinned yet.");
+    expect(screen.getByRole("region", { name: "File explorer" })).toHaveTextContent(
+      "No repository connected yet.",
+    );
     expect(screen.queryByTestId("menu")).not.toBeInTheDocument();
+  });
+
+  it("shows pinned items above the file explorer", () => {
+    render(
+      <I18nProvider locale="en" resources={{ en: { layout: enLayout } }}>
+        {dockedSectionBody("projects", { pinned: <a href="/acme/projects/p1">Roadmap</a> })}
+      </I18nProvider>,
+    );
+
+    const pinned = screen.getByRole("region", { name: "Pinned" });
+    const explorer = screen.getByRole("region", { name: "File explorer" });
+    expect(pinned).toHaveTextContent("Roadmap");
+    expect(pinned.compareDocumentPosition(explorer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("opens Settings from its tab and hosts the settings navigation there", () => {

@@ -75,6 +75,8 @@
     "menu": "菜单",
     "projects": "项目目录",
     "settings": "设置",
-    "projects_empty": "尚未连接代码仓库。"
+    "projects_empty": "尚未连接代码仓库。",
+    "explorer": "文件资源管理器",
+    "pinned_empty": "尚无固定项。"
   }
 }

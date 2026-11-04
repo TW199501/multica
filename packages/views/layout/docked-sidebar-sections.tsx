@@ -1,8 +1,14 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import { useDefaultLayout } from "react-resizable-panels";
 import { useDockedLayoutStore, type DockedSidebarSection } from "@multica/core/chat/docked-layout-store";
 import { useWorkspacePaths } from "@multica/core/paths";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@multica/ui/components/ui/resizable";
 import { cn } from "@multica/ui/lib/utils";
 import { useNavigation } from "../navigation";
 import { useT } from "../i18n";
@@ -82,13 +88,45 @@ export function DockedSidebarTabs({ active }: { active: DockedSidebarSection }) 
   );
 }
 
-/** Body of the project tree section until a repository source is connected. */
-export function DockedProjectTree() {
+/**
+ * Body of the projects section: pinned items on top (25%) and the file
+ * explorer below (75%), each scrolling on its own. The explorer stays empty
+ * until a repository source is connected.
+ */
+export function DockedProjectTree({ pinned }: { pinned?: ReactNode }) {
   const { t } = useT("layout");
+  const { defaultLayout, onLayoutChanged } = useDefaultLayout({ id: "multica_docked_projects_split" });
   return (
-    <div className="px-4 py-6 text-caption text-muted-foreground">
-      {t(($) => $.docked.projects_empty)}
-    </div>
+    <ResizablePanelGroup
+      orientation="vertical"
+      className="min-h-0 flex-1"
+      defaultLayout={defaultLayout}
+      onLayoutChanged={onLayoutChanged}
+    >
+      <ResizablePanel id="pinned" defaultSize="25%" minSize="10%">
+        <section aria-label={t(($) => $.sidebar.pinned_label)} className="flex h-full min-h-0 flex-col">
+          <h2 className="px-4 pb-1 pt-2 text-caption font-medium text-muted-foreground">
+            {t(($) => $.sidebar.pinned_label)}
+          </h2>
+          <div className="min-h-0 flex-1 overflow-y-auto px-2">
+            {pinned ?? (
+              <p className="px-2 py-1 text-caption text-muted-foreground">{t(($) => $.docked.pinned_empty)}</p>
+            )}
+          </div>
+        </section>
+      </ResizablePanel>
+      <ResizableHandle />
+      <ResizablePanel id="explorer" defaultSize="75%" minSize="25%">
+        <section aria-label={t(($) => $.docked.explorer)} className="flex h-full min-h-0 flex-col">
+          <h2 className="px-4 pb-1 pt-2 text-caption font-medium text-muted-foreground">
+            {t(($) => $.docked.explorer)}
+          </h2>
+          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-2 text-caption text-muted-foreground">
+            {t(($) => $.docked.projects_empty)}
+          </div>
+        </section>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 }
 
@@ -102,6 +140,9 @@ export function DockedSettingsNavHost() {
 }
 
 /** Body for a section other than the menu, which keeps the sidebar's own nav. */
-export function dockedSectionBody(active: Exclude<DockedSidebarSection, "menu">): ReactNode {
-  return active === "projects" ? <DockedProjectTree /> : <DockedSettingsNavHost />;
+export function dockedSectionBody(
+  active: Exclude<DockedSidebarSection, "menu">,
+  { pinned }: { pinned?: ReactNode } = {},
+): ReactNode {
+  return active === "projects" ? <DockedProjectTree pinned={pinned} /> : <DockedSettingsNavHost />;
 }
