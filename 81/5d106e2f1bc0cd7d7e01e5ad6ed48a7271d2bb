@@ -1,0 +1,23 @@
+apps/desktop/src/renderer/src/components/desktop-layout.tsx
+  s_aa47a447e01641::t_efcd671a3ccbff 297-300
+packages/views/chat/docked-chat-layout.test.tsx
+  s_aa47a447e01641::t_f12dd80ba07a08 32,44,74-81
+packages/views/chat/docked-chat-layout.tsx
+  s_aa47a447e01641::t_5eb0448b23e803 20-24,31-32,35,37-39,42-52,58,82-83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "815d106e2f1bc0cd7d7e01e5ad6ed48a7271d2bb",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
