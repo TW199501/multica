@@ -1,0 +1,23 @@
+packages/views/workflows/workflows-page.test.tsx
+  s_aa47a447e01641::t_79c6a2afb58987 1-88
+packages/views/workflows/workflows-page.tsx
+  s_aa47a447e01641::t_6f6665ffabf016 7
+packages/views/workflows/workflows-tab.tsx
+  s_aa47a447e01641::t_643939c00a5ea4 14,48,65-67,69,116,135,141-177,199-211,216-227
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c20b710ae3a8130387e72d22cd422b42a437afe1",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
