@@ -92,7 +92,7 @@ function DockedChatLayoutForWorkspace({
       defaultSize="32%"
       minSize="360px"
     >
-      <div className={pageFirst ? "h-full border-l pb-[30px]" : "h-full border-r pb-[30px]"}>
+      <div className={pageFirst ? "h-full border-l" : "h-full border-r"}>
         <ChatWindow variant="docked" />
       </div>
     </ResizablePanel>

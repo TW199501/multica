@@ -7,6 +7,7 @@ vi.mock("@multica/core/issue-statuses/hooks", () => ({
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "@multica/core/api";
 import { renderWithI18n } from "../test/i18n";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import { AppSidebar } from "./app-sidebar";
 
 const { appForeground, chatSessions, chatStore, detail, deletePin, invitationApi, navigation, pins, sidebarState, summary, workspaces } = vi.hoisted(() => ({
@@ -64,9 +65,21 @@ vi.mock("@dnd-kit/sortable", () => ({
 }));
 vi.mock("@dnd-kit/utilities", () => ({ CSS: { Transform: { toString: () => undefined } } }));
 vi.mock("@multica/ui/components/ui/sidebar", () => ({
-  Sidebar: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  SidebarContent: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  SidebarFooter: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  Sidebar: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-slot="sidebar" className={className}>
+      {children}
+    </div>
+  ),
+  SidebarContent: ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (
+    <div data-slot="sidebar-content" style={style}>
+      {children}
+    </div>
+  ),
+  SidebarFooter: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-slot="sidebar-footer" className={className}>
+      {children}
+    </div>
+  ),
   SidebarGroup: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   SidebarGroupContent: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   SidebarGroupLabel: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -442,6 +455,33 @@ describe("docked layout", () => {
 
     expect(container.querySelector('button[data-href="/acme/settings"]')).toBeNull();
     expect(container.querySelector('button[data-href="/acme/usage"]')).not.toBeNull();
+  });
+
+  it("shows the menu scrollbar and leaves the footer padding to the status bar", () => {
+    chatStore.current = { activeSessionId: null, isOpen: false, floatingChatEnabled: false };
+    const { container } = render(<AppSidebar />);
+
+    const content = container.querySelector<HTMLElement>("[data-slot='sidebar-content']");
+    expect(content?.style.scrollbarWidth).toBe("thin");
+    expect(container.querySelector("[data-slot='sidebar-footer']")).not.toHaveClass("pb-[30px]");
+  });
+
+  it("keeps the author's hidden menu scrollbar while the chat floats", () => {
+    const { container } = render(<AppSidebar />);
+
+    const content = container.querySelector<HTMLElement>("[data-slot='sidebar-content']");
+    expect(content?.style.scrollbarWidth).toBe("");
+  });
+
+  it("ends the sidebar above the status bar while the docked layout is on screen", () => {
+    useDockedLayoutStore.setState({ layoutActive: true });
+    const { container, unmount } = render(<AppSidebar />);
+
+    expect(container.querySelector("[data-slot='sidebar']")).toHaveClass("h-[calc(100svh-30px)]");
+    unmount();
+    useDockedLayoutStore.setState({ layoutActive: false });
+    const second = render(<AppSidebar />);
+    expect(second.container.querySelector("[data-slot='sidebar']")).not.toHaveClass("h-[calc(100svh-30px)]");
   });
 });
 

@@ -71,6 +71,7 @@ import { inboxUnreadSummaryEnabled, inboxUnreadSummaryOptions, useInboxUnreadCou
 import { chatSessionsOptions } from "@multica/core/chat/queries";
 import { countUnreadChatMessages } from "@multica/core/chat/unread";
 import { useChatStore } from "@multica/core/chat";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import { api, ApiError } from "@multica/core/api";
 import { useConfigStore } from "@multica/core/config";
 import { pinListOptions } from "@multica/core/pins/queries";
@@ -462,6 +463,7 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
   // Docked layout: the floating chat preference is off and the sidebar is a
   // permanent column (on compact screens it is a sheet and stays as before).
   const docked = useChatStore((s) => s.floatingChatEnabled === false) && !isCompact;
+  const dockedLayoutActive = useDockedLayoutStore((s) => s.layoutActive);
   useEffect(() => {
     setOpenMobile(false);
   }, [pathname, setOpenMobile]);
@@ -658,7 +660,8 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
 
   return (
     <RouteDataPrefetch wsId={wsId} userId={userId ?? null}>
-      <Sidebar variant="inset">
+      {/* The sidebar is fixed to the viewport, so it has to stop above the docked status bar itself. */}
+      <Sidebar variant="inset" className={dockedLayoutActive ? "h-[calc(100svh-30px)]" : undefined}>
         {topSlot}
         {/* Workspace Switcher */}
         <SidebarHeader className={cn("py-3", headerClassName)} style={headerStyle}>
@@ -823,7 +826,11 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
         {docked && dockedSection !== "menu" ? (
           dockedSectionBody(dockedSection, { pinned: visiblePinned.length > 0 ? pinnedList : undefined })
         ) : (
-        <SidebarContent ref={sidebarScrollRef} style={sidebarFadeStyle}>
+        <SidebarContent
+          ref={sidebarScrollRef}
+          // A set scrollbar-width overrides the no-scrollbar ::-webkit-scrollbar rule in Chromium.
+          style={docked ? { ...sidebarFadeStyle, scrollbarWidth: "thin" } : sidebarFadeStyle}
+        >
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu className="gap-0.5">
@@ -935,7 +942,7 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
         </SidebarContent>
         )}
 
-        <SidebarFooter className={docked ? "p-2 pb-[30px]" : "p-2"}>
+        <SidebarFooter className="p-2">
           <SidebarMenu className="gap-0.5">
             {utilityNav.filter((item) => !(docked && item.key === "settings")).map((item) => {
               const href = p[item.key]();

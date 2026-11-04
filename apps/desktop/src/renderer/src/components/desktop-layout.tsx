@@ -14,6 +14,7 @@ import {
 import { ModalRegistry } from "@multica/views/modals/registry";
 import {
   AppSidebar,
+  DockedStatusBar,
   GlobalShortcuts,
   NavigationProgress,
 } from "@multica/views/layout";
@@ -259,7 +260,7 @@ export function DesktopShell() {
           IndexRedirect, not a route. */}
       <WorkspaceSlugProvider slug={slug}>
         <DesktopInboxBridge />
-        <div className="flex h-screen bg-app-shell">
+        <div className="flex h-screen flex-col bg-app-shell">
           {/* bg-app-shell is the wrapper's non-inset fill, so it also owns the
               non-inset half of --sidebar-wrapper-fill. sidebar.tsx supplies the
               inset half of both. Anything that has to paint an opaque layer
@@ -273,7 +274,7 @@ export function DesktopShell() {
               50px under this one (MUL-6218). */}
           <SidebarProvider
             hasExternalTrigger
-            className="flex-1 bg-app-shell [--sidebar-wrapper-fill:var(--app-shell)]"
+            className="min-h-0 flex-1 bg-app-shell [--sidebar-wrapper-fill:var(--app-shell)]"
           >
             {slug && <GlobalShortcuts />}
             {slug && <WindowToolbar />}
@@ -307,6 +308,7 @@ export function DesktopShell() {
               </DesktopBrowserPluginProvider>
             </div>
           </SidebarProvider>
+          <DockedStatusBar />
         </div>
         {slug && <ModalRegistry />}
         {slug && <TabLimitDialog />}

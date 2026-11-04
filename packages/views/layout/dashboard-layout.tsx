@@ -5,6 +5,7 @@ import { SidebarProvider, SidebarInset } from "@multica/ui/components/ui/sidebar
 import { ModalRegistry } from "../modals/registry";
 import { SourceBackfillModal } from "../onboarding";
 import { AppSidebar } from "./app-sidebar";
+import { DockedStatusBar } from "./docked-status-bar";
 import { DashboardGuard } from "./dashboard-guard";
 import { NavigationProgress } from "./navigation-progress";
 import { WorkspacePresencePrefetch } from "./workspace-presence-prefetch";
@@ -34,18 +35,21 @@ export function DashboardLayout({
         </div>
       }
     >
-      <SidebarProvider className="h-svh bg-app-shell">
-        <GlobalShortcuts />
-        <WorkspacePresencePrefetch />
-        <AppSidebar searchSlot={searchSlot} />
-        <SidebarInset className="relative overflow-hidden">
-          <NavigationProgress />
-          {children}
-          <ModalRegistry />
-          <SourceBackfillModal />
-          {extra}
-        </SidebarInset>
-      </SidebarProvider>
+      <div className="flex h-svh flex-col bg-app-shell">
+        <SidebarProvider className="min-h-0 flex-1 bg-app-shell">
+          <GlobalShortcuts />
+          <WorkspacePresencePrefetch />
+          <AppSidebar searchSlot={searchSlot} />
+          <SidebarInset className="relative overflow-hidden">
+            <NavigationProgress />
+            {children}
+            <ModalRegistry />
+            <SourceBackfillModal />
+            {extra}
+          </SidebarInset>
+        </SidebarProvider>
+        <DockedStatusBar />
+      </div>
     </DashboardGuard>
   );
 }

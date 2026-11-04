@@ -141,6 +141,12 @@ describe("DockedChatLayout", () => {
     expect(panelProps.page?.minSize).toBe("25%");
   });
 
+  it("leaves the bottom spacing to the status bar under the shell", () => {
+    renderAt("/acme/issues");
+
+    expect(screen.getByTestId("chat-window").parentElement).not.toHaveClass("pb-[30px]");
+  });
+
   it("reports itself active only while the conversation is docked", () => {
     const { unmount } = renderAt("/acme/issues");
     expect(useDockedLayoutStore.getState().layoutActive).toBe(true);
