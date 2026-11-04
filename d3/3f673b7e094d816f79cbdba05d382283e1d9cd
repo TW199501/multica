@@ -1,0 +1,23 @@
+packages/views/layout/app-sidebar.tsx
+  s_aa47a447e01641::t_5c17061795e727 755-756,779
+packages/views/layout/docked-sidebar-sections.test.tsx
+  s_aa47a447e01641::t_53455e4d4a2ce0 89-103
+packages/views/layout/docked-sidebar-sections.tsx
+  s_aa47a447e01641::t_f4ec2ebca62397 3,17-19,27,30-38,40-42,48,51,60,69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d33f673b7e094d816f79cbdba05d382283e1d9cd",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
