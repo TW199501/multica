@@ -1233,7 +1233,10 @@
       "close_others": "關閉其他標籤頁",
       "open_window": "在新視窗開啟",
       "new": "新建標籤頁",
-      "pinned_name": "{{title}}（已固定）"
+      "pinned_name": "{{title}}（已固定）",
+      "limit_title": "分頁已達 10 個",
+      "limit_body": "要關閉最左邊的「{{title}}」再開新分頁嗎？",
+      "limit_confirm": "關閉並開啟"
     },
     "updates": {
       "title": "更新",

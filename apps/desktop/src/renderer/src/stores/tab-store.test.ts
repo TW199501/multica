@@ -11,6 +11,7 @@ import {
   mergePersistedTabs,
   useTabStore,
   getActiveTab,
+  TAB_LIMIT,
   type WorkspaceTabGroup,
 } from "./tab-store";
 
@@ -1593,5 +1594,129 @@ describe("reserved workspace restoration", () => {
     useTabStore.setState(restored);
     useTabStore.getState().validateWorkspaceSlugs(new Set(["acme"]));
     expect(useTabStore.getState().byWorkspace.dingtalk).toBeUndefined();
+  });
+});
+
+describe("tab limit", () => {
+  const tabs = () => useTabStore.getState().byWorkspace.acme.tabs;
+
+  // Workspace seed tab (/acme/issues) plus extra tabs up to TAB_LIMIT.
+  function fillToLimit() {
+    const store = useTabStore.getState();
+    store.switchWorkspace("acme");
+    for (let i = 1; i < TAB_LIMIT; i++) {
+      store.addTab(`/acme/issues/i${i}`, `Issue ${i}`);
+    }
+    expect(tabs()).toHaveLength(TAB_LIMIT);
+  }
+
+  it("caps a workspace at 10 tabs", () => {
+    expect(TAB_LIMIT).toBe(10);
+  });
+
+  it("asks before opening an 11th tab", () => {
+    fillToLimit();
+    const before = tabs();
+
+    const id = useTabStore.getState().addTab("/acme/projects", "Projects");
+
+    expect(id).toBe("");
+    expect(tabs()).toBe(before);
+    expect(useTabStore.getState().pendingTabOpen).toEqual({
+      path: "/acme/projects",
+      title: "Projects",
+      mode: "add",
+      activate: true,
+    });
+  });
+
+  it("asks before openTab creates an 11th tab, keeping its activate flag", () => {
+    fillToLimit();
+
+    const id = useTabStore
+      .getState()
+      .openTab("/acme/projects", "Projects", { activate: false });
+
+    expect(id).toBe("");
+    expect(tabs()).toHaveLength(TAB_LIMIT);
+    expect(useTabStore.getState().pendingTabOpen).toEqual({
+      path: "/acme/projects",
+      title: "Projects",
+      mode: "open",
+      activate: false,
+    });
+  });
+
+  it("closes the leftmost unpinned tab when confirmed", () => {
+    fillToLimit();
+    const [first, second] = tabs();
+    useTabStore.getState().togglePin(first.id);
+    useTabStore.getState().addTab("/acme/projects", "Projects");
+
+    const id = useTabStore.getState().confirmPendingTabOpen();
+
+    const s = useTabStore.getState();
+    const ids = tabs().map((t) => t.id);
+    expect(id).not.toBe("");
+    expect(ids).toHaveLength(TAB_LIMIT);
+    expect(ids).toContain(first.id);
+    expect(ids).not.toContain(second.id);
+    expect(tabs().find((t) => t.id === id)?.url).toBe("/acme/projects");
+    expect(getActiveTab(s)?.id).toBe(id);
+    expect(s.pendingTabOpen).toBeNull();
+  });
+
+  it("confirming an openTab request opens beside the opener without activating a background open", () => {
+    fillToLimit();
+    const activeBefore = useTabStore.getState().byWorkspace.acme.activeTabId;
+    useTabStore.getState().setActiveTab(tabs()[5].id);
+    const opener = tabs()[5].id;
+    useTabStore.getState().openTab("/acme/projects", "Projects");
+
+    const id = useTabStore.getState().confirmPendingTabOpen();
+
+    const s = useTabStore.getState();
+    expect(tabs()).toHaveLength(TAB_LIMIT);
+    expect(tabs().map((t) => t.id)).not.toContain(activeBefore);
+    const openerIndex = tabs().findIndex((t) => t.id === opener);
+    expect(tabs()[openerIndex + 1].id).toBe(id);
+    expect(getActiveTab(s)?.id).toBe(opener);
+  });
+
+  it("focuses an existing tab without counting it as new", () => {
+    fillToLimit();
+    const target = tabs()[3];
+
+    const id = useTabStore
+      .getState()
+      .openTab(target.url, "", { activate: true });
+
+    const s = useTabStore.getState();
+    expect(id).toBe(target.id);
+    expect(getActiveTab(s)?.id).toBe(target.id);
+    expect(tabs()).toHaveLength(TAB_LIMIT);
+    expect(s.pendingTabOpen).toBeNull();
+  });
+
+  it("opens normally when every tab is pinned", () => {
+    fillToLimit();
+    for (const tab of tabs()) useTabStore.getState().togglePin(tab.id);
+
+    const id = useTabStore.getState().addTab("/acme/projects", "Projects");
+
+    expect(id).not.toBe("");
+    expect(tabs()).toHaveLength(TAB_LIMIT + 1);
+    expect(useTabStore.getState().pendingTabOpen).toBeNull();
+  });
+
+  it("cancel leaves the tabs unchanged", () => {
+    fillToLimit();
+    const before = tabs();
+    useTabStore.getState().addTab("/acme/projects", "Projects");
+
+    useTabStore.getState().cancelPendingTabOpen();
+
+    expect(tabs()).toBe(before);
+    expect(useTabStore.getState().pendingTabOpen).toBeNull();
   });
 });

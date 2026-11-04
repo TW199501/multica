@@ -134,6 +134,21 @@ export interface WorkspaceTabGroup {
   recentTabIds: string[];
 }
 
+/** Most tabs a workspace keeps before a new one asks to close the leftmost. */
+export const TAB_LIMIT = 10;
+
+/**
+ * A new-tab request held back by TAB_LIMIT until the user confirms closing
+ * the leftmost unpinned tab. `mode` names the action to replay: `openTab`
+ * (inserts beside the opener) or `addTab` (appends).
+ */
+export interface PendingTabOpen {
+  path: string;
+  title: string;
+  mode: "open" | "add";
+  activate: boolean;
+}
+
 interface TabStore {
   /**
    * The workspace currently visible in the TabBar / TabContent. Null in three
@@ -162,6 +177,12 @@ interface TabStore {
   mountGeneration: number;
 
   /**
+   * Set when openTab/addTab would create a tab past TAB_LIMIT in a workspace
+   * that still has an unpinned tab to close. Not persisted.
+   */
+  pendingTabOpen: PendingTabOpen | null;
+
+  /**
    * Switch to a workspace.
    *   - If the group doesn't exist yet, create it with a single default tab.
    *   - If `openPath` is given, find a tab with that resourceKey and activate
@@ -174,15 +195,27 @@ interface TabStore {
    * Open-or-activate (dedupes by resourceKey) a tab in the active workspace.
    * `activate` focuses the opened/existing tab in the SAME store write — a
    * separate setActiveTab call would give subscribers (and React) two full
-   * passes for one user action.
+   * passes for one user action. Returns "" and sets `pendingTabOpen` instead
+   * of creating a tab past TAB_LIMIT.
    */
   openTab: (
     path: string,
     title: string,
     opts?: { activate?: boolean },
   ) => string;
-  /** Always creates a new tab (no dedupe) in the active workspace. */
+  /**
+   * Always creates a new tab (no dedupe) in the active workspace. Returns ""
+   * and sets `pendingTabOpen` instead of creating a tab past TAB_LIMIT.
+   */
   addTab: (path: string, title: string) => string;
+  /**
+   * Close the active workspace's leftmost unpinned tab, then replay the
+   * pending request (activating the new tab when it asked to). Returns the
+   * new tab id, or "" when nothing was pending.
+   */
+  confirmPendingTabOpen: () => string;
+  /** Drop the pending request; tabs stay as they are. */
+  cancelPendingTabOpen: () => void;
   /**
    * Close a tab. Finds it across all workspaces (callers like the X button
    * only know the tab id, not the owning workspace). If this is the last
@@ -694,6 +727,7 @@ export const useTabStore = create<TabStore>()(
       activeWorkspaceSlug: null,
       byWorkspace: {},
       mountGeneration: 0,
+      pendingTabOpen: null,
 
       switchWorkspace(slug, openPath) {
         // Defensive no-op if slug is empty/invalid — callers like the
@@ -777,106 +811,46 @@ export const useTabStore = create<TabStore>()(
       },
 
       openTab(path, title, opts) {
-        const { activeWorkspaceSlug, byWorkspace } = get();
-        const clean = sanitizeTabPath(path);
-        if (!activeWorkspaceSlug || !clean) return "";
-        const group = byWorkspace[activeWorkspaceSlug];
-        if (!group) return "";
-
-        // Dedup by resourceKey: the existing tab keeps its own url (its
-        // filters/anchor are its view state); we only focus it.
-        const key = resourceKeyForUrl(clean);
-        const existing = group.tabs.find((t) => t.resourceKey === key);
-        if (existing) {
-          const historyBase = withActiveSessionVisit(
-            group,
-            activeWorkspaceSlug,
-          );
-          const nextGroup = withBrowsingVisit(
-            reconcileGroup(historyBase, group.tabs, existing.id),
-            activeWorkspaceSlug,
-            existing.url,
-            { title: existing.title },
-          );
-          set({
-            byWorkspace: {
-              ...byWorkspace,
-              [activeWorkspaceSlug]: nextGroup,
-            },
-          });
-          return existing.id;
-        }
-
-        const tab = makeSession(clean, title);
-        // Insert immediately right of the opener (the active tab) — browser
-        // convention for cmd/middle/menu opens (MUL-5860) — rather than
-        // appending. The pinned-first invariant caps the left edge: a pinned
-        // opener's "right" is the start of the unpinned zone. The explicit
-        // "+" button appends instead (see addTab).
-        const activeIndex = group.tabs.findIndex(
-          (t) => t.id === group.activeTabId,
-        );
-        const insertAt =
-          activeIndex >= 0
-            ? Math.max(activeIndex + 1, pinnedBoundary(group.tabs))
-            : group.tabs.length;
-        const nextTabs = [
-          ...group.tabs.slice(0, insertAt),
-          tab,
-          ...group.tabs.slice(insertAt),
-        ];
-        const historyBase = withActiveSessionVisit(
-          group,
-          activeWorkspaceSlug,
-        );
-        const nextGroup = withBrowsingVisit(
-          reconcileGroup(
-            historyBase,
-            nextTabs,
-            opts?.activate === true ? tab.id : group.activeTabId,
-          ),
-          activeWorkspaceSlug,
-          clean,
-          { title: tab.title },
-        );
-        set({
-          byWorkspace: {
-            ...byWorkspace,
-            [activeWorkspaceSlug]: nextGroup,
-          },
-        });
-        return tab.id;
+        return openTabIn(get, set, path, title, opts, true);
       },
 
       addTab(path, title) {
-        const { activeWorkspaceSlug, byWorkspace } = get();
-        const clean = sanitizeTabPath(path);
-        if (!activeWorkspaceSlug || !clean) return "";
-        const group = byWorkspace[activeWorkspaceSlug];
-        if (!group) return "";
+        return addTabIn(get, set, path, title, true);
+      },
 
-        const tab = makeSession(clean, title);
-        const historyBase = withActiveSessionVisit(
-          group,
-          activeWorkspaceSlug,
-        );
-        const nextGroup = withBrowsingVisit(
-          reconcileGroup(
-            historyBase,
-            [...group.tabs, tab],
-            group.activeTabId,
-          ),
-          activeWorkspaceSlug,
-          clean,
-          { title: tab.title },
-        );
-        set({
-          byWorkspace: {
-            ...byWorkspace,
-            [activeWorkspaceSlug]: nextGroup,
-          },
-        });
-        return tab.id;
+      confirmPendingTabOpen() {
+        const pending = get().pendingTabOpen;
+        if (!pending) return "";
+        set({ pendingTabOpen: null });
+
+        const { activeWorkspaceSlug, byWorkspace } = get();
+        const group = activeWorkspaceSlug
+          ? byWorkspace[activeWorkspaceSlug]
+          : undefined;
+        const leftmost = group?.tabs.find((t) => !t.pinned);
+        if (group && leftmost && group.tabs.length >= TAB_LIMIT) {
+          get().closeTab(leftmost.id);
+        }
+
+        // Replay without the limit check: a group restored above the limit
+        // still swaps one tab for one instead of prompting again.
+        if (pending.mode === "open") {
+          return openTabIn(
+            get,
+            set,
+            pending.path,
+            pending.title,
+            { activate: pending.activate },
+            false,
+          );
+        }
+        const id = addTabIn(get, set, pending.path, pending.title, false);
+        if (id && pending.activate) get().setActiveTab(id);
+        return id;
+      },
+
+      cancelPendingTabOpen() {
+        if (get().pendingTabOpen) set({ pendingTabOpen: null });
       },
 
       closeTab(tabId) {
@@ -1238,7 +1212,12 @@ export const useTabStore = create<TabStore>()(
       },
 
       reset() {
-        set({ activeWorkspaceSlug: null, byWorkspace: {}, mountGeneration: 0 });
+        set({
+          activeWorkspaceSlug: null,
+          byWorkspace: {},
+          mountGeneration: 0,
+          pendingTabOpen: null,
+        });
       },
     }),
     {
@@ -1414,6 +1393,135 @@ export function mergePersistedTabs<T extends PersistedTabState>(
       : (Object.keys(byWorkspace)[0] ?? null);
 
   return { ...currentState, byWorkspace, activeWorkspaceSlug };
+}
+
+type GetTabStore = () => TabStore;
+type SetTabStore = (partial: Partial<TabStore>) => void;
+
+/** The limit only applies while closing a tab can make room for the new one. */
+function atTabLimit(tabs: TabSession[]): boolean {
+  return tabs.length >= TAB_LIMIT && tabs.some((t) => !t.pinned);
+}
+
+function openTabIn(
+  get: GetTabStore,
+  set: SetTabStore,
+  path: string,
+  title: string,
+  opts: { activate?: boolean } | undefined,
+  enforceLimit: boolean,
+): string {
+  const { activeWorkspaceSlug, byWorkspace } = get();
+  const clean = sanitizeTabPath(path);
+  if (!activeWorkspaceSlug || !clean) return "";
+  const group = byWorkspace[activeWorkspaceSlug];
+  if (!group) return "";
+
+  // Dedup by resourceKey: the existing tab keeps its own url (its
+  // filters/anchor are its view state); we only focus it.
+  const key = resourceKeyForUrl(clean);
+  const existing = group.tabs.find((t) => t.resourceKey === key);
+  if (existing) {
+    const historyBase = withActiveSessionVisit(group, activeWorkspaceSlug);
+    const nextGroup = withBrowsingVisit(
+      reconcileGroup(historyBase, group.tabs, existing.id),
+      activeWorkspaceSlug,
+      existing.url,
+      { title: existing.title },
+    );
+    set({
+      byWorkspace: {
+        ...byWorkspace,
+        [activeWorkspaceSlug]: nextGroup,
+      },
+    });
+    return existing.id;
+  }
+
+  if (enforceLimit && atTabLimit(group.tabs)) {
+    set({
+      pendingTabOpen: {
+        path: clean,
+        title,
+        mode: "open",
+        activate: opts?.activate === true,
+      },
+    });
+    return "";
+  }
+
+  const tab = makeSession(clean, title);
+  // Insert immediately right of the opener (the active tab) — browser
+  // convention for cmd/middle/menu opens (MUL-5860) — rather than
+  // appending. The pinned-first invariant caps the left edge: a pinned
+  // opener's "right" is the start of the unpinned zone. The explicit
+  // "+" button appends instead (see addTab).
+  const activeIndex = group.tabs.findIndex((t) => t.id === group.activeTabId);
+  const insertAt =
+    activeIndex >= 0
+      ? Math.max(activeIndex + 1, pinnedBoundary(group.tabs))
+      : group.tabs.length;
+  const nextTabs = [
+    ...group.tabs.slice(0, insertAt),
+    tab,
+    ...group.tabs.slice(insertAt),
+  ];
+  const historyBase = withActiveSessionVisit(group, activeWorkspaceSlug);
+  const nextGroup = withBrowsingVisit(
+    reconcileGroup(
+      historyBase,
+      nextTabs,
+      opts?.activate === true ? tab.id : group.activeTabId,
+    ),
+    activeWorkspaceSlug,
+    clean,
+    { title: tab.title },
+  );
+  set({
+    byWorkspace: {
+      ...byWorkspace,
+      [activeWorkspaceSlug]: nextGroup,
+    },
+  });
+  return tab.id;
+}
+
+function addTabIn(
+  get: GetTabStore,
+  set: SetTabStore,
+  path: string,
+  title: string,
+  enforceLimit: boolean,
+): string {
+  const { activeWorkspaceSlug, byWorkspace } = get();
+  const clean = sanitizeTabPath(path);
+  if (!activeWorkspaceSlug || !clean) return "";
+  const group = byWorkspace[activeWorkspaceSlug];
+  if (!group) return "";
+
+  if (enforceLimit && atTabLimit(group.tabs)) {
+    // The "+" button, addTab's only caller, activates the tab it adds.
+    set({
+      pendingTabOpen: { path: clean, title, mode: "add", activate: true },
+    });
+    return "";
+  }
+
+  const tab = makeSession(clean, title);
+  const historyBase = withActiveSessionVisit(group, activeWorkspaceSlug);
+  const nextGroup = withBrowsingVisit(
+    reconcileGroup(historyBase, [...group.tabs, tab], group.activeTabId),
+    activeWorkspaceSlug,
+    clean,
+    { title: tab.title },
+  );
+  set({
+    byWorkspace: {
+      ...byWorkspace,
+      [activeWorkspaceSlug]: nextGroup,
+    },
+  });
+  return tab.id;
 }
 
 function stepHistory(

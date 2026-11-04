@@ -39,6 +39,7 @@ import {
 } from "@/browser-plugin";
 import { TabBar } from "./tab-bar";
 import { TabContent } from "./tab-content";
+import { TabLimitDialog } from "./tab-limit-dialog";
 import { WindowOverlay } from "./window-overlay";
 import { WindowToolbar, WINDOW_TOOLBAR_CLEARANCE } from "./window-toolbar";
 
@@ -308,6 +309,7 @@ export function DesktopShell() {
           </SidebarProvider>
         </div>
         {slug && <ModalRegistry />}
+        {slug && <TabLimitDialog />}
         {slug && <SearchCommand />}
         <WindowOverlay />
       </WorkspaceSlugProvider>
