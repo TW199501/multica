@@ -463,7 +463,7 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
   // Docked layout: the floating chat preference is off and the sidebar is a
   // permanent column (on compact screens it is a sheet and stays as before).
   const docked = useChatStore((s) => s.floatingChatEnabled === false) && !isCompact;
-  const dockedLayoutActive = useDockedLayoutStore((s) => s.layoutActive);
+  const shellDocked = useDockedLayoutStore((s) => s.shellDocked);
   useEffect(() => {
     setOpenMobile(false);
   }, [pathname, setOpenMobile]);
@@ -661,7 +661,7 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
   return (
     <RouteDataPrefetch wsId={wsId} userId={userId ?? null}>
       {/* The sidebar is fixed to the viewport, so it has to stop above the docked status bar itself. */}
-      <Sidebar variant="inset" className={dockedLayoutActive ? "h-[calc(100svh-30px)]" : undefined}>
+      <Sidebar variant="inset" className={shellDocked ? "h-[calc(100svh-30px)]" : undefined}>
         {topSlot}
         {/* Workspace Switcher */}
         <SidebarHeader className={cn("py-3", headerClassName)} style={headerStyle}>

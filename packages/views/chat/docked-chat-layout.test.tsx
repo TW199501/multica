@@ -52,6 +52,7 @@ vi.mock("@multica/ui/components/ui/resizable", async (importOriginal) => {
 });
 
 const { DockedChatLayout } = await import("./docked-chat-layout");
+const { DockedStatusBar } = await import("../layout/docked-status-bar");
 
 function renderAt(pathname: string, enabled?: boolean, pageFirstPaths?: string[]) {
   const navigation: NavigationAdapter = {
@@ -68,6 +69,7 @@ function renderAt(pathname: string, enabled?: boolean, pageFirstPaths?: string[]
       <DockedChatLayout enabled={enabled} pageFirstPaths={pageFirstPaths}>
         <div data-testid="route-page">page</div>
       </DockedChatLayout>
+      <DockedStatusBar />
     </NavigationProvider>,
   );
 }
@@ -170,6 +172,31 @@ describe("DockedChatLayout", () => {
     renderAt("/acme/chat");
 
     expect(screen.queryByTestId("chat-window")).not.toBeInTheDocument();
+  });
+
+  it("keeps the docked shell and its status bar on the Chat tab while floating chat is off", () => {
+    const { container, unmount } = renderAt("/acme/chat");
+
+    expect(useDockedLayoutStore.getState().layoutActive).toBe(false);
+    expect(useDockedLayoutStore.getState().shellDocked).toBe(true);
+    expect(container.querySelector("[data-slot='docked-status-bar']")).not.toBeNull();
+    unmount();
+    expect(useDockedLayoutStore.getState().shellDocked).toBe(false);
+  });
+
+  it("drops the docked shell and its status bar while floating chat is on", () => {
+    chatState.floatingChatEnabled = true;
+    const { container } = renderAt("/acme/chat");
+
+    expect(useDockedLayoutStore.getState().shellDocked).toBe(false);
+    expect(container.querySelector("[data-slot='docked-status-bar']")).toBeNull();
+  });
+
+  it("drops the docked shell until the shell has a workspace", () => {
+    const { container } = renderAt("/acme/issues", false);
+
+    expect(useDockedLayoutStore.getState().shellDocked).toBe(false);
+    expect(container.querySelector("[data-slot='docked-status-bar']")).toBeNull();
   });
 
   it("leaves small screens alone", () => {

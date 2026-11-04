@@ -72,9 +72,16 @@ function DockedChatLayoutForWorkspace({
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
     id: pageFirst ? "multica_docked_chat_layout_page_first_v3" : "multica_docked_chat_layout_v2",
   });
-  const active = !floating && !isMobile && !isFloatingChatRouteSuppressed(pathname, wsPaths.chat());
+  const shellDocked = !floating && !isMobile;
+  const active = shellDocked && !isFloatingChatRouteSuppressed(pathname, wsPaths.chat());
   const setLayoutActive = useDockedLayoutStore((s) => s.setLayoutActive);
+  const setShellDocked = useDockedLayoutStore((s) => s.setShellDocked);
   const setPageElement = useDockedLayoutStore((s) => s.setPageElement);
+
+  useEffect(() => {
+    setShellDocked(shellDocked);
+    return () => setShellDocked(false);
+  }, [shellDocked, setShellDocked]);
 
   useEffect(() => {
     setLayoutActive(active);

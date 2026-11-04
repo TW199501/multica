@@ -2,10 +2,10 @@
 
 import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 
-/** Fixed 30px bar under the whole window while the docked chat layout is on screen. */
+/** Fixed 30px bar under the whole window while the shell is docked, the Chat tab included. */
 export function DockedStatusBar() {
-  const layoutActive = useDockedLayoutStore((s) => s.layoutActive);
-  if (!layoutActive) return null;
+  const shellDocked = useDockedLayoutStore((s) => s.shellDocked);
+  if (!shellDocked) return null;
   return (
     <footer
       data-slot="docked-status-bar"

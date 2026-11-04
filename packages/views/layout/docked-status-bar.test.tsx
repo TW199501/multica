@@ -6,12 +6,12 @@ import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import { DockedStatusBar } from "./docked-status-bar";
 
 afterEach(() => {
-  useDockedLayoutStore.setState({ layoutActive: false });
+  useDockedLayoutStore.setState({ shellDocked: false });
 });
 
 describe("DockedStatusBar", () => {
-  it("renders an empty bar while the docked layout is on screen", () => {
-    useDockedLayoutStore.setState({ layoutActive: true });
+  it("renders an empty bar while the shell is docked", () => {
+    useDockedLayoutStore.setState({ shellDocked: true });
     const { container } = render(<DockedStatusBar />);
 
     const bar = container.querySelector("[data-slot='docked-status-bar']");
@@ -20,7 +20,7 @@ describe("DockedStatusBar", () => {
     expect(bar?.textContent).toBe("");
   });
 
-  it("renders nothing outside the docked layout", () => {
+  it("renders nothing while the shell is not docked", () => {
     const { container } = render(<DockedStatusBar />);
 
     expect(container.querySelector("[data-slot='docked-status-bar']")).toBeNull();

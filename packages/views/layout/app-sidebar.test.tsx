@@ -473,13 +473,14 @@ describe("docked layout", () => {
     expect(content?.style.scrollbarWidth).toBe("");
   });
 
-  it("ends the sidebar above the status bar while the docked layout is on screen", () => {
-    useDockedLayoutStore.setState({ layoutActive: true });
+  it("ends the sidebar above the status bar while the shell is docked, including the Chat tab", () => {
+    // On the Chat tab the conversation columns are off but the shell stays docked.
+    useDockedLayoutStore.setState({ shellDocked: true, layoutActive: false });
     const { container, unmount } = render(<AppSidebar />);
 
     expect(container.querySelector("[data-slot='sidebar']")).toHaveClass("h-[calc(100svh-30px)]");
     unmount();
-    useDockedLayoutStore.setState({ layoutActive: false });
+    useDockedLayoutStore.setState({ shellDocked: false });
     const second = render(<AppSidebar />);
     expect(second.container.querySelector("[data-slot='sidebar']")).not.toHaveClass("h-[calc(100svh-30px)]");
   });
