@@ -1,0 +1,21 @@
+apps/desktop/src/renderer/src/components/tab-bar.test.tsx
+  s_aa47a447e01641::t_40fe8c60f33392 367-369
+apps/desktop/src/renderer/src/components/tab-bar.tsx
+  s_aa47a447e01641::t_1ad9481e53b2d2 350
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dcc7a2b94f61ef4b45cd50065f1d5f7ee1d42ffb",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
