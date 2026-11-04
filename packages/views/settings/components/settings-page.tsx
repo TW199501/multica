@@ -113,6 +113,8 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
   const isMember = role === "member";
   const navigation = useNavigation();
   const dockedNavTarget = useDockedLayoutStore((s) => s.settingsNavTarget);
+  // The docked layout keeps settings navigation in the sidebar only.
+  const dockedLayout = useDockedLayoutStore((s) => s.layoutActive);
   // In the docked sidebar the navigation matches the main menu's rows.
   const inSidebar = dockedNavTarget !== null;
   const pluginsEnabled = useFeatureEnabled(PLUGINS_V1_FLAG, false);
@@ -561,7 +563,7 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background md:flex-row">
       {dockedNav}
-      {!dockedNav && (
+      {!dockedNav && !dockedLayout && (
       <aside className="shrink-0 border-b border-surface-border md:flex md:w-60 md:flex-col md:border-b-0 md:border-r">
         <div className="flex h-16 shrink-0 items-center gap-1 px-4 md:px-5">
           <CollapsedNavTrigger />

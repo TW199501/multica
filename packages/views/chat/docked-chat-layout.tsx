@@ -1,8 +1,9 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { useDefaultLayout } from "react-resizable-panels";
 import { useChatStore } from "@multica/core/chat";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import { useWorkspacePaths } from "@multica/core/paths";
 import {
   ResizableHandle,
@@ -57,22 +58,34 @@ function DockedChatLayoutForWorkspace({
   const settingsPath = wsPaths.settings();
   const pageFirst = [settingsPath, ...pageFirstPaths].some((base) => isUnder(pathname, base));
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
-    id: pageFirst ? "multica_docked_chat_layout_page_first" : "multica_docked_chat_layout",
+    id: pageFirst ? "multica_docked_chat_layout_page_first_v2" : "multica_docked_chat_layout",
   });
+  const active = !floating && !isMobile && !isFloatingChatRouteSuppressed(pathname, wsPaths.chat());
+  const setLayoutActive = useDockedLayoutStore((s) => s.setLayoutActive);
 
-  if (floating || isMobile || isFloatingChatRouteSuppressed(pathname, wsPaths.chat())) {
+  useEffect(() => {
+    setLayoutActive(active);
+    return () => setLayoutActive(false);
+  }, [active, setLayoutActive]);
+
+  if (!active) {
     return <>{children}</>;
   }
 
   const conversation = (
-    <ResizablePanel key="conversation" id="conversation" defaultSize="50%" minSize="30%">
+    <ResizablePanel
+      key="conversation"
+      id="conversation"
+      defaultSize={pageFirst ? "45%" : "50%"}
+      minSize="30%"
+    >
       <div className={pageFirst ? "h-full border-l pb-[30px]" : "h-full border-r pb-[30px]"}>
         <ChatWindow variant="docked" />
       </div>
     </ResizablePanel>
   );
   const page = (
-    <ResizablePanel key="page" id="page" defaultSize="50%" minSize="25%">
+    <ResizablePanel key="page" id="page" defaultSize={pageFirst ? "55%" : "50%"} minSize="25%">
       <div data-slot="docked-page" className="relative flex h-full min-w-0 flex-col overflow-hidden">
         {children}
       </div>

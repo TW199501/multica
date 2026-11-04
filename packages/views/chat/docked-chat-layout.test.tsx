@@ -2,6 +2,7 @@
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import { NavigationProvider, type NavigationAdapter } from "../navigation";
 
 const chatState = { floatingChatEnabled: false };
@@ -80,6 +81,17 @@ describe("DockedChatLayout", () => {
     const chat = screen.getByTestId("chat-window");
     const page = screen.getByTestId("route-page");
     expect(page.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("reports itself active only while the conversation is docked", () => {
+    const { unmount } = renderAt("/acme/issues");
+    expect(useDockedLayoutStore.getState().layoutActive).toBe(true);
+    unmount();
+    expect(useDockedLayoutStore.getState().layoutActive).toBe(false);
+
+    chatState.floatingChatEnabled = true;
+    renderAt("/acme/issues");
+    expect(useDockedLayoutStore.getState().layoutActive).toBe(false);
   });
 
   it("leaves the page alone while floating chat is on", () => {
