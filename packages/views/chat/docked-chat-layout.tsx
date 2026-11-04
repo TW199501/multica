@@ -63,6 +63,7 @@ function DockedChatLayoutForWorkspace({
     wsPaths.inbox(),
     wsPaths.agents(),
     wsPaths.squads(),
+    wsPaths.workflows(),
     wsPaths.skills(),
     wsPaths.runtimes(),
     wsPaths.usage(),

@@ -20,6 +20,7 @@ vi.mock("@multica/core/paths", () => ({
     inbox: () => "/acme/inbox",
     agents: () => "/acme/agents",
     squads: () => "/acme/squads",
+    workflows: () => "/acme/workflows",
     skills: () => "/acme/skills",
     runtimes: () => "/acme/runtimes",
     usage: () => "/acme/usage",
@@ -93,7 +94,7 @@ describe("DockedChatLayout", () => {
     expect(page.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  it.each(["/acme/agents", "/acme/squads/s1", "/acme/skills", "/acme/runtimes", "/acme/usage"])(
+  it.each(["/acme/agents", "/acme/squads/s1", "/acme/workflows", "/acme/skills", "/acme/runtimes", "/acme/usage"])(
     "keeps the management page %s in the middle",
     (path) => {
       renderAt(path);

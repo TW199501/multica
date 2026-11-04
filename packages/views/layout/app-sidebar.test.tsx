@@ -150,6 +150,7 @@ vi.mock("@multica/core/paths", async (importOriginal) => ({
     autopilots: () => "/acme/autopilots",
     agents: () => "/acme/agents",
     squads: () => "/acme/squads",
+    workflows: () => "/acme/workflows",
     usage: () => "/acme/usage",
     runtimes: () => "/acme/runtimes",
     skills: () => "/acme/skills",
@@ -414,6 +415,19 @@ describe("navigation item presentation", () => {
         referenceClassName,
       );
     }
+  });
+});
+
+describe("AI team nav", () => {
+  it("lists Workflows between Squads and Skills", () => {
+    const { container } = render(<AppSidebar />);
+    const hrefs = [...container.querySelectorAll("button[data-href]")].map((el) =>
+      el.getAttribute("data-href"),
+    );
+
+    const squads = hrefs.indexOf("/acme/squads");
+    expect(hrefs[squads + 1]).toBe("/acme/workflows");
+    expect(hrefs[squads + 2]).toBe("/acme/skills");
   });
 });
 
