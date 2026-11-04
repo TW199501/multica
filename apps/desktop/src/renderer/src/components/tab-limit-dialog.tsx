@@ -1,12 +1,13 @@
-import { Button } from "@multica/ui/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@multica/ui/components/ui/dialog";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@multica/ui/components/ui/alert-dialog";
 import { useT } from "@multica/views/i18n";
 import { useTabPresentation } from "@multica/views/layout";
 import { useTabStore, type Tab } from "@/stores/tab-store";
@@ -26,27 +27,25 @@ export function TabLimitDialog() {
   const cancel = useTabStore((s) => s.cancelPendingTabOpen);
 
   return (
-    <Dialog
+    <AlertDialog
       open={pending !== null && leftmost !== null}
       onOpenChange={(open) => {
         if (!open) cancel();
       }}
     >
-      <DialogContent className="max-w-sm" showCloseButton={false}>
-        <DialogHeader>
-          <DialogTitle>{t(($) => $.desktop.tab_bar.limit_title)}</DialogTitle>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t(($) => $.desktop.tab_bar.limit_title)}</AlertDialogTitle>
           {leftmost && <LimitBody tab={leftmost} />}
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={cancel}>
-            {tCommon(($) => $.cancel)}
-          </Button>
-          <Button onClick={() => confirm()}>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{tCommon(($) => $.cancel)}</AlertDialogCancel>
+          <AlertDialogAction onClick={() => confirm()}>
             {t(($) => $.desktop.tab_bar.limit_confirm)}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
 
@@ -56,8 +55,8 @@ function LimitBody({ tab }: { tab: Tab }) {
   // still be the empty seed.
   const { title } = useTabPresentation(tab.url, tab.title);
   return (
-    <DialogDescription>
+    <AlertDialogDescription>
       {t(($) => $.desktop.tab_bar.limit_body, { title })}
-    </DialogDescription>
+    </AlertDialogDescription>
   );
 }

@@ -40,7 +40,7 @@ describe("TabLimitDialog", () => {
   it("stays closed without a pending tab open", () => {
     useTabStore.getState().switchWorkspace("acme");
     renderDialog();
-    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.queryByRole("alertdialog")).toBeNull();
   });
 
   it("names the leftmost unpinned tab it will close", () => {
@@ -48,7 +48,8 @@ describe("TabLimitDialog", () => {
     useTabStore.getState().togglePin(tabs()[0].id);
     renderDialog();
 
-    expect(screen.getByText("10 tabs open")).toBeTruthy();
+    expect(screen.getByRole("alertdialog")).toBeTruthy();
+    expect(screen.getByText(`${TAB_LIMIT} tabs open`)).toBeTruthy();
     expect(
       screen.getByText("Close “Issue 1”, the leftmost tab, to open a new one?"),
     ).toBeTruthy();
@@ -65,7 +66,7 @@ describe("TabLimitDialog", () => {
     expect(s.pendingTabOpen).toBeNull();
     expect(tabs().map((t) => t.id)).not.toContain(leftmost);
     expect(getActiveTab(s)?.url).toBe("/acme/projects");
-    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull());
   });
 
   it("cancels without touching the tabs", async () => {
@@ -77,7 +78,7 @@ describe("TabLimitDialog", () => {
 
     expect(useTabStore.getState().pendingTabOpen).toBeNull();
     expect(tabs()).toBe(before);
-    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull());
   });
 
   it("treats Escape as cancel", async () => {
