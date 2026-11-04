@@ -1,0 +1,21 @@
+packages/views/settings/components/settings-page.test.tsx
+  s_aa47a447e01641::t_57cfc91e938a8e 171-201
+packages/views/settings/components/settings-page.tsx
+  s_aa47a447e01641::t_8c6160796bfda9 41,116,119-121,570
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "831be4f70e41dd84bd5016d7696f0ca6dc6118c6",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
