@@ -924,7 +924,7 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
 
         <SidebarFooter className={docked ? "p-2 pb-[30px]" : "p-2"}>
           <SidebarMenu className="gap-0.5">
-            {utilityNav.map((item) => {
+            {utilityNav.filter((item) => !(docked && item.key === "settings")).map((item) => {
               const href = p[item.key]();
               const Icon = routeIconForPath(href);
               return (

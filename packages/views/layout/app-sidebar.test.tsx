@@ -4,7 +4,7 @@ import { buildIssueStatusCatalog } from "@multica/core/issue-statuses/queries";
 vi.mock("@multica/core/issue-statuses/hooks", () => ({
   useIssueStatuses: () => buildIssueStatusCatalog([]),
 }));
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "@multica/core/api";
 import { renderWithI18n } from "../test/i18n";
 import { AppSidebar } from "./app-sidebar";
@@ -13,7 +13,13 @@ const { appForeground, chatSessions, chatStore, detail, deletePin, invitationApi
   appForeground: { current: true },
   sidebarState: { setOpenMobile: vi.fn() },
   chatSessions: { current: [] as { id?: string; unread_count?: number }[] },
-  chatStore: { current: { activeSessionId: null as string | null, isOpen: false } },
+  chatStore: {
+    current: { activeSessionId: null, isOpen: false } as {
+      activeSessionId: string | null;
+      isOpen: boolean;
+      floatingChatEnabled?: boolean;
+    },
+  },
   detail: { current: { isPending: false, isError: false, data: null as unknown, error: null as unknown } },
   deletePin: vi.fn(),
   // Captures the sidebar's invitation accept/decline mutations so the
@@ -123,7 +129,7 @@ vi.mock("@multica/core/auth", () => ({
 // Callable-store shape (selectorFn + getState) per the repo testing rules.
 vi.mock("@multica/core/chat", () => ({
   useChatStore: Object.assign(
-    (selector: (state: { activeSessionId: string | null; isOpen: boolean }) => unknown) =>
+    (selector: (state: typeof chatStore.current) => unknown) =>
       selector(chatStore.current),
     { getState: () => chatStore.current },
   ),
@@ -408,6 +414,20 @@ describe("navigation item presentation", () => {
         referenceClassName,
       );
     }
+  });
+});
+
+describe("docked layout", () => {
+  afterEach(() => {
+    chatStore.current = { activeSessionId: null, isOpen: false };
+  });
+
+  it("drops the footer Settings entry once the sidebar tabs carry Settings", () => {
+    chatStore.current = { activeSessionId: null, isOpen: false, floatingChatEnabled: false };
+    const { container } = render(<AppSidebar />);
+
+    expect(container.querySelector('button[data-href="/acme/settings"]')).toBeNull();
+    expect(container.querySelector('button[data-href="/acme/usage"]')).not.toBeNull();
   });
 });
 
