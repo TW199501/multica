@@ -1,0 +1,31 @@
+packages/views/editor/polish/use-polish-gate.tsx
+  s_aa47a447e01641::t_02b12c2c0cbde8 4,17-21,112-115
+packages/views/issues/components/reply-input.tsx
+  s_aa47a447e01641::t_400f330174a39a 265-267
+packages/views/editor/polish/use-polish-gate.test.tsx
+  s_aa47a447e01641::t_f3e35ec21f2580 14,28,144,288-383
+packages/views/editor/use-composer-submit.test.tsx
+  s_aa47a447e01641::t_4def739a09de57 257
+packages/views/editor/use-composer-submit.ts
+  s_aa47a447e01641::t_15230877513497 88-92,157,160,170,174
+packages/views/issues/components/comment-input.tsx
+  s_aa47a447e01641::t_9fcab3a34916c0 253-255
+packages/views/test/composer-mocks.tsx
+  s_aa47a447e01641::t_a3c666d9fbb290 14-15,93,140
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "af3c26027c6ce2824a4ece6dc9c0d1b9d7f80177",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
