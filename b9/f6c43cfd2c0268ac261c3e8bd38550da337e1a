@@ -1,0 +1,29 @@
+apps/docs/content/docs/environment-variables.fr.mdx
+  s_aa47a447e01641::t_4c4015ae612138 225
+apps/docs/content/docs/environment-variables.ja.mdx
+  s_aa47a447e01641::t_13589ce56e36b6 228
+apps/docs/content/docs/environment-variables.ko.mdx
+  s_aa47a447e01641::t_0ebebb4ed068b7 228
+apps/docs/content/docs/environment-variables.mdx
+  s_aa47a447e01641::t_1496a8f082be29 228
+apps/docs/content/docs/environment-variables.zh-Hant.mdx
+  s_aa47a447e01641::t_92b508f5d98272 228
+apps/docs/content/docs/environment-variables.zh.mdx
+  s_aa47a447e01641::t_7222a9235efb99 228
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b9f6c43cfd2c0268ac261c3e8bd38550da337e1a",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
