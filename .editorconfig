@@ -1,0 +1,8 @@
+root = true
+
+[*]
+end_of_line = lf
+
+# Windows batch files need CRLF to run reliably.
+[*.{bat,cmd}]
+end_of_line = crlf

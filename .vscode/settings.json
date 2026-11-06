@@ -1,4 +1,8 @@
 {
+  "files.eol": "\n",
+  "[bat]": {
+    "files.eol": "\r\n"
+  },
   "cSpell.language": "en,en-GB",
   "cSpell.ignorePaths": [
     "pnpm-lock.yaml",
