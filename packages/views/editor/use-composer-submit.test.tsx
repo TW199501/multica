@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useComposerSubmit } from "./use-composer-submit";
+import { defaultNormalize, useComposerSubmit } from "./use-composer-submit";
 import type { ContentEditorRef } from "./content-editor";
 import type { UploadGate } from "./use-upload-gate";
 
@@ -260,5 +260,17 @@ describe("useComposerSubmit afterAccepted", () => {
     unmount();
     await act(async () => { await nextFrame(); });
     expect(calls.focused).toBe(0);
+  });
+});
+
+describe("defaultNormalize", () => {
+  it("strips surrounding whitespace and keeps inner blank lines", () => {
+    expect(defaultNormalize("  \n hello\n\n  world \n\n  \n")).toBe("hello\n\n  world");
+  });
+
+  it("stays fast on a long run of newlines before other text", () => {
+    const start = performance.now();
+    expect(defaultNormalize(`${"\n".repeat(28)}x`)).toBe("x");
+    expect(performance.now() - start).toBeLessThan(100);
   });
 });
