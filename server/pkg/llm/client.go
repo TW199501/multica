@@ -217,7 +217,10 @@ func environmentOverrides(apiKey string) []option.RequestOption {
 	if custom, ok := os.LookupEnv("OPENAI_CUSTOM_HEADERS"); ok {
 		for _, line := range strings.Split(custom, "\n") {
 			if colon := strings.Index(line, ":"); colon >= 0 {
-				if name := strings.TrimSpace(line[:colon]); name != "" {
+				if name := strings.TrimSpace(line[:colon]); strings.EqualFold(name, "Content-Type") {
+					// Every request here is JSON; deleting it would break them.
+					opts = append(opts, option.WithHeader(name, "application/json"))
+				} else if name != "" {
 					opts = append(opts, option.WithHeaderDel(name))
 				}
 			}

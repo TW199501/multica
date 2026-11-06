@@ -79,7 +79,7 @@ export function PolishButton({ wsId, editorRef, context, onAdopted, disabled, ga
         >
           <Sparkles
             aria-hidden="true"
-            className={cn(polishing && "animate-pulse [animation-duration:1.8s]")}
+            className={cn(polishing && "motion-safe:animate-pulse [animation-duration:1.8s]")}
           />
         </TooltipTrigger>
         <TooltipContent side="top">{label}</TooltipContent>
