@@ -1,0 +1,41 @@
+packages/views/issues/components/agent-comment-fold.test.ts
+  s_aa47a447e01641::t_2cce093c42e4e1 1-120
+packages/views/issues/components/agent-comment-fold.ts
+  s_aa47a447e01641::t_3eb1cb743004d7 1-79
+packages/views/issues/components/comment-card.tsx
+  s_aa47a447e01641::t_b7a5ae54f3ec2c 1002,1193-1203,1208,1555-1572,1574,1582,1586-1589
+packages/views/issues/components/issue-detail.test.tsx
+  s_aa47a447e01641::t_c49c9d5a4fae85 44,436,1794-1888
+packages/views/issues/components/issue-detail.tsx
+  s_aa47a447e01641::t_9f32f8d399b319 104,106-113,1806-1847,2036,2040,2055,2067,2135,2151,2562,2574,3155-3183
+packages/views/issues/components/reply-input.tsx
+  s_aa47a447e01641::t_2bf3494e14e9c8 53-54,62,146-149
+packages/views/locales/en/issues.json
+  s_aa47a447e01641::t_68c6f0fadb64c0 535-536,678
+packages/views/locales/fr/issues.json
+  s_aa47a447e01641::t_6593b08a75a81f 534-535,677
+packages/views/locales/ja/issues.json
+  s_aa47a447e01641::t_a05d4f7efb45a4 527,657
+packages/views/locales/ko/issues.json
+  s_aa47a447e01641::t_e5160117fb0b6c 527,657
+packages/views/locales/zh-Hans/issues.json
+  s_aa47a447e01641::t_f3faaaa588515d 527,657
+packages/views/locales/zh-Hant/issues.json
+  s_aa47a447e01641::t_e2ccebadcdb335 526,656
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6f7076346509baf3ed1ea24f714d3fbc13d55f3c",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
