@@ -67,3 +67,25 @@ func TestProtectChecksIdentifierNeighboursAcrossAFenceBoundary(t *testing.T) {
 		t.Fatalf("only the fence should be masked: masked %q, spans %q", masked, spans)
 	}
 }
+
+func TestProtectMasksInlineCodeAcrossALineBreak(t *testing.T) {
+	for name, text := range map[string]string{
+		"single backticks": "before `first\nsecond` after",
+		"double backticks": "before ``first\nsecond`` after",
+	} {
+		t.Run(name, func(t *testing.T) {
+			masked, spans := Protect(text)
+			if masked != "before ⟦1⟧ after" || len(spans) != 1 {
+				t.Fatalf("masked %q, spans %q", masked, spans)
+			}
+		})
+	}
+}
+
+func TestProtectDoesNotPairBackticksAcrossABlankLine(t *testing.T) {
+	text := "a stray ` here\n\nand another ` there"
+
+	if _, spans := Protect(text); len(spans) != 0 {
+		t.Fatalf("spans = %q, want none", spans)
+	}
+}

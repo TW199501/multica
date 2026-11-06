@@ -19,8 +19,9 @@ var ErrSpanLost = errors.New("aisettings: polished text lost a protected span")
 // be confused with ours on Restore. Only the identifier alternative captures.
 var protectPattern = regexp.MustCompile(
 	"(?s:```.*?(?:```|\\z))" + // fenced code block (an unclosed fence runs to the end)
-		"|``[^\\n]*?``" + // inline code with double backticks
-		"|`[^`\\n]+`" + // inline code
+		// Inline code may wrap onto the next line, but a blank line ends it.
+		"|``(?:[^\\n]|\\n[^\\n])*?``" + // inline code with double backticks
+		"|`(?:[^`\\n]|\\n[^`\\n])+`" + // inline code
 		// Markdown link, image or file card (!file[...]), incl. mention://; the
 		// editor backslash-escapes brackets inside labels. The destination may
 		// hold one level of balanced parentheses (wiki/Foo_(bar)).
