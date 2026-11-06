@@ -1,0 +1,31 @@
+packages/views/editor/polish/use-polish-gate.tsx
+  s_aa47a447e01641::t_dfa30378054553 5,9,13,69-70,72-74,77,79,87-103,110,119
+packages/views/editor/polish/use-polish-gate.test.tsx
+  s_aa47a447e01641::t_3df27049a4b38c 365-399
+packages/views/editor/polish/use-polish.ts
+  s_809285a255977e::t_1ce63ad57e552f 8-14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a8b69ba4247eae510761fc4791cf4ec86d45f2c7",
+  "prompts": {},
+  "sessions": {
+    "s_809285a255977e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a5e35679995dd77ea",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    },
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
