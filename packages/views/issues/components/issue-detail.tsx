@@ -41,6 +41,8 @@ import { Button } from "@multica/ui/components/ui/button";
 import { IconButton } from "@multica/ui/components/common/icon-button";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@multica/ui/components/ui/resizable";
 import { Sheet, SheetContent } from "@multica/ui/components/ui/sheet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@multica/ui/components/ui/tabs";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import { useIsMobile } from "@multica/ui/hooks/use-mobile";
 import { ContentEditor, type ContentEditorRef, TitleEditor, type TitleEditorRef, useFileDropZone, FileDropOverlay, useLazyEditor, useEditorUpload, PreviewSequenceProvider, collectPreviewSequence } from "../../editor";
 import {
@@ -1316,6 +1318,7 @@ export function IssueDetailSkeleton({
 export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = true, layoutId = "multica_issue_detail_layout", highlightCommentId, highlightRequestToken, leadingAction, variant = "page", trailingActions }: IssueDetailProps) {
   const isPeek = variant === "peek";
   const { t } = useT("issues");
+  const { t: tLayout } = useT("layout");
   const { t: tCommon } = useT("common");
   const locale = useLocale();
   const timeAgo = useTimeAgo();
@@ -1364,13 +1367,24 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
     handleResize: handleDesktopSidebarResize,
   } = useAnimatedRightSidebarState(desktopSidebarInitialOpen);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  // The docked chat layout allows three columns at most, so the properties
+  // share this column with the issue behind tabs.
+  const docked = useDockedLayoutStore((s) => s.layoutActive) && !isPeek && !isMobile;
+  const [dockedTab, setDockedTab] = useState<"issue" | "properties">("issue");
 
   useEffect(() => {
     if (isMobile) {
       setMobileSidebarOpen(false);
     }
   }, [isMobile]);
-  const sidebarOpen = isMobile ? mobileSidebarOpen : desktopSidebarOpen;
+  useEffect(() => {
+    setDockedTab("issue");
+  }, [id]);
+  const sidebarOpen = docked
+    ? dockedTab === "properties"
+    : isMobile
+      ? mobileSidebarOpen
+      : desktopSidebarOpen;
   const [propertiesOpen, setPropertiesOpen] = useState(true);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [parentIssueOpen, setParentIssueOpen] = useState(true);
@@ -2667,6 +2681,10 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   }, [autoOpenCustomProp]);
 
   const handleToggleSidebar = useCallback(() => {
+    if (docked) {
+      setDockedTab((tab) => (tab === "issue" ? "properties" : "issue"));
+      return;
+    }
     if (isMobile) {
       setMobileSidebarOpen((open) => !open);
       return;
@@ -2680,7 +2698,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       if (nextOpen) panel.expand();
       else panel.collapse();
     });
-  }, [beginDesktopSidebarToggle, isMobile, sidebarRef]);
+  }, [beginDesktopSidebarToggle, docked, isMobile, sidebarRef]);
 
   // The header's wakeup chip opens the sidebar and brings the Wakeups section
   // into view with focus on its heading.
@@ -3302,7 +3320,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
             />
             {isPeek ? (
               trailingActions
-            ) : (
+            ) : docked ? null : (
               <IconButton
                 label={t(($) => $.detail.sidebar_tooltip)}
                 shortcut={<ActionShortcutKeycaps action="toggleRightSidebar" />}
@@ -4049,6 +4067,35 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
           </SheetContent>
         </Sheet>
       </div>,
+    );
+  }
+
+  if (docked) {
+    return withPreview(
+      <Tabs
+        value={dockedTab}
+        onValueChange={(value) => setDockedTab(value as "issue" | "properties")}
+        className="flex min-h-0 flex-1 flex-col gap-0"
+      >
+        <div className="flex shrink-0 items-center border-b px-3 py-1.5">
+          <TabsList>
+            <TabsTrigger value="issue">{tLayout(($) => $.tab.issue)}</TabsTrigger>
+            <TabsTrigger value="properties">{t(($) => $.detail.section_properties)}</TabsTrigger>
+          </TabsList>
+        </div>
+        {/* Both stay mounted: leaving the issue must not drop a comment draft
+            or its scroll position. */}
+        <TabsContent keepMounted value="issue" className="flex min-h-0 data-hidden:hidden">
+          {detailContent}
+        </TabsContent>
+        <TabsContent
+          keepMounted
+          value="properties"
+          className="min-h-0 overflow-y-auto [scrollbar-gutter:stable] px-2 py-4 data-hidden:hidden"
+        >
+          {sidebarContent}
+        </TabsContent>
+      </Tabs>,
     );
   }
 
