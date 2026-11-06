@@ -256,7 +256,7 @@ export function PolishDialog({
                   role="status"
                   className="flex min-h-48 flex-1 items-center justify-center gap-2 rounded-lg border border-input text-caption text-muted-foreground"
                 >
-                  <Sparkles className="size-4 animate-pulse [animation-duration:1.8s]" aria-hidden="true" />
+                  <Sparkles className="size-4 motion-safe:animate-pulse [animation-duration:1.8s]" aria-hidden="true" />
                   {t(($) => $.polish.loading)}
                 </div>
               ) : (
