@@ -370,6 +370,23 @@ describe("AI settings layout", () => {
     }
   });
 
+  it("shows a rejected key beside Save, whichever tab is open", async () => {
+    const user = userEvent.setup();
+    mocks.api.updateAISettings.mockRejectedValue(
+      new ApiError("key required", 409, "Conflict", { error: "api_key_required" }),
+    );
+    renderUi(<AISettingsPage />);
+    const key = await screen.findByLabelText(/API key/);
+    await user.click(screen.getByRole("tab", { name: "Model usage" }));
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    const error = await screen.findByRole("alert");
+    expect(error).toBeVisible();
+    expect(error).toHaveAttribute("id", "ai-api-key-error");
+    expect(key).toHaveAttribute("aria-describedby", "ai-api-key-error");
+  });
+
   it("never asks people for the model type", async () => {
     renderUi(<AISettingsPage />);
     await screen.findByRole("tab", { name: "Providers" });
