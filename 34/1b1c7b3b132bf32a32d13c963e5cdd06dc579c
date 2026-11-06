@@ -1,0 +1,21 @@
+packages/views/agents/ai-settings/ai-settings-page.test.tsx
+  s_8f7e4e20e29858::t_63e41db918b355 373-389
+packages/views/agents/ai-settings/ai-settings-page.tsx
+  s_8f7e4e20e29858::t_5dea62fd710d4e 537
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "341b1c7b3b132bf32a32d13c963e5cdd06dc579c",
+  "prompts": {},
+  "sessions": {
+    "s_8f7e4e20e29858": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "s_8f7e4e20e29858",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
