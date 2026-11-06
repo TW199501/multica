@@ -1077,6 +1077,33 @@
     "save_failed_toast": "AI 설정을 저장할 수 없습니다",
     "load_failed": "AI 설정을 불러올 수 없습니다",
     "retry": "다시 시도",
-    "model_placeholder": "비워 두면 서버에 로드된 모델을 사용합니다"
+    "model_placeholder": "비워 두면 서버에 로드된 모델을 사용합니다",
+    "tab_providers": "모델 공급자",
+    "tab_usage": "모델 용도",
+    "new_config": "새 구성",
+    "duplicate_config": "복제",
+    "delete_config": "삭제",
+    "next_round": "다음 단계에 제공",
+    "show_key": "API 키 표시",
+    "hide_key": "API 키 숨기기",
+    "custom_headers": "사용자 지정 헤더",
+    "add_header": "헤더 추가",
+    "model_list": "모델",
+    "add_model": "모델 추가",
+    "vision": "비전",
+    "context_window": "컨텍스트 {{value}}",
+    "output_limit": "출력 {{value}}",
+    "needs_chat_model": "메시지 다듬기에는 채팅 모델이 필요합니다.",
+    "usage_chat": "채팅 AI",
+    "usage_embedding": "임베딩",
+    "usage_rerank": "재순위",
+    "usage_decision": "판단",
+    "model_types": {
+      "chat": "채팅",
+      "embedding": "임베딩",
+      "rerank": "재순위",
+      "decision": "판단",
+      "other": "기타"
+    }
   }
 }

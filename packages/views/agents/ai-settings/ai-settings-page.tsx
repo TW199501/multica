@@ -3,7 +3,17 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { AlertCircle, Loader2, Sparkles } from "@multica/ui/icons";
+import {
+  AlertCircle,
+  Copy,
+  Eye,
+  EyeOff,
+  Loader2,
+  Plus,
+  Sparkles,
+  Trash2,
+} from "@multica/ui/icons";
+import { Badge } from "@multica/ui/components/ui/badge";
 import { Button } from "@multica/ui/components/ui/button";
 import { Input } from "@multica/ui/components/ui/input";
 import { Label } from "@multica/ui/components/ui/label";
@@ -15,6 +25,7 @@ import {
   SelectValue,
 } from "@multica/ui/components/ui/select";
 import { Switch } from "@multica/ui/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@multica/ui/components/ui/tabs";
 import { Textarea } from "@multica/ui/components/ui/textarea";
 import { aiErrorCode } from "@multica/core/api";
 import { useWorkspaceId } from "@multica/core/hooks";
@@ -39,6 +50,12 @@ import {
 import { PAGE_GUTTER, PAGE_RAIL } from "../../layout/page-header";
 import { SettingsReadOnlyNotice } from "../../settings/components/settings-layout";
 import { useT, useTimeAgo } from "../../i18n";
+import {
+  catalogModelsFor,
+  detectModelType,
+  lookupModel,
+  useModelCatalog,
+} from "./model-catalog";
 import { KEYLESS_PROVIDERS, PROVIDER_PRESETS } from "./provider-presets";
 
 const NO_SKILL = "__none__";
@@ -141,6 +158,7 @@ function AISettingsForm({
     settings.prompt_skill_id,
   );
   const [keyError, setKeyError] = useState(false);
+  const [showKey, setShowKey] = useState(false);
   const [testResult, setTestResult] = useState<AISettingsTestResult | null>(
     null,
   );
@@ -153,6 +171,14 @@ function AISettingsForm({
   const keyRequired = !keyless && (!settings.api_key_set || targetChanged);
   const blocked = !settings.secret_key_available;
   const promptFromSkill = skillId !== null;
+  const catalog = useModelCatalog();
+  const modelType = detectModelType(model, catalog);
+  const modelInfo = lookupModel(model, catalog);
+  const modelOptions = useMemo(
+    () => [...new Set([...(preset?.models ?? []), ...catalogModelsFor(provider, catalog)])],
+    [preset, provider, catalog],
+  );
+  const compact = useMemo(() => new Intl.NumberFormat(undefined, { notation: "compact" }), []);
 
   const providerItems = useMemo(() => {
     const items = PROVIDER_PRESETS.map((p) => ({
@@ -215,6 +241,7 @@ function AISettingsForm({
       // The mutation cache would otherwise keep the typed key in its variables.
       update.reset();
       setApiKey("");
+      setShowKey(false);
       toast.success(t(($) => $.ai_settings.saved_toast));
     } catch (err) {
       const code = aiErrorCode(err);
@@ -258,178 +285,293 @@ function AISettingsForm({
         </div>
       ) : null}
 
-      <Field id="ai-provider" label={t(($) => $.ai_settings.provider)}>
-        <Select
-          items={providerItems}
-          value={provider}
-          onValueChange={onProviderChange}
-        >
-          <SelectTrigger id="ai-provider" className="w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {providerItems.map((item) => (
-              <SelectItem key={item.value} value={item.value}>
-                {item.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </Field>
+      <Tabs defaultValue="providers" className="gap-5">
+        <TabsList>
+          <TabsTrigger value="providers">{t(($) => $.ai_settings.tab_providers)}</TabsTrigger>
+          <TabsTrigger value="usage">{t(($) => $.ai_settings.tab_usage)}</TabsTrigger>
+        </TabsList>
 
-      <Field id="ai-model" label={t(($) => $.ai_settings.model)}>
-        <Input
-          id="ai-model"
-          list="ai-model-options"
-          placeholder={
-            keyless ? t(($) => $.ai_settings.model_placeholder) : undefined
-          }
-          value={model}
-          onChange={(e) => setModel(e.target.value)}
-        />
-        <datalist id="ai-model-options">
-          {(preset?.models ?? []).map((m) => (
-            <option key={m} value={m} />
-          ))}
-        </datalist>
-      </Field>
+        {/* Both stay mounted: switching tabs must not drop unsaved edits. */}
+        <TabsContent keepMounted value="providers" className="space-y-5 data-hidden:hidden">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button type="button" variant="outline" disabled>
+              <Plus className="size-3.5" />
+              {t(($) => $.ai_settings.new_config)}
+            </Button>
+            <Button type="button" variant="outline" disabled>
+              <Copy className="size-3.5" />
+              {t(($) => $.ai_settings.duplicate_config)}
+            </Button>
+            <Button type="button" variant="outline" disabled>
+              <Trash2 className="size-3.5" />
+              {t(($) => $.ai_settings.delete_config)}
+            </Button>
+            <NextRoundBadge />
+          </div>
 
-      <Field id="ai-endpoint" label={t(($) => $.ai_settings.endpoint)}>
-        <Input
-          id="ai-endpoint"
-          value={baseUrl}
-          onChange={(e) => setBaseUrl(e.target.value)}
-        />
-      </Field>
+          <Field id="ai-provider" label={t(($) => $.ai_settings.provider)}>
+            <Select items={providerItems} value={provider} onValueChange={onProviderChange}>
+              <SelectTrigger id="ai-provider" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {providerItems.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
 
-      <Field
-        id="ai-api-key"
-        label={
-          keyRequired
-            ? t(($) => $.ai_settings.api_key_required)
-            : t(($) => $.ai_settings.api_key)
-        }
-      >
-        <Input
-          id="ai-api-key"
-          type="password"
-          autoComplete="off"
-          value={apiKey}
-          placeholder={
-            settings.api_key_set ? `••••${settings.api_key_last4}` : undefined
-          }
-          aria-invalid={keyError || undefined}
-          aria-describedby={keyError ? "ai-api-key-error" : undefined}
-          onChange={(e) => setApiKey(e.target.value)}
-        />
+          <Field id="ai-endpoint" label={t(($) => $.ai_settings.endpoint)}>
+            <Input id="ai-endpoint" value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} />
+          </Field>
+
+          <Field
+            id="ai-api-key"
+            label={
+              keyRequired
+                ? t(($) => $.ai_settings.api_key_required)
+                : t(($) => $.ai_settings.api_key)
+            }
+          >
+            <div className="flex items-center gap-2">
+              <Input
+                id="ai-api-key"
+                type={showKey ? "text" : "password"}
+                autoComplete="off"
+                value={apiKey}
+                placeholder={settings.api_key_set ? `••••${settings.api_key_last4}` : undefined}
+                aria-invalid={keyError || undefined}
+                aria-describedby={keyError ? "ai-api-key-error" : undefined}
+                onChange={(e) => setApiKey(e.target.value)}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                aria-label={
+                  showKey ? t(($) => $.ai_settings.hide_key) : t(($) => $.ai_settings.show_key)
+                }
+                onClick={() => setShowKey((shown) => !shown)}
+              >
+                {showKey ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              </Button>
+            </div>
+            {keyError ? (
+              <p id="ai-api-key-error" className="text-caption text-destructive">
+                {t(($) => $.ai_settings.api_key_error)}
+              </p>
+            ) : null}
+          </Field>
+
+          <div className="space-y-1.5">
+            <p className="text-body font-medium">{t(($) => $.ai_settings.custom_headers)}</p>
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" disabled>
+                <Plus className="size-3.5" />
+                {t(($) => $.ai_settings.add_header)}
+              </Button>
+              <NextRoundBadge />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-body font-medium">{t(($) => $.ai_settings.model_list)}</p>
+            <div className="space-y-3 rounded-lg border p-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="min-w-0 truncate font-medium">
+                  {model.trim() || t(($) => $.ai_settings.model_placeholder)}
+                </span>
+                {modelType ? (
+                  <Badge variant="secondary" data-testid="ai-model-type">
+                    {t(($) => $.ai_settings.model_types[modelType])}
+                  </Badge>
+                ) : null}
+                {modelInfo?.vision ? (
+                  <Badge variant="secondary" data-testid="ai-model-vision">
+                    {t(($) => $.ai_settings.vision)}
+                  </Badge>
+                ) : null}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="ml-auto"
+                  disabled={blocked || test.isPending}
+                  onClick={handleTest}
+                >
+                  {test.isPending ? <Loader2 className="size-3.5 animate-spin" /> : null}
+                  {t(($) => $.ai_settings.test)}
+                </Button>
+              </div>
+
+              <Field id="ai-model" label={t(($) => $.ai_settings.model)}>
+                <Input
+                  id="ai-model"
+                  list="ai-model-options"
+                  placeholder={keyless ? t(($) => $.ai_settings.model_placeholder) : undefined}
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                />
+                <datalist id="ai-model-options">
+                  {modelOptions.map((m) => (
+                    <option key={m} value={m} />
+                  ))}
+                </datalist>
+              </Field>
+
+              {modelInfo?.context ? (
+                <p data-testid="ai-model-limits" className="text-caption text-muted-foreground">
+                  {t(($) => $.ai_settings.context_window, { value: compact.format(modelInfo.context) })}
+                  {modelInfo.output
+                    ? ` · ${t(($) => $.ai_settings.output_limit, { value: compact.format(modelInfo.output) })}`
+                    : null}
+                </p>
+              ) : null}
+
+              {modelType && modelType !== "chat" ? (
+                <p role="alert" className="text-caption text-warning">
+                  {t(($) => $.ai_settings.needs_chat_model)}
+                </p>
+              ) : null}
+
+              {testResult ? (
+                <p
+                  role="status"
+                  className={
+                    testResult.ok ? "text-caption text-success" : "text-caption text-destructive"
+                  }
+                >
+                  {testResult.ok
+                    ? t(($) => $.ai_settings.test_ok)
+                    : t(($) => $.ai_settings.test_failed, {
+                        status: testResult.status,
+                        message: testResult.message,
+                      })}
+                </p>
+              ) : null}
+            </div>
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" size="sm" disabled>
+                <Plus className="size-3.5" />
+                {t(($) => $.ai_settings.add_model)}
+              </Button>
+              <NextRoundBadge />
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent keepMounted value="usage" className="space-y-5 data-hidden:hidden">
+          <div className="space-y-5 rounded-lg border p-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-medium">{t(($) => $.ai_settings.usage_chat)}</span>
+              <span className="min-w-0 truncate text-caption text-muted-foreground">
+                {model.trim() || t(($) => $.ai_settings.model_placeholder)}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Switch
+                id="ai-disable-thinking"
+                aria-label={t(($) => $.ai_settings.disable_thinking)}
+                checked={disableThinking}
+                onCheckedChange={setDisableThinking}
+              />
+              <Label htmlFor="ai-disable-thinking">
+                {t(($) => $.ai_settings.disable_thinking)}
+              </Label>
+            </div>
+
+            <Field id="ai-prompt" label={t(($) => $.ai_settings.prompt)}>
+              <Textarea
+                id="ai-prompt"
+                rows={8}
+                value={prompt}
+                disabled={promptFromSkill}
+                aria-describedby={promptFromSkill ? "ai-prompt-from-skill" : undefined}
+                onChange={(e) => setPrompt(e.target.value)}
+              />
+              {promptFromSkill ? (
+                <p id="ai-prompt-from-skill" className="text-caption text-muted-foreground">
+                  {t(($) => $.ai_settings.prompt_from_skill)}
+                </p>
+              ) : null}
+              <div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  disabled={promptFromSkill}
+                  onClick={() => setPrompt(settings.default_prompt)}
+                >
+                  {t(($) => $.ai_settings.restore_default)}
+                </Button>
+              </div>
+            </Field>
+
+            <Field id="ai-skill" label={t(($) => $.ai_settings.load_from_skill)}>
+              <Select
+                items={skillItems}
+                value={skillId ?? NO_SKILL}
+                onValueChange={(v) => setSkillId(!v || v === NO_SKILL ? null : v)}
+              >
+                <SelectTrigger id="ai-skill" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {skillItems.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+          </div>
+
+          <PlannedUsage id="ai-usage-embedding" label={t(($) => $.ai_settings.usage_embedding)} />
+          <PlannedUsage id="ai-usage-rerank" label={t(($) => $.ai_settings.usage_rerank)} />
+          <PlannedUsage id="ai-usage-decision" label={t(($) => $.ai_settings.usage_decision)} />
+        </TabsContent>
+      </Tabs>
+
+      <div className="border-t pt-4">
         {keyError ? (
-          <p id="ai-api-key-error" className="text-caption text-destructive">
+          <p role="alert" className="mb-3 text-caption text-destructive">
             {t(($) => $.ai_settings.api_key_error)}
           </p>
         ) : null}
-      </Field>
-
-      <div className="flex items-center gap-2">
-        <Switch
-          id="ai-disable-thinking"
-          checked={disableThinking}
-          onCheckedChange={setDisableThinking}
-        />
-        <Label htmlFor="ai-disable-thinking">
-          {t(($) => $.ai_settings.disable_thinking)}
-        </Label>
-      </div>
-
-      <Field id="ai-prompt" label={t(($) => $.ai_settings.prompt)}>
-        <Textarea
-          id="ai-prompt"
-          rows={8}
-          value={prompt}
-          disabled={promptFromSkill}
-          aria-describedby={promptFromSkill ? "ai-prompt-from-skill" : undefined}
-          onChange={(e) => setPrompt(e.target.value)}
-        />
-        {promptFromSkill ? (
-          <p
-            id="ai-prompt-from-skill"
-            className="text-caption text-muted-foreground"
-          >
-            {t(($) => $.ai_settings.prompt_from_skill)}
-          </p>
-        ) : null}
-        <div>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            disabled={promptFromSkill}
-            onClick={() => setPrompt(settings.default_prompt)}
-          >
-            {t(($) => $.ai_settings.restore_default)}
-          </Button>
-        </div>
-      </Field>
-
-      <Field id="ai-skill" label={t(($) => $.ai_settings.load_from_skill)}>
-        <Select
-          items={skillItems}
-          value={skillId ?? NO_SKILL}
-          onValueChange={(v) => setSkillId(!v || v === NO_SKILL ? null : v)}
-        >
-          <SelectTrigger id="ai-skill" className="w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {skillItems.map((item) => (
-              <SelectItem key={item.value} value={item.value}>
-                {item.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </Field>
-
-      <div className="flex items-center gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          disabled={blocked || test.isPending}
-          onClick={handleTest}
-        >
-          {test.isPending ? (
-            <Loader2 className="size-3.5 animate-spin" />
-          ) : null}
-          {t(($) => $.ai_settings.test)}
-        </Button>
-        <Button
-          type="button"
-          disabled={blocked || update.isPending}
-          onClick={handleSave}
-        >
-          {update.isPending ? (
-            <Loader2 className="size-3.5 animate-spin" />
-          ) : null}
+        <Button type="button" disabled={blocked || update.isPending} onClick={handleSave}>
+          {update.isPending ? <Loader2 className="size-3.5 animate-spin" /> : null}
           {t(($) => $.ai_settings.save)}
         </Button>
-        {testResult ? (
-          <span
-            role="status"
-            className={
-              testResult.ok
-                ? "text-caption text-success"
-                : "text-caption text-destructive"
-            }
-          >
-            {testResult.ok
-              ? t(($) => $.ai_settings.test_ok)
-              : t(($) => $.ai_settings.test_failed, {
-                  status: testResult.status,
-                  message: testResult.message,
-                })}
-          </span>
-        ) : null}
       </div>
     </>
+  );
+}
+
+function NextRoundBadge() {
+  const { t } = useT("agents");
+  return <Badge variant="outline">{t(($) => $.ai_settings.next_round)}</Badge>;
+}
+
+/** A model usage the server cannot store or test yet. */
+function PlannedUsage({ id, label }: { id: string; label: string }) {
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center gap-2">
+        <Label htmlFor={id}>{label}</Label>
+        <NextRoundBadge />
+      </div>
+      <Select disabled items={[]} value={null}>
+        <SelectTrigger id={id} className="w-full" aria-label={label}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent />
+      </Select>
+    </div>
   );
 }
 

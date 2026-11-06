@@ -1068,7 +1068,7 @@
     "load_from_skill": "从技能加载",
     "no_skill": "无",
     "prompt_from_skill": "将使用所选技能的内容代替此提示词。",
-    "test": "测试",
+    "test": "检测连接",
     "save": "保存",
     "test_ok": "连接成功",
     "test_failed": "{{status}} · {{message}}",
@@ -1077,6 +1077,33 @@
     "save_failed_toast": "无法保存 AI 设置",
     "load_failed": "无法加载 AI 设置",
     "retry": "重试",
-    "model_placeholder": "留空则使用服务器已加载的模型"
+    "model_placeholder": "留空则使用服务器已加载的模型",
+    "tab_providers": "模型供应商",
+    "tab_usage": "模型配置",
+    "new_config": "新建配置",
+    "duplicate_config": "复制",
+    "delete_config": "删除",
+    "next_round": "下一轮开放",
+    "show_key": "显示 API 密钥",
+    "hide_key": "隐藏 API 密钥",
+    "custom_headers": "自定义请求头",
+    "add_header": "添加 Header",
+    "model_list": "模型列表",
+    "add_model": "添加模型",
+    "vision": "视觉",
+    "context_window": "上下文 {{value}}",
+    "output_limit": "输出 {{value}}",
+    "needs_chat_model": "消息润色需要对话模型。",
+    "usage_chat": "对话 AI",
+    "usage_embedding": "嵌入",
+    "usage_rerank": "重排序",
+    "usage_decision": "决策",
+    "model_types": {
+      "chat": "对话",
+      "embedding": "嵌入",
+      "rerank": "重排序",
+      "decision": "决策",
+      "other": "其他"
+    }
   }
 }

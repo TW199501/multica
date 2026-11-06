@@ -1104,6 +1104,33 @@
     "save_failed_toast": "Couldn't save AI settings",
     "load_failed": "Couldn't load AI settings",
     "retry": "Retry",
-    "model_placeholder": "Empty uses the server's loaded model"
+    "model_placeholder": "Empty uses the server's loaded model",
+    "tab_providers": "Providers",
+    "tab_usage": "Model usage",
+    "new_config": "New configuration",
+    "duplicate_config": "Duplicate",
+    "delete_config": "Delete",
+    "next_round": "Next round",
+    "show_key": "Show key",
+    "hide_key": "Hide key",
+    "custom_headers": "Custom headers",
+    "add_header": "Add header",
+    "model_list": "Models",
+    "add_model": "Add model",
+    "vision": "Vision",
+    "context_window": "Context {{value}}",
+    "output_limit": "Output {{value}}",
+    "needs_chat_model": "Message polish needs a chat model.",
+    "usage_chat": "Chat AI",
+    "usage_embedding": "Embedding",
+    "usage_rerank": "Rerank",
+    "usage_decision": "Decision",
+    "model_types": {
+      "chat": "Chat",
+      "embedding": "Embedding",
+      "rerank": "Rerank",
+      "decision": "Decision",
+      "other": "Other"
+    }
   }
 }
