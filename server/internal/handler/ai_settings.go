@@ -152,6 +152,9 @@ func (h *Handler) PutAISettings(w http.ResponseWriter, r *http.Request) {
 	case errors.Is(err, aisettings.ErrKeyRequired):
 		writeError(w, http.StatusConflict, "api_key_required")
 		return
+	case errors.Is(err, aisettings.ErrConcurrentUpdate):
+		writeError(w, http.StatusConflict, "ai_settings_changed")
+		return
 	case errors.Is(err, aisettings.ErrSecretKeyMissing):
 		writeError(w, http.StatusServiceUnavailable, "secret_key_missing")
 		return

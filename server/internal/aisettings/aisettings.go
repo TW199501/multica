@@ -7,6 +7,7 @@ import (
 	"errors"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -20,6 +21,7 @@ var (
 	ErrSecretKeyMissing = errors.New("aisettings: MULTICA_AI_SECRET_KEY is not set")
 	ErrNotConfigured    = errors.New("aisettings: workspace AI is not configured")
 	ErrKeyRequired      = errors.New("aisettings: api key must be re-entered for a new provider or host")
+	ErrConcurrentUpdate = errors.New("aisettings: settings changed by another save")
 )
 
 // Settings is the stored configuration without any key material.
@@ -125,6 +127,7 @@ func (s *Service) existing(ctx context.Context, workspaceID pgtype.UUID) (db.Wor
 
 // Save upserts the settings. A stored key is kept when in.APIKey is nil, but only
 // while provider and host are unchanged, so a saved key is never sent elsewhere.
+// ErrConcurrentUpdate means another save changed the row while this one kept its key.
 func (s *Service) Save(ctx context.Context, workspaceID, userID pgtype.UUID, in Input) (Settings, error) {
 	if s.box == nil {
 		return Settings{}, ErrSecretKeyMissing
@@ -133,6 +136,11 @@ func (s *Service) Save(ctx context.Context, workspaceID, userID pgtype.UUID, in 
 	if err != nil {
 		return Settings{}, err
 	}
+	return s.saveOver(ctx, row, found, workspaceID, userID, in)
+}
+
+// saveOver writes in over the row its key decision was checked against.
+func (s *Service) saveOver(ctx context.Context, row db.WorkspaceAiSetting, found bool, workspaceID, userID pgtype.UUID, in Input) (Settings, error) {
 	params := db.UpsertWorkspaceAISettingsParams{
 		WorkspaceID:     workspaceID,
 		Provider:        in.Provider,
@@ -152,10 +160,20 @@ func (s *Service) Save(ctx context.Context, workspaceID, userID pgtype.UUID, in 
 		params.ApiKeyLast4 = last4(key)
 	} else if in.ClearAPIKey {
 		params.ClearKey = true
-	} else if found && len(row.ApiKeySealed) > 0 && !sameTarget(row, in) {
-		return Settings{}, ErrKeyRequired
+	} else {
+		if found && len(row.ApiKeySealed) > 0 && !sameTarget(row, in) {
+			return Settings{}, ErrKeyRequired
+		}
+		params.ExpectedUpdatedAt = row.UpdatedAt
+		if !found {
+			// No row was seen, so any row that exists by now is a conflict.
+			params.ExpectedUpdatedAt = pgtype.Timestamptz{Time: time.Unix(0, 0), Valid: true}
+		}
 	}
 	saved, err := s.q.UpsertWorkspaceAISettings(ctx, params)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return Settings{}, ErrConcurrentUpdate
+	}
 	if err != nil {
 		return Settings{}, err
 	}

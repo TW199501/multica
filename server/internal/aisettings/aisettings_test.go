@@ -322,3 +322,56 @@ func TestKeyedWorkspaceClientSendsOnlyItsOwnKey(t *testing.T) {
 	}
 	assertNoOrgOrProject(t, *got)
 }
+
+func TestSaveRefusesToKeepAKeyOverAConcurrentTargetChange(t *testing.T) {
+	ctx := context.Background()
+	svc := NewService(db.New(testPool), newBox(t))
+	ws := newWorkspace(t)
+
+	endpointA := Input{Provider: "openai", BaseURL: "https://a.example.com/v1", Model: "a", APIKey: strPtr("sk-aaaaaaaa1111")}
+	if _, err := svc.Save(ctx, ws, newUser(), endpointA); err != nil {
+		t.Fatal(err)
+	}
+	stale, found, err := svc.existing(ctx, ws)
+	if err != nil || !found {
+		t.Fatalf("existing = %v, %v", found, err)
+	}
+
+	endpointB := Input{Provider: "openai", BaseURL: "https://b.example.com/v1", Model: "b", APIKey: strPtr("sk-bbbbbbbb2222")}
+	if _, err := svc.Save(ctx, ws, newUser(), endpointB); err != nil {
+		t.Fatal(err)
+	}
+
+	promptOnly := Input{Provider: "openai", BaseURL: "https://a.example.com/v1", Model: "a", Prompt: "new prompt"}
+	if _, err := svc.saveOver(ctx, stale, found, ws, newUser(), promptOnly); !errors.Is(err, ErrConcurrentUpdate) {
+		t.Fatalf("saveOver = %v, want ErrConcurrentUpdate", err)
+	}
+
+	got, _, err := svc.Get(ctx, ws)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.BaseURL != endpointB.BaseURL || got.APIKeyLast4 != "2222" {
+		t.Fatalf("B's endpoint and key must survive together: %+v", got)
+	}
+}
+
+func TestSaveRefusesToKeepAKeyWhenARowAppearedConcurrently(t *testing.T) {
+	ctx := context.Background()
+	svc := NewService(db.New(testPool), newBox(t))
+	ws := newWorkspace(t)
+
+	stale, found, err := svc.existing(ctx, ws)
+	if err != nil || found {
+		t.Fatalf("existing = %v, %v", found, err)
+	}
+	endpointB := Input{Provider: "openai", BaseURL: "https://b.example.com/v1", Model: "b", APIKey: strPtr("sk-bbbbbbbb2222")}
+	if _, err := svc.Save(ctx, ws, newUser(), endpointB); err != nil {
+		t.Fatal(err)
+	}
+
+	noKey := Input{Provider: "openai", BaseURL: "https://a.example.com/v1", Model: "a"}
+	if _, err := svc.saveOver(ctx, stale, found, ws, newUser(), noKey); !errors.Is(err, ErrConcurrentUpdate) {
+		t.Fatalf("saveOver = %v, want ErrConcurrentUpdate", err)
+	}
+}

@@ -6,6 +6,8 @@ WHERE workspace_id = $1;
 -- api_key_sealed / api_key_last4 are only overwritten when a new sealed key is
 -- supplied, so saving without a key keeps the stored one; clear_key wipes it
 -- (a new key in the same call wins, so callers pass clear_key=false then).
+-- expected_updated_at makes keeping a key conditional on the row the caller
+-- checked it against: no row comes back when another save got there first.
 INSERT INTO workspace_ai_settings (
     workspace_id, provider, base_url, model, api_key_sealed, api_key_last4,
     disable_thinking, prompt, prompt_skill_id, updated_by
@@ -27,6 +29,8 @@ ON CONFLICT (workspace_id) DO UPDATE SET
     prompt_skill_id  = EXCLUDED.prompt_skill_id,
     updated_by       = EXCLUDED.updated_by,
     updated_at       = now()
+WHERE sqlc.narg('expected_updated_at')::timestamptz IS NULL
+   OR workspace_ai_settings.updated_at = sqlc.narg('expected_updated_at')
 RETURNING *;
 
 -- name: TouchWorkspaceAISettingsCalledAt :exec

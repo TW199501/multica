@@ -69,26 +69,31 @@ ON CONFLICT (workspace_id) DO UPDATE SET
     prompt_skill_id  = EXCLUDED.prompt_skill_id,
     updated_by       = EXCLUDED.updated_by,
     updated_at       = now()
+WHERE $12::timestamptz IS NULL
+   OR workspace_ai_settings.updated_at = $12
 RETURNING workspace_id, provider, base_url, model, api_key_sealed, api_key_last4, disable_thinking, prompt, prompt_skill_id, last_called_at, updated_by, created_at, updated_at
 `
 
 type UpsertWorkspaceAISettingsParams struct {
-	WorkspaceID     pgtype.UUID `json:"workspace_id"`
-	Provider        string      `json:"provider"`
-	BaseUrl         string      `json:"base_url"`
-	Model           string      `json:"model"`
-	DisableThinking bool        `json:"disable_thinking"`
-	Prompt          string      `json:"prompt"`
-	PromptSkillID   pgtype.UUID `json:"prompt_skill_id"`
-	UpdatedBy       pgtype.UUID `json:"updated_by"`
-	ApiKeySealed    []byte      `json:"api_key_sealed"`
-	ApiKeyLast4     string      `json:"api_key_last4"`
-	ClearKey        bool        `json:"clear_key"`
+	WorkspaceID       pgtype.UUID        `json:"workspace_id"`
+	Provider          string             `json:"provider"`
+	BaseUrl           string             `json:"base_url"`
+	Model             string             `json:"model"`
+	DisableThinking   bool               `json:"disable_thinking"`
+	Prompt            string             `json:"prompt"`
+	PromptSkillID     pgtype.UUID        `json:"prompt_skill_id"`
+	UpdatedBy         pgtype.UUID        `json:"updated_by"`
+	ApiKeySealed      []byte             `json:"api_key_sealed"`
+	ApiKeyLast4       string             `json:"api_key_last4"`
+	ClearKey          bool               `json:"clear_key"`
+	ExpectedUpdatedAt pgtype.Timestamptz `json:"expected_updated_at"`
 }
 
 // api_key_sealed / api_key_last4 are only overwritten when a new sealed key is
 // supplied, so saving without a key keeps the stored one; clear_key wipes it
 // (a new key in the same call wins, so callers pass clear_key=false then).
+// expected_updated_at makes keeping a key conditional on the row the caller
+// checked it against: no row comes back when another save got there first.
 func (q *Queries) UpsertWorkspaceAISettings(ctx context.Context, arg UpsertWorkspaceAISettingsParams) (WorkspaceAiSetting, error) {
 	row := q.db.QueryRow(ctx, upsertWorkspaceAISettings,
 		arg.WorkspaceID,
@@ -102,6 +107,7 @@ func (q *Queries) UpsertWorkspaceAISettings(ctx context.Context, arg UpsertWorks
 		arg.ApiKeySealed,
 		arg.ApiKeyLast4,
 		arg.ClearKey,
+		arg.ExpectedUpdatedAt,
 	)
 	var i WorkspaceAiSetting
 	err := row.Scan(
