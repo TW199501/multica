@@ -46,6 +46,11 @@ that needs a key.
 
 Saving requires `MULTICA_AI_SECRET_KEY` to be set on the Multica server.
 
+The Multica server refuses AI endpoints on localhost and private addresses. List
+this server's address in `MULTICA_AI_ALLOW_CIDRS` on the Multica server, for
+example `192.168.25.14/32`. Every workspace owner can then reach that range, so
+keep it narrow.
+
 The image uses the floating `server` tag. Pin a `server-b<build>` tag from
 <https://github.com/ggml-org/llama.cpp/pkgs/container/llama.cpp> if you need
 reproducible deployments. The server has no authentication by default; do not

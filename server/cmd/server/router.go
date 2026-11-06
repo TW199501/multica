@@ -780,6 +780,13 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 		}
 	}
 	h.AISettings = aisettings.NewService(queries, aiBox)
+	// Non-public ranges workspace AI endpoints may reach. Empty by default.
+	if raw := strings.TrimSpace(os.Getenv(aisettings.AllowCIDRsEnv)); raw != "" {
+		for _, err := range aisettings.SetAllowedPrefixes(strings.Split(raw, ",")) {
+			slog.Error("ai settings: ignoring malformed allow cidr", "error", err)
+		}
+		slog.Warn("ai settings: operator allow-list set; workspace owners can reach those ranges", "cidrs", raw)
+	}
 	if aiBox != nil {
 		slog.Info("ai settings enabled")
 	} else {

@@ -186,6 +186,7 @@ Les limites de débit d'authentification nécessitent `REDIS_URL` ; sans cette v
 | Lark | `MULTICA_LARK_SECRET_KEY` | Clé de chiffrement des identifiants de 32 octets, encodée en Base64 |
 | Slack | `MULTICA_SLACK_SECRET_KEY` | Clé de chiffrement des jetons de 32 octets, encodée en Base64 |
 | Paramètres IA | `MULTICA_AI_SECRET_KEY` | Clé de 32 octets encodée en Base64 qui chiffre la clé des paramètres IA de l'espace de travail ; sans elle, la page des paramètres IA ne peut pas enregistrer et l'amélioration des messages est indisponible. Gardez-la stable : la perdre ou la changer rend illisibles les clés IA enregistrées |
+| Paramètres IA | `MULTICA_AI_ALLOW_CIDRS` | Plages non publiques que les points de terminaison IA des espaces de travail peuvent joindre, séparées par des virgules, par exemple `192.168.25.14/32` pour llama.cpp sur votre réseau. Vide par défaut : localhost, les adresses privées et les adresses de métadonnées sont refusés. Tout propriétaire d'espace de travail peut joindre ces plages : gardez-les étroites. |
 | Telegram | `MULTICA_TELEGRAM_SECRET_KEY` | Clé de chiffrement du jeton du bot de 32 octets, encodée en Base64 |
 | Composio | `COMPOSIO_API_KEY` | Active les connexions d'outils Composio |
 | Composio | `COMPOSIO_CALLBACK_BASE_URL` | URL de l'API de rappel ; peut se rabattre sur `MULTICA_PUBLIC_URL` |

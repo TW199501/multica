@@ -87,6 +87,9 @@ func hostAllowed(host string, policies []string) bool {
 	return false
 }
 
+// IsPublicAddress reports whether address is routable on the public internet.
+func IsPublicAddress(address netip.Addr) bool { return isPublicAddress(address) }
+
 func isPublicAddress(address netip.Addr) bool {
 	if !address.IsValid() || address.IsPrivate() || address.IsLoopback() || address.IsLinkLocalUnicast() || address.IsLinkLocalMulticast() || address.IsMulticast() || address.IsUnspecified() {
 		return false

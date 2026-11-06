@@ -184,6 +184,7 @@ services:
       MULTICA_SLACK_SECRET_KEY: ${MULTICA_SLACK_SECRET_KEY:-}
       # Workspace AI settings (message polish). Unset = the AI settings page cannot save.
       MULTICA_AI_SECRET_KEY: ${MULTICA_AI_SECRET_KEY:-}
+      MULTICA_AI_ALLOW_CIDRS: ${MULTICA_AI_ALLOW_CIDRS:-}
       # DingTalk bot integration. MULTICA_DINGTALK_SECRET_KEY is the opt-in:
       # unset = integration disabled. It encrypts each installation's AppSecret
       # at rest, so this single deployment-wide key is all the operator needs

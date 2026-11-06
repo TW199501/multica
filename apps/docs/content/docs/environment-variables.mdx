@@ -186,6 +186,7 @@ The auth rate limits require `REDIS_URL`; without it, the startup log notes that
 | Lark | `MULTICA_LARK_SECRET_KEY` | Base64-encoded 32-byte credential encryption key |
 | Slack | `MULTICA_SLACK_SECRET_KEY` | Base64-encoded 32-byte token encryption key |
 | AI settings | `MULTICA_AI_SECRET_KEY` | Base64-encoded 32-byte key that encrypts the workspace AI settings key; without it the AI settings page cannot save and message polish is unavailable. Keep it stable: losing or changing it makes stored AI keys unreadable |
+| AI settings | `MULTICA_AI_ALLOW_CIDRS` | Non-public ranges workspace AI endpoints may reach, comma-separated, for example `192.168.25.14/32` for llama.cpp on your network. Empty by default: localhost, private and metadata addresses are refused. Every workspace owner can reach what you list, so keep it narrow. |
 | Telegram | `MULTICA_TELEGRAM_SECRET_KEY` | Base64-encoded 32-byte Bot token encryption key |
 | Composio | `COMPOSIO_API_KEY` | Enables Composio tool connections |
 | Composio | `COMPOSIO_CALLBACK_BASE_URL` | Callback API URL; can fall back to `MULTICA_PUBLIC_URL` |

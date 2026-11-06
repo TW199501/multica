@@ -39,6 +39,8 @@ func TestMain(m *testing.M) {
 		os.Exit(0)
 	}
 	testPool = pool
+	// The fake endpoints below listen on loopback.
+	SetAllowedPrefixes([]string{"127.0.0.0/8", "::1/128"})
 	code := m.Run()
 	pool.Close()
 	os.Exit(code)

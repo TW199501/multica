@@ -38,7 +38,10 @@ func aiSettingsRouter(t *testing.T, withKey bool) http.Handler {
 	}
 	prev := testHandler.AISettings
 	testHandler.AISettings = aisettings.NewService(testHandler.Queries, box)
+	// The fake AI endpoints in these tests listen on loopback.
+	aisettings.SetAllowedPrefixes([]string{"127.0.0.0/8", "::1/128"})
 	t.Cleanup(func() {
+		aisettings.SetAllowedPrefixes(nil)
 		testHandler.AISettings = prev
 		_, _ = testPool.Exec(context.Background(), `DELETE FROM workspace_ai_settings WHERE workspace_id = $1`, testWorkspaceID)
 	})

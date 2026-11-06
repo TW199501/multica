@@ -253,8 +253,11 @@ func ClientFromInput(in Input, apiKey string, retries *llm.RetryOverride) *llm.C
 		BaseURL:         in.BaseURL,
 		DefaultModel:    in.Model,
 		DisableThinking: in.DisableThinking,
-		// The host is admin-chosen, so the server's OPENAI_* credentials must not follow.
+		// The host is admin-chosen, so the server's OPENAI_* credentials must not follow,
+		// and it may only be a public address or a range the operator allowed.
 		IgnoreEnvironment: true,
+		HTTPClient:        guardedHTTPClient,
+		NoFallbackModel:   true,
 	})
 }
 
