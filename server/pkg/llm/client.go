@@ -197,6 +197,9 @@ type Config struct {
 	// custom headers, base URL) are all overridden. Workspace clients set it so
 	// operator credentials never reach a host a workspace admin typed.
 	IgnoreEnvironment bool
+	// NoFallbackModel leaves an empty DefaultModel empty instead of using
+	// FallbackModel, so a self-hosted endpoint answers with its loaded model.
+	NoFallbackModel bool
 }
 
 // openAIDefaultBaseURL is the SDK's production endpoint, pinned explicitly for
@@ -343,7 +346,7 @@ func New(cfg Config) *Client {
 	opts = append(opts, option.WithMiddleware(normalizeUpstreamError))
 
 	defaultModel := strings.TrimSpace(cfg.DefaultModel)
-	if defaultModel == "" {
+	if defaultModel == "" && !cfg.NoFallbackModel {
 		defaultModel = FallbackModel
 	}
 
