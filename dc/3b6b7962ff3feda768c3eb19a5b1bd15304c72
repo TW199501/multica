@@ -1,0 +1,29 @@
+server/internal/aisettings/protect.go
+  s_4d9bfb92d78af8::t_70c9979bd0fb82 22-24
+server/internal/aisettings/protect_fence_test.go
+  s_aa47a447e01641::t_6bd76c834c077f 70-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dc3b6b7962ff3feda768c3eb19a5b1bd15304c72",
+  "prompts": {},
+  "sessions": {
+    "s_4d9bfb92d78af8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a6ea0d1c825dae02b",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    },
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
