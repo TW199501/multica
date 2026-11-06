@@ -16,7 +16,7 @@ describe("DockedStatusBar", () => {
 
     const bar = container.querySelector("[data-slot='docked-status-bar']");
     expect(bar).not.toBeNull();
-    expect(bar).toHaveClass("h-[30px]", "shrink-0");
+    expect(bar).toHaveClass("h-[24px]", "shrink-0");
     expect(bar?.textContent).toBe("");
   });
 
