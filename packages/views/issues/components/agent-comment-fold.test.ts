@@ -22,9 +22,19 @@ function comment(overrides: Partial<TimelineEntry> = {}): TimelineEntry {
   } as TimelineEntry;
 }
 
-const agentRow = (id: string): AgentFoldRow => ({ id, role: "foldable", isComment: true });
-const visibleComment = (id: string): AgentFoldRow => ({ id, role: "visible", isComment: true });
-const activityRow = (id: string): AgentFoldRow => ({ id, role: "transparent", isComment: false });
+let clock = 0;
+const nextTime = () => new Date(Date.UTC(2026, 10, 7, 0, clock++)).toISOString();
+const agentRow = (id: string, count = 1, latestAt = nextTime()): AgentFoldRow => ({
+  id,
+  role: "foldable",
+  comment: { count, latestAt },
+});
+const visibleComment = (id: string): AgentFoldRow => ({
+  id,
+  role: "visible",
+  comment: { count: 1, latestAt: nextTime() },
+});
+const activityRow = (id: string): AgentFoldRow => ({ id, role: "transparent" });
 
 describe("isAgentOnlyThread", () => {
   it("accepts an agent comment that addresses nobody", () => {
@@ -111,6 +121,21 @@ describe("planAgentFolds", () => {
     const before = planAgentFolds([agentRow("a"), agentRow("b"), agentRow("c")]);
     const after = planAgentFolds([agentRow("a"), agentRow("b"), agentRow("c"), agentRow("d")]);
     expect(after.get("c")?.foldId).toBe(before.get("a")?.foldId);
+  });
+
+  it("keeps the thread holding the newest reply visible", () => {
+    const plan = planAgentFolds([
+      agentRow("older-thread", 2, "2026-11-07T05:00:00.000Z"),
+      agentRow("later-root", 1, "2026-11-07T01:00:00.000Z"),
+      agentRow("earlier-root", 1, "2026-11-07T00:30:00.000Z"),
+    ]);
+    expect(plan.has("older-thread")).toBe(false);
+    expect(plan.get("later-root")?.foldId).toBe("later-root");
+  });
+
+  it("counts every comment in a folded thread", () => {
+    const plan = planAgentFolds([agentRow("a", 5), agentRow("b", 2), agentRow("latest")]);
+    expect(plan.get("a")?.count).toBe(7);
   });
 
   it("treats a trailing visible comment as the newest", () => {

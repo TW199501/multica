@@ -101,7 +101,12 @@ import { IssueProjectPicker } from "../../projects/components/issue-project-pick
 import { IssuePropertyPills } from "./issue-property-pills";
 import { LocalDirectoryHint } from "../../projects/components/local-directory-hint";
 import { useNewRunIds } from "./use-run-comment-motion";
-import { isAgentOnlyThread, planAgentFolds, type AgentFoldRow } from "./agent-comment-fold";
+import {
+  hasPendingReply,
+  isAgentOnlyThread,
+  planAgentFolds,
+  type AgentFoldRow,
+} from "./agent-comment-fold";
 import { AgentRunComment, CommentCard } from "./comment-card";
 import {
   EMPTY_COMMENT_RUNS,
@@ -158,6 +163,7 @@ import { memberListOptions, agentListOptions } from "@multica/core/workspace/que
 import {
   selectExpandedResolved,
   useCommentCollapseStore,
+  useCommentDraftStore,
   useRecentIssuesStore,
   useResolvedExpandStore,
   useSubIssuesCollapseStore,
@@ -1803,6 +1809,32 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
     [timelineView.groups, expandedResolved],
   );
 
+  // A thread someone is replying in must not collapse under their cursor, and a
+  // saved draft must not disappear when the issue is reopened.
+  const draftedThreadIds = useCommentDraftStore((state) =>
+    items
+      .filter(
+        (item) =>
+          item.kind !== "activity-group" && hasPendingReply(state, `reply:${id}:${item.id}`),
+      )
+      .map((item) => item.id)
+      .join(" "),
+  );
+  const draftedThreads = useMemo(
+    () => new Set(draftedThreadIds ? draftedThreadIds.split(" ") : []),
+    [draftedThreadIds],
+  );
+  const [openReplyThreads, setOpenReplyThreads] = useState<ReadonlySet<string>>(() => new Set());
+  const handleReplyOpenChange = useCallback((threadId: string, replyOpen: boolean) => {
+    setOpenReplyThreads((prev) => {
+      if (prev.has(threadId) === replyOpen) return prev;
+      const next = new Set(prev);
+      if (replyOpen) next.add(threadId);
+      else next.delete(threadId);
+      return next;
+    });
+  }, []);
+
   // Agent-to-agent threads collapse behind one row. Folded rows stay in `items`
   // so every index-based jump keeps working; they only render as a placeholder.
   const agentFolds = useMemo(() => {
@@ -1812,21 +1844,38 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
           isActiveCommentRun(task) || task.status === "failed" || task.status === "cancelled",
       );
     const rows = items.map((item): AgentFoldRow => {
-      if (item.kind === "activity-group" || item.kind === "resolved-bar") {
-        return { id: item.id, role: "transparent", isComment: false };
-      }
+      if (item.kind === "activity-group") return { id: item.id, role: "transparent" };
       const entry = item.entry;
-      if (!entry) return { id: item.id, role: "visible", isComment: true };
+      if (!entry) {
+        return {
+          id: item.id,
+          role: "visible",
+          comment: { count: 0, latestAt: item.kind === "run" ? item.run.task.created_at : "" },
+        };
+      }
+      const replies = timelineView.threadReplies.get(entry.id) ?? EMPTY_REPLIES;
+      const thread = [entry, ...replies];
+      const comment = {
+        count: thread.filter((reply) => !reply.deleted_at).length,
+        latestAt: thread.reduce(
+          (latest, reply) =>
+            Date.parse(reply.created_at) > Date.parse(latest) ? reply.created_at : latest,
+          entry.created_at,
+        ),
+      };
       const settled =
         isSettled(entry.id) &&
         (item.kind !== "run" ||
           (!isActiveCommentRun(item.run.task) && !isRunFailureNotice(entry, item.run.task)));
       const foldable =
-        settled && isAgentOnlyThread(entry, timelineView.threadReplies.get(entry.id) ?? EMPTY_REPLIES);
-      return { id: item.id, role: foldable ? "foldable" : "visible", isComment: true };
+        settled &&
+        !draftedThreads.has(entry.id) &&
+        !openReplyThreads.has(entry.id) &&
+        isAgentOnlyThread(entry, replies);
+      return { id: item.id, role: foldable ? "foldable" : "visible", comment };
     });
     return planAgentFolds(rows);
-  }, [items, commentRuns, timelineView.threadReplies]);
+  }, [items, commentRuns, timelineView.threadReplies, draftedThreads, openReplyThreads]);
   const [expandedAgentFolds, setExpandedAgentFolds] = useState<ReadonlySet<string>>(() => new Set());
   const toggleAgentFold = useCallback((foldId: string) => {
     setExpandedAgentFolds((prev) => {
@@ -3189,7 +3238,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
           onExpand={() => toggleResolvedExpand(reply.id, true)} /> : <AgentRunComment run={item.run} entering={enteringRunIds.has(item.run.task.id)} standalone
           highlightedId={highlightedId}
           commentProps={reply ? {
-            issueId: id, entry: reply, replies: timelineView.threadReplies.get(reply.id) ?? EMPTY_REPLIES,
+            issueId: id, onReplyOpenChange: handleReplyOpenChange, entry: reply, replies: timelineView.threadReplies.get(reply.id) ?? EMPTY_REPLIES,
             currentUserId: user?.id, canModerate: canModerateComments, onReply: submitReply,
             onReplyAccepted: scrollToTimelineBottom, onEdit: editComment, onDelete: deleteComment,
             onToggleReaction: handleToggleReaction, onCreateSubIssue: openCommentSubIssue,
@@ -3219,6 +3268,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
         <div className="pb-3" id={`comment-${item.id}`}>
           <CommentCard
             issueId={id}
+            onReplyOpenChange={handleReplyOpenChange}
             runs={commentRuns.get(item.id) ?? EMPTY_COMMENT_RUNS}
             enteringRunIds={enteringRunIds}
             entry={item.entry}

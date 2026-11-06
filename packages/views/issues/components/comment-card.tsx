@@ -28,6 +28,7 @@ import { DeferredTooltip } from "../../common/deferred-tooltip";
 import { ReactionBar } from "@multica/ui/components/common/reaction-bar";
 import { QuickEmojiPicker } from "@multica/ui/components/common/quick-emoji-picker";
 import { cn } from "@multica/ui/lib/utils";
+import { hasPendingReply } from "./agent-comment-fold";
 import { copyText } from "@multica/ui/lib/clipboard";
 import { useActorName } from "@multica/core/workspace/hooks";
 import { useLocale, useTimeAgo } from "../../i18n";
@@ -112,6 +113,8 @@ function StickyHeaderShell({
 // Types
 
 interface CommentCardProps {
+  /** Reports whether this thread's reply box is open, so it stays out of folds. */
+  onReplyOpenChange?: (threadId: string, replyOpen: boolean) => void;
   issueId: string;
   runs?: CommentRun[];
   runViewState?: InlineCommentRunState;
@@ -1027,6 +1030,7 @@ export function AgentRunComment({ run, standalone = false, commentProps, enterin
 // Provenance still lives on `quick_action_id`; it is data, not decoration.
 
 function CommentCardImpl({
+  onReplyOpenChange,
   issueId,
   runs = EMPTY_COMMENT_RUNS,
   runViewState,
@@ -1193,13 +1197,11 @@ function CommentCardImpl({
   const replyDraftKey = `reply:${issueId}:${entry.id}` as const;
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyFocusRequest, setReplyFocusRequest] = useState(0);
-  const hasPendingReply = useCommentDraftStore(
-    (state) =>
-      !!state.getDraft(replyDraftKey)?.trim() ||
-      state.getAnnotations(replyDraftKey).length > 0 ||
-      state.getUploads(replyDraftKey).length > 0,
-  );
-  const showReplyInput = replyOpen || hasPendingReply;
+  const replyPending = useCommentDraftStore((state) => hasPendingReply(state, replyDraftKey));
+  const showReplyInput = replyOpen || replyPending;
+  useEffect(() => {
+    onReplyOpenChange?.(entry.id, replyOpen);
+  }, [onReplyOpenChange, entry.id, replyOpen]);
 
   return (
     // overflow-clip (not -hidden) clips the rounded corners WITHOUT creating a

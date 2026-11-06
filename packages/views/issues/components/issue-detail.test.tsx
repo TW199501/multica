@@ -1921,6 +1921,61 @@ describe("IssueDetail (shared)", () => {
       });
     });
 
+    it("keeps a resolved member thread between agent threads reachable", async () => {
+      const resolved: TimelineEntry = {
+        ...agentComment("member-root", "Please check this", { created_at: "2026-01-18T00:02:00Z" }),
+        actor_type: "member",
+        actor_id: "user-1",
+        resolved_at: "2026-01-18T00:00:00Z",
+      };
+      mockApiObj.listTimeline.mockResolvedValue([
+        agentComment("agent-a", "Pixel, fix it", { created_at: "2026-01-18T00:01:00Z" }),
+        resolved,
+        agentComment("agent-b", "Sentinel, review it", { created_at: "2026-01-18T00:03:00Z" }),
+        agentComment("agent-latest", "All done", { created_at: "2026-01-18T00:04:00Z" }),
+      ]);
+      renderIssueDetail();
+
+      const folds = await screen.findAllByRole("button", { name: "1 agent comment" });
+      expect(folds).toHaveLength(2);
+    });
+
+    it("keeps an agent thread visible while a reply draft is waiting in it", async () => {
+      pendingReplyDrafts.set("reply:issue-1:agent-a", "half written");
+      mockApiObj.listTimeline.mockResolvedValue([
+        agentComment("agent-a", "Should I retry?"),
+        agentComment("agent-latest", "All done"),
+      ]);
+      renderIssueDetail();
+
+      expect(await screen.findByText("Should I retry?")).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /agent comment/ })).not.toBeInTheDocument();
+      pendingReplyDrafts.clear();
+    });
+
+    it("keeps a thread visible once its reply box is open", async () => {
+      mockApiObj.listTimeline.mockResolvedValue([agentComment("agent-a", "Should I retry?")]);
+      const client = createTestQueryClient();
+      render(
+        <I18nProvider locale="en" resources={TEST_RESOURCES}>
+          <QueryClientProvider client={client}>
+            <IssueDetail issueId="issue-1" />
+          </QueryClientProvider>
+        </I18nProvider>,
+      );
+      fireEvent.click(await screen.findByRole("button", { name: "Reply" }));
+
+      act(() => {
+        client.setQueryData(issueKeys.timeline("issue-1"), [
+          agentComment("agent-a", "Should I retry?"),
+          agentComment("agent-latest", "All done"),
+        ]);
+      });
+
+      expect(await screen.findByText("All done")).toBeInTheDocument();
+      expect(screen.getByText("Should I retry?")).toBeInTheDocument();
+    });
+
     it("does not fold when deep linking to a comment", async () => {
       const timeline = [
         agentComment("agent-a", "Pixel, fix the format check"),
