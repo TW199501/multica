@@ -1976,6 +1976,71 @@ describe("IssueDetail (shared)", () => {
       expect(screen.getByText("Should I retry?")).toBeInTheDocument();
     });
 
+    it("keeps the reply box open after a restored draft is emptied", async () => {
+      pendingReplyDrafts.set("reply:issue-1:agent-a", "half written");
+      mockApiObj.listTimeline.mockResolvedValue([agentComment("agent-a", "All done")]);
+      const client = createTestQueryClient();
+      render(
+        <I18nProvider locale="en" resources={TEST_RESOURCES}>
+          <QueryClientProvider client={client}>
+            <IssueDetail issueId="issue-1" />
+          </QueryClientProvider>
+        </I18nProvider>,
+      );
+      await screen.findByText("All done");
+
+      pendingReplyDrafts.clear();
+      act(() => {
+        client.setQueryData(issueKeys.timeline("issue-1"), [
+          { ...agentComment("agent-a", "All done"), updated_at: "2026-01-18T00:01:00Z" },
+        ]);
+      });
+
+      await screen.findByText("All done");
+      expect(screen.queryByRole("button", { name: "Reply" })).not.toBeInTheDocument();
+    });
+
+    it("does not treat a run with no comment as the newest comment", async () => {
+      const task = {
+        id: "4a2e8d1c-7f9b-4e2a-9c1d-000000000004", agent_id: "agent-1", runtime_id: "runtime-1",
+        issue_id: "issue-1", status: "running", priority: 0, created_at: "2026-01-19T00:00:00Z",
+        dispatched_at: "2026-01-19T00:00:01Z", started_at: "2026-01-19T00:00:02Z",
+        completed_at: null, result: null, error: null,
+      } as AgentTask;
+      mockApiObj.listTimeline.mockResolvedValue([
+        agentComment("agent-a", "Pixel, fix it", { created_at: "2026-01-18T00:01:00Z" }),
+        agentComment("agent-latest", "All done", { created_at: "2026-01-18T00:02:00Z" }),
+      ]);
+      mockApiObj.listTasksByIssue.mockResolvedValue([task]);
+      renderIssueDetail();
+
+      expect(await screen.findByText("All done")).toBeInTheDocument();
+      expect(await screen.findByRole("button", { name: "1 agent comment" })).toBeInTheDocument();
+    });
+
+    it("keeps the reply box open when replying inside an expanded fold", async () => {
+      mockApiObj.listTimeline.mockResolvedValue([
+        agentComment("agent-a", "Pixel, fix it", { created_at: "2026-01-18T00:01:00Z" }),
+        agentComment("agent-b", "Sentinel, review it", { created_at: "2026-01-18T00:02:00Z" }),
+        agentComment("agent-latest", "All done", { created_at: "2026-01-18T00:03:00Z" }),
+      ]);
+      const { container } = renderIssueDetail();
+
+      fireEvent.click(await screen.findByRole("button", { name: "2 agent comments" }));
+      const thread = (await waitFor(() => {
+        const found = container.querySelector("#comment-agent-a");
+        expect(found).not.toBeNull();
+        return found;
+      })) as HTMLElement;
+      fireEvent.click(within(thread).getByRole("button", { name: "Reply" }));
+
+      await waitFor(() => {
+        const current = container.querySelector("#comment-agent-a") as HTMLElement;
+        expect(within(current).queryByRole("button", { name: "Reply" })).not.toBeInTheDocument();
+      });
+      expect(screen.getByText("Pixel, fix it")).toBeInTheDocument();
+    });
+
     it("does not fold when deep linking to a comment", async () => {
       const timeline = [
         agentComment("agent-a", "Pixel, fix the format check"),

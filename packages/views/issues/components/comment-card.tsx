@@ -1199,6 +1199,10 @@ function CommentCardImpl({
   const [replyFocusRequest, setReplyFocusRequest] = useState(0);
   const replyPending = useCommentDraftStore((state) => hasPendingReply(state, replyDraftKey));
   const showReplyInput = replyOpen || replyPending;
+  // A restored draft opens the box; emptying it must not hide it mid-edit.
+  useEffect(() => {
+    if (replyPending) setReplyOpen(true);
+  }, [replyPending]);
   useEffect(() => {
     onReplyOpenChange?.(entry.id, replyOpen);
   }, [onReplyOpenChange, entry.id, replyOpen]);

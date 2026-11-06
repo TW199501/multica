@@ -1846,13 +1846,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
     const rows = items.map((item): AgentFoldRow => {
       if (item.kind === "activity-group") return { id: item.id, role: "transparent" };
       const entry = item.entry;
-      if (!entry) {
-        return {
-          id: item.id,
-          role: "visible",
-          comment: { count: 0, latestAt: item.kind === "run" ? item.run.task.created_at : "" },
-        };
-      }
+      if (!entry) return { id: item.id, role: "visible" };
       const replies = timelineView.threadReplies.get(entry.id) ?? EMPTY_REPLIES;
       const thread = [entry, ...replies];
       const comment = {
@@ -3204,13 +3198,12 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   const renderItem = (i: number, item: TimelineItem): React.ReactElement => {
     // Flat mode exists so find and deep links can reach every comment.
     const fold = isFlatTimeline ? undefined : agentFolds.get(item.id);
-    if (!fold) return renderTimelineRow(i, item);
-    const open = expandedAgentFolds.has(fold.foldId);
-    // Virtuoso rejects zero-height rows, so a folded row keeps one pixel.
-    if (!open && !fold.isHead) return <div className="h-px" aria-hidden="true" />;
+    const open = !fold || expandedAgentFolds.has(fold.foldId);
+    // The row keeps one position in this tree so that joining or leaving a fold
+    // never remounts a comment and loses its open reply box.
     return (
       <>
-        {fold.isHead && (
+        {fold?.isHead && (
           <div className="flex items-center gap-3 pb-3 px-4 max-md:px-3">
             <span aria-hidden="true" className="h-px flex-1 bg-border/60" />
             <button
@@ -3225,7 +3218,9 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
             <span aria-hidden="true" className="h-px flex-1 bg-border/60" />
           </div>
         )}
-        {open && renderTimelineRow(i, item)}
+        {open ? renderTimelineRow(i, item) : null}
+        {/* Virtuoso rejects zero-height rows, so a folded row keeps one pixel. */}
+        {!open && !fold?.isHead ? <div className="h-px" aria-hidden="true" /> : null}
       </>
     );
   };
