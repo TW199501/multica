@@ -478,11 +478,11 @@ describe("docked layout", () => {
     useDockedLayoutStore.setState({ shellDocked: true, layoutActive: false });
     const { container, unmount } = render(<AppSidebar />);
 
-    expect(container.querySelector("[data-slot='sidebar']")).toHaveClass("h-[calc(100svh-30px)]");
+    expect(container.querySelector("[data-slot='sidebar']")).toHaveClass("h-[calc(100svh-24px)]");
     unmount();
     useDockedLayoutStore.setState({ shellDocked: false });
     const second = render(<AppSidebar />);
-    expect(second.container.querySelector("[data-slot='sidebar']")).not.toHaveClass("h-[calc(100svh-30px)]");
+    expect(second.container.querySelector("[data-slot='sidebar']")).not.toHaveClass("h-[calc(100svh-24px)]");
   });
 
   it("puts Usage and help on one row in the docked footer", () => {

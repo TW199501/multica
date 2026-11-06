@@ -661,7 +661,7 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
   return (
     <RouteDataPrefetch wsId={wsId} userId={userId ?? null}>
       {/* The sidebar is fixed to the viewport, so it has to stop above the docked status bar itself. */}
-      <Sidebar variant="inset" className={shellDocked ? "h-[calc(100svh-30px)]" : undefined}>
+      <Sidebar variant="inset" className={shellDocked ? "h-[calc(100svh-24px)]" : undefined}>
         {topSlot}
         {/* Workspace Switcher */}
         <SidebarHeader className={cn("py-3", headerClassName)} style={headerStyle}>
