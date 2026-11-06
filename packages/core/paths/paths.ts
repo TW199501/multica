@@ -57,6 +57,7 @@ function workspaceScoped(slug: string) {
       `${ws}/agents/${encode(id)}?view=general&focus=${AGENT_FOCUS_CONVERSATION_STARTERS}`,
     memberDetail: (id: string) => `${ws}/members/${encode(id)}`,
     squads: () => `${ws}/squads`,
+    workflows: () => `${ws}/workflows`,
     squadDetail: (id: string) => `${ws}/squads/${encode(id)}`,
     inbox: () => `${ws}/inbox`,
     chat: () => `${ws}/chat`,

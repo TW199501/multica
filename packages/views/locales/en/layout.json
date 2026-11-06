@@ -8,6 +8,7 @@
     "autopilots": "Autopilot",
     "agents": "Agents",
     "squads": "Squads",
+    "workflows": "Workflows",
     "usage": "Analytics",
     "runtimes": "Runtimes",
     "skills": "Skills",
@@ -69,5 +70,14 @@
       "title": "Join our Discord",
       "dismiss": "Dismiss"
     }
+  },
+  "docked": {
+    "sections": "Sidebar sections",
+    "menu": "Menu",
+    "projects": "Projects",
+    "settings": "Settings",
+    "projects_empty": "No repository connected yet.",
+    "explorer": "File explorer",
+    "pinned_empty": "Nothing pinned yet."
   }
 }

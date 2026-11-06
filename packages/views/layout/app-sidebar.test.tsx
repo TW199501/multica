@@ -4,16 +4,23 @@ import { buildIssueStatusCatalog } from "@multica/core/issue-statuses/queries";
 vi.mock("@multica/core/issue-statuses/hooks", () => ({
   useIssueStatuses: () => buildIssueStatusCatalog([]),
 }));
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "@multica/core/api";
 import { renderWithI18n } from "../test/i18n";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import { AppSidebar } from "./app-sidebar";
 
 const { appForeground, chatSessions, chatStore, detail, deletePin, invitationApi, navigation, pins, sidebarState, summary, workspaces } = vi.hoisted(() => ({
   appForeground: { current: true },
   sidebarState: { setOpenMobile: vi.fn() },
   chatSessions: { current: [] as { id?: string; unread_count?: number }[] },
-  chatStore: { current: { activeSessionId: null as string | null, isOpen: false } },
+  chatStore: {
+    current: { activeSessionId: null, isOpen: false } as {
+      activeSessionId: string | null;
+      isOpen: boolean;
+      floatingChatEnabled?: boolean;
+    },
+  },
   detail: { current: { isPending: false, isError: false, data: null as unknown, error: null as unknown } },
   deletePin: vi.fn(),
   // Captures the sidebar's invitation accept/decline mutations so the
@@ -58,9 +65,21 @@ vi.mock("@dnd-kit/sortable", () => ({
 }));
 vi.mock("@dnd-kit/utilities", () => ({ CSS: { Transform: { toString: () => undefined } } }));
 vi.mock("@multica/ui/components/ui/sidebar", () => ({
-  Sidebar: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  SidebarContent: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  SidebarFooter: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  Sidebar: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-slot="sidebar" className={className}>
+      {children}
+    </div>
+  ),
+  SidebarContent: ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (
+    <div data-slot="sidebar-content" style={style}>
+      {children}
+    </div>
+  ),
+  SidebarFooter: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-slot="sidebar-footer" className={className}>
+      {children}
+    </div>
+  ),
   SidebarGroup: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   SidebarGroupContent: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   SidebarGroupLabel: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -123,7 +142,7 @@ vi.mock("@multica/core/auth", () => ({
 // Callable-store shape (selectorFn + getState) per the repo testing rules.
 vi.mock("@multica/core/chat", () => ({
   useChatStore: Object.assign(
-    (selector: (state: { activeSessionId: string | null; isOpen: boolean }) => unknown) =>
+    (selector: (state: typeof chatStore.current) => unknown) =>
       selector(chatStore.current),
     { getState: () => chatStore.current },
   ),
@@ -144,6 +163,7 @@ vi.mock("@multica/core/paths", async (importOriginal) => ({
     autopilots: () => "/acme/autopilots",
     agents: () => "/acme/agents",
     squads: () => "/acme/squads",
+    workflows: () => "/acme/workflows",
     usage: () => "/acme/usage",
     runtimes: () => "/acme/runtimes",
     skills: () => "/acme/skills",
@@ -408,6 +428,61 @@ describe("navigation item presentation", () => {
         referenceClassName,
       );
     }
+  });
+});
+
+describe("AI team nav", () => {
+  it("lists Workflows between Squads and Skills", () => {
+    const { container } = render(<AppSidebar />);
+    const hrefs = [...container.querySelectorAll("button[data-href]")].map((el) =>
+      el.getAttribute("data-href"),
+    );
+
+    const squads = hrefs.indexOf("/acme/squads");
+    expect(hrefs[squads + 1]).toBe("/acme/workflows");
+    expect(hrefs[squads + 2]).toBe("/acme/skills");
+  });
+});
+
+describe("docked layout", () => {
+  afterEach(() => {
+    chatStore.current = { activeSessionId: null, isOpen: false };
+  });
+
+  it("drops the footer Settings entry once the sidebar tabs carry Settings", () => {
+    chatStore.current = { activeSessionId: null, isOpen: false, floatingChatEnabled: false };
+    const { container } = render(<AppSidebar />);
+
+    expect(container.querySelector('button[data-href="/acme/settings"]')).toBeNull();
+    expect(container.querySelector('button[data-href="/acme/usage"]')).not.toBeNull();
+  });
+
+  it("shows the menu scrollbar and leaves the footer padding to the status bar", () => {
+    chatStore.current = { activeSessionId: null, isOpen: false, floatingChatEnabled: false };
+    const { container } = render(<AppSidebar />);
+
+    const content = container.querySelector<HTMLElement>("[data-slot='sidebar-content']");
+    expect(content?.style.scrollbarWidth).toBe("thin");
+    expect(container.querySelector("[data-slot='sidebar-footer']")).not.toHaveClass("pb-[30px]");
+  });
+
+  it("keeps the author's hidden menu scrollbar while the chat floats", () => {
+    const { container } = render(<AppSidebar />);
+
+    const content = container.querySelector<HTMLElement>("[data-slot='sidebar-content']");
+    expect(content?.style.scrollbarWidth).toBe("");
+  });
+
+  it("ends the sidebar above the status bar while the shell is docked, including the Chat tab", () => {
+    // On the Chat tab the conversation columns are off but the shell stays docked.
+    useDockedLayoutStore.setState({ shellDocked: true, layoutActive: false });
+    const { container, unmount } = render(<AppSidebar />);
+
+    expect(container.querySelector("[data-slot='sidebar']")).toHaveClass("h-[calc(100svh-30px)]");
+    unmount();
+    useDockedLayoutStore.setState({ shellDocked: false });
+    const second = render(<AppSidebar />);
+    expect(second.container.querySelector("[data-slot='sidebar']")).not.toHaveClass("h-[calc(100svh-30px)]");
   });
 });
 

@@ -8,6 +8,7 @@
     "autopilots": "오토파일럿",
     "agents": "에이전트",
     "squads": "스쿼드",
+    "workflows": "워크플로",
     "usage": "분석",
     "runtimes": "런타임",
     "skills": "스킬",
@@ -69,5 +70,14 @@
       "title": "Discord 참여하기",
       "dismiss": "닫기"
     }
+  },
+  "docked": {
+    "sections": "사이드바 섹션",
+    "menu": "메뉴",
+    "projects": "프로젝트",
+    "settings": "설정",
+    "projects_empty": "아직 연결된 저장소가 없습니다.",
+    "explorer": "파일 탐색기",
+    "pinned_empty": "고정한 항목이 없습니다."
   }
 }

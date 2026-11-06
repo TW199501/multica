@@ -79,6 +79,7 @@ vi.mock("@multica/views/layout", () => ({
       <div data-testid="sidebar-personal-extra">{personalNavExtra}</div>
     </div>
   ),
+  DockedStatusBar: () => <footer data-testid="docked-status-bar" />,
   GlobalShortcuts: () => null,
   NavigationProgress: () => null,
 }));
@@ -96,7 +97,10 @@ vi.mock("@multica/views/search", () => ({
   SearchCommand: () => null,
   SearchTrigger: () => null,
 }));
-vi.mock("@multica/views/chat", () => ({ FloatingChat: () => null }));
+vi.mock("@multica/views/chat", () => ({
+  FloatingChat: () => null,
+  DockedChatLayout: ({ children }: { children: ReactNode }) => <>{children}</>,
+}));
 vi.mock("./tab-bar", () => ({ TabBar: () => null }));
 vi.mock("./window-overlay", () => ({ WindowOverlay: () => null }));
 
@@ -164,6 +168,17 @@ describe("DesktopShell browser entry placement", () => {
     expect(getByTestId("sidebar-top-slot")).not.toContainElement(
       getByTestId("browser-entry"),
     );
+  });
+});
+
+describe("DesktopShell status bar", () => {
+  it("puts the docked status bar under the sidebar and main area", () => {
+    const { container, getByTestId } = renderShell();
+
+    const wrapper = container.querySelector("[data-slot='sidebar-wrapper']");
+    expect(wrapper).toHaveClass("min-h-0", "flex-1");
+    expect(wrapper?.nextElementSibling).toBe(getByTestId("docked-status-bar"));
+    expect(wrapper?.parentElement).toHaveClass("h-screen", "flex-col");
   });
 });
 

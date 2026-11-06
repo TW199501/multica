@@ -94,10 +94,21 @@ const uiLogger = createLogger("chat.ui");
 const apiLogger = createLogger("chat.api");
 
 
-export function ChatWindow() {
+export interface ChatWindowProps {
+  /**
+   * `floating` is the resizable overlay card. `docked` fills the column it is
+   * placed in and is always open: it is the conversation column of the docked
+   * layout, used when the floating chat preference is off.
+   */
+  variant?: "floating" | "docked";
+}
+
+export function ChatWindow({ variant = "floating" }: ChatWindowProps = {}) {
   const { t } = useT("chat");
   const wsId = useWorkspaceId();
-  const isOpen = useChatStore((s) => s.isOpen);
+  const docked = variant === "docked";
+  const storeIsOpen = useChatStore((s) => s.isOpen);
+  const isOpen = docked || storeIsOpen;
   const activeSessionId = useChatStore((s) => s.activeSessionId);
   const { data: quickActionsPending = null } = useQuery(
     chatQuickActionsPendingOptions(activeSessionId ?? ""),
@@ -732,7 +743,7 @@ export function ChatWindow() {
 
   const { renderWidth, renderHeight, isAtMax, boundsReady, isDragging, toggleExpand, startDrag } = useChatResize(windowRef);
 
-  const isVisible = isOpen && (isExpanded || boundsReady);
+  const isVisible = docked || (isOpen && (isExpanded || boundsReady));
 
   // Small screens drop the floating-card form entirely — a 90%-of-375px
   // "window" is all chrome and no content, so the panel goes full-screen
@@ -742,12 +753,14 @@ export function ChatWindow() {
   // `@container`: the window is user-resizable from 360px to 90% of the
   // viewport, so the chat body's gutter (CHAT_GUTTER) has to key off the
   // window's own width, not the page behind it.
-  const containerClass = cn(
-    "absolute z-50 flex flex-col overflow-hidden bg-surface-raised @container",
-    isMobile
-      ? "inset-x-0"
-      : "right-2 rounded-xl shadow-[var(--floating-shadow)] ring-1 ring-surface-border",
-  );
+  const containerClass = docked
+    ? "relative flex h-full w-full min-w-0 flex-col overflow-hidden bg-surface-raised @container"
+    : cn(
+        "absolute z-50 flex flex-col overflow-hidden bg-surface-raised @container",
+        isMobile
+          ? "inset-x-0"
+          : "right-2 rounded-xl shadow-[var(--floating-shadow)] ring-1 ring-surface-border",
+      );
   // Soft keyboards shrink only the *visual* viewport — the layout viewport
   // (and this panel's bottom-anchored parent) keeps its full height, so
   // without correction the panel's lower half, composer included, sits
@@ -762,7 +775,7 @@ export function ChatWindow() {
   // disappears from the style prop, so a conditional spread here would
   // leave the keyboard geometry stuck on the DOM after the keyboard closes.
   const keyboard = useVisualViewportKeyboard();
-  const containerStyle: React.CSSProperties = {
+  const containerStyle: React.CSSProperties = docked ? { pointerEvents: "auto" } : {
     transformOrigin: "bottom right",
     pointerEvents: isOpen ? "auto" : "none",
     ...(isMobile
@@ -787,7 +800,9 @@ export function ChatWindow() {
   // otherwise leave the desktop card's inline width stuck on the
   // full-screen panel. Mixed units (px <-> "100%") skip interpolation and
   // jump, which is the behavior we want for keyboard snaps anyway.
-  const motionSize = isMobile
+  const motionSize = docked
+    ? { width: "100%", height: "100%" }
+    : isMobile
     ? {
         width: "100%",
         height: keyboard ? keyboard.viewportHeight : "100%",
@@ -815,7 +830,7 @@ export function ChatWindow() {
         opacity: { duration: 0.15 },
       }}
     >
-      {!isMobile && <ChatResizeHandles onDragStart={startDrag} />}
+      {!isMobile && !docked && <ChatResizeHandles onDragStart={startDrag} />}
       {/* Header — ⊕ new + session dropdown | window tools */}
       <div className="flex items-center justify-between border-b px-4 py-2.5 gap-2">
         <div className="flex items-center gap-1 min-w-0">
@@ -843,7 +858,7 @@ export function ChatWindow() {
             onSelectSession={handleSelectSession}
           />
         </div>
-        <div className="flex items-center gap-0.5 shrink-0">
+        {!docked && <div className="flex items-center gap-0.5 shrink-0">
           {!isMobile && (
             <Tooltip>
               <TooltipTrigger
@@ -881,7 +896,7 @@ export function ChatWindow() {
               <ActionShortcutKeycaps action="toggleChat" />
             </TooltipContent>
           </Tooltip>
-        </div>
+        </div>}
       </div>
 
       {/* Messages / skeleton / empty state */}

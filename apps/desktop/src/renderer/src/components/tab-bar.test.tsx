@@ -364,10 +364,9 @@ describe("TabBar overflow", () => {
       "overflow-x-auto",
       "overflow-y-hidden",
     );
-    expect(getByLabelText("Tab 1").closest("[data-tab-frame]")).toHaveClass(
-      "w-40",
-      "min-w-32",
-    );
+    const tabFrame = getByLabelText("Tab 1").closest("[data-tab-frame]");
+    expect(tabFrame).toHaveClass("flex-1", "max-w-40", "min-w-[72px]");
+    expect(tabFrame).not.toHaveClass("w-40");
 
     const newTabButton = getByLabelText("New tab");
     expect(tabScroller).not.toContainElement(newTabButton);

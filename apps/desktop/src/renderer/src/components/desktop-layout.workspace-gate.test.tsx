@@ -81,6 +81,7 @@ vi.mock("@multica/views/platform", () => ({
 // which of them the shell decided to mount.
 vi.mock("@multica/views/layout", () => ({
   AppSidebar: () => <div data-testid="app-sidebar" />,
+  DockedStatusBar: () => null,
   GlobalShortcuts: () => <div data-testid="global-shortcuts" />,
   NavigationProgress: () => <div data-testid="navigation-progress" />,
 }));
@@ -107,6 +108,7 @@ vi.mock("@multica/views/search", () => ({
 
 vi.mock("@multica/views/chat", () => ({
   FloatingChat: () => <div data-testid="floating-chat" />,
+  DockedChatLayout: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
 
 vi.mock("./tab-bar", () => ({ TabBar: () => null }));

@@ -71,6 +71,7 @@ import { inboxUnreadSummaryEnabled, inboxUnreadSummaryOptions, useInboxUnreadCou
 import { chatSessionsOptions } from "@multica/core/chat/queries";
 import { countUnreadChatMessages } from "@multica/core/chat/unread";
 import { useChatStore } from "@multica/core/chat";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import { api, ApiError } from "@multica/core/api";
 import { useConfigStore } from "@multica/core/config";
 import { pinListOptions } from "@multica/core/pins/queries";
@@ -83,6 +84,7 @@ import { ProjectIcon } from "../projects/components/project-icon";
 import { routeIconForPath } from "./route-icon-components";
 import { RouteDataPrefetch } from "./route-data-prefetch";
 import { useT } from "../i18n";
+import { DockedSidebarTabs, dockedSectionBody, useDockedSidebarSection } from "./docked-sidebar-sections";
 import {
   useShortcut,
 } from "@multica/core/shortcuts";
@@ -120,6 +122,7 @@ type NavKey =
   | "autopilots"
   | "agents"
   | "squads"
+  | "workflows"
   | "usage"
   | "runtimes"
   | "skills"
@@ -136,6 +139,7 @@ type NavLabelKey =
   | "autopilots"
   | "agents"
   | "squads"
+  | "workflows"
   | "usage"
   | "runtimes"
   | "skills"
@@ -159,6 +163,7 @@ const workNav: { key: NavKey; labelKey: NavLabelKey }[] = [
 const aiTeamNav: { key: NavKey; labelKey: NavLabelKey }[] = [
   { key: "agents", labelKey: "agents" },
   { key: "squads", labelKey: "squads" },
+  { key: "workflows", labelKey: "workflows" },
   { key: "skills", labelKey: "skills" },
   { key: "runtimes", labelKey: "runtimes" },
 ];
@@ -436,6 +441,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassName, headerStyle }: AppSidebarProps = {}) {
   const { t } = useT("layout");
+  const dockedSection = useDockedSidebarSection();
   const { pathname, push } = useNavigation();
   const user = useAuthStore((s) => s.user);
   const userId = useAuthStore((s) => s.user?.id);
@@ -453,7 +459,11 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
   // pinned items, the workspace switcher's programmatic push, and anything
   // added later. `setOpenMobile` is a no-op on desktop, where the sheet is not
   // the sidebar's rendering at all.
-  const { setOpenMobile } = useSidebar();
+  const { setOpenMobile, isCompact } = useSidebar();
+  // Docked layout: the floating chat preference is off and the sidebar is a
+  // permanent column (on compact screens it is a sheet and stays as before).
+  const docked = useChatStore((s) => s.floatingChatEnabled === false) && !isCompact;
+  const shellDocked = useDockedLayoutStore((s) => s.shellDocked);
   useEffect(() => {
     setOpenMobile(false);
   }, [pathname, setOpenMobile]);
@@ -611,9 +621,47 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
 
   const createIssueShortcut = useShortcut("createIssue");
 
+  // The menu shows pins under their own group; the docked projects section
+  // shows them above the file explorer.
+  const pinnedList = (
+    <>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <SortableContext items={displayedPinned.map((p) => p.id)} strategy={verticalListSortingStrategy}>
+          <SidebarMenu className="gap-0.5">
+            {displayedPinned.map((pin: PinnedItem) => (
+              <PinRow
+                key={pin.id}
+                pin={pin}
+                href={getPinHref(pin)}
+                pathname={pathname}
+                onUnpin={() => deletePin.mutate({ itemType: pin.item_type, itemId: pin.item_id })}
+                wsId={wsId ?? ""}
+              />
+            ))}
+          </SidebarMenu>
+        </SortableContext>
+      </DndContext>
+      {visiblePinned.length > PINNED_PREVIEW_LIMIT && (
+        <SidebarMenuButton
+          size="sm"
+          aria-expanded={pinsExpanded}
+          className="mt-0.5 pl-7 text-muted-foreground"
+          onClick={() => setExpandedPinsWorkspaceId(pinsExpanded ? null : wsId ?? null)}
+        >
+          <span>
+            {pinsExpanded
+              ? t(($) => $.sidebar.show_fewer_pins)
+              : t(($) => $.sidebar.show_more_pins, { count: visiblePinned.length - PINNED_PREVIEW_LIMIT })}
+          </span>
+        </SidebarMenuButton>
+      )}
+    </>
+  );
+
   return (
     <RouteDataPrefetch wsId={wsId} userId={userId ?? null}>
-      <Sidebar variant="inset">
+      {/* The sidebar is fixed to the viewport, so it has to stop above the docked status bar itself. */}
+      <Sidebar variant="inset" className={shellDocked ? "h-[calc(100svh-30px)]" : undefined}>
         {topSlot}
         {/* Workspace Switcher */}
         <SidebarHeader className={cn("py-3", headerClassName)} style={headerStyle}>
@@ -747,6 +795,8 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
               </DropdownMenu>
             </SidebarMenuItem>
           </SidebarMenu>
+          {docked && <DockedSidebarTabs active={dockedSection} />}
+          {(!docked || dockedSection === "menu") && (
           <SidebarMenu>
             {searchSlot && (
               <SidebarMenuItem>
@@ -769,10 +819,18 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
+          )}
         </SidebarHeader>
 
         {/* Navigation */}
-        <SidebarContent ref={sidebarScrollRef} style={sidebarFadeStyle}>
+        {docked && dockedSection !== "menu" ? (
+          dockedSectionBody(dockedSection, { pinned: visiblePinned.length > 0 ? pinnedList : undefined })
+        ) : (
+        <SidebarContent
+          ref={sidebarScrollRef}
+          // A set scrollbar-width overrides the no-scrollbar ::-webkit-scrollbar rule in Chromium.
+          style={docked ? { ...sidebarFadeStyle, scrollbarWidth: "thin" } : sidebarFadeStyle}
+        >
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu className="gap-0.5">
@@ -812,7 +870,7 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
             </SidebarGroupContent>
           </SidebarGroup>
 
-          {visiblePinned.length > 0 && (
+          {!docked && visiblePinned.length > 0 && (
             <Collapsible defaultOpen>
               <SidebarGroup className="group/pinned">
                 <SidebarGroupLabel
@@ -825,36 +883,7 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
                 </SidebarGroupLabel>
                 <CollapsibleContent>
                   <SidebarGroupContent>
-                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-                      <SortableContext items={displayedPinned.map((p) => p.id)} strategy={verticalListSortingStrategy}>
-                        <SidebarMenu className="gap-0.5">
-                          {displayedPinned.map((pin: PinnedItem) => (
-                            <PinRow
-                              key={pin.id}
-                              pin={pin}
-                              href={getPinHref(pin)}
-                              pathname={pathname}
-                              onUnpin={() => deletePin.mutate({ itemType: pin.item_type, itemId: pin.item_id })}
-                              wsId={wsId ?? ""}
-                            />
-                          ))}
-                        </SidebarMenu>
-                      </SortableContext>
-                    </DndContext>
-                    {visiblePinned.length > PINNED_PREVIEW_LIMIT && (
-                      <SidebarMenuButton
-                        size="sm"
-                        aria-expanded={pinsExpanded}
-                        className="mt-0.5 pl-7 text-muted-foreground"
-                        onClick={() => setExpandedPinsWorkspaceId(pinsExpanded ? null : wsId ?? null)}
-                      >
-                        <span>
-                          {pinsExpanded
-                            ? t(($) => $.sidebar.show_fewer_pins)
-                            : t(($) => $.sidebar.show_more_pins, { count: visiblePinned.length - PINNED_PREVIEW_LIMIT })}
-                        </span>
-                      </SidebarMenuButton>
-                    )}
+                    {pinnedList}
                   </SidebarGroupContent>
                 </CollapsibleContent>
               </SidebarGroup>
@@ -911,10 +940,11 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
+        )}
 
         <SidebarFooter className="p-2">
           <SidebarMenu className="gap-0.5">
-            {utilityNav.map((item) => {
+            {utilityNav.filter((item) => !(docked && item.key === "settings")).map((item) => {
               const href = p[item.key]();
               const Icon = routeIconForPath(href);
               return (

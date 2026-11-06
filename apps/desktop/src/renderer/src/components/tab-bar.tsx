@@ -347,7 +347,7 @@ function SortableTabItem({
       style={style}
       data-tab-frame
       data-tab-id={tab.id}
-      className={cn("h-9 w-40 min-w-32", isActive && "z-10")}
+      className={cn("h-9 min-w-[72px] max-w-40 flex-1", isActive && "z-10")}
     >
       <motion.div
         className="group/tab relative size-full"

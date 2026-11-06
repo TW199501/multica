@@ -11,6 +11,7 @@ import {
   Plus,
   Search,
   User,
+  Workflow,
 } from "@multica/ui/icons";
 import { useAuthStore } from "@multica/core/auth";
 import { useWorkspaceId } from "@multica/core/hooks";
@@ -44,6 +45,7 @@ import { StatusIcon } from "../issues/components/status-icon";
 import { useStatusLabel } from "../issues/utils/status-label";
 import { AppLink, useNavigation } from "../navigation";
 import { ProjectIcon } from "../projects/components/project-icon";
+import { CollectionPageHeader } from "../layout/collection-page";
 import { IssueStatusesTab } from "../settings/components/issue-statuses-tab";
 import { SettingsTab } from "../settings/components/settings-layout";
 import { useT } from "../i18n";
@@ -60,8 +62,11 @@ const NEW_WORKFLOW = "new";
  * Settings → Workflows (MUL-7420): the workflows, then the status library
  * they all draw from. `?workflow=<id>` (or `new`) opens the editor in place,
  * so a workflow is a linkable page rather than a dialog.
+ *
+ * `page` renders it as the standalone Workflows page: a collection header with
+ * the title, nav trigger and New action, over a scrolling body.
  */
-export function WorkflowsTab() {
+export function WorkflowsTab({ page = false }: { page?: boolean }) {
   const { t } = useT("issues");
   const navigation = useNavigation();
   const wsId = useWorkspaceId();
@@ -108,7 +113,7 @@ export function WorkflowsTab() {
 
   if (open) {
     const seed = open === NEW_WORKFLOW && duplicateOf ? workflows.find((w) => w.id === duplicateOf) ?? null : null;
-    return (
+    const editor = (
       <WorkflowEditorPage
         key={`${open}:${duplicateOf ?? ""}:${template ?? ""}`}
         workflowId={open === NEW_WORKFLOW ? null : open}
@@ -127,51 +132,49 @@ export function WorkflowsTab() {
         }
       />
     );
+    return page ? <WorkflowsPageFrame>{editor}</WorkflowsPageFrame> : editor;
   }
 
   const defaultProjects = projects.filter((p) => !p.workflow_id);
   const defaultRow = workflows.find((w) => w.is_default);
 
-  return (
-    <SettingsTab
-      title={t(($) => $.workflows.settings.title)}
-      actions={
-        canCreate && (
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button variant="outline" className="gap-1.5">
-                  <Plus className="size-3.5" />
-                  {t(($) => $.workflows.settings.new)}
-                  <ChevronDown className="size-3" />
-                </Button>
-              }
-            />
-            <DropdownMenuContent align="end" className="w-72">
-              <DropdownMenuItem onClick={() => openEditor(NEW_WORKFLOW)}>
-                <Plus className="size-3.5" />
-                {t(($) => $.workflows.settings.new_blank)}
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuLabel>{t(($) => $.workflows.settings.from_template)}</DropdownMenuLabel>
-                {WORKFLOW_TEMPLATES.map((tpl) => (
-                  <DropdownMenuItem key={tpl.id} className="items-start py-2" onClick={() => openEditor(NEW_WORKFLOW, tpl.id)}>
-                    <LayoutTemplate className="mt-0.5 size-3.5" />
-                    <span className="min-w-0">
-                      <span className="block font-medium">{t(($) => $.workflows.templates[tpl.id].name)}</span>
-                      <span className="block text-caption text-muted-foreground">
-                        {t(($) => $.workflows.templates[tpl.id].summary)}
-                      </span>
-                    </span>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )
-      }
-    >
+  const newMenu = canCreate && (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="outline" size={page ? "sm" : "default"} className="gap-1.5">
+            <Plus className="size-3.5" />
+            {t(($) => $.workflows.settings.new)}
+            <ChevronDown className="size-3" />
+          </Button>
+        }
+      />
+      <DropdownMenuContent align="end" className="w-72">
+        <DropdownMenuItem onClick={() => openEditor(NEW_WORKFLOW)}>
+          <Plus className="size-3.5" />
+          {t(($) => $.workflows.settings.new_blank)}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>{t(($) => $.workflows.settings.from_template)}</DropdownMenuLabel>
+          {WORKFLOW_TEMPLATES.map((tpl) => (
+            <DropdownMenuItem key={tpl.id} className="items-start py-2" onClick={() => openEditor(NEW_WORKFLOW, tpl.id)}>
+              <LayoutTemplate className="mt-0.5 size-3.5" />
+              <span className="min-w-0">
+                <span className="block font-medium">{t(($) => $.workflows.templates[tpl.id].name)}</span>
+                <span className="block text-caption text-muted-foreground">
+                  {t(($) => $.workflows.templates[tpl.id].summary)}
+                </span>
+              </span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
+  const body = (
+    <>
       <div className="divide-y divide-surface-border overflow-hidden rounded-lg border border-surface-border bg-card">
         {defaultRow ? (
           <WorkflowRow workflow={defaultRow} projects={defaultProjects} href={editorHref(defaultRow.id)} />
@@ -193,7 +196,32 @@ export function WorkflowsTab() {
         embedded={{ title: t(($) => $.workflows.settings.statuses_title) }}
         workflowUsage={usage}
       />
+    </>
+  );
+
+  if (page) {
+    return (
+      <WorkflowsPageFrame actions={newMenu || undefined}>
+        <div className="space-y-8">{body}</div>
+      </WorkflowsPageFrame>
+    );
+  }
+  return (
+    <SettingsTab title={t(($) => $.workflows.settings.title)} actions={newMenu}>
+      {body}
     </SettingsTab>
+  );
+}
+
+function WorkflowsPageFrame({ actions, children }: { actions?: ReactNode; children: ReactNode }) {
+  const { t } = useT("layout");
+  return (
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <CollectionPageHeader icon={Workflow} title={t(($) => $.nav.workflows)} actions={actions} />
+      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain">
+        <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 md:px-10 md:py-8">{children}</div>
+      </div>
+    </div>
   );
 }
 

@@ -7,6 +7,7 @@ import { issueKeys } from "@multica/core/issues/queries";
 import { issueStatusKeys } from "@multica/core/issue-statuses";
 import { I18nProvider } from "@multica/core/i18n/react";
 import { toast } from "sonner";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import { useResolvedExpandStore } from "@multica/core/issues/stores/resolved-expand-store";
 import { useCommentCollapseStore } from "@multica/core/issues/stores";
 import {
@@ -16,8 +17,9 @@ import {
 import enAgents from "../../locales/en/agents.json";
 import enCommon from "../../locales/en/common.json";
 import enIssues from "../../locales/en/issues.json";
+import enLayout from "../../locales/en/layout.json";
 
-const TEST_RESOURCES = { en: { agents: enAgents, common: enCommon, issues: enIssues } };
+const TEST_RESOURCES = { en: { agents: enAgents, common: enCommon, issues: enIssues, layout: enLayout } };
 
 const mockViewport = vi.hoisted(() => ({ isMobile: false }));
 const mockLocalDirectoryHint = vi.hoisted(() => vi.fn());
@@ -754,6 +756,43 @@ describe("IssueDetail (shared)", () => {
     // Reset project mock — individual tests override per case. Default fixture
     // has project_id: null so getProject is not invoked.
     mockApiObj.getProject.mockReset();
+  });
+
+  describe("in the docked chat layout", () => {
+    beforeEach(() => useDockedLayoutStore.setState({ layoutActive: true }));
+    afterEach(() => useDockedLayoutStore.setState({ layoutActive: false }));
+
+    it("switches between the issue and its properties with tabs, not a fourth column", async () => {
+      renderIssueDetail();
+
+      const issueTab = await screen.findByRole("tab", { name: "Issue" });
+      const propertiesTab = screen.getByRole("tab", { name: "Properties" });
+      expect(issueTab).toHaveAttribute("aria-selected", "true");
+      expect(screen.getByRole("tabpanel", { name: "Issue" })).toBeVisible();
+      expect(screen.queryByRole("button", { name: /right sidebar/i })).not.toBeInTheDocument();
+
+      fireEvent.click(propertiesTab);
+
+      expect(propertiesTab).toHaveAttribute("aria-selected", "true");
+      expect(screen.getByRole("tabpanel", { name: "Properties" })).toHaveTextContent("Status");
+    });
+
+    it("keeps the issue mounted while the properties tab is showing", async () => {
+      renderIssueDetail();
+      fireEvent.click(await screen.findByRole("tab", { name: "Properties" }));
+
+      expect(contentEditorMounts.count).toBeGreaterThan(0);
+      const mounts = contentEditorMounts.count;
+      fireEvent.click(screen.getByRole("tab", { name: "Issue" }));
+      expect(contentEditorMounts.count).toBe(mounts);
+    });
+  });
+
+  it("keeps the side column outside the docked layout", async () => {
+    renderIssueDetail();
+    await screen.findByText("Properties");
+
+    expect(screen.queryByRole("tab", { name: "Properties" })).not.toBeInTheDocument();
   });
 
   it("passes the issue's agent assignment to the local-directory hint", async () => {
