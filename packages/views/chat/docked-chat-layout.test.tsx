@@ -25,6 +25,7 @@ vi.mock("@multica/core/paths", () => ({
     runtimes: () => "/acme/runtimes",
     usage: () => "/acme/usage",
     settings: () => "/acme/settings",
+    projects: () => "/acme/projects",
   }),
 }));
 
@@ -126,6 +127,14 @@ describe("DockedChatLayout", () => {
     const chat = screen.getByTestId("chat-window");
     const page = screen.getByTestId("route-page");
     expect(chat.compareDocumentPosition(page) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("keeps an open project in the middle and moves the conversation to the right", () => {
+    renderAt("/acme/projects/project-1");
+
+    const chat = screen.getByTestId("chat-window");
+    const page = screen.getByTestId("route-page");
+    expect(page.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("puts a page-first route such as the desktop browser in the middle", () => {
