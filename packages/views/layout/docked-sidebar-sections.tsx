@@ -77,7 +77,7 @@ export function DockedSidebarTabs({ active }: { active: DockedSidebarSection }) 
           className={cn(
             "h-7 min-w-0 flex-1 whitespace-nowrap rounded-md px-1 text-caption transition-colors focus-visible:outline-2 focus-visible:outline-ring",
             active === section
-              ? "bg-brand font-medium text-brand-foreground shadow-sm"
+              ? "bg-primary font-medium text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
           )}
         >
