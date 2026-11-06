@@ -1,0 +1,23 @@
+packages/views/editor/use-composer-submit.test.tsx
+  s_aa47a447e01641::t_e69334cad88ccb 3,265-276
+packages/views/editor/use-composer-submit.ts
+  s_aa47a447e01641::t_a4c65adb726c8d 93
+server/migrations/700_workspace_ai_settings.up.sql
+  s_aa47a447e01641::t_d7413946e4b83e 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5d390c7da812fafbbbd27a3d466bec7426422e5a",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
