@@ -88,6 +88,7 @@ export function usePolishGate({
     let isAvailable = stateRef.current.available;
     if (stateRef.current.polishOnSend && stateRef.current.pending) {
       // A send must not slip past polish just because the status is still loading.
+      const pressed = editorRef.current?.getMarkdown() ?? "";
       awaitingStatus.current = true;
       try {
         const status = await queryClient.fetchQuery(
@@ -95,11 +96,14 @@ export function usePolishGate({
         );
         isAvailable = status.polish_available === true;
       } catch {
-        // No answer means polish cannot run either; the send still goes out.
-        isAvailable = false;
+        // Unknown is not "unavailable": the dialog reports the failure, and the
+        // person still confirms the send there.
+        isAvailable = true;
       } finally {
         awaitingStatus.current = false;
       }
+      // The press was for that draft. Switching chats or typing on cancels it.
+      if ((editorRef.current?.getMarkdown() ?? "") !== pressed) return;
     }
     const state = stateRef.current;
     if (state.open) return;

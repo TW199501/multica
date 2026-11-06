@@ -385,6 +385,31 @@ describe("usePolishGate", () => {
       expect(send).not.toHaveBeenCalled();
     });
 
+    it("does not send a draft that changed while it waited", async () => {
+      const { status, send } = await pressSendBeforeStatus();
+      fireEvent.change(screen.getByTestId("editor"), { target: { value: "another draft" } });
+
+      await act(async () => status.resolve({ polish_available: true }));
+      await act(async () => {});
+
+      expect(send).not.toHaveBeenCalled();
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    it("opens the dialog when the status cannot be read, so the send still needs confirming", async () => {
+      apiGetAISettingsStatus.mockRejectedValue(new Error("offline"));
+      const send = vi.fn().mockResolvedValue("comment-1");
+      composers[1]!.render(send);
+      await typeInto(composers[1]!, "hello wrld");
+      await waitFor(() => expect(apiGetAISettingsStatus).toHaveBeenCalled());
+      await act(async () => {});
+
+      fireEvent.click(composerSendButton());
+
+      await waitForPolished("Hello world.");
+      expect(send).not.toHaveBeenCalled();
+    });
+
     it("sends once the answer says polish is unavailable", async () => {
       const { status, send } = await pressSendBeforeStatus();
       await act(async () => {});

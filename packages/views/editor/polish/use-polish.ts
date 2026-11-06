@@ -10,6 +10,7 @@ export function usePolishAvailable(wsId: string): boolean {
 
 /** The polish status, telling "not known yet" apart from "not available". */
 export function usePolishStatus(wsId: string): { available: boolean; pending: boolean } {
-  const { data, isPending } = useQuery(workspaceAISettingsStatusOptions(wsId));
-  return { available: data?.polish_available === true, pending: isPending && wsId !== "" };
+  const { data } = useQuery(workspaceAISettingsStatusOptions(wsId));
+  // A failed lookup has no data either: it says nothing about availability.
+  return { available: data?.polish_available === true, pending: !data && wsId !== "" };
 }
