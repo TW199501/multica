@@ -37,6 +37,8 @@ import { Button } from "@multica/ui/components/ui/button";
 import { IconButton } from "@multica/ui/components/common/icon-button";
 import { TooltipHint } from "@multica/ui/components/common/tooltip-hint";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@multica/ui/components/ui/resizable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@multica/ui/components/ui/tabs";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import { Sheet, SheetContent } from "@multica/ui/components/ui/sheet";
 import { useIsMobile } from "@multica/ui/hooks/use-mobile";
 import {
@@ -113,6 +115,7 @@ function ProjectWorkflowPropRow({ project }: { project: Project }) {
 export function ProjectDetail({ projectId }: { projectId: string }) {
   const { t } = useT("projects");
   const { t: tCommon } = useT("common");
+  const { t: tLayout } = useT("layout");
   const statusLabels = useProjectStatusLabels();
   const priorityLabels = useProjectPriorityLabels();
   const wsId = useWorkspaceId();
@@ -188,6 +191,13 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
     handleResize: handleDesktopSidebarResize,
   } = useAnimatedRightSidebarState(desktopSidebarInitialOpen);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  // The docked chat layout allows three columns at most, so the properties
+  // share this column with the project behind tabs.
+  const docked = useDockedLayoutStore((s) => s.layoutActive) && !isMobile;
+  const [dockedTab, setDockedTab] = useState<"project" | "properties">("project");
+  useEffect(() => {
+    setDockedTab("project");
+  }, [projectId]);
   const sidebarOpen = isMobile ? mobileSidebarOpen : desktopSidebarOpen;
 
   useEffect(() => {
@@ -201,6 +211,10 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
       setMobileSidebarOpen((open) => !open);
       return;
     }
+    if (docked) {
+      setDockedTab((tab) => (tab === "project" ? "properties" : "project"));
+      return;
+    }
 
     const panel = sidebarRef.current;
     if (!panel) return;
@@ -210,7 +224,7 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
       if (nextOpen) panel.expand();
       else panel.collapse();
     });
-  }, [beginDesktopSidebarToggle, isMobile, sidebarRef]);
+  }, [beginDesktopSidebarToggle, docked, isMobile, sidebarRef]);
 
   useRightSidebarShortcut(rightSidebarShortcutTargetRef, handleToggleSidebar);
 
@@ -491,90 +505,150 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
     </div>
   );
 
+  const detailContent = (
+    <div ref={rightSidebarShortcutTargetRef} className="flex h-full flex-col">
+      <BreadcrumbHeader
+        segments={[{ href: wsPaths.projects(), label: t(($) => $.detail.breadcrumb_fallback) }]}
+        leaf={<span className="truncate font-medium text-foreground">{project.title}</span>}
+        actions={
+          <>
+          <ProjectWorkflowMenu project={project} />
+          <IconButton
+            label={isPinned ? t(($) => $.detail.unpin_tooltip) : t(($) => $.detail.pin_tooltip)}
+            tooltipSide="bottom"
+            className={cn("text-muted-foreground", isPinned && "text-foreground")}
+            onClick={() => {
+              if (isPinned) {
+                deletePinMut.mutate({ itemType: "project", itemId: projectId });
+              } else {
+                createPin.mutate({ item_type: "project", item_id: projectId });
+              }
+            }}
+          >
+            {isPinned ? <PinOff /> : <Pin />}
+          </IconButton>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <IconButton
+                  label={tCommon(($) => $.more_actions)}
+                  tooltipSide="bottom"
+                  className="text-muted-foreground"
+                >
+                  <MoreHorizontal />
+                </IconButton>
+              }
+            />
+            <DropdownMenuContent align="end" className="w-auto">
+              <DropdownMenuItem onClick={() => {
+                void copyText(router.getShareableUrl(currentPath(router))).then((ok) => {
+                  if (ok) toast.success(t(($) => $.detail.toast_link_copied));
+                });
+              }}>
+                <Link2 className="h-3.5 w-3.5" />
+                {t(($) => $.detail.copy_link)}
+              </DropdownMenuItem>
+              {isWorkspaceAdmin && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onClick={() => setDeleteDialogOpen(true)}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    {t(($) => $.detail.delete_action)}
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {!docked && <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  variant={sidebarOpen ? "secondary" : "ghost"}
+                  size="icon-sm"
+                  className={sidebarOpen ? "" : "text-muted-foreground"}
+                  onClick={handleToggleSidebar}
+                >
+                  <PanelRight />
+                </Button>
+              }
+            />
+            <TooltipContent side="bottom">{t(($) => $.detail.sidebar_tooltip)}</TooltipContent>
+          </Tooltip>}
+          </>
+        }
+      />
+
+      <IssueSurface
+        scope={issueScope}
+        modes={["board", "list", "table", "swimlane", "gantt"]}
+      />
+      </div>
+  );
+
+  const deleteDialog = (
+    <>
+      {/* Delete confirmation */}
+      {isWorkspaceAdmin && (
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t(($) => $.delete_dialog.title)}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {t(($) => $.delete_dialog.description)}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t(($) => $.delete_dialog.cancel)}</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete} className="bg-destructive text-white hover:bg-destructive/90">
+                {t(($) => $.delete_dialog.confirm)}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+    </>
+  );
+
+  if (docked) {
+    return (
+      <>
+        <Tabs
+          value={dockedTab}
+          onValueChange={(value) => setDockedTab(value as "project" | "properties")}
+          className="flex min-h-0 flex-1 flex-col gap-0"
+        >
+          <div className="flex shrink-0 items-center border-b px-3 py-1.5">
+            <TabsList>
+              <TabsTrigger value="project">{tLayout(($) => $.tab.project)}</TabsTrigger>
+              <TabsTrigger value="properties">{t(($) => $.detail.section_properties)}</TabsTrigger>
+            </TabsList>
+          </div>
+          {/* Both stay mounted: leaving the project must not drop its filters
+              or scroll position. */}
+          <TabsContent keepMounted value="project" className="flex min-h-0 flex-col data-hidden:hidden">
+            {detailContent}
+          </TabsContent>
+          <TabsContent
+            keepMounted
+            value="properties"
+            className="min-h-0 overflow-y-auto [scrollbar-gutter:stable] px-4 py-4 data-hidden:hidden"
+          >
+            {sidebarContent}
+          </TabsContent>
+        </Tabs>
+        {deleteDialog}
+      </>
+    );
+  }
+
   return (
     <>
     <ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0" defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged}>
       <ResizablePanel id="content" minSize="50%">
-        <div ref={rightSidebarShortcutTargetRef} className="flex h-full flex-col">
-          <BreadcrumbHeader
-            segments={[{ href: wsPaths.projects(), label: t(($) => $.detail.breadcrumb_fallback) }]}
-            leaf={<span className="truncate font-medium text-foreground">{project.title}</span>}
-            actions={
-              <>
-              <ProjectWorkflowMenu project={project} />
-              <IconButton
-                label={isPinned ? t(($) => $.detail.unpin_tooltip) : t(($) => $.detail.pin_tooltip)}
-                tooltipSide="bottom"
-                className={cn("text-muted-foreground", isPinned && "text-foreground")}
-                onClick={() => {
-                  if (isPinned) {
-                    deletePinMut.mutate({ itemType: "project", itemId: projectId });
-                  } else {
-                    createPin.mutate({ item_type: "project", item_id: projectId });
-                  }
-                }}
-              >
-                {isPinned ? <PinOff /> : <Pin />}
-              </IconButton>
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <IconButton
-                      label={tCommon(($) => $.more_actions)}
-                      tooltipSide="bottom"
-                      className="text-muted-foreground"
-                    >
-                      <MoreHorizontal />
-                    </IconButton>
-                  }
-                />
-                <DropdownMenuContent align="end" className="w-auto">
-                  <DropdownMenuItem onClick={() => {
-                    void copyText(router.getShareableUrl(currentPath(router))).then((ok) => {
-                      if (ok) toast.success(t(($) => $.detail.toast_link_copied));
-                    });
-                  }}>
-                    <Link2 className="h-3.5 w-3.5" />
-                    {t(($) => $.detail.copy_link)}
-                  </DropdownMenuItem>
-                  {isWorkspaceAdmin && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        variant="destructive"
-                        onClick={() => setDeleteDialogOpen(true)}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                        {t(($) => $.detail.delete_action)}
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <Tooltip>
-                <TooltipTrigger
-                  render={
-                    <Button
-                      variant={sidebarOpen ? "secondary" : "ghost"}
-                      size="icon-sm"
-                      className={sidebarOpen ? "" : "text-muted-foreground"}
-                      onClick={handleToggleSidebar}
-                    >
-                      <PanelRight />
-                    </Button>
-                  }
-                />
-                <TooltipContent side="bottom">{t(($) => $.detail.sidebar_tooltip)}</TooltipContent>
-              </Tooltip>
-              </>
-            }
-          />
-
-          <IssueSurface
-            scope={issueScope}
-            modes={["board", "list", "table", "swimlane", "gantt"]}
-          />
-          </div>
+        {detailContent}
         </ResizablePanel>
         {!isMobile && <ResizableHandle />}
         {!isMobile && (
@@ -604,25 +678,7 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
         )}
       </ResizablePanelGroup>
 
-      {/* Delete confirmation */}
-      {isWorkspaceAdmin && (
-        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>{t(($) => $.delete_dialog.title)}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {t(($) => $.delete_dialog.description)}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>{t(($) => $.delete_dialog.cancel)}</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete} className="bg-destructive text-white hover:bg-destructive/90">
-                {t(($) => $.delete_dialog.confirm)}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
+      {deleteDialog}
     </>
   );
 }

@@ -1,6 +1,7 @@
 import React from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import userEvent from "@testing-library/user-event";
 import type { Project } from "@multica/core/types";
 import { renderWithI18n } from "../../test/i18n";
@@ -118,8 +119,8 @@ vi.mock("@multica/ui/components/ui/resizable", () => ({
   ResizablePanelGroup: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   ),
-  ResizablePanel: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
+  ResizablePanel: ({ children, id }: { children: React.ReactNode; id?: string }) => (
+    <div data-testid={`panel-${id}`}>{children}</div>
   ),
   ResizableHandle: () => null,
 }));
@@ -357,5 +358,36 @@ describe("ProjectDetail project deletion", () => {
     expect(
       screen.queryByRole("button", { name: "Delete project" }),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe("ProjectDetail in the docked chat layout", () => {
+  beforeEach(() => useDockedLayoutStore.setState({ layoutActive: true }));
+  afterEach(() => useDockedLayoutStore.setState({ layoutActive: false }));
+
+  it("switches between the project and its properties with tabs, not a fourth column", async () => {
+    const user = userEvent.setup();
+    renderProjectDetail();
+
+    const projectTab = await screen.findByRole("tab", { name: "Project" });
+    const propertiesTab = screen.getByRole("tab", { name: "Properties" });
+    expect(projectTab).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByRole("tabpanel", { name: "Project" })).toBeVisible();
+    expect(screen.queryByTestId("panel-sidebar")).not.toBeInTheDocument();
+
+    await user.click(propertiesTab);
+
+    expect(propertiesTab).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByRole("tabpanel", { name: "Properties" })).toHaveTextContent("Properties");
+  });
+});
+
+describe("ProjectDetail outside the docked chat layout", () => {
+  it("keeps the side column and no tabs", async () => {
+    renderProjectDetail();
+    await screen.findAllByText("Properties");
+
+    expect(screen.queryByRole("tab", { name: "Properties" })).not.toBeInTheDocument();
+    expect(screen.getByTestId("panel-sidebar")).toBeInTheDocument();
   });
 });
