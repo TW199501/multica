@@ -1,0 +1,43 @@
+apps/docs/content/docs/chat.zh-Hant.mdx
+  s_49c071b898c5dd::t_e75ae36947db25 60-68
+apps/docs/content/docs/desktop-app.ja.mdx
+  s_49c071b898c5dd::t_03214db3904ae8 57-72
+apps/docs/content/docs/desktop-app.mdx
+  s_49c071b898c5dd::t_03214db3904ae8 57-71
+  s_49c071b898c5dd::t_26e10381c4a7f4 56
+apps/docs/content/docs/desktop-app.fr.mdx
+  s_49c071b898c5dd::t_03214db3904ae8 57-72
+apps/docs/content/docs/chat.zh.mdx
+  s_49c071b898c5dd::t_e75ae36947db25 60-68
+apps/docs/content/docs/chat.ja.mdx
+  s_49c071b898c5dd::t_e75ae36947db25 60-68
+apps/docs/content/docs/desktop-app.zh.mdx
+  s_49c071b898c5dd::t_03214db3904ae8 57-72
+apps/docs/content/docs/chat.fr.mdx
+  s_49c071b898c5dd::t_e75ae36947db25 60-68
+apps/docs/content/docs/chat.mdx
+  s_49c071b898c5dd::t_e75ae36947db25 60-68
+apps/docs/content/docs/chat.ko.mdx
+  s_49c071b898c5dd::t_e75ae36947db25 60-68
+apps/docs/content/docs/desktop-app.ko.mdx
+  s_49c071b898c5dd::t_03214db3904ae8 57-72
+apps/docs/content/docs/desktop-app.zh-Hant.mdx
+  s_49c071b898c5dd::t_4cfc7a28157f8c 63
+  s_49c071b898c5dd::t_03214db3904ae8 57-62,64-72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "98c3cf1b5eed5d4966b78f405bf60ebece9c76b9",
+  "prompts": {},
+  "sessions": {
+    "s_49c071b898c5dd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1af81-1b14-70a1-8ac2-1c3d3c74911f",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
