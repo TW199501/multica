@@ -30,7 +30,7 @@ export interface DockedChatLayoutProps {
 /**
  * With the floating chat preference off, the conversation gets its own column
  * in the middle and the current page moves to a resizable column on the right;
- * on Settings, Inbox, the AI team pages, Usage and `pageFirstPaths` the page
+ * on Settings, Inbox, an open project, the AI team pages, Usage and `pageFirstPaths` the page
  * stays in the middle and the conversation takes the right. With it on, on
  * the Chat tab and on small screens, the page renders as before.
  */
@@ -69,7 +69,9 @@ function DockedChatLayoutForWorkspace({
     wsPaths.runtimes(),
     wsPaths.usage(),
     ...pageFirstPaths,
-  ].some((base) => isUnder(pathname, base));
+  ].some((base) => isUnder(pathname, base)) ||
+    // An open project is a wide table; the project list stays a work page.
+    pathname.startsWith(`${wsPaths.projects()}/`);
   // Pages carry split panes of their own (issue properties, the Inbox list
   // beside an issue), so the page column never shrinks below what they need.
   const pageMinSize = isUnder(pathname, wsPaths.inbox()) ? "780px" : "540px";

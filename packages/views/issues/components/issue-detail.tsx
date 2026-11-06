@@ -1455,12 +1455,13 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   const rightSidebarShortcutTargetRef = useRef<HTMLDivElement | null>(null);
   const attachScrollContainer = useCallback(
     (el: HTMLDivElement | null) => {
-      // The peek has no sidebar, so it must not claim the toggle shortcut.
-      rightSidebarShortcutTargetRef.current = isPeek ? null : el;
+      // The peek has no sidebar, so it must not claim the toggle shortcut. Docked,
+      // this column hides behind a tab, so the tabs hold the target instead.
+      if (!docked) rightSidebarShortcutTargetRef.current = isPeek ? null : el;
       setScrollContainerEl(el);
       restoreScrollRef(el);
     },
-    [isPeek, restoreScrollRef],
+    [docked, isPeek, restoreScrollRef],
   );
   const [pendingPostedCommentId, setPendingPostedCommentId] = useState<string | null>(null);
   const scrollToTimelineBottom = useCallback((commentId: string) => {
@@ -4073,6 +4074,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   if (docked) {
     return withPreview(
       <Tabs
+        ref={rightSidebarShortcutTargetRef}
         value={dockedTab}
         onValueChange={(value) => setDockedTab(value as "issue" | "properties")}
         className="flex min-h-0 flex-1 flex-col gap-0"

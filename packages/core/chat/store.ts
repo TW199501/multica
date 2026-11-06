@@ -375,10 +375,10 @@ export function createChatStore(options: ChatStoreOptions) {
   const storedOpen = storage.getItem(OPEN_KEY);
   const initialIsOpen = storedOpen === "true";
 
-  // Default ON: the floating window is enabled unless the user explicitly
-  // turned it off ("false") from the Settings → Chat tab. A missing key
-  // (new user) resolves to enabled.
-  const initialFloatingEnabled = storage.getItem(FLOATING_KEY) !== "false";
+  // Default OFF in this fork: the docked layout is what people get, and the
+  // floating window stays one choice away in Settings. A missing key
+  // (new user) resolves to docked.
+  const initialFloatingEnabled = storage.getItem(FLOATING_KEY) === "true";
 
   const initialAgentId = storage.getItem(wsKey(AGENT_STORAGE_KEY));
   const initialDraftSlots = loadDraftSlots(
