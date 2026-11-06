@@ -362,6 +362,41 @@ describe("usePolishGate", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
   });
 
+  describe("while the polish status is still loading", () => {
+    async function pressSendBeforeStatus() {
+      const status = deferred<{ polish_available: boolean }>();
+      apiGetAISettingsStatus.mockReturnValue(status.promise);
+      const send = vi.fn().mockResolvedValue("comment-1");
+      composers[1]!.render(send);
+      await typeInto(composers[1]!, "hello wrld");
+      await waitFor(() => expect(apiGetAISettingsStatus).toHaveBeenCalled());
+      fireEvent.click(composerSendButton());
+      return { status, send };
+    }
+
+    it("waits for the answer and opens the dialog when polish is available", async () => {
+      const { status, send } = await pressSendBeforeStatus();
+      await act(async () => {});
+      expect(send).not.toHaveBeenCalled();
+
+      await act(async () => status.resolve({ polish_available: true }));
+
+      await waitForPolished("Hello world.");
+      expect(send).not.toHaveBeenCalled();
+    });
+
+    it("sends once the answer says polish is unavailable", async () => {
+      const { status, send } = await pressSendBeforeStatus();
+      await act(async () => {});
+      expect(send).not.toHaveBeenCalled();
+
+      await act(async () => status.resolve({ polish_available: false }));
+
+      await waitFor(() => expect(send).toHaveBeenCalled());
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+  });
+
   for (const composer of composers.slice(1)) {
     it(`enter inside the editor's debounce still opens the dialog (${composer.name})`, async () => {
       const send = vi.fn().mockResolvedValue("comment-1");

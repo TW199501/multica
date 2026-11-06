@@ -2,13 +2,15 @@
 
 import { useCallback, useRef, useState, type ReactNode, type RefObject } from "react";
 import { flushSync } from "react-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCommentComposerStore } from "@multica/core/issues/stores";
 import { useCurrentWorkspace } from "@multica/core/paths";
 import type { PolishContext } from "@multica/core/types";
+import { workspaceAISettingsStatusOptions } from "@multica/core/workspace/queries";
 import type { ContentEditorRef } from "../content-editor";
 import { hasPolishableText } from "./display-text";
 import { PolishDialog, type PolishDialogMode } from "./polish-dialog";
-import { usePolishAvailable } from "./use-polish";
+import { usePolishStatus } from "./use-polish";
 
 export interface PolishGateOptions {
   wsId: string;
@@ -64,12 +66,17 @@ export function usePolishGate({
   allowEmptySend = false,
 }: PolishGateOptions): PolishGate {
   const polishOnSend = useCommentComposerStore((s) => s.polishOnSend);
-  const available = usePolishAvailable(wsId);
+  const { available, pending } = usePolishStatus(wsId);
+  const queryClient = useQueryClient();
   const [opened, setOpened] = useState<OpenDialog | null>(null);
-  const stateRef = useRef({ polishOnSend, available, canSend, submit, onAdopted, open: false });
+  // Set while a send waits for the status, so a second press does not queue another.
+  const awaitingStatus = useRef(false);
+  const stateRef = useRef({ polishOnSend, wsId, available, pending, canSend, submit, onAdopted, open: false });
   stateRef.current = {
     polishOnSend,
+    wsId,
     available,
+    pending,
     canSend,
     submit,
     onAdopted,
@@ -77,13 +84,30 @@ export function usePolishGate({
   };
 
   const gatedSubmit = useCallback(async () => {
+    if (stateRef.current.open || awaitingStatus.current) return;
+    let isAvailable = stateRef.current.available;
+    if (stateRef.current.polishOnSend && stateRef.current.pending) {
+      // A send must not slip past polish just because the status is still loading.
+      awaitingStatus.current = true;
+      try {
+        const status = await queryClient.fetchQuery(
+          workspaceAISettingsStatusOptions(stateRef.current.wsId),
+        );
+        isAvailable = status.polish_available === true;
+      } catch {
+        // No answer means polish cannot run either; the send still goes out.
+        isAvailable = false;
+      } finally {
+        awaitingStatus.current = false;
+      }
+    }
     const state = stateRef.current;
     if (state.open) return;
     const editor = editorRef.current;
     const markdown = editor?.getMarkdown() ?? "";
     if (
       !state.polishOnSend ||
-      !state.available ||
+      !isAvailable ||
       !state.canSend ||
       !hasPolishableText(markdown) ||
       editor?.hasActiveUploads()
@@ -92,7 +116,7 @@ export function usePolishGate({
       return;
     }
     setOpened({ original: markdown, mode: "send", fromSend: true });
-  }, [editorRef]);
+  }, [editorRef, queryClient]);
 
   const openPolish = useCallback(() => {
     const state = stateRef.current;
