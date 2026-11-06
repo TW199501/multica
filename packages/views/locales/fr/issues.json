@@ -531,6 +531,8 @@
     "squad_leader_failed": "évaluation en échec",
     "squad_leader_failed_reason": "évaluation en échec : {{reason}}",
     "coalesced_badge": "×{{count}}",
+    "agent_comments_one": "{{count}} commentaire d’agent",
+    "agent_comments_other": "{{count}} commentaires d’agents",
     "activity_count_one": "{{count}} activité",
     "activity_count_other": "{{count}} activités",
     "show_more_activities_one": "Afficher {{count}} activité de plus",
@@ -672,6 +674,7 @@
     "restart_failed": "Impossible d'arrêter l'exécution en cours. Votre message n'a pas été envoyé."
   },
   "reply": {
+    "action": "Répondre",
     "placeholder": "Laisser une réponse...",
     "annotations": {
       "confirm_add": "Ajouter une annotation",

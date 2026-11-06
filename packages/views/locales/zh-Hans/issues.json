@@ -524,6 +524,7 @@
     "squad_leader_failed": "评估失败",
     "squad_leader_failed_reason": "评估失败：{{reason}}",
     "coalesced_badge": "×{{count}}",
+    "agent_comments_other": "{{count}} 条代理留言",
     "activity_count_other": "{{count}} 条动态",
     "show_more_activities_other": "展开更早 {{count}} 条动态",
     "duplicate_marked": "把这个任务标记为 {{identifier}} 的重复",
@@ -653,6 +654,7 @@
     "restart_failed": "没能停止当前运行，消息还没有发送。"
   },
   "reply": {
+    "action": "回复",
     "placeholder": "回复...",
     "annotations": {
       "confirm_add": "添加批注",
