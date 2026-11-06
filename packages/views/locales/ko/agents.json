@@ -1035,5 +1035,48 @@
   "actions": {
     "selected_other": "{{count}}개 선택됨",
     "clear_selection": "선택 해제"
+  },
+  "ai_settings": {
+    "entry": "AI 설정",
+    "title": "AI 설정",
+    "status_connected": "연결됨 · {{when}} 호출됨",
+    "status_connected_idle": "연결됨",
+    "status_not_configured": "설정되지 않음",
+    "no_secret_key": "서버에 암호화 키가 설정되어 있지 않습니다",
+    "provider": "공급자",
+    "providers": {
+      "claude": "Claude",
+      "openai": "OpenAI",
+      "gemini": "Gemini",
+      "deepseek": "DeepSeek",
+      "qwen": "Qwen",
+      "kimi": "Kimi",
+      "grok": "Grok",
+      "openrouter": "OpenRouter",
+      "huggingface": "Hugging Face",
+      "llamacpp": "자체 호스팅(llama.cpp)",
+      "custom": "사용자 지정"
+    },
+    "model": "모델",
+    "endpoint": "API 엔드포인트",
+    "api_key": "API 키",
+    "api_key_required": "API 키(필수)",
+    "api_key_error": "공급자나 호스트를 변경한 뒤에는 API 키를 다시 입력하세요.",
+    "disable_thinking": "사고 끄기",
+    "prompt": "프롬프트",
+    "restore_default": "기본값 복원",
+    "load_from_skill": "스킬에서 불러오기",
+    "no_skill": "없음",
+    "prompt_from_skill": "이 프롬프트 대신 선택한 스킬의 내용을 사용합니다.",
+    "test": "테스트",
+    "save": "저장",
+    "test_ok": "연결에 성공했습니다",
+    "test_failed": "{{status}} · {{message}}",
+    "test_request_failed": "연결 테스트를 실행할 수 없습니다",
+    "saved_toast": "AI 설정을 저장했습니다",
+    "save_failed_toast": "AI 설정을 저장할 수 없습니다",
+    "load_failed": "AI 설정을 불러올 수 없습니다",
+    "retry": "다시 시도",
+    "model_placeholder": "비워 두면 서버에 로드된 모델을 사용합니다"
   }
 }

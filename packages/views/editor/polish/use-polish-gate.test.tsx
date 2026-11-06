@@ -1,0 +1,512 @@
+import type { ReactNode } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { WorkspaceSlugProvider } from "@multica/core/paths";
+import { useCommentComposerStore, useCommentDraftStore } from "@multica/core/issues/stores";
+import { renderWithI18n } from "../../test/i18n";
+
+const apiGetAISettingsStatus = vi.hoisted(() => vi.fn());
+const apiPolishText = vi.hoisted(() => vi.fn());
+const apiListWorkspaces = vi.hoisted(() => vi.fn());
+const apiPreviewCommentTriggers = vi.hoisted(() => vi.fn());
+const apiListTasksByIssue = vi.hoisted(() => vi.fn());
+const apiCancelTask = vi.hoisted(() => vi.fn());
+
+vi.mock("@multica/core/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@multica/core/api")>()),
+  api: {
+    getBaseUrl: () => "https://api.example.test",
+    getAISettingsStatus: apiGetAISettingsStatus,
+    polishText: apiPolishText,
+    listWorkspaces: apiListWorkspaces,
+    uploadFile: vi.fn(),
+    listQuickActions: vi.fn().mockResolvedValue({ quick_actions: [] }),
+    renderQuickAction: vi.fn(),
+    previewCommentTriggers: apiPreviewCommentTriggers,
+    listTasksByIssue: apiListTasksByIssue,
+    cancelTask: apiCancelTask,
+  },
+}));
+
+vi.mock("../../common/actor-avatar", () => ({
+  ActorAvatar: () => <span data-testid="actor-avatar" />,
+  AgentStatusDot: () => null,
+}));
+
+vi.mock("@multica/core/agents", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@multica/core/agents")>()),
+  useAgentPresenceDetail: () => "loading",
+}));
+
+vi.mock("../../projects/components/project-picker", () => ({
+  ProjectPicker: () => null,
+}));
+
+vi.mock("..", async () => (await import("../../test/composer-mocks")).editorModule());
+vi.mock("@multica/core/chat", async () => (await import("../../test/composer-mocks")).chatModule());
+
+import { mockChatState, mockEditorState, resetComposerMocks } from "../../test/composer-mocks";
+import { ChatInput } from "../../chat/components/chat-input";
+import { CommentInput } from "../../issues/components/comment-input";
+import { ReplyInput } from "../../issues/components/reply-input";
+
+const WORKSPACE = { id: "ws-1", slug: "acme", name: "Acme" };
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((res) => {
+    resolve = res;
+  });
+  return { promise, resolve };
+}
+
+function renderUi(ui: ReactNode) {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return renderWithI18n(
+    <QueryClientProvider client={queryClient}>
+      <WorkspaceSlugProvider slug="acme">{ui}</WorkspaceSlugProvider>
+    </QueryClientProvider>,
+  );
+}
+
+interface ComposerCase {
+  name: string;
+  render: (send: (...args: any[]) => any) => void;
+  shell?: string;
+  sendLabel: string;
+}
+
+const composers: ComposerCase[] = [
+  {
+    name: "chat",
+    sendLabel: "Send",
+    render: (send) => renderUi(<ChatInput onSend={send} agentName="Multica" />),
+  },
+  {
+    name: "comment",
+    shell: "comment-composer-shell",
+    sendLabel: "Send",
+    render: (send) => renderUi(<CommentInput issueId="issue-1" onSubmit={send} />),
+  },
+  {
+    name: "reply",
+    shell: "reply-composer-shell",
+    sendLabel: "Send",
+    render: (send) =>
+      renderUi(
+        <ReplyInput
+          issueId="issue-1"
+          parentId="comment-1"
+          avatarType="member"
+          avatarId="user-1"
+          draftKey="reply:issue-1:comment-1"
+          onSubmit={send}
+        />,
+      ),
+  },
+];
+
+async function typeInto(composer: ComposerCase, text: string) {
+  if (composer.shell) fireEvent.click(screen.getByTestId(composer.shell));
+  const editor = (await screen.findByTestId("editor")) as HTMLTextAreaElement;
+  fireEvent.change(editor, { target: { value: text } });
+  return editor;
+}
+
+/** The composer's own send button, never the dialog's. */
+function composerSendButton() {
+  const buttons = screen.getAllByRole("button", { name: "Send", hidden: true });
+  const outside = buttons.find((button) => !button.closest("[role='dialog']"));
+  if (!outside) throw new Error("composer send button not found");
+  return outside;
+}
+
+async function waitForPolished(text: string) {
+  const dialog = await screen.findByRole("dialog", { name: "Polish message" });
+  await waitFor(() =>
+    expect((within(dialog).getByLabelText("After") as HTMLTextAreaElement).value).toBe(text),
+  );
+  return dialog;
+}
+
+beforeEach(() => {
+  apiGetAISettingsStatus.mockReset();
+  apiGetAISettingsStatus.mockResolvedValue({ polish_available: true });
+  apiPolishText.mockReset();
+  apiPolishText.mockResolvedValue({ text: "Hello world." });
+  apiListWorkspaces.mockReset();
+  apiListWorkspaces.mockResolvedValue([WORKSPACE]);
+  apiPreviewCommentTriggers.mockReset();
+  apiPreviewCommentTriggers.mockResolvedValue({ agents: [] });
+  apiListTasksByIssue.mockReset();
+  apiListTasksByIssue.mockResolvedValue([]);
+  apiCancelTask.mockReset();
+  localStorage.clear();
+  resetComposerMocks();
+  mockChatState.activeSessionId = "session-1";
+  useCommentDraftStore.setState({ drafts: {} });
+  useCommentComposerStore.setState({
+    sticky: true,
+    runningAgentReply: "steer",
+    polishOnSend: true,
+    executionMode: "multi",
+  });
+});
+
+describe("usePolishGate", () => {
+  for (const composer of composers) {
+    it(`gate submits directly when off (${composer.name})`, async () => {
+      useCommentComposerStore.setState({ polishOnSend: false });
+      const send = vi.fn().mockResolvedValue("comment-1");
+      composer.render(send);
+      await typeInto(composer, "hello wrld");
+      await screen.findByRole("button", { name: "Polish message" });
+
+      fireEvent.click(composerSendButton());
+
+      await waitFor(() => expect(send).toHaveBeenCalled());
+      expect(send.mock.calls[0]?.[0]).toBe("hello wrld");
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+      expect(apiPolishText).not.toHaveBeenCalled();
+    });
+
+    it(`gate submits directly when polish is unavailable (${composer.name})`, async () => {
+      apiGetAISettingsStatus.mockResolvedValue({ polish_available: false });
+      const send = vi.fn().mockResolvedValue("comment-1");
+      composer.render(send);
+      await typeInto(composer, "hello wrld");
+      await waitFor(() => expect(apiGetAISettingsStatus).toHaveBeenCalled());
+
+      fireEvent.click(composerSendButton());
+
+      await waitFor(() => expect(send).toHaveBeenCalled());
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    it(`gate opens the dialog instead of sending when on (${composer.name})`, async () => {
+      const send = vi.fn().mockResolvedValue("comment-1");
+      composer.render(send);
+      await typeInto(composer, "hello wrld");
+      await screen.findByRole("button", { name: "Polish message" });
+
+      fireEvent.click(composerSendButton());
+
+      const dialog = await waitForPolished("Hello world.");
+      expect(within(dialog).getByRole("button", { name: "Send" })).toBeInTheDocument();
+      expect(within(dialog).getByText(/turn off message polish/)).toBeInTheDocument();
+      expect(apiPolishText.mock.calls[0]?.[1]).toBe("hello wrld");
+      expect(send).not.toHaveBeenCalled();
+    });
+
+    it(`enter key is gated too (${composer.name})`, async () => {
+      const send = vi.fn().mockResolvedValue("comment-1");
+      composer.render(send);
+      const editor = await typeInto(composer, "hello wrld");
+      await screen.findByRole("button", { name: "Polish message" });
+
+      fireEvent.keyDown(editor, { key: "Enter" });
+
+      await waitForPolished("Hello world.");
+      expect(send).not.toHaveBeenCalled();
+    });
+
+    it(`closing the dialog sends nothing (${composer.name})`, async () => {
+      const send = vi.fn().mockResolvedValue("comment-1");
+      composer.render(send);
+      const editor = await typeInto(composer, "hello wrld");
+      await screen.findByRole("button", { name: "Polish message" });
+      fireEvent.click(composerSendButton());
+      const dialog = await waitForPolished("Hello world.");
+
+      fireEvent.click(within(dialog).getByRole("button", { name: "Close" }));
+
+      await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+      expect(send).not.toHaveBeenCalled();
+      expect(editor.value).toBe("hello wrld");
+    });
+  }
+
+  it("send from the dialog submits the edited text with the recipient choices", async () => {
+    apiPreviewCommentTriggers.mockResolvedValue({
+      agents: [{ id: "agent-1", name: "Lambda", source: "mention_agent", reason: "" }],
+    });
+    const send = vi.fn().mockResolvedValue("comment-9");
+    renderUi(<CommentInput issueId="issue-1" onSubmit={send} />);
+    await typeInto(composers[1]!, "hello wrld");
+
+    // Mark the only recipient as "Won't start this time".
+    await waitFor(() => {
+      const chip = screen.getByRole("button", { name: "Lambda trigger: Will start when sent" });
+      if (chip.getAttribute("aria-expanded") !== "true") fireEvent.click(chip);
+      expect(screen.getByRole("menuitemradio", { name: /Won't start this time/ })).toBeInTheDocument();
+    }, { timeout: 5000 });
+    fireEvent.click(screen.getByRole("menuitemradio", { name: /Won't start this time/ }));
+    await screen.findByRole("button", { name: "Lambda trigger: Won't start this time" });
+
+    fireEvent.click(composerSendButton());
+    const dialog = await waitForPolished("Hello world.");
+    fireEvent.change(within(dialog).getByLabelText("After"), { target: { value: "Hello, world!" } });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
+
+    await waitFor(() =>
+      expect(send).toHaveBeenCalledWith("Hello, world!", undefined, ["agent-1"], undefined),
+    );
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect((screen.getByTestId("editor") as HTMLTextAreaElement).value).toBe("");
+    expect(useCommentDraftStore.getState().getDraft("new:issue-1")).toBeUndefined();
+  }, 15_000);
+
+  it("send from the dialog keeps steering a running turn", async () => {
+    const turn = {
+      id: "turn-1", agent_id: "agent-1", issue_id: "issue-1", status: "running", priority: 0,
+      created_at: "2026-09-23T00:00:00Z", dispatched_at: null, started_at: "2026-09-23T00:00:01Z",
+      completed_at: null, result: null, error: null,
+      supplement_capability: "task-supplement-v1", can_supplement: true,
+    };
+    apiListTasksByIssue.mockResolvedValue([turn]);
+    apiPreviewCommentTriggers.mockResolvedValue({
+      agents: [{ id: "agent-1", name: "Lambda", source: "thread_parent", reason: "" }],
+    });
+    const send = vi.fn().mockResolvedValue("reply-9");
+    renderUi(
+      <ReplyInput issueId="issue-1" parentId="comment-1" avatarType="member" avatarId="user-1"
+        onSubmit={send} steerByDefault={(task) => task.id === "turn-1"} />,
+    );
+    await typeInto(composers[2]!, "only fix web");
+    await screen.findByRole("button", { name: "Lambda trigger: Add to current run" }, { timeout: 5000 });
+
+    fireEvent.click(composerSendButton());
+    const dialog = await waitForPolished("Hello world.");
+    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
+
+    await waitFor(() =>
+      expect(send).toHaveBeenCalledWith("Hello world.", undefined, undefined, ["turn-1"]),
+    );
+  }, 15_000);
+
+  describe("a run the sender chose to stop", () => {
+    const AGENT_ID = "11111111-1111-4111-8111-111111111111";
+    const MENTION = `[@Lambda](mention://agent/${AGENT_ID})`;
+
+    async function openDialogWithRestartChosen(send: (...args: any[]) => any) {
+      const turn = {
+        id: "turn-1", agent_id: AGENT_ID, issue_id: "issue-1", status: "running", priority: 0,
+        created_at: "2026-09-23T00:00:00Z", dispatched_at: null, started_at: "2026-09-23T00:00:01Z",
+        completed_at: null, result: null, error: null,
+        supplement_capability: "task-supplement-v1", can_supplement: true,
+      };
+      apiListTasksByIssue.mockResolvedValue([turn]);
+      apiCancelTask.mockResolvedValue({ ...turn, status: "cancelled" });
+      apiPreviewCommentTriggers.mockImplementation(async (_issue: string, content: string) => ({
+        agents: content.includes(AGENT_ID)
+          ? [{ id: AGENT_ID, name: "Lambda", source: "mention_agent", reason: "" }]
+          : [],
+      }));
+      apiPolishText.mockResolvedValue({ text: `${MENTION} start over` });
+      renderUi(<CommentInput issueId="issue-1" onSubmit={send} />);
+      await typeInto(composers[1]!, `${MENTION} start ovr`);
+      await waitFor(() => {
+        const chip = screen.getByRole("button", { name: "Lambda trigger: Add to current run" });
+        if (chip.getAttribute("aria-expanded") !== "true") fireEvent.click(chip);
+        expect(screen.getByRole("menuitemradio", { name: /Stop and start over/ })).toBeInTheDocument();
+      }, { timeout: 5000 });
+      fireEvent.click(screen.getByRole("menuitemradio", { name: /Stop and start over/ }));
+      fireEvent.click(await screen.findByRole("button", { name: "Stop and send" }, { timeout: 5000 }));
+      return waitForPolished("@Lambda start over");
+    }
+
+    it("is not stopped once the dialog edit removed its mention", async () => {
+      const send = vi.fn().mockResolvedValue("comment-9");
+      const dialog = await openDialogWithRestartChosen(send);
+
+      fireEvent.change(within(dialog).getByLabelText("After"), { target: { value: "just a note" } });
+      fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
+
+      await waitFor(() => expect(send).toHaveBeenCalled());
+      expect(send.mock.calls[0]?.[0]).toBe("just a note");
+      expect(apiCancelTask).not.toHaveBeenCalled();
+    }, 15_000);
+
+    it("is still stopped while the mention stays", async () => {
+      const send = vi.fn().mockResolvedValue("comment-9");
+      const dialog = await openDialogWithRestartChosen(send);
+
+      fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
+
+      await waitFor(() => expect(send).toHaveBeenCalled());
+      expect(send.mock.calls[0]?.[0]).toBe(`${MENTION} start over`);
+      expect(apiCancelTask).toHaveBeenCalledWith("issue-1", "turn-1");
+    }, 15_000);
+  });
+
+  it("keeps the dialog and its result when the send is rejected, and retries the same text", async () => {
+    const send = vi.fn().mockResolvedValueOnce(undefined).mockResolvedValueOnce("comment-9");
+    renderUi(<CommentInput issueId="issue-1" onSubmit={send} />);
+    await typeInto(composers[1]!, "hello wrld");
+    await screen.findByRole("button", { name: "Polish message" });
+
+    fireEvent.click(composerSendButton());
+    const dialog = await waitForPolished("Hello world.");
+    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
+
+    await waitFor(() => expect(send).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(within(dialog).getByRole("button", { name: "Send" })).toBeEnabled());
+    expect((within(dialog).getByLabelText("After") as HTMLTextAreaElement).value).toBe("Hello world.");
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
+
+    await waitFor(() => expect(send).toHaveBeenCalledTimes(2));
+    expect(send.mock.calls[1]?.[0]).toBe("Hello world.");
+    expect(apiPolishText).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+  });
+
+  describe("while the polish status is still loading", () => {
+    async function pressSendBeforeStatus() {
+      const status = deferred<{ polish_available: boolean }>();
+      apiGetAISettingsStatus.mockReturnValue(status.promise);
+      const send = vi.fn().mockResolvedValue("comment-1");
+      composers[1]!.render(send);
+      await typeInto(composers[1]!, "hello wrld");
+      await waitFor(() => expect(apiGetAISettingsStatus).toHaveBeenCalled());
+      fireEvent.click(composerSendButton());
+      return { status, send };
+    }
+
+    it("waits for the answer and opens the dialog when polish is available", async () => {
+      const { status, send } = await pressSendBeforeStatus();
+      await act(async () => {});
+      expect(send).not.toHaveBeenCalled();
+
+      await act(async () => status.resolve({ polish_available: true }));
+
+      await waitForPolished("Hello world.");
+      expect(send).not.toHaveBeenCalled();
+    });
+
+    it("does not send a draft that changed while it waited", async () => {
+      const { status, send } = await pressSendBeforeStatus();
+      fireEvent.change(screen.getByTestId("editor"), { target: { value: "another draft" } });
+
+      await act(async () => status.resolve({ polish_available: true }));
+      await act(async () => {});
+
+      expect(send).not.toHaveBeenCalled();
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    it("opens the dialog when the status cannot be read, so the send still needs confirming", async () => {
+      apiGetAISettingsStatus.mockRejectedValue(new Error("offline"));
+      const send = vi.fn().mockResolvedValue("comment-1");
+      composers[1]!.render(send);
+      await typeInto(composers[1]!, "hello wrld");
+      await waitFor(() => expect(apiGetAISettingsStatus).toHaveBeenCalled());
+      await act(async () => {});
+
+      fireEvent.click(composerSendButton());
+
+      await waitForPolished("Hello world.");
+      expect(send).not.toHaveBeenCalled();
+    });
+
+    it("sends once the answer says polish is unavailable", async () => {
+      const { status, send } = await pressSendBeforeStatus();
+      await act(async () => {});
+      expect(send).not.toHaveBeenCalled();
+
+      await act(async () => status.resolve({ polish_available: false }));
+
+      await waitFor(() => expect(send).toHaveBeenCalled());
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+  });
+
+  for (const composer of composers.slice(1)) {
+    it(`enter inside the editor's debounce still opens the dialog (${composer.name})`, async () => {
+      const send = vi.fn().mockResolvedValue("comment-1");
+      composer.render(send);
+      await screen.findByTestId(composer.shell!);
+      fireEvent.click(screen.getByTestId(composer.shell!));
+      const editor = (await screen.findByTestId("editor")) as HTMLTextAreaElement;
+      await waitFor(() => expect(apiGetAISettingsStatus).toHaveBeenCalled());
+      await act(async () => {});
+
+      mockEditorState.holdUpdates = true;
+      fireEvent.change(editor, { target: { value: "hello wrld" } });
+      fireEvent.keyDown(editor, { key: "Enter" });
+
+      await waitForPolished("Hello world.");
+      expect(send).not.toHaveBeenCalled();
+    });
+  }
+
+  it("chat sends the text from the dialog and syncs the draft first", async () => {
+    const send = vi.fn().mockResolvedValue(true);
+    renderUi(<ChatInput onSend={send} agentName="Multica" />);
+    await typeInto(composers[0]!, "hello wrld");
+    await screen.findByRole("button", { name: "Polish message" });
+
+    fireEvent.click(composerSendButton());
+    const dialog = await waitForPolished("Hello world.");
+    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
+
+    await waitFor(() => expect(send).toHaveBeenCalled());
+    expect(send.mock.calls[0]?.[0]).toBe("Hello world.");
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+  });
+
+  it("disables the close button while the send is in flight", async () => {
+    const pending = deferred<string>();
+    const send = vi.fn().mockReturnValue(pending.promise);
+    renderUi(<CommentInput issueId="issue-1" onSubmit={send} />);
+    await typeInto(composers[1]!, "hello wrld");
+    await screen.findByRole("button", { name: "Polish message" });
+
+    fireEvent.click(composerSendButton());
+    const dialog = await waitForPolished("Hello world.");
+    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
+
+    await waitFor(() => expect(send).toHaveBeenCalled());
+    expect(within(dialog).getByRole("button", { name: "Close" })).toBeDisabled();
+    pending.resolve("comment-9");
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+  });
+
+  it("cannot send a blank right column without a decision", async () => {
+    const send = vi.fn().mockResolvedValue("comment-9");
+    renderUi(<CommentInput issueId="issue-1" onSubmit={send} />);
+    await typeInto(composers[1]!, "hello wrld");
+    await screen.findByRole("button", { name: "Polish message" });
+
+    fireEvent.click(composerSendButton());
+    const dialog = await waitForPolished("Hello world.");
+    fireEvent.change(within(dialog).getByLabelText("After"), { target: { value: "  " } });
+
+    const confirm = within(dialog).getByRole("button", { name: "Send" });
+    expect(confirm).toBeDisabled();
+    fireEvent.click(confirm);
+    expect(send).not.toHaveBeenCalled();
+    expect(useCommentDraftStore.getState().getDraft("new:issue-1")).toBe("hello wrld");
+  });
+
+  for (const composer of composers) {
+    it(`an upload in progress sends straight to the composer instead of opening the dialog (${composer.name})`, async () => {
+      const send = vi.fn().mockResolvedValue("comment-1");
+      composer.render(send);
+      const editor = await typeInto(composer, "hello wrld");
+      await screen.findByRole("button", { name: "Polish message" });
+      act(() => {
+        mockEditorState.uploading = true;
+        mockEditorState.notifyUploading?.(true);
+      });
+
+      fireEvent.keyDown(editor, { key: "Enter" });
+      await Promise.resolve();
+
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+      expect(apiPolishText).not.toHaveBeenCalled();
+      expect(send).not.toHaveBeenCalled();
+    });
+  }
+});

@@ -198,6 +198,10 @@
       "after_run": "Démarrer après cette exécution",
       "hint": "Définit seulement le choix par défaut. Vous pouvez le modifier pour chaque message avant l'envoi."
     },
+    "polish_on_send": {
+      "title": "Amélioration des messages",
+      "hint": "Envoyer dans le chat, les commentaires et les réponses ouvre d'abord la fenêtre d'amélioration."
+    },
     "comments_title": "Commentaires et discussion",
     "region_title": "Langue et région",
     "appearance_title": "Apparence",

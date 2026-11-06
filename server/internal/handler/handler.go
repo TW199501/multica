@@ -18,6 +18,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/multica-ai/multica/server/internal/aisettings"
 	"github.com/multica-ai/multica/server/internal/analytics"
 	"github.com/multica-ai/multica/server/internal/auth"
 	"github.com/multica-ai/multica/server/internal/cloudruntime"
@@ -333,6 +334,9 @@ type Handler struct {
 	ChannelMediaReconciler *service.ChannelMediaReconciler
 	// LarkTyping owns the durable reaction cleanup worker, started under sweepCtx.
 	LarkTyping *lark.TypingIndicatorManager
+	// AISettings stores each workspace's chat AI endpoint and sealed API key.
+	// Non-nil after router wiring; without MULTICA_AI_SECRET_KEY it can read but not save.
+	AISettings *aisettings.Service
 	// SlackInstall owns the bring-your-own-app Slack install lifecycle (register
 	// pasted tokens / list / revoke) and the at-rest encryption of each app's bot
 	// + app tokens (MUL-3666). Nil unless MULTICA_SLACK_SECRET_KEY is set.

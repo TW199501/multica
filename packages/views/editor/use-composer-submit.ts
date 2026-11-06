@@ -85,11 +85,15 @@ export interface ComposerSubmitOptions {
 export interface ComposerSubmit {
   /** True from submit start until the server settles. Drives lock + spinner. */
   submitting: boolean;
-  /** Invoke from the send button and the Cmd/Ctrl+Enter shortcut. */
-  submit: () => Promise<void>;
+  /**
+   * Invoke from the send button and the Cmd/Ctrl+Enter shortcut. Resolves true
+   * once the send was accepted, false when it was refused or failed.
+   */
+  submit: () => Promise<boolean>;
 }
 
-const defaultNormalize = (raw: string) => raw.replace(/(\n\s*)+$/, "").trim();
+/** The `normalize` used when none is passed. */
+export const defaultNormalize = (raw: string) => raw.trim();
 
 export function useComposerSubmit(opts: ComposerSubmitOptions): ComposerSubmit {
   const [submitting, setSubmitting] = useState(false);
@@ -150,10 +154,10 @@ export function useComposerSubmit(opts: ComposerSubmitOptions): ComposerSubmit {
     const o = optsRef.current;
     const raw = o.editorRef.current?.getMarkdown() ?? "";
     const content = (o.normalize ?? defaultNormalize)(raw);
-    if (!content || inFlight.current) return;
+    if (!content || inFlight.current) return false;
     // Submit-time upload re-check: the disabled button is a frame behind, and
     // Cmd+Enter / Enter-on-title bypass the button entirely.
-    if (o.uploadGate.isBlocked()) return;
+    if (o.uploadGate.isBlocked()) return false;
 
     inFlight.current = true;
     setSubmitting(true);
@@ -163,9 +167,11 @@ export function useComposerSubmit(opts: ComposerSubmitOptions): ComposerSubmit {
         o.onAccepted?.();
         runAfterAccepted();
       }
+      return accepted;
     } catch {
       // A thrown send is a rejection: keep the draft, let the caller's
       // onSubmit surface its own error toast.
+      return false;
     } finally {
       inFlight.current = false;
       setSubmitting(false);

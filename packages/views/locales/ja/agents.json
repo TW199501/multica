@@ -1035,5 +1035,48 @@
   "actions": {
     "selected_other": "{{count}} 件選択中",
     "clear_selection": "選択を解除"
+  },
+  "ai_settings": {
+    "entry": "AI 設定",
+    "title": "AI 設定",
+    "status_connected": "接続済み · {{when}}に呼び出し",
+    "status_connected_idle": "接続済み",
+    "status_not_configured": "未設定",
+    "no_secret_key": "サーバーに暗号化キーが設定されていません",
+    "provider": "プロバイダー",
+    "providers": {
+      "claude": "Claude",
+      "openai": "OpenAI",
+      "gemini": "Gemini",
+      "deepseek": "DeepSeek",
+      "qwen": "Qwen",
+      "kimi": "Kimi",
+      "grok": "Grok",
+      "openrouter": "OpenRouter",
+      "huggingface": "Hugging Face",
+      "llamacpp": "セルフホスト（llama.cpp）",
+      "custom": "カスタム"
+    },
+    "model": "モデル",
+    "endpoint": "API エンドポイント",
+    "api_key": "API キー",
+    "api_key_required": "API キー（必須）",
+    "api_key_error": "プロバイダーまたはホストを変更した場合は、API キーを再入力してください。",
+    "disable_thinking": "思考を無効にする",
+    "prompt": "プロンプト",
+    "restore_default": "デフォルトに戻す",
+    "load_from_skill": "スキルから読み込む",
+    "no_skill": "なし",
+    "prompt_from_skill": "このプロンプトの代わりに、選択したスキルの内容を使います。",
+    "test": "テスト",
+    "save": "保存",
+    "test_ok": "接続に成功しました",
+    "test_failed": "{{status}} · {{message}}",
+    "test_request_failed": "接続テストを実行できませんでした",
+    "saved_toast": "AI 設定を保存しました",
+    "save_failed_toast": "AI 設定を保存できませんでした",
+    "load_failed": "AI 設定を読み込めませんでした",
+    "retry": "再試行",
+    "model_placeholder": "空欄の場合はサーバーが読み込んだモデルを使用します"
   }
 }

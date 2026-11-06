@@ -12,6 +12,7 @@ import type { Workspace, WorkspaceMcpServer } from "../types";
 import { forgetLocalSearchIndex } from "../search-index/instance";
 import {
   useCreateWorkspace,
+  useUpdateAISettings,
   useDeleteWorkspace,
   useLeaveWorkspace,
   useUpdateWorkspaceMcpServer,
@@ -386,5 +387,37 @@ describe("useLeaveWorkspace", () => {
       await result.current.mutateAsync("ws-3");
     });
     expect(forgetLocalSearchIndex).toHaveBeenCalledWith("ws-3");
+  });
+});
+
+describe("useUpdateAISettings", () => {
+  it("invalidates settings and status", async () => {
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false, staleTime: Infinity } },
+    });
+    const updateAISettings = vi.fn().mockResolvedValue({ configured: true });
+    setApiInstance({ updateAISettings } as unknown as ApiClient);
+    qc.setQueryData(workspaceKeys.aiSettings("ws-1"), { configured: false });
+    qc.setQueryData(workspaceKeys.aiSettingsStatus("ws-1"), { polish_available: false });
+
+    const { result } = renderHook(() => useUpdateAISettings("ws-1"), {
+      wrapper: createWrapper(qc),
+    });
+    const input = {
+      provider: "openai",
+      base_url: "",
+      model: "m",
+      disable_thinking: false,
+      prompt: "",
+      prompt_skill_id: null,
+    };
+    await act(async () => {
+      await result.current.mutateAsync(input);
+    });
+
+    expect(updateAISettings).toHaveBeenCalledWith("ws-1", input);
+    expect(qc.getQueryState(workspaceKeys.aiSettings("ws-1"))?.isInvalidated).toBe(true);
+    expect(qc.getQueryState(workspaceKeys.aiSettingsStatus("ws-1"))?.isInvalidated).toBe(true);
+    qc.clear();
   });
 });

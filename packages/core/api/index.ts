@@ -1,5 +1,6 @@
 export {
   ApiClient,
+  aiErrorCode,
   ApiError,
   clientErrorMessage,
   dispatchReasonCode,

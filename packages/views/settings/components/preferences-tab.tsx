@@ -50,7 +50,9 @@ import {
   type QuickCreateField,
 } from "@multica/core/issues/stores/issue-create-settings-store";
 import { api } from "@multica/core/api";
+import { useCurrentWorkspace } from "@multica/core/paths";
 import { browserTimezone, timezoneOptions } from "../../common/timezone-select";
+import { usePolishAvailable } from "../../editor/polish/use-polish";
 import { SegmentedToggle } from "../../common/segmented-toggle";
 import { useT } from "../../i18n";
 import {
@@ -101,6 +103,7 @@ export function PreferencesTab() {
         <SettingsCard>
           <StickyCommentBarRow />
           <RunningAgentReplyRow />
+          <PolishOnSendRow />
           <FloatingChatRow />
         </SettingsCard>
       </SettingsSection>
@@ -332,6 +335,29 @@ function RunningAgentReplyRow() {
           ))}
         </SelectContent>
       </Select>
+    </SettingsRow>
+  );
+}
+
+/** Hidden while the workspace has no conversation AI to polish with. */
+function PolishOnSendRow() {
+  const { t } = useT("settings");
+  const wsId = useCurrentWorkspace()?.id ?? "";
+  const available = usePolishAvailable(wsId);
+  const enabled = useCommentComposerStore((s) => s.polishOnSend);
+  const setEnabled = useCommentComposerStore((s) => s.setPolishOnSend);
+  if (!available) return null;
+  return (
+    <SettingsRow
+      anchor="polish-on-send"
+      label={t(($) => $.preferences.polish_on_send.title)}
+      description={t(($) => $.preferences.polish_on_send.hint)}
+    >
+      <Switch
+        checked={enabled}
+        onCheckedChange={(checked) => setEnabled(checked)}
+        aria-label={t(($) => $.preferences.polish_on_send.title)}
+      />
     </SettingsRow>
   );
 }

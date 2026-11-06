@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	openai "github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/shared"
@@ -60,6 +61,103 @@ func TestEnabledWithBaseURLOnly(t *testing.T) {
 	c := New(Config{BaseURL: "http://localhost:1234"})
 	if !c.Enabled() {
 		t.Fatal("expected enabled client when only base URL is set (keyless gateway)")
+	}
+}
+
+// headerRecorder serves one canned completion and records the request headers.
+func headerRecorder(t *testing.T) (*httptest.Server, *http.Header) {
+	t.Helper()
+	var got http.Header
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got = r.Header.Clone()
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, `{"id":"c","object":"chat.completion","choices":[{"index":0,"message":{"role":"assistant","content":"ok"},"finish_reason":"stop"}]}`)
+	}))
+	t.Cleanup(srv.Close)
+	return srv, &got
+}
+
+func setOperatorOpenAIEnv(t *testing.T) {
+	t.Setenv("OPENAI_API_KEY", "sk-operator-secret")
+	t.Setenv("OPENAI_ADMIN_KEY", "sk-admin-operator-secret")
+	t.Setenv("OPENAI_ORG_ID", "org-x")
+	t.Setenv("OPENAI_PROJECT_ID", "proj-x")
+	t.Setenv("OPENAI_CUSTOM_HEADERS", "X-Operator-Secret: hush")
+}
+
+func assertNoOperatorHeaders(t *testing.T, h http.Header) {
+	t.Helper()
+	for _, name := range []string{"OpenAI-Organization", "OpenAI-Project", "X-Operator-Secret"} {
+		if _, ok := h[http.CanonicalHeaderKey(name)]; ok {
+			t.Fatalf("%s leaked to the workspace host: %q", name, h.Get(name))
+		}
+	}
+}
+
+func TestIgnoreEnvironmentKeylessSendsNoOperatorCredentials(t *testing.T) {
+	setOperatorOpenAIEnv(t)
+	srv, got := headerRecorder(t)
+	c := New(Config{BaseURL: srv.URL, IgnoreEnvironment: true, MaxRetries: retries(0)})
+	if _, err := c.GenerateText(context.Background(), "", "", "hi"); err != nil {
+		t.Fatalf("GenerateText: %v", err)
+	}
+	if auth := got.Get("Authorization"); auth != "" {
+		t.Fatalf("keyless workspace client sent Authorization %q", auth)
+	}
+	assertNoOperatorHeaders(t, *got)
+}
+
+func TestIgnoreEnvironmentKeyedSendsOnlyItsOwnKey(t *testing.T) {
+	setOperatorOpenAIEnv(t)
+	srv, got := headerRecorder(t)
+	c := New(Config{APIKey: "sk-workspace", BaseURL: srv.URL, IgnoreEnvironment: true, MaxRetries: retries(0)})
+	if _, err := c.GenerateText(context.Background(), "", "", "hi"); err != nil {
+		t.Fatalf("GenerateText: %v", err)
+	}
+	if auth := got.Get("Authorization"); auth != "Bearer sk-workspace" {
+		t.Fatalf("Authorization = %q, want the workspace key only", auth)
+	}
+	assertNoOperatorHeaders(t, *got)
+}
+
+func TestIgnoreEnvironmentDoesNotFollowEnvBaseURL(t *testing.T) {
+	envHit := false
+	envSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		envHit = true
+		w.WriteHeader(http.StatusTeapot)
+	}))
+	t.Cleanup(envSrv.Close)
+	t.Setenv("OPENAI_BASE_URL", envSrv.URL)
+	// A keyed client with no base URL targets the SDK default, never the env URL.
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	c := New(Config{APIKey: "sk-workspace", IgnoreEnvironment: true, MaxRetries: retries(0), HTTPClient: &http.Client{
+		Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+			if r.URL.Host != "api.openai.com" {
+				t.Errorf("request went to %s", r.URL.Host)
+			}
+			return nil, context.Canceled
+		}),
+	}})
+	_, _ = c.GenerateText(ctx, "", "", "hi")
+	if envHit {
+		t.Fatal("workspace client followed OPENAI_BASE_URL")
+	}
+}
+
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+func TestDeploymentClientStillReadsEnvironment(t *testing.T) {
+	setOperatorOpenAIEnv(t)
+	srv, got := headerRecorder(t)
+	c := New(Config{BaseURL: srv.URL, MaxRetries: retries(0)})
+	if _, err := c.GenerateText(context.Background(), "", "", "hi"); err != nil {
+		t.Fatalf("GenerateText: %v", err)
+	}
+	if got.Get("OpenAI-Organization") != "org-x" {
+		t.Fatalf("deployment client behaviour changed: OpenAI-Organization = %q", got.Get("OpenAI-Organization"))
 	}
 }
 

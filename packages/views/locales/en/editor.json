@@ -182,5 +182,32 @@
     "clear_filter": "Clear filter",
     "no_matches": "No matching rows",
     "close": "Close"
+  },
+  "polish": {
+    "button": "Polish message",
+    "title": "Polish message",
+    "close": "Close",
+    "before": "Before",
+    "after": "After",
+    "loading": "Polishing…",
+    "regenerate": "Polish",
+    "adopt": "Use",
+    "send": "Send",
+    "disclaimer": "AI agents can make mistakes.",
+    "turn_off_hint": "To decide for yourself whether to polish, turn off message polish in Preferences → Comments & chat.",
+    "error_lost_spans": "The polished text changed mentions, links or code, so the original is kept.",
+    "error_not_configured": "Message polish isn't set up for this workspace. The original is kept.",
+    "error_failed": "Couldn't polish the message. The original is kept."
+  },
+  "decision": {
+    "label": "Decision",
+    "placeholder": "Decide",
+    "approve": "Approve and start",
+    "discuss": "Discuss further",
+    "execution_label": "AI execution",
+    "single": "Single agent",
+    "multi": "Multiple agents",
+    "sent": "Decision sent: {{label}}",
+    "view": "View"
   }
 }

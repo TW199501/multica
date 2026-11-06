@@ -190,6 +190,19 @@ vi.mock("../../editor", async () => ({
   }),
 }));
 
+// The polish button needs a QueryClient and workspace route; its chat wiring
+// is covered in editor/polish/polish.test.tsx.
+vi.mock("../../editor/polish/polish-button", () => ({
+  WorkspacePolishButton: () => null,
+}));
+// Same for the send gate; editor/polish/use-polish-gate.test.tsx covers it.
+vi.mock("../../editor/polish/use-polish-gate", () => ({
+  useWorkspacePolishGate: ({ submit }: { submit: () => Promise<void> }) => ({
+    gatedSubmit: submit,
+    dialog: null,
+  }),
+}));
+
 vi.mock("../../projects/components/project-picker", () => ({
   ProjectPicker: ({
     projectId,

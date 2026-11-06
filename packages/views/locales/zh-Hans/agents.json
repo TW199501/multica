@@ -1035,5 +1035,48 @@
   "actions": {
     "selected_other": "已选 {{count}} 项",
     "clear_selection": "清除选择"
+  },
+  "ai_settings": {
+    "entry": "AI 设置",
+    "title": "AI 设置",
+    "status_connected": "已连接 · {{when}}调用过",
+    "status_connected_idle": "已连接",
+    "status_not_configured": "尚未设置",
+    "no_secret_key": "服务器尚未配置加密密钥",
+    "provider": "服务商",
+    "providers": {
+      "claude": "Claude",
+      "openai": "OpenAI",
+      "gemini": "Gemini",
+      "deepseek": "DeepSeek",
+      "qwen": "Qwen",
+      "kimi": "Kimi",
+      "grok": "Grok",
+      "openrouter": "OpenRouter",
+      "huggingface": "Hugging Face",
+      "llamacpp": "自托管（llama.cpp）",
+      "custom": "自定义"
+    },
+    "model": "模型",
+    "endpoint": "API 端点",
+    "api_key": "API 密钥",
+    "api_key_required": "API 密钥（必填）",
+    "api_key_error": "更换服务商或主机后，请重新输入 API 密钥。",
+    "disable_thinking": "关闭思考",
+    "prompt": "提示词",
+    "restore_default": "恢复默认",
+    "load_from_skill": "从技能加载",
+    "no_skill": "无",
+    "prompt_from_skill": "将使用所选技能的内容代替此提示词。",
+    "test": "测试",
+    "save": "保存",
+    "test_ok": "连接成功",
+    "test_failed": "{{status}} · {{message}}",
+    "test_request_failed": "无法执行连接测试",
+    "saved_toast": "已保存 AI 设置",
+    "save_failed_toast": "无法保存 AI 设置",
+    "load_failed": "无法加载 AI 设置",
+    "retry": "重试",
+    "model_placeholder": "留空则使用服务器已加载的模型"
   }
 }

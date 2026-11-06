@@ -84,6 +84,7 @@ import {
 } from "../editor";
 import { useIssueCreateUploads } from "./use-issue-create-uploads";
 import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
+import { WorkspacePolishButton } from "../editor/polish/polish-button";
 import { useT } from "../i18n";
 import { matchesPinyin } from "../editor/extensions/pinyin-match";
 import { SourceContextPreviewCard, useSourceContextFailureMessage } from "./source-context-preview";
@@ -920,6 +921,15 @@ export function AgentCreatePanel({
               size="sm"
               multiple
               onSelect={(file) => editorRef.current?.uploadFile(file)}
+            />
+            <WorkspacePolishButton
+              editorRef={editorRef}
+              context={{ kind: "none" }}
+              disabled={!hasContent || gate.uploading || submitting}
+              onAdopted={(md) => {
+                setHasContent(md.trim().length > 0);
+                setAgent({ prompt: md });
+              }}
             />
             {keepOpen && sentCount > 0 && (
               <span className="text-caption text-emerald-600 dark:text-emerald-400">

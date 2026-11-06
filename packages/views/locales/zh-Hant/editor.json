@@ -178,5 +178,32 @@
     "clear_filter": "清除篩選",
     "no_matches": "沒有匹配的行",
     "close": "關閉"
+  },
+  "polish": {
+    "button": "對話優化",
+    "title": "對話優化",
+    "close": "關閉",
+    "before": "優化前",
+    "after": "優化後",
+    "loading": "優化中…",
+    "regenerate": "優化",
+    "adopt": "採用",
+    "send": "送出",
+    "disclaimer": "AI 代理可能會出錯。",
+    "turn_off_hint": "如果想自己決定要不要優化，請到偏好設定 → 評論與聊天，關閉對話優化。",
+    "error_lost_spans": "優化結果改動了 @提及、連結或程式碼，已保留原文。",
+    "error_not_configured": "此工作區尚未設定對話 AI，已保留原文。",
+    "error_failed": "優化失敗，已保留原文。"
+  },
+  "decision": {
+    "label": "決議",
+    "placeholder": "請決定",
+    "approve": "核准執行",
+    "discuss": "再議討論",
+    "execution_label": "AI 執行方式",
+    "single": "單代理執行",
+    "multi": "多代理執行",
+    "sent": "已送出決議：{{label}}",
+    "view": "查看"
   }
 }

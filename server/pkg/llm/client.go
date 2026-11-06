@@ -1,8 +1,9 @@
 // Package llm is a thin, reusable wrapper around the official OpenAI Go SDK
 // (github.com/openai/openai-go). It exists so the rest of the server has a
 // single, well-typed entry point for "just call an LLM" needs that do NOT
-// require the full agent runtime — currently chat auto-titling and chat
-// follow-up questions (MUL-4238).
+// require the full agent runtime — chat auto-titling and chat follow-up
+// questions (MUL-4238), configured by MULTICA_LLM_*, and the workspace AI
+// connection test and message polish (E-50), configured per workspace.
 //
 // # Scope: the assist layer, not every model call in the product
 //
@@ -36,6 +37,8 @@
 // TestDocumentedConsumersAreTheOnlyCallers fails until a new call site is
 // reflected here.
 //
+// Deployment consumers, configured by MULTICA_LLM_*:
+//
 //   - Chat auto-titling — server/internal/handler/chat_title.go. Sends the
 //     first user message of a new chat session, verbatim and uncapped.
 //     Attachments are never included.
@@ -45,6 +48,21 @@
 //     answered capped at 3000 runes (2000 head + 1000 tail) and each older
 //     message at 800.
 //
+// Workspace consumers, configured by a workspace admin in AI settings and
+// independent of MULTICA_LLM_*:
+//
+//   - AI settings connection test — server/internal/handler/ai_settings.go
+//     (CheckAISettings). Uses the workspace's own settings, not MULTICA_LLM_*;
+//     sends one fixed short prompt, no user content.
+//   - Message polish — server/internal/handler/ai_polish.go. Uses the
+//     workspace's own settings (not MULTICA_LLM_*). Sends the draft the user is
+//     writing (up to 8000 characters), with mentions, links and code in the
+//     draft replaced by placeholders. Also sends context as-is (not masked):
+//     for a chat, up to 6 visible messages of the caller's own chat; for an
+//     issue, its title (capped at 200 characters), its description (capped at
+//     2000) and up to 6 comments, or up to 6 of one thread. Each context
+//     message is capped at 800 characters.
+//
 // Request shape beyond the prompts is deployment-controlled and lives in
 // Config: MaxRetries (transport budget) and DisableThinking, which appends
 // `chat_template_kwargs: {"enable_thinking": false}` to every request body for
@@ -53,15 +71,22 @@
 // reject unknown body fields, so the knob is opt-in per deployment and off by
 // default.
 //
-// Both consumers send private chat content, which is why an unconfigured
-// deployment making zero upstream requests is a contract rather than a side
-// effect: New with no API key and no base URL returns a disabled client whose
-// every call fails with ErrNotConfigured before an HTTP request is ever built,
-// and both consumers check Enabled() before doing any work
-// (TestUnconfiguredClientMakesZeroUpstreamRequests). An operator who must not
-// let THIS layer send chat content leaves MULTICA_LLM_API_KEY and
-// MULTICA_LLM_BASE_URL empty; the product stays whole (client-derived chat
-// titles, no follow-up question buttons).
+// Both deployment consumers send private chat content, which is why an
+// unconfigured deployment making zero upstream requests is a contract rather
+// than a side effect: New with no API key and no base URL returns a disabled
+// client whose every call fails with ErrNotConfigured before an HTTP request is
+// ever built, and both deployment consumers check Enabled() before doing any
+// work (TestUnconfiguredClientMakesZeroUpstreamRequests). Leaving
+// MULTICA_LLM_API_KEY and MULTICA_LLM_BASE_URL empty stops only those two; the
+// product stays whole (client-derived chat titles, no follow-up question
+// buttons).
+//
+// Workspace clients never read OPENAI_* env vars (Config.IgnoreEnvironment).
+//
+// The workspace consumers do not read MULTICA_LLM_*. They send content
+// whenever a workspace admin has configured AI settings, to the endpoint the
+// admin chose, and send nothing for a workspace without settings (or when the
+// server has no MULTICA_AI_SECRET_KEY to open stored keys).
 //
 // The wrapper is intentionally small:
 //
@@ -84,6 +109,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -166,6 +192,44 @@ type Config struct {
 	// HTTPClient, when set, replaces the SDK's default transport. Primarily a
 	// test seam.
 	HTTPClient option.HTTPClient
+	// IgnoreEnvironment makes the client use only this Config: the SDK's
+	// OPENAI_* environment defaults (API key, admin key, organization, project,
+	// custom headers, base URL) are all overridden. Workspace clients set it so
+	// operator credentials never reach a host a workspace admin typed.
+	IgnoreEnvironment bool
+	// NoFallbackModel leaves an empty DefaultModel empty instead of using
+	// FallbackModel, so a self-hosted endpoint answers with its loaded model.
+	NoFallbackModel bool
+}
+
+// openAIDefaultBaseURL is the SDK's production endpoint, pinned explicitly for
+// IgnoreEnvironment clients so OPENAI_BASE_URL cannot redirect them.
+const openAIDefaultBaseURL = "https://api.openai.com/v1/"
+
+// environmentOverrides neutralises every option openai.NewClient derives from
+// OPENAI_* variables. Header deletions come first because deleting
+// Authorization marks a header override, which the WithAPIKey after it clears.
+func environmentOverrides(apiKey string) []option.RequestOption {
+	opts := []option.RequestOption{
+		option.WithHeaderDel("OpenAI-Organization"),
+		option.WithHeaderDel("OpenAI-Project"),
+	}
+	if custom, ok := os.LookupEnv("OPENAI_CUSTOM_HEADERS"); ok {
+		for _, line := range strings.Split(custom, "\n") {
+			if colon := strings.Index(line, ":"); colon >= 0 {
+				if name := strings.TrimSpace(line[:colon]); strings.EqualFold(name, "Content-Type") {
+					// Every request here is JSON; deleting it would break them.
+					opts = append(opts, option.WithHeader(name, "application/json"))
+				} else if name != "" {
+					opts = append(opts, option.WithHeaderDel(name))
+				}
+			}
+		}
+	}
+	return append(opts,
+		option.WithAdminAPIKey(""),
+		option.WithAPIKey(apiKey),
+	)
 }
 
 // DefaultMaxRetries is the retry budget used when Config.MaxRetries is unset.
@@ -246,11 +310,15 @@ type Client struct {
 // is simply not set up on a given deployment).
 func New(cfg Config) *Client {
 	opts := make([]option.RequestOption, 0, 4)
-	if key := strings.TrimSpace(cfg.APIKey); key != "" {
+	if cfg.IgnoreEnvironment {
+		opts = append(opts, environmentOverrides(strings.TrimSpace(cfg.APIKey))...)
+	} else if key := strings.TrimSpace(cfg.APIKey); key != "" {
 		opts = append(opts, option.WithAPIKey(key))
 	}
 	if base := strings.TrimSpace(cfg.BaseURL); base != "" {
 		opts = append(opts, option.WithBaseURL(base))
+	} else if cfg.IgnoreEnvironment {
+		opts = append(opts, option.WithBaseURL(openAIDefaultBaseURL))
 	}
 	retry := RetryBudget{
 		MaxRetries:     DefaultMaxRetries,
@@ -278,9 +346,10 @@ func New(cfg Config) *Client {
 	if cfg.HTTPClient != nil {
 		opts = append(opts, option.WithHTTPClient(cfg.HTTPClient))
 	}
+	opts = append(opts, option.WithMiddleware(normalizeUpstreamError))
 
 	defaultModel := strings.TrimSpace(cfg.DefaultModel)
-	if defaultModel == "" {
+	if defaultModel == "" && !cfg.NoFallbackModel {
 		defaultModel = FallbackModel
 	}
 
@@ -525,3 +594,19 @@ func withDefaultTimeout(ctx context.Context) (context.Context, context.CancelFun
 // compile-time assertion that option.HTTPClient is satisfied by *http.Client so
 // callers can pass a plain *http.Client as the test seam.
 var _ option.HTTPClient = (*http.Client)(nil)
+
+// UpstreamError reports the HTTP status and the upstream's own error message
+// when err came from the model endpoint answering with an error. ok is false
+// for every other failure (transport errors, cancellation, local errors). The
+// SDK's Error() text is never used because it embeds the request URL.
+func UpstreamError(err error) (status int, message string, ok bool) {
+	var apiErr *openai.Error
+	if !errors.As(err, &apiErr) {
+		return 0, "", false
+	}
+	message = strings.TrimSpace(apiErr.Message)
+	if message == "" {
+		message = http.StatusText(apiErr.StatusCode)
+	}
+	return apiErr.StatusCode, message, true
+}

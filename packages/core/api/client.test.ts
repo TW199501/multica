@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { createAuthStore } from "../auth";
 import { configStore } from "../config";
 import type { StorageAdapter, User } from "../types";
-import { ApiClient, ApiError, CHAT_DRAFT_RESTORE_CAPABILITY, clientErrorMessage } from "./client";
+import { ApiClient, ApiError, CHAT_DRAFT_RESTORE_CAPABILITY, aiErrorCode, clientErrorMessage } from "./client";
 import { EMPTY_PLUGIN_PACKAGE_LIST, EMPTY_PLUGIN_PREVIEW, EMPTY_PLUGIN_SURFACE_LAUNCH } from "./schemas";
 
 afterEach(() => {
@@ -3169,5 +3169,134 @@ describe("ApiClient shared credential across windows", () => {
     await expect(client.markOnboardingComplete()).rejects.toBeInstanceOf(ApiError);
 
     expect(onUnauthorized).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("ApiClient workspace AI settings", () => {
+  function stubJSON(body: unknown, status = 200) {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify(body), {
+        status,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    return fetchMock;
+  }
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("getAISettings falls back when the response is malformed", async () => {
+    stubJSON({ nope: true });
+
+    const result = await new ApiClient("https://api.example.test").getAISettings("ws-1");
+
+    expect(result.configured).toBe(false);
+    expect(result.secret_key_available).toBe(false);
+    expect(result.api_key_set).toBe(false);
+    expect(result.prompt_skill_id).toBeNull();
+  });
+
+  it("getAISettings keeps an unknown provider as a string", async () => {
+    stubJSON({ configured: true, provider: "future-llm", model: "m" });
+
+    const result = await new ApiClient("https://api.example.test").getAISettings("ws-1");
+
+    expect(result.provider).toBe("future-llm");
+    expect(result.configured).toBe(true);
+  });
+
+  it("getAISettingsStatus treats malformed as unavailable", async () => {
+    stubJSON({ polish_available: "yes" });
+
+    const result = await new ApiClient("https://api.example.test").getAISettingsStatus("ws-1");
+
+    expect(result).toEqual({ polish_available: false });
+  });
+
+  it("testAISettings falls back to a failed result when malformed", async () => {
+    stubJSON({ nope: true });
+
+    const result = await new ApiClient("https://api.example.test")
+      .testAISettings("ws-1", { provider: "openai" } as never);
+
+    expect(result.ok).toBe(false);
+  });
+
+  it("updateAISettings PUTs the input including clear_api_key", async () => {
+    const fetchMock = stubJSON({ configured: true });
+
+    await new ApiClient("https://api.example.test").updateAISettings("ws-1", {
+      provider: "openai",
+      base_url: "https://x.test/v1",
+      model: "m",
+      disable_thinking: false,
+      prompt: "p",
+      prompt_skill_id: null,
+      clear_api_key: true,
+    });
+
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toContain("/api/workspaces/ws-1/ai-settings");
+    expect(init.method).toBe("PUT");
+    expect(JSON.parse(String(init.body)).clear_api_key).toBe(true);
+  });
+
+  it("polishText returns the polished text", async () => {
+    const fetchMock = stubJSON({ text: "better" });
+
+    const result = await new ApiClient("https://api.example.test")
+      .polishText("ws-1", "good", { kind: "none" });
+
+    expect(result).toEqual({ text: "better" });
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toContain("/api/workspaces/ws-1/ai/polish");
+    expect(JSON.parse(String(init.body))).toEqual({ text: "good", context: { kind: "none" } });
+  });
+
+  it("polishText surfaces polish_lost_spans", async () => {
+    stubJSON({ error: "polish_lost_spans" }, 422);
+
+    const error = await new ApiClient("https://api.example.test")
+      .polishText("ws-1", "x", { kind: "none" })
+      .catch((e: unknown) => e);
+
+    expect(error).toBeInstanceOf(ApiError);
+    expect((error as ApiError).status).toBe(422);
+    expect(aiErrorCode(error)).toBe("polish_lost_spans");
+  });
+
+  it("polishText rejects a malformed success body", async () => {
+    stubJSON({ nope: true });
+
+    await expect(
+      new ApiClient("https://api.example.test").polishText("ws-1", "x", { kind: "none" }),
+    ).rejects.toThrow(/Malformed response/);
+  });
+
+  it("updateAISettings falls back to safe empty settings when malformed", async () => {
+    stubJSON({ nope: true });
+
+    const result = await new ApiClient("https://api.example.test")
+      .updateAISettings("ws-1", { provider: "openai" } as never);
+
+    expect(result.configured).toBe(false);
+    expect(result.secret_key_available).toBe(false);
+    expect(result.api_key_set).toBe(false);
+    expect(result.api_key_last4).toBe("");
+    expect(result.prompt_skill_id).toBeNull();
+  });
+
+  it("updateAISettings surfaces api_key_required", async () => {
+    stubJSON({ error: "api_key_required" }, 409);
+
+    const error = await new ApiClient("https://api.example.test")
+      .updateAISettings("ws-1", {} as never)
+      .catch((e: unknown) => e);
+
+    expect(aiErrorCode(error)).toBe("api_key_required");
+    expect(aiErrorCode(new Error("x"))).toBeUndefined();
   });
 });

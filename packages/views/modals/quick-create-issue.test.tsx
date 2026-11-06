@@ -361,6 +361,10 @@ vi.mock("../editor", async () => {
       },
       uploadFile: runUpload,
       focus: vi.fn(),
+      adoptContent: (markdown: string) => {
+        valueRef.current = markdown;
+        setValue(markdown);
+      },
       hasActiveUploads: () => inFlightRef.current > 0,
       // Placeholder rebuild contract: the real handle draws a card for an
       // upload the document is not showing and reports whether it landed.
@@ -404,6 +408,27 @@ vi.mock("../editor", async () => {
     FileDropOverlay: () => null,
   };
 });
+
+// The real button needs workspace routing and the AI status query; its adopt
+// flow is covered in editor/polish. This stub adopts through the same two
+// calls the real button makes: the editor handle, then onAdopted.
+vi.mock("../editor/polish/polish-button", () => ({
+  WorkspacePolishButton: (props: {
+    editorRef: { current: { adoptContent: (md: string) => void } | null };
+    disabled?: boolean;
+    onAdopted?: (md: string) => void;
+  }) => (
+    <button
+      type="button"
+      aria-label="Polish message"
+      data-disabled={props.disabled ? "true" : "false"}
+      onClick={() => {
+        props.editorRef.current?.adoptContent("Polished text");
+        props.onAdopted?.("Polished text");
+      }}
+    />
+  ),
+}));
 
 vi.mock("@multica/ui/components/ui/dialog", () => ({
   DialogTitle: ({ children, className }: { children: ReactNode; className?: string }) => (
@@ -643,6 +668,24 @@ describe("AgentCreatePanel", () => {
     expect(mockClearDraft).toHaveBeenCalled();
     expect(mockSetLastMode).toHaveBeenCalledWith("agent");
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("quick-create keeps the adopted prompt", async () => {
+    const user = userEvent.setup();
+    renderPanel({ onClose: vi.fn(), isExpanded: false, setIsExpanded: vi.fn() });
+
+    await user.type(screen.getByPlaceholderText(/Tell the agent what to do/), "rough prompt");
+    await user.click(screen.getByRole("button", { name: "Polish message" }));
+
+    expect(mockSetAgent).toHaveBeenLastCalledWith({ prompt: "Polished text" });
+    const create = screen.getByRole("button", { name: /^Create$/i });
+    expect(create).toBeEnabled();
+    await user.click(create);
+    await waitFor(() =>
+      expect(mockQuickCreateIssue).toHaveBeenCalledWith(
+        expect.objectContaining({ prompt: "Polished text" }),
+      ),
+    );
   });
 
   it("shows the upgrade recovery immediately when quick create is rejected by the issue preflight", async () => {

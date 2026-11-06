@@ -196,6 +196,10 @@
       "after_run": "本輪結束後開始",
       "hint": "只決定預設選項，每條訊息傳送前仍可單獨修改。"
     },
+    "polish_on_send": {
+      "title": "對話優化",
+      "hint": "在聊天、評論、回覆中傳送時，先開啟優化視窗。"
+    },
     "comments_title": "評論與聊天",
     "region_title": "語言與地區",
     "appearance_title": "外觀",

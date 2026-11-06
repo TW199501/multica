@@ -20,6 +20,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 
+	"github.com/multica-ai/multica/server/internal/aisettings"
 	"github.com/multica-ai/multica/server/internal/analytics"
 	"github.com/multica-ai/multica/server/internal/auth"
 	"github.com/multica-ai/multica/server/internal/cloudruntime"
@@ -768,6 +769,28 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 		}
 	} else {
 		slog.Info("lark integration disabled (MULTICA_LARK_SECRET_KEY not set)")
+	}
+
+	// Workspace AI settings. The service is always built so admins can open the
+	// page; without MULTICA_AI_SECRET_KEY it cannot save or use a key.
+	var aiBox *secretbox.Box
+	if aiKey, err := secretbox.LoadKey("MULTICA_AI_SECRET_KEY"); err == nil {
+		if b, err := secretbox.New(aiKey); err == nil {
+			aiBox = b
+		}
+	}
+	h.AISettings = aisettings.NewService(queries, aiBox)
+	// Non-public ranges workspace AI endpoints may reach. Empty by default.
+	if raw := strings.TrimSpace(os.Getenv(aisettings.AllowCIDRsEnv)); raw != "" {
+		for _, err := range aisettings.SetAllowedPrefixes(strings.Split(raw, ",")) {
+			slog.Error("ai settings: ignoring malformed allow cidr", "error", err)
+		}
+		slog.Warn("ai settings: operator allow-list set; workspace owners can reach those ranges", "cidrs", raw)
+	}
+	if aiBox != nil {
+		slog.Info("ai settings enabled")
+	} else {
+		slog.Info("ai settings: secret key missing")
 	}
 
 	// Slack integration. Multi-tenant B2 model (MUL-3666): Multica hosts ONE
@@ -1849,6 +1872,18 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 					// terminal failure.
 					r.Post("/lark/install/begin", h.BeginLarkInstall)
 					r.Get("/lark/install/{sessionId}/status", h.GetLarkInstallStatus)
+				})
+
+				r.Group(func(r chi.Router) {
+					r.Use(middleware.RequireWorkspaceMemberFromURL(queries, "id"))
+					r.Get("/ai-settings/status", h.GetAISettingsStatus)
+					r.Post("/ai/polish", h.PolishText)
+				})
+				r.Group(func(r chi.Router) {
+					r.Use(middleware.RequireWorkspaceRoleFromURL(queries, "id", "owner", "admin"))
+					r.Get("/ai-settings", h.GetAISettings)
+					r.Put("/ai-settings", h.PutAISettings)
+					r.Post("/ai-settings/test", h.CheckAISettings)
 				})
 
 				// Slack integration (MUL-3666). Same admin/member split as

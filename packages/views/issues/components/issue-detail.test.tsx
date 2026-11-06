@@ -89,6 +89,11 @@ vi.mock("@multica/core/workspace/hooks", () => ({
 
 // Mock workspace queries
 vi.mock("@multica/core/workspace/queries", () => ({
+  // The composers' polish button stays hidden; it is covered in editor/polish.
+  workspaceAISettingsStatusOptions: () => ({
+    queryKey: ["workspaces", "ws-1", "ai-settings-status"],
+    queryFn: () => Promise.resolve({ polish_available: false }),
+  }),
   memberListOptions: () => ({
     queryKey: ["workspaces", "ws-1", "members"],
     queryFn: () => Promise.resolve([{ user_id: "user-1", name: "Test User", email: "test@test.com", role: "admin" }]),

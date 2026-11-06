@@ -46,3 +46,14 @@ export { AttachmentCard } from "./attachment-card";
 export type { AttachmentCardProps } from "./attachment-card";
 export { Attachment } from "./attachment";
 export type { AttachmentInput, AttachmentProps } from "./attachment";
+export { usePolishAvailable } from "./polish/use-polish";
+export {
+  PolishDialog,
+  type PolishDialogMode,
+  type PolishDialogProps,
+} from "./polish/polish-dialog";
+export {
+  PolishButton,
+  WorkspacePolishButton,
+  type PolishButtonProps,
+} from "./polish/polish-button";

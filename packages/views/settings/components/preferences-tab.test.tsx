@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
   describe,
   it,
@@ -11,6 +11,7 @@ import {
 } from "vitest";
 import { render, screen, act, cleanup, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { I18nProvider } from "@multica/core/i18n/react";
 import enCommon from "../../locales/en/common.json";
 import enAuth from "../../locales/en/auth.json";
@@ -26,6 +27,9 @@ vi.mock("../../navigation", () => ({
 }));
 const mockPersist = vi.hoisted(() => vi.fn());
 const mockUpdateMe = vi.hoisted(() => vi.fn());
+const mockGetAISettingsStatus = vi.hoisted(() =>
+  vi.fn().mockResolvedValue({ polish_available: false }),
+);
 const mockReload = vi.hoisted(() => vi.fn());
 const mockToastWarning = vi.hoisted(() => vi.fn());
 const mockToastError = vi.hoisted(() => vi.fn());
@@ -72,7 +76,7 @@ vi.mock("@multica/core/paths", () => ({
 }));
 
 vi.mock("@multica/core/api", () => ({
-  api: { updateMe: mockUpdateMe },
+  api: { updateMe: mockUpdateMe, getAISettingsStatus: mockGetAISettingsStatus },
 }));
 
 vi.mock("sonner", () => ({
@@ -119,10 +123,15 @@ const TEST_RESOURCES = {
 };
 
 function I18nWrapper({ children }: { children: ReactNode }) {
+  const [queryClient] = useState(
+    () => new QueryClient({ defaultOptions: { queries: { retry: false } } }),
+  );
   return (
-    <I18nProvider locale="en" resources={TEST_RESOURCES}>
-      {children}
-    </I18nProvider>
+    <QueryClientProvider client={queryClient}>
+      <I18nProvider locale="en" resources={TEST_RESOURCES}>
+        {children}
+      </I18nProvider>
+    </QueryClientProvider>
   );
 }
 
@@ -356,8 +365,25 @@ describe("PreferencesTab — Comments & chat", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     userRef.current = null;
-    useCommentComposerStore.setState({ runningAgentReply: "steer", sticky: true });
+    useCommentComposerStore.setState({ runningAgentReply: "steer", sticky: true, polishOnSend: false });
     chatState.floatingChatEnabled = true;
+    mockGetAISettingsStatus.mockResolvedValue({ polish_available: false });
+  });
+
+  it("preferences shows the polish switch only when available", async () => {
+    const view = render(<PreferencesTab />, { wrapper: I18nWrapper });
+    await waitFor(() => expect(mockGetAISettingsStatus).toHaveBeenCalledWith("ws-1"));
+    expect(screen.queryByRole("switch", { name: enSettings.preferences.polish_on_send.title })).not.toBeInTheDocument();
+    view.unmount();
+
+    mockGetAISettingsStatus.mockResolvedValue({ polish_available: true });
+    const user = userEvent.setup();
+    render(<PreferencesTab />, { wrapper: I18nWrapper });
+    const toggle = await screen.findByRole("switch", { name: enSettings.preferences.polish_on_send.title });
+    expect(toggle).toHaveAttribute("aria-checked", "false");
+    await user.click(toggle);
+    expect(useCommentComposerStore.getState().polishOnSend).toBe(true);
+    expect(mockToastSuccess).not.toHaveBeenCalled();
   });
 
   afterEach(() => {

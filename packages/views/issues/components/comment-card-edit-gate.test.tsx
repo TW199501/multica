@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { act, fireEvent, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { forwardRef, useEffect, useImperativeHandle, useRef, type ComponentProps, type ReactNode, type Ref } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Attachment, TimelineEntry } from "@multica/core/types";
@@ -147,6 +147,31 @@ vi.mock("../../editor", async () => ({
       />
     );
   }),
+}));
+
+// The real button needs workspace routing and the AI status query; its
+// adopt flow is covered in editor/polish. This stub records the props the
+// card passes and adopts through the same two calls the real button makes.
+vi.mock("../../editor/polish/polish-button", () => ({
+  WorkspacePolishButton: (props: {
+    editorRef: { current: { adoptContent: (md: string) => void } | null };
+    context: unknown;
+    disabled?: boolean;
+    onAdopted?: (md: string) => void;
+  }) => {
+    return (
+      <button
+        type="button"
+        aria-label="Polish message"
+        data-context={JSON.stringify(props.context)}
+        disabled={props.disabled}
+        onClick={() => {
+          props.editorRef.current?.adoptContent("Polished body");
+          props.onAdopted?.("Polished body");
+        }}
+      />
+    );
+  },
 }));
 
 import { CommentCard } from "./comment-card";
@@ -362,6 +387,59 @@ describe("comment edit — upload submit gate", () => {
     fireEvent.keyDown(editor, { key: "Enter", metaKey: true });
     await Promise.resolve();
     expect(onEdit).not.toHaveBeenCalled();
+  });
+});
+
+describe("comment edit — polish", () => {
+  // The thread's reply composer carries its own polish button, so address the
+  // edit footer's one through the Save button's row.
+  const editPolishButton = () =>
+    within(getSaveButton().parentElement!).getByRole("button", { name: "Polish message" });
+
+  it("edit comment shows the polish button", async () => {
+    renderCard();
+    await startEditing();
+    expect(editPolishButton()).toBeEnabled();
+    expect(JSON.parse(editPolishButton().getAttribute("data-context")!)).toEqual({
+      kind: "issue",
+      issue_id: "issue-1",
+      thread_comment_id: "comment-1",
+    });
+  });
+
+  it("editing a reply polishes within the thread root", async () => {
+    const reply = { ...entry, id: "reply-1", parent_id: "comment-1", content: "Reply body" } as TimelineEntry;
+    renderCard(undefined, { replies: [reply] });
+    const triggers = document.querySelectorAll('button[aria-haspopup="menu"]');
+    fireEvent.click(triggers[triggers.length - 1]!);
+    fireEvent.click(await screen.findByText("Edit"));
+    await screen.findByTestId("editor");
+    expect(JSON.parse(editPolishButton().getAttribute("data-context")!)).toEqual({
+      kind: "issue",
+      issue_id: "issue-1",
+      thread_comment_id: "comment-1",
+    });
+  });
+
+  it("edit comment saves the adopted text", async () => {
+    const { onEdit } = renderCard();
+    await startEditing();
+    fireEvent.click(editPolishButton());
+
+    expect(useCommentDraftStore.getState().getDraft("edit:issue-1:comment-1")).toBe("Polished body");
+    fireEvent.click(getSaveButton());
+    await waitFor(() =>
+      expect(onEdit).toHaveBeenCalledWith("comment-1", "Polished body", [], undefined, "Original body"),
+    );
+  });
+
+  it("edit comment disables polish while an upload is in flight", async () => {
+    const { container } = renderCard();
+    await startEditing();
+    const input = container.querySelector('input[type="file"]')!;
+    apiUploadFile.mockImplementationOnce(() => new Promise(() => {}));
+    fireEvent.change(input, { target: { files: [new File(["x"], "shot.png", { type: "image/png" })] } });
+    await waitFor(() => expect(editPolishButton()).toBeDisabled());
   });
 });
 

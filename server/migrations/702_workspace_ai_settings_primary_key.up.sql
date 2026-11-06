@@ -1,0 +1,2 @@
+ALTER TABLE workspace_ai_settings DROP CONSTRAINT IF EXISTS workspace_ai_settings_pkey;
+ALTER TABLE workspace_ai_settings ADD CONSTRAINT workspace_ai_settings_pkey PRIMARY KEY USING INDEX workspace_ai_settings_workspace_uidx;

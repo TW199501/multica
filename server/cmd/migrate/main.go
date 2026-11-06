@@ -152,6 +152,7 @@ var concurrentIndexCleanups = map[string]string{
 	"547_issue_pull_request_exclusion_workspace_index":          "idx_issue_pull_request_exclusion_workspace",
 	"548_task_supplement_comment_task_index":                    "task_supplement_comment_task_uidx",
 	"574_issue_workflow_pkey_index":                             "issue_workflow_pkey_uidx",
+	"701_workspace_ai_settings_pkey_index":                      "workspace_ai_settings_workspace_uidx",
 	"576_issue_workflow_workspace_name_index":                   "idx_issue_workflow_workspace_name",
 	"582_issue_workflow_default_index":                          "idx_issue_workflow_workspace_default",
 	"554_wakeup_expiry_index":                                   "issue_wakeup_expiry_idx",

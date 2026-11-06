@@ -28,6 +28,7 @@
     "./agents": "./agents/index.ts",
     "./agents/agent-detail-page": "./agents/components/agent-detail-page.tsx",
     "./agents/agents-page": "./agents/components/agents-page.tsx",
+    "./agents/ai-settings": "./agents/ai-settings/index.ts",
     "./agents/ai-builder-session-page": "./agents/create/ai-builder-session-page.tsx",
     "./agents/ai-create-agent-page": "./agents/create/ai-create-agent-page.tsx",
     "./agents/agent-created-page": "./agents/create/agent-created-page.tsx",

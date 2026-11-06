@@ -196,6 +196,10 @@
       "after_run": "本轮结束后开始",
       "hint": "只决定默认选项，每条消息发送前仍可单独修改。"
     },
+    "polish_on_send": {
+      "title": "对话优化",
+      "hint": "在聊天、评论、回复中发送时，先打开优化窗口。"
+    },
     "comments_title": "评论与聊天",
     "region_title": "语言与地区",
     "appearance_title": "外观",

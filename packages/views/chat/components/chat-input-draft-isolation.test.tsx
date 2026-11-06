@@ -94,6 +94,18 @@ vi.mock("../../editor/attachment-download-context", () => ({
   AttachmentDownloadProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
+// The polish button needs a QueryClient and workspace route; its chat wiring
+// is covered in editor/polish/polish.test.tsx.
+vi.mock("../../editor/polish/polish-button", () => ({
+  WorkspacePolishButton: () => null,
+}));
+vi.mock("../../editor/polish/use-polish-gate", () => ({
+  useWorkspacePolishGate: ({ submit }: { submit: () => Promise<void> }) => ({
+    gatedSubmit: submit,
+    dialog: null,
+  }),
+}));
+
 vi.mock("@tiptap/react", () => ({
   useEditor: (options: {
     onCreate?: (args: { editor: unknown }) => void;

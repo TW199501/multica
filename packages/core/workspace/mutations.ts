@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { forgetLocalSearchIndex } from "../search-index/instance";
-import type { Workspace } from "../types";
+import type { AISettingsInput, PolishContext, Workspace } from "../types";
 import { api } from "../api";
 import { defaultStorage } from "../platform/storage";
 import { clearWorkspaceStorage } from "../platform/storage-cleanup";
@@ -167,4 +167,27 @@ export function useSetAgentMcpServerEnabled(agentId: string) {
 export function useRemoveAgentMcpServer(agentId: string) {
   return useAgentMcpMutation(agentId, (serverId: string) =>
     api.removeAgentMcpServer(agentId, serverId));
+}
+
+export function useUpdateAISettings(wsId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: AISettingsInput) => api.updateAISettings(wsId, input),
+    onSettled: () =>
+      // The status key sits under the settings key, so one call covers both.
+      queryClient.invalidateQueries({ queryKey: workspaceKeys.aiSettings(wsId) }),
+  });
+}
+
+export function useTestAISettings(wsId: string) {
+  return useMutation({
+    mutationFn: (input: AISettingsInput) => api.testAISettings(wsId, input),
+  });
+}
+
+export function usePolishText(wsId: string) {
+  return useMutation({
+    mutationFn: ({ text, context }: { text: string; context: PolishContext }) =>
+      api.polishText(wsId, text, context),
+  });
 }

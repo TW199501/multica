@@ -1035,5 +1035,48 @@
   "actions": {
     "selected_other": "已選 {{count}} 項",
     "clear_selection": "清除選擇"
+  },
+  "ai_settings": {
+    "entry": "AI 設定",
+    "title": "AI 設定",
+    "status_connected": "已連線 · {{when}}呼叫過",
+    "status_connected_idle": "已連線",
+    "status_not_configured": "尚未設定",
+    "no_secret_key": "伺服器尚未設定加密金鑰",
+    "provider": "供應商",
+    "providers": {
+      "claude": "Claude",
+      "openai": "OpenAI",
+      "gemini": "Gemini",
+      "deepseek": "DeepSeek",
+      "qwen": "Qwen",
+      "kimi": "Kimi",
+      "grok": "Grok",
+      "openrouter": "OpenRouter",
+      "huggingface": "Hugging Face",
+      "llamacpp": "自架（llama.cpp）",
+      "custom": "自訂"
+    },
+    "model": "模型",
+    "endpoint": "API 端點",
+    "api_key": "API 金鑰",
+    "api_key_required": "API 金鑰（必填）",
+    "api_key_error": "更換供應商或主機後，請重新輸入 API 金鑰。",
+    "disable_thinking": "關閉思考",
+    "prompt": "提示詞",
+    "restore_default": "還原預設",
+    "load_from_skill": "從技能載入",
+    "no_skill": "無",
+    "prompt_from_skill": "將使用所選技能的內容代替此提示詞。",
+    "test": "測試",
+    "save": "儲存",
+    "test_ok": "連線成功",
+    "test_failed": "{{status}} · {{message}}",
+    "test_request_failed": "無法執行連線測試",
+    "saved_toast": "已儲存 AI 設定",
+    "save_failed_toast": "無法儲存 AI 設定",
+    "load_failed": "無法載入 AI 設定",
+    "retry": "重試",
+    "model_placeholder": "留空則使用伺服器已載入的模型"
   }
 }
