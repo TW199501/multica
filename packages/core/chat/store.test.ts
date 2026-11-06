@@ -218,9 +218,9 @@ describe("chat store — draft attachments", () => {
 });
 
 describe("chat store — floating window preference", () => {
-  it("defaults ON when no preference is stored", () => {
+  it("defaults OFF when no preference is stored", () => {
     const store = createChatStore({ storage: memStorage() });
-    expect(store.getState().floatingChatEnabled).toBe(true);
+    expect(store.getState().floatingChatEnabled).toBe(false);
   });
 
   it("honours an explicit stored 'false' preference (opt-out)", () => {

@@ -506,7 +506,7 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
   );
 
   const detailContent = (
-    <div ref={rightSidebarShortcutTargetRef} className="flex h-full flex-col">
+    <div ref={docked ? undefined : rightSidebarShortcutTargetRef} className="flex h-full flex-col">
       <BreadcrumbHeader
         segments={[{ href: wsPaths.projects(), label: t(($) => $.detail.breadcrumb_fallback) }]}
         leaf={<span className="truncate font-medium text-foreground">{project.title}</span>}
@@ -615,7 +615,9 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
   if (docked) {
     return (
       <>
+        {/* The shortcut needs a target that stays visible on both tabs. */}
         <Tabs
+          ref={rightSidebarShortcutTargetRef}
           value={dockedTab}
           onValueChange={(value) => setDockedTab(value as "project" | "properties")}
           className="flex min-h-0 flex-1 flex-col gap-0"
