@@ -1873,6 +1873,54 @@ describe("IssueDetail (shared)", () => {
       pendingReplyDrafts.clear();
     });
 
+    describe("with a run on the thread", () => {
+      const run = (status: AgentTask["status"], id: string): AgentTask => ({
+        id, agent_id: "agent-1", runtime_id: "runtime-1", issue_id: "issue-1", status,
+        priority: 0, created_at: "2026-01-18T00:00:00Z", dispatched_at: "2026-01-18T00:00:01Z",
+        started_at: "2026-01-18T00:00:02Z", completed_at: status === "running" ? null : "2026-01-18T00:10:00Z",
+        result: null, error: status === "failed" ? "boom" : null,
+      } as AgentTask);
+
+      it("keeps a thread visible while its agent is still working", async () => {
+        const task = run("running", "4a2e8d1c-7f9b-4e2a-9c1d-000000000001");
+        mockApiObj.listTimeline.mockResolvedValue([
+          agentComment("agent-a", "Working on the fix", { source_task_id: task.id }),
+          agentComment("agent-latest", "All done"),
+        ]);
+        mockApiObj.listTasksByIssue.mockResolvedValue([task]);
+        renderIssueDetail();
+
+        expect(await screen.findByText("Working on the fix")).toBeInTheDocument();
+        expect(screen.queryByRole("button", { name: /agent comment/ })).not.toBeInTheDocument();
+      });
+
+      it("keeps a thread visible when its run failed", async () => {
+        const task = run("failed", "4a2e8d1c-7f9b-4e2a-9c1d-000000000002");
+        mockApiObj.listTimeline.mockResolvedValue([
+          agentComment("agent-a", "Trying the deploy", { source_task_id: task.id }),
+          agentComment("agent-latest", "All done"),
+        ]);
+        mockApiObj.listTasksByIssue.mockResolvedValue([task]);
+        renderIssueDetail();
+
+        expect(await screen.findByText("Trying the deploy")).toBeInTheDocument();
+        expect(screen.queryByRole("button", { name: /agent comment/ })).not.toBeInTheDocument();
+      });
+
+      it("folds a thread once its run has completed", async () => {
+        const task = run("completed", "4a2e8d1c-7f9b-4e2a-9c1d-000000000003");
+        mockApiObj.listTimeline.mockResolvedValue([
+          agentComment("agent-a", "Fixed the check", { source_task_id: task.id }),
+          agentComment("agent-latest", "All done"),
+        ]);
+        mockApiObj.listTasksByIssue.mockResolvedValue([task]);
+        renderIssueDetail();
+
+        expect(await screen.findByRole("button", { name: "1 agent comment" })).toBeInTheDocument();
+        expect(screen.queryByText("Fixed the check")).not.toBeInTheDocument();
+      });
+    });
+
     it("does not fold when deep linking to a comment", async () => {
       const timeline = [
         agentComment("agent-a", "Pixel, fix the format check"),
