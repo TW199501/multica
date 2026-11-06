@@ -1,0 +1,21 @@
+packages/views/chat/docked-chat-layout.test.tsx
+  s_38cd6d0b0cb4c9::t_88b11f62701375 28,132-139
+packages/views/chat/docked-chat-layout.tsx
+  s_38cd6d0b0cb4c9::t_415e5521c1a574 33,72-74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6ca5af3493c782b88f1f8335a74dd153b1989b88",
+  "prompts": {},
+  "sessions": {
+    "s_38cd6d0b0cb4c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-aa7710335b7b98b69",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
