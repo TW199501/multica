@@ -293,7 +293,7 @@ function AISettingsForm({
 
         {/* Both stay mounted: switching tabs must not drop unsaved edits. */}
         <TabsContent keepMounted value="providers" className="space-y-5 data-hidden:hidden">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button type="button" variant="outline" disabled>
               <Plus className="size-3.5" />
               {t(($) => $.ai_settings.new_config)}
