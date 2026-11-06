@@ -1,0 +1,21 @@
+packages/views/issues/components/issue-detail.test.tsx
+  s_aa47a447e01641::t_6293844b0624e9 10,20,22,756-792
+packages/views/issues/components/issue-detail.tsx
+  s_aa47a447e01641::t_a2ec83a294169a 44-45,1321,1370-1373,1380-1387,2684-2687,2701,3323,4073-4101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "278479fcf3bdea3c3b32188f90b63d53651147d3",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
