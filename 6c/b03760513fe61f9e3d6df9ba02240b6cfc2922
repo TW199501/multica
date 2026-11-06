@@ -1,0 +1,21 @@
+packages/core/chat/store.test.ts
+  s_aa47a447e01641::t_c96ca4a1b50fb0 221,223
+packages/core/chat/store.ts
+  s_aa47a447e01641::t_71dd193ec2c6c3 378-381
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6cb03760513fe61f9e3d6df9ba02240b6cfc2922",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
