@@ -1239,7 +1239,10 @@
       "close_others": "Fermer les autres onglets",
       "open_window": "Ouvrir dans une nouvelle fenêtre",
       "new": "Nouvel onglet",
-      "pinned_name": "{{title}} (épinglé)"
+      "pinned_name": "{{title}} (épinglé)",
+      "limit_title": "{{count}} onglets ouverts",
+      "limit_body": "Fermer « {{title}} », l’onglet le plus à gauche, pour en ouvrir un nouveau ?",
+      "limit_confirm": "Fermer et ouvrir"
     },
     "updates": {
       "title": "Mises à jour",

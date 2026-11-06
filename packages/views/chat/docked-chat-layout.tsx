@@ -1,8 +1,9 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useLayoutEffect, type ReactNode } from "react";
 import { useDefaultLayout } from "react-resizable-panels";
 import { useChatStore } from "@multica/core/chat";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import { useWorkspacePaths } from "@multica/core/paths";
 import {
   ResizableHandle,
@@ -17,58 +18,115 @@ import { isFloatingChatRouteSuppressed } from "./floating-chat-visibility";
 export interface DockedChatLayoutProps {
   /** False until the shell has a resolved workspace; the page then renders alone. */
   enabled?: boolean;
+  /**
+   * Extra routes (besides the built-in page-first ones) whose page takes the
+   * middle column, with the conversation on the right; matched as the path or
+   * its sub-paths.
+   */
+  pageFirstPaths?: readonly string[];
   children: ReactNode;
 }
 
 /**
  * With the floating chat preference off, the conversation gets its own column
  * in the middle and the current page moves to a resizable column on the right;
- * on Settings the page stays in the middle and the conversation takes the
- * right. With it on, on the Chat tab and on small screens, the page renders as
- * before.
+ * on Settings, Inbox, the AI team pages, Usage and `pageFirstPaths` the page
+ * stays in the middle and the conversation takes the right. With it on, on
+ * the Chat tab and on small screens, the page renders as before.
  */
-export function DockedChatLayout({ enabled = true, children }: DockedChatLayoutProps) {
+export function DockedChatLayout({ enabled = true, pageFirstPaths, children }: DockedChatLayoutProps) {
   if (!enabled) return <>{children}</>;
-  return <DockedChatLayoutForWorkspace>{children}</DockedChatLayoutForWorkspace>;
+  return (
+    <DockedChatLayoutForWorkspace pageFirstPaths={pageFirstPaths}>{children}</DockedChatLayoutForWorkspace>
+  );
 }
 
-function DockedChatLayoutForWorkspace({ children }: { children: ReactNode }) {
+function isUnder(pathname: string, base: string): boolean {
+  return pathname === base || pathname.startsWith(`${base}/`);
+}
+
+function DockedChatLayoutForWorkspace({
+  pageFirstPaths = [],
+  children,
+}: {
+  pageFirstPaths?: readonly string[];
+  children: ReactNode;
+}) {
   const floating = useChatStore((s) => s.floatingChatEnabled);
   const { pathname } = useNavigation();
   const wsPaths = useWorkspacePaths();
   const isMobile = useIsMobile();
   const settingsPath = wsPaths.settings();
-  const pageFirst = pathname === settingsPath || pathname.startsWith(`${settingsPath}/`);
+  // Wide management pages keep the middle column; work pages put the
+  // conversation there.
+  const pageFirst = [
+    settingsPath,
+    wsPaths.inbox(),
+    wsPaths.agents(),
+    wsPaths.squads(),
+    wsPaths.workflows(),
+    wsPaths.skills(),
+    wsPaths.runtimes(),
+    wsPaths.usage(),
+    ...pageFirstPaths,
+  ].some((base) => isUnder(pathname, base));
+  // Pages carry split panes of their own (issue properties, the Inbox list
+  // beside an issue), so the page column never shrinks below what they need.
+  const pageMinSize = isUnder(pathname, wsPaths.inbox()) ? "780px" : "540px";
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
-    id: pageFirst ? "multica_docked_chat_layout_page_first" : "multica_docked_chat_layout",
+    id: pageFirst ? "multica_docked_chat_layout_page_first_v3" : "multica_docked_chat_layout_v2",
   });
+  const shellDocked = !floating && !isMobile;
+  const active = shellDocked && !isFloatingChatRouteSuppressed(pathname, wsPaths.chat());
+  const setLayoutActive = useDockedLayoutStore((s) => s.setLayoutActive);
+  const setShellDocked = useDockedLayoutStore((s) => s.setShellDocked);
+  const setPageElement = useDockedLayoutStore((s) => s.setPageElement);
 
-  if (floating || isMobile || isFloatingChatRouteSuppressed(pathname, wsPaths.chat())) {
+  useLayoutEffect(() => {
+    setShellDocked(shellDocked);
+    return () => setShellDocked(false);
+  }, [shellDocked, setShellDocked]);
+
+  useLayoutEffect(() => {
+    setLayoutActive(active);
+    return () => setLayoutActive(false);
+  }, [active, setLayoutActive]);
+
+  if (!active) {
     return <>{children}</>;
   }
 
   const conversation = (
-    <ResizablePanel key="conversation" id="conversation" defaultSize="50%" minSize="30%">
-      <div className={pageFirst ? "h-full border-l pb-[30px]" : "h-full border-r pb-[30px]"}>
+    <ResizablePanel
+      key="conversation"
+      id="conversation"
+      defaultSize="32%"
+      minSize="360px"
+    >
+      <div className={pageFirst ? "h-full border-l" : "h-full border-r"}>
         <ChatWindow variant="docked" />
       </div>
     </ResizablePanel>
   );
   const page = (
-    <ResizablePanel key="page" id="page" defaultSize="50%" minSize="25%">
-      <div data-slot="docked-page" className="relative flex h-full min-w-0 flex-col overflow-hidden">
+    <ResizablePanel key="page" id="page" defaultSize="68%" minSize={pageMinSize}>
+      <div
+        ref={setPageElement}
+        data-slot="docked-page"
+        className="relative flex h-full min-w-0 flex-col overflow-hidden"
+      >
         {children}
       </div>
     </ResizablePanel>
   );
 
-  // Settings keeps its content in the middle and moves the conversation to
-  // the third column; every other page sits beside the conversation.
+  // Page-first routes keep their content in the middle and move the
+  // conversation to the third column; every other page sits beside it.
   return (
     <ResizablePanelGroup
       key={pageFirst ? "page-first" : "conversation-first"}
       orientation="horizontal"
-      className="flex-1 min-h-0"
+      className="min-h-0 min-w-0 flex-1 overflow-hidden"
       defaultLayout={defaultLayout}
       onLayoutChanged={onLayoutChanged}
     >

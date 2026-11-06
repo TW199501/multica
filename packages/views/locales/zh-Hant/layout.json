@@ -8,6 +8,7 @@
     "autopilots": "自動化",
     "agents": "AI 代理",
     "squads": "小隊",
+    "workflows": "工作流",
     "usage": "統計",
     "runtimes": "執行時",
     "skills": "Skills",
@@ -75,6 +76,8 @@
     "menu": "選單",
     "projects": "專案目錄",
     "settings": "設定",
-    "projects_empty": "尚未連接程式庫。"
+    "projects_empty": "尚未連接程式庫。",
+    "explorer": "檔案總管",
+    "pinned_empty": "尚無固定項目。"
   }
 }

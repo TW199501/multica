@@ -68,8 +68,24 @@ describe("docked sidebar sections", () => {
 
     fireEvent.click(screen.getByRole("tab", { name: "Projects" }));
 
-    expect(screen.getByText("No repository connected yet.")).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Pinned" })).toHaveTextContent("Nothing pinned yet.");
+    expect(screen.getByRole("region", { name: "File explorer" })).toHaveTextContent(
+      "No repository connected yet.",
+    );
     expect(screen.queryByTestId("menu")).not.toBeInTheDocument();
+  });
+
+  it("shows pinned items above the file explorer", () => {
+    render(
+      <I18nProvider locale="en" resources={{ en: { layout: enLayout } }}>
+        {dockedSectionBody("projects", { pinned: <a href="/acme/projects/p1">Roadmap</a> })}
+      </I18nProvider>,
+    );
+
+    const pinned = screen.getByRole("region", { name: "Pinned" });
+    const explorer = screen.getByRole("region", { name: "File explorer" });
+    expect(pinned).toHaveTextContent("Roadmap");
+    expect(pinned.compareDocumentPosition(explorer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("opens Settings from its tab and hosts the settings navigation there", () => {
@@ -85,5 +101,20 @@ describe("docked sidebar sections", () => {
 
     expect(screen.getByRole("tab", { name: "Settings" })).toHaveAttribute("aria-selected", "true");
     expect(useDockedLayoutStore.getState().settingsNavTarget).toBeInstanceOf(HTMLElement);
+  });
+
+  it("lets the menu and projects tabs open while on the settings route", () => {
+    const { push } = renderAt("/acme/settings");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Menu" }));
+    expect(screen.getByRole("tab", { name: "Menu" })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByTestId("menu")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Projects" }));
+    expect(screen.getByText("No repository connected yet.")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Settings" }));
+    expect(screen.getByRole("tab", { name: "Settings" })).toHaveAttribute("aria-selected", "true");
+    expect(push).not.toHaveBeenCalled();
   });
 });

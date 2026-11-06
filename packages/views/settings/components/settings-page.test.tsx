@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SidebarProvider, useSidebar } from "@multica/ui/components/ui/sidebar";
 import { configStore } from "@multica/core/config";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import {
   BILLING_WORKSPACE_SUBSCRIPTIONS_FLAG,
   PLUGINS_V1_FLAG,
@@ -104,6 +105,7 @@ beforeEach(() => {
   configStore.getState().setFeatureFlags({});
   replace.mockClear();
   push.mockClear();
+  useDockedLayoutStore.setState({ layoutActive: false, settingsNavTarget: null });
 });
 
 describe("SettingsPage nav trigger", () => {
@@ -146,6 +148,56 @@ describe("SettingsPage nav trigger", () => {
       screen.queryByRole("button", { name: "Toggle left sidebar" }),
     ).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Settings" })).toBeInTheDocument();
+  });
+});
+
+describe("SettingsPage in the docked layout", () => {
+  it("keeps its navigation out of the page when the sidebar is not showing settings", () => {
+    useDockedLayoutStore.setState({ layoutActive: true, settingsNavTarget: null });
+    renderWithI18n(<SettingsPage />);
+
+    expect(screen.queryByRole("navigation", { name: "Settings" })).not.toBeInTheDocument();
+  });
+
+  it("renders its navigation into the sidebar host", () => {
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    useDockedLayoutStore.setState({ layoutActive: true, settingsNavTarget: host });
+    renderWithI18n(<SettingsPage />);
+
+    expect(within(host).getByRole("navigation", { name: "Settings" })).toBeInTheDocument();
+    host.remove();
+  });
+
+  it("shows its navigation in the page while the docked sidebar is collapsed", () => {
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    useDockedLayoutStore.setState({ layoutActive: true, settingsNavTarget: host });
+    renderWithI18n(
+      <SidebarProvider defaultOpen={false}>
+        <SettingsPage />
+      </SidebarProvider>,
+    );
+
+    expect(within(host).queryByRole("navigation", { name: "Settings" })).toBeNull();
+    const nav = screen.getByRole("navigation", { name: "Settings" });
+    expect(host.contains(nav)).toBe(false);
+    host.remove();
+  });
+
+  it("moves the navigation back to the sidebar once it expands", () => {
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    useDockedLayoutStore.setState({ layoutActive: true, settingsNavTarget: host });
+    renderWithI18n(
+      <SidebarProvider defaultOpen>
+        <SettingsPage />
+      </SidebarProvider>,
+    );
+
+    expect(within(host).getByRole("navigation", { name: "Settings" })).toBeInTheDocument();
+    expect(screen.getAllByRole("navigation", { name: "Settings" })).toHaveLength(1);
+    host.remove();
   });
 });
 

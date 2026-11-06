@@ -8,6 +8,7 @@
     "autopilots": "オートパイロット",
     "agents": "エージェント",
     "squads": "スクワッド",
+    "workflows": "ワークフロー",
     "usage": "分析",
     "runtimes": "ランタイム",
     "skills": "スキル",
@@ -75,6 +76,8 @@
     "menu": "メニュー",
     "projects": "プロジェクト",
     "settings": "設定",
-    "projects_empty": "まだリポジトリが接続されていません。"
+    "projects_empty": "まだリポジトリが接続されていません。",
+    "explorer": "ファイル エクスプローラー",
+    "pinned_empty": "ピン留めした項目はありません。"
   }
 }

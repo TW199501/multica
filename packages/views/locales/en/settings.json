@@ -1239,7 +1239,10 @@
       "close_others": "Close other tabs",
       "open_window": "Open as new window",
       "new": "New tab",
-      "pinned_name": "{{title}} (pinned)"
+      "pinned_name": "{{title}} (pinned)",
+      "limit_title": "{{count}} tabs open",
+      "limit_body": "Close “{{title}}”, the leftmost tab, to open a new one?",
+      "limit_confirm": "Close and open"
     },
     "updates": {
       "title": "Updates",

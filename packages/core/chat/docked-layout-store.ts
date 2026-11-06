@@ -10,11 +10,26 @@ interface DockedLayoutState {
   setSidebarSection: (section: DockedSidebarSection) => void;
   /**
    * The sidebar element the settings page renders its own navigation into.
-   * Null while the settings section is not on screen; the page then keeps its
-   * navigation inline.
+   * Null while the settings section is not on screen.
    */
   settingsNavTarget: HTMLElement | null;
   setSettingsNavTarget: (target: HTMLElement | null) => void;
+  /** True while the docked layout is on screen. */
+  layoutActive: boolean;
+  setLayoutActive: (active: boolean) => void;
+  /**
+   * True while the shell uses the docked chrome (status bar, shortened
+   * sidebar): floating chat is off on a wide screen. Unlike `layoutActive`,
+   * it stays on for the Chat tab, which hides only the conversation columns.
+   */
+  shellDocked: boolean;
+  setShellDocked: (docked: boolean) => void;
+  /**
+   * The docked page column, for overlays drawn outside it (the desktop
+   * browser) that must cover only that column.
+   */
+  pageElement: HTMLElement | null;
+  setPageElement: (element: HTMLElement | null) => void;
 }
 
 export const useDockedLayoutStore = create<DockedLayoutState>()((set) => ({
@@ -22,4 +37,10 @@ export const useDockedLayoutStore = create<DockedLayoutState>()((set) => ({
   setSidebarSection: (sidebarSection) => set({ sidebarSection }),
   settingsNavTarget: null,
   setSettingsNavTarget: (settingsNavTarget) => set({ settingsNavTarget }),
+  layoutActive: false,
+  setLayoutActive: (layoutActive) => set({ layoutActive }),
+  shellDocked: false,
+  setShellDocked: (shellDocked) => set({ shellDocked }),
+  pageElement: null,
+  setPageElement: (pageElement) => set({ pageElement }),
 }));

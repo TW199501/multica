@@ -8,6 +8,7 @@
     "autopilots": "Automatisation",
     "agents": "Agents",
     "squads": "Squads",
+    "workflows": "Workflows",
     "usage": "Statistiques",
     "runtimes": "Runtimes",
     "skills": "Skills",
@@ -75,6 +76,8 @@
     "menu": "Menu",
     "projects": "Projets",
     "settings": "Paramètres",
-    "projects_empty": "Aucun dépôt connecté pour l'instant."
+    "projects_empty": "Aucun dépôt connecté pour l'instant.",
+    "explorer": "Explorateur de fichiers",
+    "pinned_empty": "Aucun élément épinglé."
   }
 }

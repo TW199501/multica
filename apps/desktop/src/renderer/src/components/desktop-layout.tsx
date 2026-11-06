@@ -14,6 +14,7 @@ import {
 import { ModalRegistry } from "@multica/views/modals/registry";
 import {
   AppSidebar,
+  DockedStatusBar,
   GlobalShortcuts,
   NavigationProgress,
 } from "@multica/views/layout";
@@ -39,6 +40,7 @@ import {
 } from "@/browser-plugin";
 import { TabBar } from "./tab-bar";
 import { TabContent } from "./tab-content";
+import { TabLimitDialog } from "./tab-limit-dialog";
 import { WindowOverlay } from "./window-overlay";
 import { WindowToolbar, WINDOW_TOOLBAR_CLEARANCE } from "./window-toolbar";
 
@@ -258,7 +260,7 @@ export function DesktopShell() {
           IndexRedirect, not a route. */}
       <WorkspaceSlugProvider slug={slug}>
         <DesktopInboxBridge />
-        <div className="flex h-screen bg-app-shell">
+        <div className="flex h-screen flex-col bg-app-shell">
           {/* bg-app-shell is the wrapper's non-inset fill, so it also owns the
               non-inset half of --sidebar-wrapper-fill. sidebar.tsx supplies the
               inset half of both. Anything that has to paint an opaque layer
@@ -272,7 +274,7 @@ export function DesktopShell() {
               50px under this one (MUL-6218). */}
           <SidebarProvider
             hasExternalTrigger
-            className="flex-1 bg-app-shell [--sidebar-wrapper-fill:var(--app-shell)]"
+            className="min-h-0 flex-1 bg-app-shell [--sidebar-wrapper-fill:var(--app-shell)]"
           >
             {slug && <GlobalShortcuts />}
             {slug && <WindowToolbar />}
@@ -294,7 +296,10 @@ export function DesktopShell() {
                       used to have no navigation feedback at all — a click just
                       froze until the destination committed (MUL-6404). */}
                   <NavigationProgress />
-                  <DockedChatLayout enabled={Boolean(slug)}>
+                  <DockedChatLayout
+                    enabled={Boolean(slug)}
+                    pageFirstPaths={slug ? [`/${slug}/browser`] : undefined}
+                  >
                     <TabContent />
                   </DockedChatLayout>
                   <BrowserLayer />
@@ -303,8 +308,10 @@ export function DesktopShell() {
               </DesktopBrowserPluginProvider>
             </div>
           </SidebarProvider>
+          <DockedStatusBar />
         </div>
         {slug && <ModalRegistry />}
+        {slug && <TabLimitDialog />}
         {slug && <SearchCommand />}
         <WindowOverlay />
       </WorkspaceSlugProvider>
