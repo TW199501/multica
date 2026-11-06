@@ -444,6 +444,34 @@ describe("PolishButton", () => {
 });
 
 describe("PolishDialog", () => {
+  it("confirms the polished markdown untouched while the right side is unchanged", async () => {
+    const fence = ["```md", "![x](http://x/x.png)", "```"].join("\n");
+    const result = `@Ann in text, [@Ann](mention://member/ann) linked\n\n${fence}`;
+    apiPolishText.mockResolvedValue({ text: result });
+    const { onConfirm } = renderDialog({ original: "draft" });
+    await waitFor(() => expect(afterTextarea().value).toContain("linked"));
+
+    fireEvent.click(screen.getByRole("button", { name: "Use" }));
+
+    await waitFor(() => expect(onConfirm).toHaveBeenCalledWith(result));
+  });
+
+  it("locks the right side while confirming", async () => {
+    let finish!: () => void;
+    renderDialog({
+      original: "draft",
+      onConfirm: () => new Promise<void>((resolve) => { finish = resolve; }),
+    });
+    await waitFor(() => expect(afterTextarea().value).toBe("Hello world."));
+    expect(afterTextarea()).not.toHaveAttribute("readonly");
+
+    fireEvent.click(screen.getByRole("button", { name: "Use" }));
+
+    await waitFor(() => expect(afterTextarea()).toHaveAttribute("readonly"));
+    await act(async () => finish());
+    await waitFor(() => expect(afterTextarea()).not.toHaveAttribute("readonly"));
+  });
+
   it("shows original and polished side by side", async () => {
     renderDialog();
 
@@ -631,6 +659,7 @@ describe("PolishDialog attachments only", () => {
 
   it("still sends the attachment when the right column is cleared", async () => {
     const card = "!file[a.txt](http://x/a.txt)";
+    apiPolishText.mockResolvedValue({ text: `Hello world.\n\n${card}` });
     const { onConfirm } = renderDialog({ original: `hello wrld\n\n${card}` });
     await waitFor(() => expect(afterTextarea().value).toBe("Hello world."));
     fireEvent.change(afterTextarea(), { target: { value: "" } });

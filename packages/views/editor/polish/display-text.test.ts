@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { fromDisplayText, hasPolishableText, toDisplayText } from "./display-text";
+import { fromDisplayText, fromEditedDisplay, hasPolishableText, toDisplayText } from "./display-text";
 
 const AGENT = "[@E50 驗收代理](mention://agent/419a4055-2a7f-473c-ab72-ab437b950e4d)";
 const ISSUE = "[E50-1](mention://issue/01a1a1eb-3d2d-7139-afd5-e19ec6b0bffe)";
@@ -12,8 +12,8 @@ describe("toDisplayText", () => {
     const { text, map } = toDisplayText(`${AGENT} 麻煩看一下 ${ISSUE}，謝謝`);
     expect(text).toBe("@E50 驗收代理 麻煩看一下 E50-1，謝謝");
     expect(map.links).toEqual([
-      { label: "@E50 驗收代理", markdown: AGENT },
-      { label: "E50-1", markdown: ISSUE },
+      { label: "@E50 驗收代理", markdown: AGENT, occurrence: 0, total: 1 },
+      { label: "E50-1", markdown: ISSUE, occurrence: 0, total: 1 },
     ]);
   });
 
@@ -60,5 +60,87 @@ describe("fromDisplayText", () => {
   it("keeps the cards when the text is emptied", () => {
     const { map } = toDisplayText(`x\n\n${FILE}`);
     expect(fromDisplayText("   ", map)).toBe(FILE);
+  });
+});
+
+const ANN = "[@Ann](mention://member/ann)";
+const ANNA = "[@Anna](mention://member/anna)";
+
+describe("link identity through an edit", () => {
+  it("keeps a shorter label off the text of a longer one", () => {
+    const { map } = toDisplayText(`${ANN} and ${ANNA}`);
+    expect(fromDisplayText("@Anna then @Ann", map)).toBe(`${ANNA} then ${ANN}`);
+  });
+
+  it("does not link a label inside a longer word", () => {
+    const { map } = toDisplayText(`${ANN} hi`);
+    expect(fromDisplayText("@Annabel and @Ann", map)).toBe(`@Annabel and ${ANN}`);
+  });
+
+  it("links a label directly followed by CJK text", () => {
+    const link = "[@小明](mention://member/m)";
+    const { map } = toDisplayText(`${link} 你好`);
+    expect(fromDisplayText("@小明請看", map)).toBe(`${link}請看`);
+  });
+
+  it("keeps a link on its own occurrence when plain text shares the label", () => {
+    const { map } = toDisplayText(`@Ann said hi to ${ANN}`);
+    expect(fromDisplayText("@Ann said hello to @Ann", map)).toBe(`@Ann said hello to ${ANN}`);
+  });
+});
+
+describe("code stays literal", () => {
+  const FENCED = `intro
+
+\`\`\`md
+${IMAGE}
+
+
+
+${ANN}
+\`\`\`
+
+end`;
+
+  it("leaves fenced blocks untouched, cards and blank lines included", () => {
+    const { text, map } = toDisplayText(FENCED);
+    expect(text).toBe(FENCED);
+    expect(map).toEqual({ hidden: [], links: [] });
+    expect(fromDisplayText(text, map)).toBe(FENCED);
+  });
+
+  it("leaves inline code untouched", () => {
+    const md = `\`${ANN}\` and ${ANN}`;
+    const { text, map } = toDisplayText(md);
+    expect(text).toBe(`\`${ANN}\` and @Ann`);
+    expect(map.links).toHaveLength(1);
+    expect(fromDisplayText(text, map)).toBe(md);
+  });
+
+  it("does not put a link on a label inside code", () => {
+    const { map } = toDisplayText(`${ANN} hi`);
+    expect(fromDisplayText("`@Ann` ok @Ann", map)).toBe(`\`@Ann\` ok ${ANN}`);
+  });
+});
+
+describe("fromEditedDisplay", () => {
+  it("returns the markdown untouched while the text is unchanged", () => {
+    const md = `@Ann ${ANN}
+
+${FILE}
+
+tail`;
+    const view = toDisplayText(md);
+    expect(fromEditedDisplay(md, view, view.text)).toBe(md);
+  });
+
+  it("converts once the text was edited", () => {
+    const md = `${ANN} hi
+
+${FILE}`;
+    const view = toDisplayText(md);
+    expect(fromEditedDisplay(md, view, "@Ann hello")).toBe(`${ANN} hello
+
+${FILE}`);
   });
 });

@@ -18,7 +18,7 @@ import type { PolishContext } from "@multica/core/types";
 import { usePolishText } from "@multica/core/workspace/mutations";
 import { useT } from "../../i18n";
 import { clampDialogOffset, type DialogOffset } from "./clamp-dialog-offset";
-import { fromDisplayText, toDisplayText } from "./display-text";
+import { fromEditedDisplay, toDisplayText } from "./display-text";
 
 export type PolishDialogMode = "adopt" | "send";
 
@@ -75,6 +75,8 @@ export function PolishDialog({
   const afterId = useId();
   // Both columns show the readable form; links and cards return on confirm.
   const view = useMemo(() => toDisplayText(original), [original]);
+  // The markdown behind the right column, so unedited text is confirmed as is.
+  const [base, setBase] = useState({ markdown: original, view });
   const [polished, setPolished] = useState(view.text);
   const [error, setError] = useState<PolishError | null>(null);
   const [loading, setLoading] = useState(false);
@@ -97,7 +99,9 @@ export function PolishDialog({
     polishText({ text, context: ctx }).then(
       (result) => {
         if (id !== requestRef.current) return;
-        setPolished(toDisplayText(result.text).text);
+        const next = toDisplayText(result.text);
+        setBase({ markdown: result.text, view: next });
+        setPolished(next.text);
         setLoading(false);
       },
       (err: unknown) => {
@@ -116,7 +120,9 @@ export function PolishDialog({
       requestRef.current += 1;
       return;
     }
-    setPolished(toDisplayText(inputRef.current.original).text);
+    const initial = toDisplayText(inputRef.current.original);
+    setBase({ markdown: inputRef.current.original, view: initial });
+    setPolished(initial.text);
     setConfirming(false);
     setOffset({ x: 0, y: 0 });
     runPolish();
@@ -147,7 +153,7 @@ export function PolishDialog({
   const confirm = async () => {
     setConfirming(true);
     try {
-      await onConfirm(fromDisplayText(polished, view.map));
+      await onConfirm(fromEditedDisplay(base.markdown, base.view, polished));
     } catch {
       // The caller reports its own failure; staying open lets the user retry.
     } finally {
@@ -257,6 +263,8 @@ export function PolishDialog({
                 <Textarea
                   id={afterId}
                   value={polished}
+                  // The send has already taken this text; later typing would be lost.
+                  readOnly={confirming}
                   onChange={(event) => setPolished(event.target.value)}
                   className="min-h-48 flex-1 resize-none"
                 />
@@ -274,7 +282,7 @@ export function PolishDialog({
               </Button>
               <Button
                 onClick={() => void confirm()}
-                disabled={busy || (!allowEmpty && !fromDisplayText(polished, view.map))}
+                disabled={busy || (!allowEmpty && !fromEditedDisplay(base.markdown, base.view, polished))}
                 aria-busy={confirming || undefined}
                 className={cn(confirming && "cursor-wait")}
               >
