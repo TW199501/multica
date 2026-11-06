@@ -1,11 +1,12 @@
 import React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { screen } from "@testing-library/react";
+import { act, screen } from "@testing-library/react";
 import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import userEvent from "@testing-library/user-event";
 import type { Project } from "@multica/core/types";
 import { renderWithI18n } from "../../test/i18n";
 import { NavigationProvider, type NavigationAdapter } from "../../navigation";
+import { useRightSidebarShortcut } from "../../layout/animated-right-sidebar";
 import { ProjectDetail } from "./project-detail";
 
 const mocks = vi.hoisted(() => ({
@@ -379,6 +380,25 @@ describe("ProjectDetail in the docked chat layout", () => {
 
     expect(propertiesTab).toHaveAttribute("aria-selected", "true");
     expect(screen.getByRole("tabpanel", { name: "Properties" })).toHaveTextContent("Properties");
+  });
+});
+
+describe("ProjectDetail right sidebar shortcut in the docked chat layout", () => {
+  beforeEach(() => useDockedLayoutStore.setState({ layoutActive: true }));
+  afterEach(() => useDockedLayoutStore.setState({ layoutActive: false }));
+
+  it("keeps its target visible on both tabs and toggles in both directions", async () => {
+    renderProjectDetail();
+    await screen.findByRole("tab", { name: "Properties" });
+    const latest = () => vi.mocked(useRightSidebarShortcut).mock.lastCall!;
+
+    act(() => latest()[1]());
+    expect(screen.getByRole("tab", { name: "Properties" })).toHaveAttribute("aria-selected", "true");
+    // The hook ignores a target with no client rects, so it must hold both panels.
+    expect(latest()[0].current).toContainElement(screen.getByRole("tabpanel", { name: "Properties" }));
+
+    act(() => latest()[1]());
+    expect(screen.getByRole("tab", { name: "Project" })).toHaveAttribute("aria-selected", "true");
   });
 });
 

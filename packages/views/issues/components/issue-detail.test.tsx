@@ -772,6 +772,26 @@ describe("IssueDetail (shared)", () => {
       expect(screen.getByRole("tabpanel", { name: "Properties" })).toHaveTextContent("Status");
     });
 
+    it("toggles the tabs with the shortcut in both directions", async () => {
+      // The shortcut ignores a target with no client rects, as a hidden panel has.
+      const rects = vi
+        .spyOn(Element.prototype, "getClientRects")
+        .mockImplementation(function (this: Element) {
+          return (this.closest("[hidden]") ? [] : [{}]) as unknown as DOMRectList;
+        });
+      renderIssueDetail();
+      const issueTab = await screen.findByRole("tab", { name: "Issue" });
+      const propertiesTab = screen.getByRole("tab", { name: "Properties" });
+      const pressShortcut = () =>
+        fireEvent.keyDown(document.body, { key: "/", code: "Slash", ctrlKey: true });
+
+      pressShortcut();
+      expect(propertiesTab).toHaveAttribute("aria-selected", "true");
+      pressShortcut();
+      expect(issueTab).toHaveAttribute("aria-selected", "true");
+      rects.mockRestore();
+    });
+
     it("keeps the issue mounted while the properties tab is showing", async () => {
       renderIssueDetail();
       fireEvent.click(await screen.findByRole("tab", { name: "Properties" }));
