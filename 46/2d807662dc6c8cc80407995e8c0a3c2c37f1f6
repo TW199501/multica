@@ -1,0 +1,25 @@
+packages/views/agents/ai-settings/model-catalog.json
+  s_aa47a447e01641::t_d0adb67fc3b00b 1
+packages/views/agents/ai-settings/model-catalog.test.ts
+  s_aa47a447e01641::t_277e9d620e441c 1-104
+packages/views/agents/ai-settings/model-catalog.ts
+  s_aa47a447e01641::t_4bc26a72a7f2cb 1-73
+scripts/generate-ai-model-catalog.mjs
+  s_aa47a447e01641::t_f08ac46f596288 1-73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "462d807662dc6c8cc80407995e8c0a3c2c37f1f6",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
