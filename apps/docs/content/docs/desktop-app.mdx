@@ -54,6 +54,22 @@ A given resource opens only once in the current workspace. Tabs can be reordered
 
 Logging out clears every tab saved on the machine, so the next person to sign in never sees pages left behind by the previous account.
 
+## Built-in browser
+
+In Desktop, open **Browser** below **Chat** in the sidebar. Use it to browse pages, move backward or forward, reload, and open multiple browser pages. You can also open the current page in your default browser. This browser is a Desktop feature; it is not available inside the Web app.
+
+### Share a page with an agent
+
+Use the browser's element selection or screenshot annotation tools to prepare context, then choose **Send to**. Select **Chat input**, or search for an issue to fill its comment draft. Review the text and attachments and send the message yourself: filling a draft does not start an agent run. Screenshots are uploaded as attachments; if an upload fails, the text remains in the draft.
+
+### Let agents operate the browser
+
+Open **Settings → Browser** and enable the agents you want to allow. The list includes supported, non-archived agents using this Desktop's local daemon; you must own the agent or be a workspace admin to change access. Start the local daemon if the list is unavailable. Allowed agents can open pages, click, and take screenshots while running tasks.
+
+The MCP connection must be ready before access can be enabled. If the displayed port is occupied, close the program using it and restart Multica. Under the advanced MCP connection settings, you can copy connection details or rotate the token. Rotation updates enabled, editable agents in the current workspace; agents in other workspaces or configured elsewhere need their credentials updated separately.
+
+See [Chat with agents](/chat) for the docked conversation layout beside the browser.
+
 ## Built-in daemon
 
 After sign-in, Desktop creates a dedicated CLI profile for the current Multica service and uses it to start the daemon. The profile lives at:
