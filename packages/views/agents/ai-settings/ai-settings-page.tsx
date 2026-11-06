@@ -538,6 +538,11 @@ function AISettingsForm({
       </Tabs>
 
       <div className="border-t pt-4">
+        {keyError ? (
+          <p role="alert" className="mb-3 text-caption text-destructive">
+            {t(($) => $.ai_settings.api_key_error)}
+          </p>
+        ) : null}
         <Button type="button" disabled={blocked || update.isPending} onClick={handleSave}>
           {update.isPending ? <Loader2 className="size-3.5 animate-spin" /> : null}
           {t(($) => $.ai_settings.save)}
