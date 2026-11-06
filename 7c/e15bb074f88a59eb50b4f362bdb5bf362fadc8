@@ -1,0 +1,89 @@
+apps/docs/content/docs/agents.fr.mdx
+  s_49c071b898c5dd::t_5b988bf3bdbe5a 101
+apps/docs/content/docs/agents.ja.mdx
+  s_49c071b898c5dd::t_ca6d9c8b0e19fa 101
+apps/docs/content/docs/agents.ko.mdx
+  s_49c071b898c5dd::t_66e7ffffb2cd6e 101
+apps/docs/content/docs/agents.mdx
+  s_49c071b898c5dd::t_c5623152fc0fcf 101
+apps/docs/content/docs/agents.zh-Hant.mdx
+  s_49c071b898c5dd::t_3e442be2aa5edb 101
+apps/docs/content/docs/agents.zh.mdx
+  s_49c071b898c5dd::t_a21849412ca325 101
+apps/docs/content/docs/ai-settings.fr.mdx
+  s_49c071b898c5dd::t_32eafbffdaf03f 1-47
+apps/docs/content/docs/ai-settings.ja.mdx
+  s_49c071b898c5dd::t_0f25478e9cf976 1-47
+apps/docs/content/docs/ai-settings.ko.mdx
+  s_49c071b898c5dd::t_61e5d97bc93889 1-47
+apps/docs/content/docs/ai-settings.mdx
+  s_49c071b898c5dd::t_4776540d9b8f5d 1-49
+apps/docs/content/docs/ai-settings.zh-Hant.mdx
+  s_49c071b898c5dd::t_ee5150cc2d34a8 1-49
+apps/docs/content/docs/ai-settings.zh.mdx
+  s_49c071b898c5dd::t_e7ddddeff88bf7 1-49
+apps/docs/content/docs/chat.fr.mdx
+  s_49c071b898c5dd::t_6cb909160126ba 137
+apps/docs/content/docs/chat.ja.mdx
+  s_49c071b898c5dd::t_fa7389887b343c 137
+apps/docs/content/docs/chat.ko.mdx
+  s_49c071b898c5dd::t_0386f769c99b66 137
+apps/docs/content/docs/chat.mdx
+  s_49c071b898c5dd::t_68cdcdfcba3cc5 137
+apps/docs/content/docs/chat.zh-Hant.mdx
+  s_49c071b898c5dd::t_9157819066e496 137
+apps/docs/content/docs/chat.zh.mdx
+  s_49c071b898c5dd::t_54ae34554218ac 137
+apps/docs/content/docs/comments.fr.mdx
+  s_49c071b898c5dd::t_240f3468b1831f 134
+apps/docs/content/docs/comments.ja.mdx
+  s_49c071b898c5dd::t_6a5219b2ee1e99 134
+apps/docs/content/docs/comments.ko.mdx
+  s_49c071b898c5dd::t_2fb6d4c19e44c3 134
+apps/docs/content/docs/comments.mdx
+  s_49c071b898c5dd::t_63f07be5536d32 134
+apps/docs/content/docs/comments.zh-Hant.mdx
+  s_49c071b898c5dd::t_2061506850cbc5 134
+apps/docs/content/docs/comments.zh.mdx
+  s_49c071b898c5dd::t_00d19ffc5036a2 134
+apps/docs/content/docs/meta.fr.json
+  s_49c071b898c5dd::t_99199d15d389e0 23
+apps/docs/content/docs/meta.ja.json
+  s_49c071b898c5dd::t_167b8b812fffde 23
+apps/docs/content/docs/meta.json
+  s_49c071b898c5dd::t_fa281119451df6 23
+apps/docs/content/docs/meta.ko.json
+  s_49c071b898c5dd::t_63fde5eb5e43ee 23
+apps/docs/content/docs/meta.zh-Hant.json
+  s_49c071b898c5dd::t_629f35562e7fb5 23
+apps/docs/content/docs/meta.zh.json
+  s_49c071b898c5dd::t_990c2a56e10dd7 23
+apps/docs/content/docs/shortcuts.fr.mdx
+  s_49c071b898c5dd::t_e21ff3360fab55 116
+apps/docs/content/docs/shortcuts.ja.mdx
+  s_49c071b898c5dd::t_066a8d2c4f923d 116
+apps/docs/content/docs/shortcuts.ko.mdx
+  s_49c071b898c5dd::t_7d941866022e60 116
+apps/docs/content/docs/shortcuts.mdx
+  s_49c071b898c5dd::t_ebd3ef888b4a81 116
+apps/docs/content/docs/shortcuts.zh-Hant.mdx
+  s_49c071b898c5dd::t_a020ce797ea0ec 116
+apps/docs/content/docs/shortcuts.zh.mdx
+  s_49c071b898c5dd::t_c4b17372944891 116
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7ce15bb074f88a59eb50b4f362bdb5bf362fadc8",
+  "prompts": {},
+  "sessions": {
+    "s_49c071b898c5dd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1af81-1b14-70a1-8ac2-1c3d3c74911f",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
