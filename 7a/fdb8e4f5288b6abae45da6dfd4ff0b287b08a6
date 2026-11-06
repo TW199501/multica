@@ -1,0 +1,27 @@
+packages/views/issues/components/agent-comment-fold.test.ts
+  s_aa47a447e01641::t_d096e0de276db8 25-37,126-140
+packages/views/issues/components/agent-comment-fold.ts
+  s_aa47a447e01641::t_562311462f70dc 2,28-29,36,40-55,58-59,64-70,72,79
+packages/views/issues/components/comment-card.tsx
+  s_aa47a447e01641::t_62deae9459777b 31,116-117,1033,1200-1204
+packages/views/issues/components/issue-detail.test.tsx
+  s_aa47a447e01641::t_7bd77321e1622d 1924-1978
+packages/views/issues/components/issue-detail.tsx
+  s_aa47a447e01641::t_f3daa32c8bc95e 104-109,166,1812-1837,1847,1849-1865,1871-1875,1878,3241,3271
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7afdb8e4f5288b6abae45da6dfd4ff0b287b08a6",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
