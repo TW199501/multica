@@ -125,7 +125,7 @@ vi.mock("@multica/ui/components/ui/tooltip", () => ({
 vi.mock("../common/use-app-foreground", () => ({
   useAppForeground: () => appForeground.current,
 }));
-vi.mock("./help-launcher", () => ({ HelpLauncher: () => null }));
+vi.mock("./help-launcher", () => ({ HelpLauncher: () => <span data-testid="help-launcher" /> }));
 vi.mock("../auth", () => ({ useLogout: () => vi.fn() }));
 vi.mock("../issues/components/status-icon", () => ({ StatusIcon: () => <span /> }));
 vi.mock("../navigation", () => ({
@@ -483,6 +483,22 @@ describe("docked layout", () => {
     useDockedLayoutStore.setState({ shellDocked: false });
     const second = render(<AppSidebar />);
     expect(second.container.querySelector("[data-slot='sidebar']")).not.toHaveClass("h-[calc(100svh-30px)]");
+  });
+
+  it("puts Usage and help on one row in the docked footer", () => {
+    chatStore.current = { activeSessionId: null, isOpen: false, floatingChatEnabled: false };
+    const { container } = render(<AppSidebar />);
+    const usage = container.querySelector('button[data-href="/acme/usage"]');
+    const row = usage?.closest("[data-slot='docked-footer-row']");
+
+    expect(row).not.toBeNull();
+    expect(row?.querySelector("[data-testid='help-launcher']")).not.toBeNull();
+  });
+
+  it("keeps the footer as it was outside the docked layout", () => {
+    const { container } = render(<AppSidebar />);
+
+    expect(container.querySelector("[data-slot='docked-footer-row']")).toBeNull();
   });
 });
 

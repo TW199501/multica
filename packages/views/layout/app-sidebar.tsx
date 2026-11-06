@@ -943,7 +943,12 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
         )}
 
         <SidebarFooter className="p-2">
-          <SidebarMenu className="gap-0.5">
+          {/* Docked, help shares Usage's row so the menu above gains a line. */}
+          <div
+            data-slot={docked ? "docked-footer-row" : undefined}
+            className={docked ? "flex items-center gap-1" : "contents"}
+          >
+          <SidebarMenu className={docked ? "min-w-0 flex-1 gap-0.5" : "gap-0.5"}>
             {utilityNav.filter((item) => !(docked && item.key === "settings")).map((item) => {
               const href = p[item.key]();
               const Icon = routeIconForPath(href);
@@ -963,6 +968,7 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
           </SidebarMenu>
           <div className="flex items-center gap-1">
             <HelpLauncher />
+          </div>
           </div>
         </SidebarFooter>
         <SidebarRail />
