@@ -54,6 +54,22 @@ Une même ressource ne s'ouvre qu'une seule fois dans l'espace de travail couran
 
 La déconnexion efface tous les onglets enregistrés sur la machine : la personne suivante qui se connecte ne voit jamais les pages laissées par le compte précédent.
 
+## Navigateur intégré
+
+Dans Desktop, ouvrez le navigateur sous Discussion dans la barre latérale. Vous pouvez consulter plusieurs pages, revenir en arrière, avancer, actualiser ou ouvrir la page courante dans votre navigateur par défaut. Cette fonction est réservée à Desktop et n'est pas disponible dans l'application web.
+
+### Transmettre une page à un agent
+
+Préparez le contexte avec la sélection d'éléments ou les annotations de captures d'écran, puis choisissez la destination. Sélectionnez la zone de discussion ou recherchez une tâche pour remplir son brouillon de commentaire. Vérifiez le texte et les pièces jointes, puis envoyez vous-même le message : remplir un brouillon ne lance pas l'agent. Les captures sont téléversées en pièces jointes ; en cas d'échec, le texte reste dans le brouillon.
+
+### Autoriser les agents à utiliser le navigateur
+
+Dans les paramètres du navigateur, activez les agents à autoriser. La liste comprend les agents compatibles, non archivés, utilisant le daemon local de ce Desktop. Seul le propriétaire de l'agent ou un admin de l'espace de travail peut modifier l'accès. Démarrez le daemon local si la liste est indisponible. Les agents autorisés peuvent ouvrir des pages, cliquer et prendre des captures pendant leurs exécutions.
+
+La connexion MCP doit être prête avant l'activation. Si le port indiqué est occupé, fermez le programme qui l'utilise et redémarrez Multica. Les paramètres avancés MCP permettent de copier les informations de connexion ou de renouveler le jeton. Le renouvellement met à jour les agents activés et modifiables de l'espace de travail courant. Les identifiants des agents d'autres espaces ou configurés ailleurs doivent être mis à jour séparément.
+
+Consultez [Discuter avec les agents](/chat) pour ancrer la conversation à côté du navigateur.
+
 ## Daemon intégré
 
 Après la connexion, Desktop crée un profil CLI dédié au service Multica courant et l'utilise pour démarrer le daemon. Le profil se trouve ici :
