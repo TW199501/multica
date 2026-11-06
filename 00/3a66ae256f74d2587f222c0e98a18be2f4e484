@@ -1,0 +1,59 @@
+.env.example
+  s_aa47a447e01641::t_94281ed3ea8abd 673-677
+apps/docs/content/docs/environment-variables.fr.mdx
+  s_aa47a447e01641::t_80290722d13516 189
+apps/docs/content/docs/environment-variables.ja.mdx
+  s_aa47a447e01641::t_1406f6105afbed 189
+apps/docs/content/docs/environment-variables.ko.mdx
+  s_aa47a447e01641::t_cc3a6b771964f9 189
+apps/docs/content/docs/environment-variables.mdx
+  s_aa47a447e01641::t_ae2fbb1dd3232e 189
+apps/docs/content/docs/environment-variables.zh-Hant.mdx
+  s_aa47a447e01641::t_4317f196aa8d01 189
+apps/docs/content/docs/environment-variables.zh.mdx
+  s_aa47a447e01641::t_14abe6e2e20028 189
+deploy/llama/README.md
+  s_aa47a447e01641::t_517eedbf155bce 49-53
+docker-compose.dockhand.yml
+  s_aa47a447e01641::t_d9630fe72a4cee 188
+docker-compose.selfhost.yml
+  s_aa47a447e01641::t_18336ca11a6bdb 187
+server/cmd/server/router.go
+  s_aa47a447e01641::t_d66c195d5f7a38 783-789
+server/internal/aisettings/aisettings_test.go
+  s_aa47a447e01641::t_d5d1c5dc05cdac 42-43
+server/pkg/remotemcp/client.go
+  s_aa47a447e01641::t_799f44bc4e346d 90-92
+server/internal/aisettings/aisettings.go
+  s_49c071b898c5dd::t_12d0e295ac6b4b 256-257,259-260
+server/internal/aisettings/outbound.go
+  s_aa47a447e01641::t_ee62cb07155b99 1-90
+server/internal/aisettings/outbound_test.go
+  s_aa47a447e01641::t_bb120514bd3c98 1-112
+server/internal/handler/ai_settings_test.go
+  s_49c071b898c5dd::t_45302d74fa0703 41-42,44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "003a66ae256f74d2587f222c0e98a18be2f4e484",
+  "prompts": {},
+  "sessions": {
+    "s_49c071b898c5dd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1af81-1b14-70a1-8ac2-1c3d3c74911f",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    },
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
