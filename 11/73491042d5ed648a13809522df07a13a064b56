@@ -1,0 +1,33 @@
+packages/views/agents/ai-settings/ai-settings-page.tsx
+  s_aa47a447e01641::t_e6609af6a0a968 6-16,28,53-58,161,174-181,244,288-292,294-310,312-337,339-367,369-542,550-572
+packages/views/locales/fr/agents.json
+  s_aa47a447e01641::t_971937247baed6 1107-1134
+packages/views/locales/ja/agents.json
+  s_aa47a447e01641::t_55908c0f05ce68 1080-1107
+packages/views/locales/ko/agents.json
+  s_aa47a447e01641::t_d389ef74305c5b 1080-1107
+packages/views/locales/zh-Hans/agents.json
+  s_aa47a447e01641::t_92ef07ba3a1ef2 1071,1080-1107
+packages/views/locales/zh-Hant/agents.json
+  s_aa47a447e01641::t_713e97692bdb73 1071,1080-1107
+packages/views/agents/ai-settings/ai-settings-page.test.tsx
+  s_aa47a447e01641::t_6a012ae6127b3f 316,329-434
+packages/views/locales/en/agents.json
+  s_aa47a447e01641::t_c1d87e2b201f01 1107-1134
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1173491042d5ed648a13809522df07a13a064b56",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
