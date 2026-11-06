@@ -1,0 +1,35 @@
+server/internal/aisettings/aisettings_test.go
+  s_aa47a447e01641::t_ec65a1f56d461b 325-377
+server/pkg/db/generated/workspace_ai_settings.sql.go
+  s_aa47a447e01641::t_37d1703321570d 72-73,78-89,95-96,110
+server/pkg/db/queries/workspace_ai_settings.sql
+  s_aa47a447e01641::t_24bd4e1f8283a8 9-10,32-33
+server/internal/aisettings/aisettings.go
+  s_49c071b898c5dd::t_658cead1ec4822 10,24,130,139-143,163-171,174-176
+server/internal/handler/ai_settings.go
+  s_aa47a447e01641::t_000fc0a15b8f8b 155-157
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f56dd2ea246fa2ac1580093fc926e058d27ef816",
+  "prompts": {},
+  "sessions": {
+    "s_49c071b898c5dd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1af81-1b14-70a1-8ac2-1c3d3c74911f",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    },
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
