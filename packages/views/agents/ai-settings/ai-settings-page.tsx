@@ -359,11 +359,6 @@ function AISettingsForm({
                 {showKey ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </Button>
             </div>
-            {keyError ? (
-              <p id="ai-api-key-error" className="text-caption text-destructive">
-                {t(($) => $.ai_settings.api_key_error)}
-              </p>
-            ) : null}
           </Field>
 
           <div className="space-y-1.5">
@@ -539,7 +534,7 @@ function AISettingsForm({
 
       <div className="border-t pt-4">
         {keyError ? (
-          <p role="alert" className="mb-3 text-caption text-destructive">
+          <p id="ai-api-key-error" role="alert" className="mb-3 text-caption text-destructive">
             {t(($) => $.ai_settings.api_key_error)}
           </p>
         ) : null}
