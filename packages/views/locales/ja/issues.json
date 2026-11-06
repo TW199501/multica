@@ -524,6 +524,7 @@
     "squad_leader_failed": "評価に失敗しました",
     "squad_leader_failed_reason": "評価に失敗しました: {{reason}}",
     "coalesced_badge": "×{{count}}",
+    "agent_comments_other": "エージェントのコメント {{count}} 件",
     "activity_count_other": "アクティビティ {{count}} 件",
     "show_more_activities_other": "アクティビティをさらに {{count}} 件表示",
     "duplicate_marked": "このタスクを {{identifier}} の重複としてマークしました",
@@ -653,6 +654,7 @@
     "restart_failed": "現在の実行を停止できませんでした。メッセージは送信されていません。"
   },
   "reply": {
+    "action": "返信",
     "placeholder": "返信を残す...",
     "annotations": {
       "confirm_add": "注釈を追加",

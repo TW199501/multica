@@ -532,6 +532,8 @@
     "squad_leader_failed": "evaluation failed",
     "squad_leader_failed_reason": "evaluation failed: {{reason}}",
     "coalesced_badge": "×{{count}}",
+    "agent_comments_one": "{{count}} agent comment",
+    "agent_comments_other": "{{count}} agent comments",
     "activity_count_one": "{{count}} activity",
     "activity_count_other": "{{count}} activities",
     "show_more_activities_one": "Show {{count}} more activity",
@@ -673,6 +675,7 @@
     "restart_failed": "Couldn't stop the current run. Your message wasn't sent."
   },
   "reply": {
+    "action": "Reply",
     "placeholder": "Leave a reply...",
     "annotations": {
       "confirm_add": "Add annotation",

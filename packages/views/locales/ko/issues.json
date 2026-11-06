@@ -524,6 +524,7 @@
     "squad_leader_failed": "평가 실패",
     "squad_leader_failed_reason": "평가 실패: {{reason}}",
     "coalesced_badge": "×{{count}}",
+    "agent_comments_other": "에이전트 댓글 {{count}}개",
     "activity_count_other": "활동 {{count}}개",
     "show_more_activities_other": "활동 {{count}}개 더 보기",
     "duplicate_marked": "이 태스크를 {{identifier}}의 중복으로 표시했습니다",
@@ -653,6 +654,7 @@
     "restart_failed": "현재 실행을 중지하지 못했습니다. 메시지는 보내지 않았습니다."
   },
   "reply": {
+    "action": "답글",
     "placeholder": "답글 남기기...",
     "annotations": {
       "confirm_add": "주석 추가",

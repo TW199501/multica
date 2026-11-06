@@ -999,7 +999,7 @@ export function AgentRunComment({ run, standalone = false, commentProps, enterin
     <div ref={motionRef} data-run-slot-id={run.task.id}
       data-run-comment-id={!reply ? run.task.id : undefined}
       id={!standalone && slotEntry ? `comment-${slotEntry.id}` : undefined}
-      className={cn("transition-colors duration-700", standalone ? !reply && "rounded-xl border" : "border-t border-border/50", !reply && "py-1.5",
+      className={cn("transition-colors duration-700", !standalone && "border-t border-border/50", !reply && "py-1.5",
         highlighted ? highlightedCommentBackgroundClass : standalone && !reply && "bg-card")}>
       {commentProps && reply ? standalone ? (
         <CommentCard {...commentProps} runs={commentProps.runs ?? [run]} runViewState={viewState} />
@@ -1190,11 +1190,22 @@ function CommentCardImpl({
   const stickyHeader =
     open && !onCollapseResolved && !(replyResolutionId != null && threadExpanded);
 
+  const replyDraftKey = `reply:${issueId}:${entry.id}` as const;
+  const [replyOpen, setReplyOpen] = useState(false);
+  const [replyFocusRequest, setReplyFocusRequest] = useState(0);
+  const hasPendingReply = useCommentDraftStore(
+    (state) =>
+      !!state.getDraft(replyDraftKey)?.trim() ||
+      state.getAnnotations(replyDraftKey).length > 0 ||
+      state.getUploads(replyDraftKey).length > 0,
+  );
+  const showReplyInput = replyOpen || hasPendingReply;
+
   return (
     // overflow-clip (not -hidden) clips the rounded corners WITHOUT creating a
     // scroll container, so the sticky collapse affordances below resolve to the
     // timeline's scroll parent instead of this card. See PR #3623.
-    <Card ref={annotation.cardRef} {...annotation.captureProps} className="!py-0 !gap-0 overflow-clip transition-colors duration-700">
+    <Card ref={annotation.cardRef} {...annotation.captureProps} className="!py-0 !gap-0 !rounded-none !border-0 !shadow-none overflow-clip transition-colors duration-700">
       {annotation.popup}
       {onCollapseResolved && (
         <button
@@ -1541,9 +1552,26 @@ function CommentCardImpl({
               {/* Replies — chronological; the resolution keeps its place with a badge */}
               {threadRows.map(renderThreadRow)}
 
-              {/* Reply input */}
-              <div className="border-t border-border/50 px-4 max-md:px-3 py-2.5">
+              {/* Stays mounted while closed: drafts, annotations and uploads live here. */}
+              {!showReplyInput && (
+                <div className="px-4 max-md:px-3">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="xs"
+                    className="text-muted-foreground opacity-0 group-hover/card:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100"
+                    onClick={() => {
+                      setReplyOpen(true);
+                      setReplyFocusRequest((request) => request + 1);
+                    }}
+                  >
+                    {t(($) => $.reply.action)}
+                  </Button>
+                </div>
+              )}
+              <div className={cn("px-4 max-md:px-3 py-2.5", !showReplyInput && "hidden")}>
                 <ReplyInput
+                  focusRequest={replyFocusRequest}
                   issueId={issueId}
                   parentId={replyTargetId}
                   targetMissing={replyTargetMissing}
@@ -1551,11 +1579,14 @@ function CommentCardImpl({
                   size="sm"
                   avatarType="member"
                   avatarId={currentUserId ?? ""}
-                  draftKey={`reply:${issueId}:${entry.id}`}
+                  draftKey={replyDraftKey}
                   onEditAnnotation={(id) => annotation.editAnnotation(id, true)}
                   steerByDefault={steerThreadRunByDefault}
                   onSubmit={(content, attachmentIds, suppressAgentIds, steerTaskIds) => replyTargetMissing ? Promise.resolve(false) : onReply(replyTargetId, content, attachmentIds, suppressAgentIds, steerTaskIds)}
-                  onAccepted={onReplyAccepted}
+                  onAccepted={(commentId) => {
+                    setReplyOpen(false);
+                    onReplyAccepted?.(commentId);
+                  }}
                 />
               </div>
             </>

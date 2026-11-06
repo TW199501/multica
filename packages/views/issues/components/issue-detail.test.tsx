@@ -41,6 +41,7 @@ const descriptionSelectionAction = vi.hoisted(() => ({ current: undefined as { l
 // so the `useCommentDraftStore(s => s.getAttachments(key))` selector keeps a
 // stable identity. A fresh `[]` per call would loop useSyncExternalStore.
 const emptyDraftAttachments = vi.hoisted(() => [] as unknown[]);
+const pendingReplyDrafts = vi.hoisted(() => new Map<string, string>());
 
 vi.mock("@multica/ui/hooks/use-mobile", () => ({
   useIsMobile: () => mockViewport.isMobile,
@@ -432,7 +433,7 @@ vi.mock("@multica/core/issues/stores", async () => ({
     (selector?: any) => {
       const state = {
         drafts: {} as Record<string, { content: string; attachments: unknown[]; updatedAt: number }>,
-        getDraft: () => undefined,
+        getDraft: (key: string) => pendingReplyDrafts.get(key),
         getAnnotations: () => emptyDraftAttachments,
         getAttachments: () => emptyDraftAttachments,
         getUploads: () => emptyDraftAttachments,
@@ -1788,6 +1789,101 @@ describe("IssueDetail (shared)", () => {
 
     expect(scrollToIndexSpy).toHaveBeenLastCalledWith({ index: expect.any(Number), align: "start", offset: -16 });
     await waitFor(() => expect(block.className).toContain(highlightedCommentBackgroundClass));
+  });
+
+  describe("agent comment folding", () => {
+    const agentComment = (id: string, content: string, overrides: Partial<TimelineEntry> = {}): TimelineEntry => ({
+      type: "comment", id, actor_type: "agent", actor_id: "agent-1", content, parent_id: null,
+      created_at: "2026-01-18T00:00:00Z", updated_at: "2026-01-18T00:00:00Z", comment_type: "comment",
+      ...overrides,
+    });
+
+    it("collapses agent-only threads and keeps the newest comment visible", async () => {
+      mockApiObj.listTimeline.mockResolvedValue([
+        agentComment("agent-a", "Pixel, fix the format check"),
+        agentComment("agent-b", "Sentinel, review it again"),
+        agentComment("agent-latest", "All done"),
+      ]);
+      renderIssueDetail();
+
+      expect(await screen.findByRole("button", { name: "2 agent comments" })).toBeInTheDocument();
+      expect(screen.getByText("All done")).toBeInTheDocument();
+      expect(screen.queryByText("Pixel, fix the format check")).not.toBeInTheDocument();
+      expect(screen.queryByText("Sentinel, review it again")).not.toBeInTheDocument();
+    });
+
+    it("shows the folded comments when the row is clicked and hides them again", async () => {
+      mockApiObj.listTimeline.mockResolvedValue([
+        agentComment("agent-a", "Pixel, fix the format check"),
+        agentComment("agent-latest", "All done"),
+      ]);
+      renderIssueDetail();
+
+      const row = await screen.findByRole("button", { name: "1 agent comment" });
+      expect(row).toHaveAttribute("aria-expanded", "false");
+      fireEvent.click(row);
+      expect(await screen.findByText("Pixel, fix the format check")).toBeInTheDocument();
+      expect(row).toHaveAttribute("aria-expanded", "true");
+      fireEvent.click(row);
+      await waitFor(() => expect(screen.queryByText("Pixel, fix the format check")).not.toBeInTheDocument());
+    });
+
+    it("keeps a comment that mentions a member visible", async () => {
+      const mention = "[@Eddie](mention://member/11111111-1111-1111-1111-111111111111) please decide";
+      mockApiObj.listTimeline.mockResolvedValue([
+        agentComment("agent-a", mention),
+        agentComment("agent-latest", "All done"),
+      ]);
+      const { container } = renderIssueDetail();
+
+      await screen.findByText("All done");
+      expect(container.querySelector("#comment-agent-a")).not.toBeNull();
+      expect(screen.queryByRole("button", { name: /agent comment/ })).not.toBeInTheDocument();
+    });
+
+    it("keeps a thread a member replied in visible", async () => {
+      const root = agentComment("agent-a", "Should I retry?");
+      const reply: TimelineEntry = { ...agentComment("member-reply", "Yes", { parent_id: "agent-a" }), actor_type: "member", actor_id: "user-1" };
+      mockApiObj.listTimeline.mockResolvedValue([root, reply, agentComment("agent-latest", "All done")]);
+      renderIssueDetail();
+
+      expect(await screen.findByText("Should I retry?")).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /agent comment/ })).not.toBeInTheDocument();
+    });
+
+    it("opens a thread's reply box only when Reply is clicked", async () => {
+      mockApiObj.listTimeline.mockResolvedValue([agentComment("agent-a", "All done")]);
+      renderIssueDetail();
+
+      const reply = await screen.findByRole("button", { name: "Reply" });
+      const box = screen.getByTestId("reply-composer-shell").closest(".px-4") as HTMLElement;
+      expect(box).toHaveClass("hidden");
+      fireEvent.click(reply);
+      expect(box).not.toHaveClass("hidden");
+      expect(screen.queryByRole("button", { name: "Reply" })).not.toBeInTheDocument();
+    });
+
+    it("keeps the reply box open while a draft is waiting", async () => {
+      pendingReplyDrafts.set("reply:issue-1:agent-a", "half written");
+      mockApiObj.listTimeline.mockResolvedValue([agentComment("agent-a", "All done")]);
+      renderIssueDetail();
+
+      await screen.findByText("All done");
+      expect(screen.queryByRole("button", { name: "Reply" })).not.toBeInTheDocument();
+      pendingReplyDrafts.clear();
+    });
+
+    it("does not fold when deep linking to a comment", async () => {
+      const timeline = [
+        agentComment("agent-a", "Pixel, fix the format check"),
+        agentComment("agent-latest", "All done"),
+      ];
+      mockApiObj.listTimeline.mockResolvedValue(timeline);
+      renderIssueDetailWithHighlight("agent-a");
+
+      expect(await screen.findByText("Pixel, fix the format check")).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /agent comment/ })).not.toBeInTheDocument();
+    });
   });
 
   describe("a run's failure notice (MUL-7692)", () => {

@@ -101,8 +101,16 @@ import { IssueProjectPicker } from "../../projects/components/issue-project-pick
 import { IssuePropertyPills } from "./issue-property-pills";
 import { LocalDirectoryHint } from "../../projects/components/local-directory-hint";
 import { useNewRunIds } from "./use-run-comment-motion";
+import { isAgentOnlyThread, planAgentFolds, type AgentFoldRow } from "./agent-comment-fold";
 import { AgentRunComment, CommentCard } from "./comment-card";
-import { EMPTY_COMMENT_RUNS, buildCommentRunView, orderTimelineWithRuns, type CommentRun } from "./comment-runs";
+import {
+  EMPTY_COMMENT_RUNS,
+  buildCommentRunView,
+  isActiveCommentRun,
+  isRunFailureNotice,
+  orderTimelineWithRuns,
+  type CommentRun,
+} from "./comment-runs";
 import { issueTasksOptions } from "@multica/core/issues/queries";
 import { SourceContextBadge } from "./source-context-viewer";
 import { RevisionConflictCompare } from "./revision-conflict-compare";
@@ -1795,6 +1803,48 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
     [timelineView.groups, expandedResolved],
   );
 
+  // Agent-to-agent threads collapse behind one row. Folded rows stay in `items`
+  // so every index-based jump keeps working; they only render as a placeholder.
+  const agentFolds = useMemo(() => {
+    const isSettled = (rootId: string) =>
+      !(commentRuns.get(rootId) ?? EMPTY_COMMENT_RUNS).some(
+        ({ task }) =>
+          isActiveCommentRun(task) || task.status === "failed" || task.status === "cancelled",
+      );
+    const rows = items.map((item): AgentFoldRow => {
+      if (item.kind === "activity-group" || item.kind === "resolved-bar") {
+        return { id: item.id, role: "transparent", isComment: false };
+      }
+      const entry = item.entry;
+      if (!entry) return { id: item.id, role: "visible", isComment: true };
+      const settled =
+        isSettled(entry.id) &&
+        (item.kind !== "run" ||
+          (!isActiveCommentRun(item.run.task) && !isRunFailureNotice(entry, item.run.task)));
+      const foldable =
+        settled && isAgentOnlyThread(entry, timelineView.threadReplies.get(entry.id) ?? EMPTY_REPLIES);
+      return { id: item.id, role: foldable ? "foldable" : "visible", isComment: true };
+    });
+    return planAgentFolds(rows);
+  }, [items, commentRuns, timelineView.threadReplies]);
+  const [expandedAgentFolds, setExpandedAgentFolds] = useState<ReadonlySet<string>>(() => new Set());
+  const toggleAgentFold = useCallback((foldId: string) => {
+    setExpandedAgentFolds((prev) => {
+      const next = new Set(prev);
+      if (!next.delete(foldId)) next.add(foldId);
+      return next;
+    });
+  }, []);
+  // A jump must never land on a collapsed row.
+  const revealAgentFold = useCallback(
+    (rowId: string | undefined) => {
+      const foldId = rowId ? agentFolds.get(rowId)?.foldId : undefined;
+      if (!foldId) return;
+      setExpandedAgentFolds((prev) => (prev.has(foldId) ? prev : new Set(prev).add(foldId)));
+    },
+    [agentFolds],
+  );
+
   // In-page find (Cmd/Ctrl+F). `items.length` is the content signal that
   // triggers a match recompute when comments are added/removed; text edits
   // are caught by the hook's own MutationObserver. Opening find forces the
@@ -1983,10 +2033,11 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       // index and let Virtuoso mount it. Offset leaves a small top gap.
       const index = items.findIndex((it) => it.id === threadId);
       if (index < 0) return;
+      revealAgentFold(threadId);
       virtuosoRef.current?.scrollToIndex({ index, align: "start", offset: -16 });
       flashJumpTarget(threadId);
     },
-    [isFlatTimeline, items, jumpToComment, flashJumpTarget],
+    [isFlatTimeline, items, jumpToComment, flashJumpTarget, revealAgentFold],
   );
   // Minimap jump to a reply. A reply's anchor exists only while its thread is
   // open, so first undo whatever hides it — the reader's own collapse, a root
@@ -2001,6 +2052,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       const rootItem = items[index];
       const root = rootItem && rootItem.kind !== "activity-group" ? rootItem.entry : undefined;
       if (!rootId || !root) return;
+      revealAgentFold(rootId);
       const collapse = useCommentCollapseStore.getState();
       if (collapse.isCollapsed(id, rootId)) collapse.toggle(id, rootId);
       if (!expandedResolved.has(rootId)) {
@@ -2012,7 +2064,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       if (!isFlatTimeline) virtuosoRef.current?.scrollToIndex({ index, align: "start", offset: -16 });
       setPendingReplyJump({ replyId, rootId });
     },
-    [id, items, replyToRoot, expandedResolved, timelineView.threadReplies, toggleResolvedExpand, isFlatTimeline],
+    [id, items, replyToRoot, expandedResolved, timelineView.threadReplies, toggleResolvedExpand, isFlatTimeline, revealAgentFold],
   );
   // Land the pending reply once its row is in the DOM. The expansion commits
   // on the next render and Virtuoso mounts the thread a frame or two later, so
@@ -2080,6 +2132,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       }
       const rootItem = items[index];
       if (!run || !rootItem) return;
+      revealAgentFold(rootItem.id);
       const root = rootItem.kind !== "activity-group" ? rootItem.entry : undefined;
       const headsThread = run.hasReply && run.commentId === rootItem.id;
       if (root && !headsThread) {
@@ -2095,7 +2148,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       if (!isFlatTimeline) virtuosoRef.current?.scrollToIndex({ index, align: "start", offset: -16 });
       setPendingRunJump({ taskId, rootId: rootItem.id, flashId: run.hasReply && run.commentId ? run.commentId : taskId });
     },
-    [id, items, commentRuns, expandedResolved, timelineView.threadReplies, toggleResolvedExpand, isFlatTimeline],
+    [id, items, commentRuns, expandedResolved, timelineView.threadReplies, toggleResolvedExpand, isFlatTimeline, revealAgentFold],
   );
   // Same frame-by-frame landing as a reply jump. A run that has replied may
   // only show as a log button in its comment's header, so align that comment.
@@ -2506,6 +2559,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       const rootItem = items.find((it) => it.id === commentId);
       const root = rootItem && rootItem.kind !== "activity-group" ? rootItem.entry : undefined;
       if (!root) return;
+      revealAgentFold(commentId);
       const collapse = useCommentCollapseStore.getState();
       if (collapse.isCollapsed(id, commentId)) collapse.toggle(id, commentId);
       if (
@@ -2517,7 +2571,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       }
       setLocateRootRequest(commentId);
     },
-    [scrollContainerEl, replyToRoot, jumpToReply, items, id, expandedResolved, timelineView.threadReplies, toggleResolvedExpand],
+    [scrollContainerEl, replyToRoot, jumpToReply, items, id, expandedResolved, timelineView.threadReplies, toggleResolvedExpand, revealAgentFold],
   );
   useEffect(() => {
     if (!locateRootRequest) return;
@@ -3098,7 +3152,35 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   // Shared row renderer for both timeline render modes (flat / virtualized).
   // The wrapper `id="comment-..."` is the deep-link target — equivalent to
   // a native `<a href="#comment-...">` anchor.
-  const renderItem = (_i: number, item: TimelineItem): React.ReactElement => {
+  const renderItem = (i: number, item: TimelineItem): React.ReactElement => {
+    // Flat mode exists so find and deep links can reach every comment.
+    const fold = isFlatTimeline ? undefined : agentFolds.get(item.id);
+    if (!fold) return renderTimelineRow(i, item);
+    const open = expandedAgentFolds.has(fold.foldId);
+    // Virtuoso rejects zero-height rows, so a folded row keeps one pixel.
+    if (!open && !fold.isHead) return <div className="h-px" aria-hidden="true" />;
+    return (
+      <>
+        {fold.isHead && (
+          <div className="flex items-center gap-3 pb-3 px-4 max-md:px-3">
+            <span aria-hidden="true" className="h-px flex-1 bg-border/60" />
+            <button
+              type="button"
+              aria-expanded={open}
+              onClick={() => toggleAgentFold(fold.foldId)}
+              className="flex shrink-0 items-center gap-1.5 text-label text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <span>{t(($) => $.activity.agent_comments, { count: fold.count })}</span>
+              {open ? <ChevronDown className="h-3 w-3 shrink-0" /> : <ChevronRight className="h-3 w-3 shrink-0" />}
+            </button>
+            <span aria-hidden="true" className="h-px flex-1 bg-border/60" />
+          </div>
+        )}
+        {open && renderTimelineRow(i, item)}
+      </>
+    );
+  };
+  const renderTimelineRow = (_i: number, item: TimelineItem): React.ReactElement => {
     if (item.kind === "run") {
       const reply = item.entry;
       return <div className="pb-3" id={reply ? `comment-${reply.id}` : undefined}>
