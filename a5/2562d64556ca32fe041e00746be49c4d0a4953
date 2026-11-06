@@ -1,0 +1,29 @@
+apps/docs/content/docs/chat.fr.mdx
+  s_aa47a447e01641::t_afb1ab2ae56c23 60,64,68
+apps/docs/content/docs/chat.ja.mdx
+  s_aa47a447e01641::t_e55485cb773657 60,64,68
+apps/docs/content/docs/chat.ko.mdx
+  s_aa47a447e01641::t_2e0ca746148d61 60,64,68
+apps/docs/content/docs/chat.mdx
+  s_aa47a447e01641::t_87c4fbb1667837 60,64,68
+apps/docs/content/docs/chat.zh-Hant.mdx
+  s_aa47a447e01641::t_90067acf1e1bbe 60,64,68
+apps/docs/content/docs/chat.zh.mdx
+  s_aa47a447e01641::t_1cb35b3c3f7d27 60,64,68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a52562d64556ca32fe041e00746be49c4d0a4953",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "unknown"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
