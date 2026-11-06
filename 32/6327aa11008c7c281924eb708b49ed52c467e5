@@ -1,0 +1,21 @@
+.vscode/settings.json
+  s_aa47a447e01641::t_bc4836c82b01c2 2
+.editorconfig
+  s_aa47a447e01641::t_104c85db3efe92 1-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "326327aa11008c7c281924eb708b49ed52c467e5",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
