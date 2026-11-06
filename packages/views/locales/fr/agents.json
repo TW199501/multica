@@ -1104,6 +1104,33 @@
     "save_failed_toast": "Impossible d'enregistrer les paramètres IA",
     "load_failed": "Impossible de charger les paramètres IA",
     "retry": "Réessayer",
-    "model_placeholder": "Vide : utilise le modèle chargé sur le serveur"
+    "model_placeholder": "Vide : utilise le modèle chargé sur le serveur",
+    "tab_providers": "Fournisseurs",
+    "tab_usage": "Usage des modèles",
+    "new_config": "Nouvelle configuration",
+    "duplicate_config": "Dupliquer",
+    "delete_config": "Supprimer",
+    "next_round": "Prochaine étape",
+    "show_key": "Afficher la clé API",
+    "hide_key": "Masquer la clé API",
+    "custom_headers": "En-têtes personnalisés",
+    "add_header": "Ajouter un en-tête",
+    "model_list": "Modèles",
+    "add_model": "Ajouter un modèle",
+    "vision": "Vision",
+    "context_window": "Contexte {{value}}",
+    "output_limit": "Sortie {{value}}",
+    "needs_chat_model": "L'amélioration des messages nécessite un modèle de discussion.",
+    "usage_chat": "IA de discussion",
+    "usage_embedding": "Embedding",
+    "usage_rerank": "Reclassement",
+    "usage_decision": "Décision",
+    "model_types": {
+      "chat": "Discussion",
+      "embedding": "Embedding",
+      "rerank": "Reclassement",
+      "decision": "Décision",
+      "other": "Autre"
+    }
   }
 }

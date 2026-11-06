@@ -1068,7 +1068,7 @@
     "load_from_skill": "從技能載入",
     "no_skill": "無",
     "prompt_from_skill": "將使用所選技能的內容代替此提示詞。",
-    "test": "測試",
+    "test": "檢測連線",
     "save": "儲存",
     "test_ok": "連線成功",
     "test_failed": "{{status}} · {{message}}",
@@ -1077,6 +1077,33 @@
     "save_failed_toast": "無法儲存 AI 設定",
     "load_failed": "無法載入 AI 設定",
     "retry": "重試",
-    "model_placeholder": "留空則使用伺服器已載入的模型"
+    "model_placeholder": "留空則使用伺服器已載入的模型",
+    "tab_providers": "模型供應商",
+    "tab_usage": "模型配置",
+    "new_config": "建立新配置",
+    "duplicate_config": "複製",
+    "delete_config": "刪除",
+    "next_round": "下一輪開放",
+    "show_key": "顯示 API 金鑰",
+    "hide_key": "隱藏 API 金鑰",
+    "custom_headers": "自訂請求頭",
+    "add_header": "新增 Header",
+    "model_list": "模型列表",
+    "add_model": "新增模型",
+    "vision": "視覺",
+    "context_window": "上下文 {{value}}",
+    "output_limit": "輸出 {{value}}",
+    "needs_chat_model": "對話優化需要對話模型。",
+    "usage_chat": "對話 AI",
+    "usage_embedding": "嵌入",
+    "usage_rerank": "重排序",
+    "usage_decision": "決策",
+    "model_types": {
+      "chat": "對話",
+      "embedding": "嵌入",
+      "rerank": "重排序",
+      "decision": "決策",
+      "other": "其他"
+    }
   }
 }

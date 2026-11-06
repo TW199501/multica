@@ -313,6 +313,7 @@ describe("AISettingsPage", () => {
     expect(
       screen.getByText("The selected skill's content is used instead of this prompt."),
     ).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("tab", { name: "Model usage" }));
     expect(screen.getByRole("button", { name: "Restore default" })).toBeDisabled();
   });
 
@@ -323,5 +324,111 @@ describe("AISettingsPage", () => {
     expect(
       screen.queryByText("The selected skill's content is used instead of this prompt."),
     ).toBeNull();
+  });
+});
+
+describe("AI settings layout", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.role = "owner";
+    mocks.api.getAISettings.mockResolvedValue(settings());
+    mocks.api.listSkills.mockResolvedValue([]);
+  });
+
+  it("splits providers and model usage into two tabs", async () => {
+    const user = userEvent.setup();
+    renderUi(<AISettingsPage />);
+
+    const providers = await screen.findByRole("tab", { name: "Providers" });
+    expect(providers).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByRole("combobox", { name: "Provider" })).toBeVisible();
+
+    await user.click(screen.getByRole("tab", { name: "Model usage" }));
+
+    expect(screen.getByLabelText("Prompt")).toBeVisible();
+    expect(screen.getByRole("switch", { name: "Disable thinking" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Save" })).toBeVisible();
+  });
+
+  it("offers embedding, rerank and decision as usages that are not open yet", async () => {
+    const user = userEvent.setup();
+    renderUi(<AISettingsPage />);
+    await user.click(await screen.findByRole("tab", { name: "Model usage" }));
+
+    for (const name of ["Embedding", "Rerank", "Decision"]) {
+      const select = screen.getByRole("combobox", { name });
+      expect(select).toHaveAttribute("data-disabled");
+    }
+  });
+
+  it("keeps configuration management visible but closed for now", async () => {
+    renderUi(<AISettingsPage />);
+    await screen.findByRole("tab", { name: "Providers" });
+
+    for (const name of ["New configuration", "Duplicate", "Delete", "Add header", "Add model"]) {
+      expect(screen.getByRole("button", { name })).toBeDisabled();
+    }
+  });
+
+  it("never asks people for the model type", async () => {
+    renderUi(<AISettingsPage />);
+    await screen.findByRole("tab", { name: "Providers" });
+
+    expect(screen.queryByRole("radio")).not.toBeInTheDocument();
+  });
+
+  it("tags the type and vision from the catalog as the model changes", async () => {
+    const user = userEvent.setup();
+    mocks.api.getAISettings.mockResolvedValue(settings({ model: "plain-text-model" }));
+    renderUi(<AISettingsPage />);
+    const model = await screen.findByLabelText("Model");
+    expect(screen.getByTestId("ai-model-type")).toHaveTextContent("Chat");
+    expect(screen.queryByTestId("ai-model-vision")).not.toBeInTheDocument();
+
+    await user.clear(model);
+    await user.type(model, "qwen/qwen3-embedding-8b");
+    await waitFor(() => expect(screen.getByTestId("ai-model-type")).toHaveTextContent("Embedding"));
+  });
+
+  it("shows vision and limits for a listed vision model", async () => {
+    mocks.api.getAISettings.mockResolvedValue(settings({ model: "claude-fable-5-1" }));
+    renderUi(<AISettingsPage />);
+
+    expect(await screen.findByTestId("ai-model-vision")).toHaveTextContent("Vision");
+    expect(screen.getByTestId("ai-model-limits")).toHaveTextContent(/Context/);
+  });
+
+  it("warns when the chat AI is given a model that cannot chat", async () => {
+    mocks.api.getAISettings.mockResolvedValue(settings({ model: "qwen3-embedding-8b" }));
+    renderUi(<AISettingsPage />);
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("chat model");
+  });
+
+  it("reveals only what was typed, never the stored key", async () => {
+    const user = userEvent.setup();
+    renderUi(<AISettingsPage />);
+    const key = await screen.findByLabelText(/API key/);
+
+    await user.type(key, "sk-typed");
+    await user.click(screen.getByRole("button", { name: "Show key" }));
+
+    expect(key).toHaveAttribute("type", "text");
+    expect(key).toHaveValue("sk-typed");
+    await user.click(screen.getByRole("button", { name: "Hide key" }));
+    expect(key).toHaveAttribute("type", "password");
+  });
+
+  it("hides the key again after saving", async () => {
+    const user = userEvent.setup();
+    mocks.api.updateAISettings.mockResolvedValue(settings());
+    renderUi(<AISettingsPage />);
+    const key = await screen.findByLabelText(/API key/);
+    await user.type(key, "sk-typed");
+    await user.click(screen.getByRole("button", { name: "Show key" }));
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(key).toHaveAttribute("type", "password"));
   });
 });

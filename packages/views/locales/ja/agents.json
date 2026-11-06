@@ -1077,6 +1077,33 @@
     "save_failed_toast": "AI 設定を保存できませんでした",
     "load_failed": "AI 設定を読み込めませんでした",
     "retry": "再試行",
-    "model_placeholder": "空欄の場合はサーバーが読み込んだモデルを使用します"
+    "model_placeholder": "空欄の場合はサーバーが読み込んだモデルを使用します",
+    "tab_providers": "モデルプロバイダー",
+    "tab_usage": "モデルの用途",
+    "new_config": "新しい構成",
+    "duplicate_config": "複製",
+    "delete_config": "削除",
+    "next_round": "次回公開",
+    "show_key": "API キーを表示",
+    "hide_key": "API キーを非表示",
+    "custom_headers": "カスタムヘッダー",
+    "add_header": "ヘッダーを追加",
+    "model_list": "モデル",
+    "add_model": "モデルを追加",
+    "vision": "ビジョン",
+    "context_window": "コンテキスト {{value}}",
+    "output_limit": "出力 {{value}}",
+    "needs_chat_model": "メッセージの推敲にはチャットモデルが必要です。",
+    "usage_chat": "チャット AI",
+    "usage_embedding": "埋め込み",
+    "usage_rerank": "リランク",
+    "usage_decision": "判定",
+    "model_types": {
+      "chat": "チャット",
+      "embedding": "埋め込み",
+      "rerank": "リランク",
+      "decision": "判定",
+      "other": "その他"
+    }
   }
 }
