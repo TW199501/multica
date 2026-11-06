@@ -30,8 +30,8 @@ export interface DockedChatLayoutProps {
 /**
  * With the floating chat preference off, the conversation gets its own column
  * in the middle and the current page moves to a resizable column on the right;
- * on Settings, Inbox, an open project, the AI team pages, Usage and `pageFirstPaths` the page
- * stays in the middle and the conversation takes the right. With it on, on
+ * on Settings, Inbox, an open project, the AI team pages, Usage, `pageFirstPaths` and while the
+ * project tree tab is open, the page stays in the middle and the conversation takes the right. With it on, on
  * the Chat tab and on small screens, the page renders as before.
  */
 export function DockedChatLayout({ enabled = true, pageFirstPaths, children }: DockedChatLayoutProps) {
@@ -59,6 +59,7 @@ function DockedChatLayoutForWorkspace({
   const settingsPath = wsPaths.settings();
   // Wide management pages keep the middle column; work pages put the
   // conversation there.
+  const sidebarSection = useDockedLayoutStore((s) => s.sidebarSection);
   const pageFirst = [
     settingsPath,
     wsPaths.inbox(),
@@ -71,7 +72,9 @@ function DockedChatLayoutForWorkspace({
     ...pageFirstPaths,
   ].some((base) => isUnder(pathname, base)) ||
     // An open project is a wide table; the project list stays a work page.
-    pathname.startsWith(`${wsPaths.projects()}/`);
+    pathname.startsWith(`${wsPaths.projects()}/`) ||
+    // The project tree is for working through tasks, so the task leads there.
+    sidebarSection === "projects";
   // Pages carry split panes of their own (issue properties, the Inbox list
   // beside an issue), so the page column never shrinks below what they need.
   const pageMinSize = isUnder(pathname, wsPaths.inbox()) ? "780px" : "540px";
