@@ -1,0 +1,25 @@
+packages/views/issues/components/issue-detail.tsx
+  s_aa47a447e01641::t_804648a5395743 1458-1460,1464,4077
+packages/views/projects/components/project-detail.test.tsx
+  s_aa47a447e01641::t_9b885a4e512b82 3,9,386-404
+packages/views/projects/components/project-detail.tsx
+  s_aa47a447e01641::t_d41ab29ce0313d 509,618,620
+packages/views/issues/components/issue-detail.test.tsx
+  s_aa47a447e01641::t_3c6496f8134a47 775-794
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d34ad08fd1dd1ddd6e0023cea67d9f576d425021",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
