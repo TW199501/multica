@@ -1,0 +1,47 @@
+---
+title: Paramètres IA et amélioration des messages
+description: Configurez l'IA de l'espace de travail et vérifiez les brouillons améliorés avant de les envoyer.
+---
+
+## Configurer l'IA de l'espace de travail
+
+Sur Web ou Desktop, un `owner` ou `admin` ouvre les paramètres IA depuis la liste des agents. Cette configuration sert à améliorer les messages ; elle ne remplace pas le runtime ni le modèle propre à un agent.
+
+1. Dans l'onglet des fournisseurs, renseignez le fournisseur, l'endpoint API compatible OpenAI, l'identifiant du modèle et la clé API. Les endpoints auto-hébergés (llama.cpp) et personnalisés peuvent fonctionner sans clé. Vous pouvez saisir un modèle absent des suggestions, ou laisser le modèle vide si un serveur sans clé le fournit.
+2. Testez la connexion. Le test utilise les valeurs du formulaire et un court prompt fixe, sans contenu utilisateur. Il ne sauvegarde pas les modifications.
+3. Dans l'onglet des usages, configurez le prompt de conversation et, si nécessaire, la désactivation du raisonnement. Un skill sélectionné remplace le prompt éditable par son contenu ; désélectionnez-le pour modifier le prompt.
+4. Cliquez sur le bouton commun d'enregistrement. Changer d'onglet conserve les modifications non enregistrées. Vérifiez les erreurs affichées près du bouton.
+
+Laisser la clé vide conserve la clé enregistrée pour le même fournisseur et le même hôte. Si l'un change, les fournisseurs exigeant une clé demandent une nouvelle saisie. La clé enregistrée est masquée.
+
+Les suggestions, types, capacités visuelles et limites de contexte/sortie proviennent d'un catalogue embarqué. Elles ne vérifient pas en direct les droits de votre compte. L'amélioration nécessite un modèle de conversation.
+
+Une seule configuration et un seul modèle sont actuellement pris en charge par espace. La création, copie et suppression de configurations, les en-têtes personnalisés, l'ajout de modèles et les usages embedding, rerank et décision sont désactivés et annoncés pour plus tard.
+
+Si le modèle est absent du catalogue, son type est déduit de son nom ; un nom inconnu est classé comme conversation. Cette indication ne garantit pas la compatibilité.
+
+## Améliorer un brouillon
+
+Une fois l'IA disponible, le bouton d'amélioration apparaît dans les discussions, commentaires, réponses, modifications de commentaires et créations de tâches, y compris la création rapide. Saisissez du texte et attendez la fin du téléversement des pièces jointes.
+
+La fenêtre compare l'original au résultat modifiable. Relisez, corrigez ou régénérez le résultat. Dans un champ d'envoi, Envoyer suit le flux normal avec les pièces jointes et destinataires. Lors de la modification d'un commentaire ou de la création d'une tâche, Utiliser remet seulement le texte dans l'éditeur : il reste à enregistrer ou créer. Le bouton de fermeture de la barre de titre permet de revenir sans confirmer.
+
+Un échec conserve l'original ; un échec de régénération conserve le résultat précédent. Un envoi échoué laisse la fenêtre ouverte pour réessayer. Les résultats perdant des mentions, liens ou blocs de code protégés sont refusés. Relisez toujours avant de confirmer.
+
+### Améliorer avant d'envoyer
+
+Activez cette préférence dans Paramètres → Préférences → Commentaires et discussion pour vérifier discussions, commentaires et réponses avant l'envoi. Ce réglage propre à l'appareil est désactivé par défaut. Si l'IA est indisponible ou si le brouillon ne contient que des pièces jointes, l'envoi normal reste possible. Désactivez-le pour choisir manuellement l'amélioration.
+
+Le brouillon et son contexte sont envoyés à l'endpoint configuré. Les mentions, liens et code du brouillon sont remplacés par des marqueurs, mais le contexte **n'est pas masqué**. Il peut contenir votre historique de discussion ou le titre, la description et les commentaires récents ou réponses du fil d'une tâche. Consultez les [variables d'environnement](/environment-variables) pour les limites.
+
+## Instructions de décision facultatives
+
+Dans les discussions, commentaires et réponses, vous pouvez approuver l'exécution ou demander de poursuivre la discussion. Le choix seul n'envoie rien. L'approbation affiche le choix d'exécution par un ou plusieurs agents ; les instructions sont ajoutées lors de l'envoi.
+
+Un agent utilise l'instruction `superpowers:executing-plans`, plusieurs agents `superpowers:subagent-driven-development`. La poursuite de la discussion demande de ne pas commencer. Ce sont des instructions dans le message, pas un mécanisme distinct d'exécution ou de permissions. Revenez au choix vide pour un message ordinaire.
+
+## Prérequis en auto-hébergement
+
+L'opérateur doit définir une `MULTICA_AI_SECRET_KEY` stable pour enregistrer les paramètres et utiliser l'amélioration. Sa perte ou son remplacement empêche de déchiffrer les clés enregistrées. Ces fonctions ne se rabattent pas sur `MULTICA_LLM_*`.
+
+L'endpoint doit être accessible depuis le backend Multica. Les adresses privées et localhost sont refusées sauf autorisation explicite via `MULTICA_AI_ALLOW_CIDRS`. Cette autorisation concerne tous les propriétaires d'espaces : limitez sa portée. Voir les [variables d'environnement](/environment-variables). Le paquet facultatif `deploy/llama/` lance un serveur séparé à partir du GGUF que vous fournissez ; il ne télécharge pas de modèle.

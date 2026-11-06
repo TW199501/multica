@@ -1,0 +1,49 @@
+---
+title: AI settings and message polish
+description: Configure workspace AI, review polished drafts, and choose optional decision instructions.
+---
+
+## Configure workspace AI
+
+On Web or Desktop, a workspace `owner` or `admin` opens **Agents → AI settings**. These settings supply message polishing; they do not replace an agent's runtime or model configuration.
+
+1. In **Model providers**, choose a provider and enter its OpenAI-compatible API endpoint, model ID, and API key. Self-hosted (llama.cpp) and Custom can use a keyless endpoint. You can type a model ID even when it is absent from the suggestions; a keyless endpoint can accept an empty model if its server supplies one.
+2. Run the connection test. It uses the form's current values and a fixed short prompt, without user content. Testing does **not** save changes.
+3. In **Model usage**, configure the conversation AI prompt and optional Disable thinking setting. Selecting a skill uses its content instead of the editable prompt; choose no skill to edit the prompt again.
+4. Click the shared **Save** button. Switching tabs preserves unsaved edits. Check any error beside Save before leaving the page.
+
+Leaving the key field empty keeps the saved key for the same provider and host. Changing provider or host requires a new key for providers that require one. The page displays a masked saved key, not its full value.
+
+Model suggestions, type badges, vision support, and context/output limits come from a bundled catalog. They are reference information, not a live check of your account's access. Polishing needs a chat model; a non-chat type displays a warning.
+
+There is currently one workspace configuration and one selected model. Creating, copying, or deleting configurations, custom headers, adding more models, and embedding/rerank/decision model assignments are disabled and marked for a later release.
+
+For models absent from the catalog, type is inferred from the name; unknown names default to chat. This is a hint, not proof of compatibility.
+
+## Polish a draft
+
+Once workspace AI is available, use the polish button in chat, issue comments, replies, comment editing, and issue creation or quick creation. Enter text first and wait for attachments to finish uploading.
+
+The dialog shows the original beside an editable result. Review or edit the result, or regenerate it. In a sending composer, **Send** sends through that composer's normal flow with its attachments and recipients. In comment editing and issue creation, **Use** only puts the result back into the editor; you still save or create afterward. Close with the title-bar close button to return without confirming.
+
+On failure the dialog keeps the original, or the previous result if regeneration failed. A failed send leaves the dialog open for retry. Mention, link, and code protection rejects a result that loses protected content; review the final text before confirming.
+
+### Polish before sending
+
+Under **Settings → Preferences → Comments & chat**, enable polish before sending to review chat messages, comments, and replies before they go out. This device preference is off by default. When AI is unavailable, or the draft contains only attachments, normal sending remains available. Turn the preference off to choose polishing manually.
+
+### What is sent to the model?
+
+Polishing sends the draft and relevant conversation context to the workspace's configured endpoint. Draft mentions, links, and code are masked with placeholders, but conversation context is **not masked**. Context can include your own chat history, or an issue's title, description, and recent comments or thread replies. See [Environment variables](/environment-variables) for limits and endpoint controls.
+
+## Optional decision instructions
+
+Chat, comment, and reply composers also offer an optional decision: approve execution or continue discussion. Choosing a decision does not send immediately. Approval reveals single-agent or multi-agent execution; the instruction is appended when you send the message.
+
+Single-agent approval names `superpowers:executing-plans`; multi-agent approval names `superpowers:subagent-driven-development`. Discussion asks the agent not to start. These are instructions in the message, not a separate execution or permission mechanism. Choose the empty decision option for a normal message.
+
+## Self-hosted setup
+
+The operator must configure a stable `MULTICA_AI_SECRET_KEY` before settings can be saved and polishing used. Losing or changing it makes stored AI keys unreadable. These features do not fall back to the server's `MULTICA_LLM_*` settings.
+
+The endpoint must be reachable from the Multica backend. Private and localhost addresses are blocked unless explicitly allowed through `MULTICA_AI_ALLOW_CIDRS`; the allowlist applies to every workspace owner, so scope it narrowly. See [Environment variables](/environment-variables). The optional `deploy/llama/` package runs a separate model server using a GGUF file you supply; it does not download a model.
