@@ -1,0 +1,41 @@
+apps/docs/content/docs/projects.ko.mdx
+  s_49c071b898c5dd::t_8bddd8392e7069 42-47
+apps/docs/content/docs/chat.zh-Hant.mdx
+  s_49c071b898c5dd::t_8bddd8392e7069 70-71
+apps/docs/content/docs/projects.fr.mdx
+  s_49c071b898c5dd::t_8bddd8392e7069 42-47
+apps/docs/content/docs/projects.mdx
+  s_49c071b898c5dd::t_8bddd8392e7069 42-47
+apps/docs/content/docs/projects.zh.mdx
+  s_49c071b898c5dd::t_8bddd8392e7069 42-47
+apps/docs/content/docs/chat.mdx
+  s_49c071b898c5dd::t_8bddd8392e7069 70-71
+apps/docs/content/docs/chat.fr.mdx
+  s_49c071b898c5dd::t_8bddd8392e7069 70-71
+apps/docs/content/docs/chat.ja.mdx
+  s_49c071b898c5dd::t_8bddd8392e7069 70-71
+apps/docs/content/docs/chat.ko.mdx
+  s_49c071b898c5dd::t_8bddd8392e7069 70-71
+apps/docs/content/docs/projects.zh-Hant.mdx
+  s_49c071b898c5dd::t_8bddd8392e7069 42-47
+apps/docs/content/docs/projects.ja.mdx
+  s_49c071b898c5dd::t_8bddd8392e7069 42-47
+apps/docs/content/docs/chat.zh.mdx
+  s_49c071b898c5dd::t_8bddd8392e7069 70-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "eea7c8c5254e5d94e446eb9b2a0ed84baef3a8ae",
+  "prompts": {},
+  "sessions": {
+    "s_49c071b898c5dd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1af81-1b14-70a1-8ac2-1c3d3c74911f",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
