@@ -1,0 +1,21 @@
+server/pkg/llm/client.go
+  s_aa47a447e01641::t_7ef5404d9a5cc7 220-223
+server/pkg/llm/client_env_test.go
+  s_aa47a447e01641::t_53bfc69027fe73 1-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d1ad17f2b42a846ea3f78a07980850fe0500a903",
+  "prompts": {},
+  "sessions": {
+    "s_aa47a447e01641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2891c356-2731-47bf-a115-f174331b7699",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "楊清雲 <41539966+TW199501@users.noreply.github.com>"
+    }
+  }
+}
