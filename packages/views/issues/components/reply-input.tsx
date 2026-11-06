@@ -262,7 +262,9 @@ function ReplyInput({
     editorRef,
     submit,
     onAdopted: syncAdopted,
-    canSend: canSend && !submitting && !gate.uploading,
+    // Hard blockers only: `canSend` follows the editor's debounce, and the gate
+    // reads the live markdown itself.
+    canSend: !targetMissing && !submitting && !gate.uploading,
     allowEmptySend: decision !== null,
   });
   const { gatedSubmit, dialog: polishGateDialog } = polishGate;

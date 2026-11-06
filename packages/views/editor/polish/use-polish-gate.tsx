@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState, type ReactNode, type RefObject } from "react";
+import { flushSync } from "react-dom";
 import { useCommentComposerStore } from "@multica/core/issues/stores";
 import { useCurrentWorkspace } from "@multica/core/paths";
 import type { PolishContext } from "@multica/core/types";
@@ -13,8 +14,11 @@ export interface PolishGateOptions {
   wsId: string;
   context: PolishContext;
   editorRef: RefObject<ContentEditorRef | null>;
-  /** The composer's own submit; the dialog's send runs exactly this. */
-  submit: () => Promise<void>;
+  /**
+   * The composer's own submit; the dialog's send runs exactly this and stays
+   * open when it resolves false, so a refused send can retry the same text.
+   */
+  submit: () => Promise<boolean>;
   /** Syncs the composer's draft after the dialog text replaced the editor. */
   onAdopted?: (markdown: string) => void;
   /**
@@ -105,8 +109,10 @@ export function usePolishGate({
       // node and strand the file; keep the dialog open until it settles.
       if (editorRef.current?.hasActiveUploads()) return;
       editorRef.current?.adoptContent(markdown);
-      stateRef.current.onAdopted?.(markdown);
-      if (opened?.mode === "send") await stateRef.current.submit();
+      // Commit before sending: the composer routes recipients from its rendered
+      // draft, and a run must not be stopped for a mention the dialog removed.
+      flushSync(() => stateRef.current.onAdopted?.(markdown));
+      if (opened?.mode === "send" && !(await stateRef.current.submit())) return;
       setOpened(null);
     },
     [editorRef, opened?.mode],

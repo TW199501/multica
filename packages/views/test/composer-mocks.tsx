@@ -11,6 +11,8 @@ import { vi } from "vitest";
 export const mockEditorState = {
   uploading: false,
   notifyUploading: undefined as ((uploading: boolean) => void) | undefined,
+  /** Holds back onUpdate, like the real editor inside its debounce window. */
+  holdUpdates: false,
 };
 
 export async function editorModule(): Promise<Record<string, unknown>> {
@@ -88,7 +90,7 @@ const MockContentEditor = forwardRef(function MockContentEditor(
       onChange={(event) => {
         valueRef.current = event.target.value;
         setText(event.target.value);
-        onUpdate?.(event.target.value);
+        if (!mockEditorState.holdUpdates) onUpdate?.(event.target.value);
       }}
       onKeyDown={(event) => {
         if (event.key === "Enter" && !event.shiftKey) {
@@ -135,6 +137,7 @@ export function chatModule(): Record<string, unknown> {
 export function resetComposerMocks() {
   mockEditorState.uploading = false;
   mockEditorState.notifyUploading = undefined;
+  mockEditorState.holdUpdates = false;
   mockChatState.activeSessionId = null;
   mockChatState.inputDrafts = {};
 }

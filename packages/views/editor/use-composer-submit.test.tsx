@@ -254,7 +254,7 @@ describe("useComposerSubmit afterAccepted", () => {
         afterAccepted: "refocus",
       }),
     );
-    let pending!: Promise<void>;
+    let pending!: Promise<boolean>;
     act(() => { pending = result.current.submit(); });
     await act(async () => { resolve(true); await pending; });
     unmount();

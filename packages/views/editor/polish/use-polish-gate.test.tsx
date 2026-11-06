@@ -11,6 +11,7 @@ const apiPolishText = vi.hoisted(() => vi.fn());
 const apiListWorkspaces = vi.hoisted(() => vi.fn());
 const apiPreviewCommentTriggers = vi.hoisted(() => vi.fn());
 const apiListTasksByIssue = vi.hoisted(() => vi.fn());
+const apiCancelTask = vi.hoisted(() => vi.fn());
 
 vi.mock("@multica/core/api", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@multica/core/api")>()),
@@ -24,7 +25,7 @@ vi.mock("@multica/core/api", async (importOriginal) => ({
     renderQuickAction: vi.fn(),
     previewCommentTriggers: apiPreviewCommentTriggers,
     listTasksByIssue: apiListTasksByIssue,
-    cancelTask: vi.fn(),
+    cancelTask: apiCancelTask,
   },
 }));
 
@@ -140,6 +141,7 @@ beforeEach(() => {
   apiPreviewCommentTriggers.mockResolvedValue({ agents: [] });
   apiListTasksByIssue.mockReset();
   apiListTasksByIssue.mockResolvedValue([]);
+  apiCancelTask.mockReset();
   localStorage.clear();
   resetComposerMocks();
   mockChatState.activeSessionId = "session-1";
@@ -282,6 +284,102 @@ describe("usePolishGate", () => {
       expect(send).toHaveBeenCalledWith("Hello world.", undefined, undefined, ["turn-1"]),
     );
   }, 15_000);
+
+  describe("a run the sender chose to stop", () => {
+    const AGENT_ID = "11111111-1111-4111-8111-111111111111";
+    const MENTION = `[@Lambda](mention://agent/${AGENT_ID})`;
+
+    async function openDialogWithRestartChosen(send: (...args: any[]) => any) {
+      const turn = {
+        id: "turn-1", agent_id: AGENT_ID, issue_id: "issue-1", status: "running", priority: 0,
+        created_at: "2026-09-23T00:00:00Z", dispatched_at: null, started_at: "2026-09-23T00:00:01Z",
+        completed_at: null, result: null, error: null,
+        supplement_capability: "task-supplement-v1", can_supplement: true,
+      };
+      apiListTasksByIssue.mockResolvedValue([turn]);
+      apiCancelTask.mockResolvedValue({ ...turn, status: "cancelled" });
+      apiPreviewCommentTriggers.mockImplementation(async (_issue: string, content: string) => ({
+        agents: content.includes(AGENT_ID)
+          ? [{ id: AGENT_ID, name: "Lambda", source: "mention_agent", reason: "" }]
+          : [],
+      }));
+      apiPolishText.mockResolvedValue({ text: `${MENTION} start over` });
+      renderUi(<CommentInput issueId="issue-1" onSubmit={send} />);
+      await typeInto(composers[1]!, `${MENTION} start ovr`);
+      await waitFor(() => {
+        const chip = screen.getByRole("button", { name: "Lambda trigger: Add to current run" });
+        if (chip.getAttribute("aria-expanded") !== "true") fireEvent.click(chip);
+        expect(screen.getByRole("menuitemradio", { name: /Stop and start over/ })).toBeInTheDocument();
+      }, { timeout: 5000 });
+      fireEvent.click(screen.getByRole("menuitemradio", { name: /Stop and start over/ }));
+      fireEvent.click(await screen.findByRole("button", { name: "Stop and send" }, { timeout: 5000 }));
+      return waitForPolished("@Lambda start over");
+    }
+
+    it("is not stopped once the dialog edit removed its mention", async () => {
+      const send = vi.fn().mockResolvedValue("comment-9");
+      const dialog = await openDialogWithRestartChosen(send);
+
+      fireEvent.change(within(dialog).getByLabelText("After"), { target: { value: "just a note" } });
+      fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
+
+      await waitFor(() => expect(send).toHaveBeenCalled());
+      expect(send.mock.calls[0]?.[0]).toBe("just a note");
+      expect(apiCancelTask).not.toHaveBeenCalled();
+    }, 15_000);
+
+    it("is still stopped while the mention stays", async () => {
+      const send = vi.fn().mockResolvedValue("comment-9");
+      const dialog = await openDialogWithRestartChosen(send);
+
+      fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
+
+      await waitFor(() => expect(send).toHaveBeenCalled());
+      expect(send.mock.calls[0]?.[0]).toBe(`${MENTION} start over`);
+      expect(apiCancelTask).toHaveBeenCalledWith("issue-1", "turn-1");
+    }, 15_000);
+  });
+
+  it("keeps the dialog and its result when the send is rejected, and retries the same text", async () => {
+    const send = vi.fn().mockResolvedValueOnce(undefined).mockResolvedValueOnce("comment-9");
+    renderUi(<CommentInput issueId="issue-1" onSubmit={send} />);
+    await typeInto(composers[1]!, "hello wrld");
+    await screen.findByRole("button", { name: "Polish message" });
+
+    fireEvent.click(composerSendButton());
+    const dialog = await waitForPolished("Hello world.");
+    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
+
+    await waitFor(() => expect(send).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(within(dialog).getByRole("button", { name: "Send" })).toBeEnabled());
+    expect((within(dialog).getByLabelText("After") as HTMLTextAreaElement).value).toBe("Hello world.");
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Send" }));
+
+    await waitFor(() => expect(send).toHaveBeenCalledTimes(2));
+    expect(send.mock.calls[1]?.[0]).toBe("Hello world.");
+    expect(apiPolishText).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+  });
+
+  for (const composer of composers.slice(1)) {
+    it(`enter inside the editor's debounce still opens the dialog (${composer.name})`, async () => {
+      const send = vi.fn().mockResolvedValue("comment-1");
+      composer.render(send);
+      await screen.findByTestId(composer.shell!);
+      fireEvent.click(screen.getByTestId(composer.shell!));
+      const editor = (await screen.findByTestId("editor")) as HTMLTextAreaElement;
+      await waitFor(() => expect(apiGetAISettingsStatus).toHaveBeenCalled());
+      await act(async () => {});
+
+      mockEditorState.holdUpdates = true;
+      fireEvent.change(editor, { target: { value: "hello wrld" } });
+      fireEvent.keyDown(editor, { key: "Enter" });
+
+      await waitForPolished("Hello world.");
+      expect(send).not.toHaveBeenCalled();
+    });
+  }
 
   it("chat sends the text from the dialog and syncs the draft first", async () => {
     const send = vi.fn().mockResolvedValue(true);
