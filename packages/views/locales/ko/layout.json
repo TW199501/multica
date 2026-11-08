@@ -76,7 +76,7 @@
     "menu": "메뉴",
     "projects": "프로젝트",
     "settings": "설정",
-    "projects_empty": "아직 연결된 저장소가 없습니다.",
+    "projects_empty": "프로젝트를 열면 파일이 표시됩니다.",
     "explorer": "파일 탐색기",
     "pinned_empty": "고정한 항목이 없습니다."
   }

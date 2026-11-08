@@ -10,6 +10,7 @@ import {
   ResizablePanelGroup,
 } from "@multica/ui/components/ui/resizable";
 import { cn } from "@multica/ui/lib/utils";
+import { ProjectCodeExplorer } from "../projects/components/project-code-explorer";
 import { useNavigation } from "../navigation";
 import { useT } from "../i18n";
 
@@ -90,11 +91,16 @@ export function DockedSidebarTabs({ active }: { active: DockedSidebarSection }) 
 
 /**
  * Body of the projects section: pinned items on top (25%) and the file
- * explorer below (75%), each scrolling on its own. The explorer stays empty
- * until a repository source is connected.
+ * explorer below (75%), each scrolling on its own. The explorer shows the open
+ * project's repository branch.
  */
 export function DockedProjectTree({ pinned }: { pinned?: ReactNode }) {
   const { t } = useT("layout");
+  const { pathname } = useNavigation();
+  const projectsPath = useWorkspacePaths().projects();
+  const projectId = pathname.startsWith(`${projectsPath}/`)
+    ? pathname.slice(projectsPath.length + 1).split("/")[0]
+    : "";
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({ id: "multica_docked_projects_split" });
   return (
     <ResizablePanelGroup
@@ -121,9 +127,13 @@ export function DockedProjectTree({ pinned }: { pinned?: ReactNode }) {
           <h2 className="px-4 pb-1 pt-2 text-caption font-medium text-muted-foreground">
             {t(($) => $.docked.explorer)}
           </h2>
-          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-2 text-caption text-muted-foreground">
-            {t(($) => $.docked.projects_empty)}
-          </div>
+          {projectId ? (
+            <ProjectCodeExplorer key={projectId} projectId={projectId} />
+          ) : (
+            <div className="min-h-0 flex-1 overflow-y-auto px-4 py-2 text-caption text-muted-foreground">
+              {t(($) => $.docked.projects_empty)}
+            </div>
+          )}
         </section>
       </ResizablePanel>
     </ResizablePanelGroup>

@@ -180,5 +180,24 @@
     "direction_desc": "내림차순",
     "section_columns": "열",
     "view": "보기"
+  },
+  "code": {
+    "tab": "코드",
+    "default_branch": "기본 브랜치",
+    "no_repository": "연결된 GitHub 저장소가 없습니다.",
+    "load_failed": "이 저장소를 읽을 수 없습니다. 비공개 저장소는 서버에 GITHUB_TOKEN을 설정해야 합니다.",
+    "truncated": "파일이 너무 많아 목록의 일부만 표시합니다.",
+    "finish_editing": "먼저 저장하거나 편집을 취소하세요.",
+    "select_file": "탐색기에서 파일을 선택하세요.",
+    "file_load_failed": "이 파일을 읽을 수 없습니다.",
+    "binary": "이 파일은 표시할 수 없습니다.",
+    "too_large": "이 파일은 1MB를 넘어 표시할 수 없습니다.",
+    "edit": "편집",
+    "cancel": "취소",
+    "save": "저장",
+    "saved": "브랜치에 저장했습니다",
+    "save_conflict": "저장하지 못했습니다: 브랜치의 파일이 변경되었거나 브랜치가 보호되어 있습니다.",
+    "save_denied": "저장하지 못했습니다: 서버의 GitHub 토큰에 쓰기 권한이 없습니다.",
+    "save_failed": "저장할 수 없습니다."
   }
 }

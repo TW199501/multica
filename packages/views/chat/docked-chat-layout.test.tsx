@@ -147,6 +147,34 @@ describe("DockedChatLayout", () => {
     useDockedLayoutStore.setState({ sidebarSection: "menu" });
   });
 
+  it("gives an open project the right column while the project tree tab is open", () => {
+    useDockedLayoutStore.setState({ sidebarSection: "projects" });
+    renderAt("/acme/projects/project-1");
+
+    const aside = useDockedLayoutStore.getState().asideElement;
+    expect(aside).toBeInstanceOf(HTMLElement);
+    const page = screen.getByTestId("route-page");
+    expect(page.compareDocumentPosition(aside!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.getByTestId("chat-window")).not.toBeVisible();
+    useDockedLayoutStore.setState({ sidebarSection: "menu" });
+  });
+
+  it("keeps the conversation on pages with no project open", () => {
+    useDockedLayoutStore.setState({ sidebarSection: "projects" });
+    renderAt("/acme/issues/issue-1");
+
+    expect(useDockedLayoutStore.getState().asideElement).toBeNull();
+    expect(screen.getByTestId("chat-window")).toBeVisible();
+    useDockedLayoutStore.setState({ sidebarSection: "menu" });
+  });
+
+  it("keeps the conversation on an open project under the menu tab", () => {
+    renderAt("/acme/projects/project-1");
+
+    expect(useDockedLayoutStore.getState().asideElement).toBeNull();
+    expect(screen.getByTestId("chat-window")).toBeVisible();
+  });
+
   it("puts a page-first route such as the desktop browser in the middle", () => {
     renderAt("/acme/browser", undefined, ["/acme/browser"]);
 
