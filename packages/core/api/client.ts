@@ -119,9 +119,6 @@ import type {
   CreateProjectResourceRequest,
   UpdateProjectResourceRequest,
   ListProjectResourcesResponse,
-  ProjectCodeTree,
-  ProjectCodeFile,
-  SaveProjectCodeFileRequest,
   Label,
   IssueProperty,
   IssuePropertyValue,
@@ -455,8 +452,6 @@ import {
   EMPTY_RESOURCE_LABELS_RESPONSE,
   GitHubConnectResponseSchema,
   ListGitHubInstallationsResponseSchema,
-  ProjectCodeFileSchema,
-  ProjectCodeTreeSchema,
   ListGitHubRepositoriesResponseSchema,
   EMPTY_GITHUB_CONNECT_RESPONSE,
   EMPTY_LIST_GITHUB_INSTALLATIONS_RESPONSE,
@@ -4212,50 +4207,6 @@ export class ApiClient {
       method: "PUT",
       body: JSON.stringify(data),
     });
-  }
-
-  async getProjectCodeTree(projectId: string, resourceId: string): Promise<ProjectCodeTree> {
-    const endpoint = `/api/projects/${projectId}/resources/${resourceId}/code/tree`;
-    const raw = await this.fetch<unknown>(endpoint);
-    return parseWithFallback<ProjectCodeTree>(
-      raw,
-      ProjectCodeTreeSchema,
-      { ref: "", truncated: false, files: [] },
-      { endpoint },
-    );
-  }
-
-  async getProjectCodeFile(
-    projectId: string,
-    resourceId: string,
-    path: string,
-  ): Promise<ProjectCodeFile> {
-    const endpoint = `/api/projects/${projectId}/resources/${resourceId}/code/file`;
-    const raw = await this.fetch<unknown>(`${endpoint}?path=${encodeURIComponent(path)}`);
-    return parseWithFallback<ProjectCodeFile>(
-      raw,
-      ProjectCodeFileSchema,
-      { path, ref: "", sha: "", content: "", binary: true, too_large: false },
-      { endpoint },
-    );
-  }
-
-  async saveProjectCodeFile(
-    projectId: string,
-    resourceId: string,
-    data: SaveProjectCodeFileRequest,
-  ): Promise<ProjectCodeFile> {
-    const endpoint = `/api/projects/${projectId}/resources/${resourceId}/code/file`;
-    const raw = await this.fetch<unknown>(endpoint, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
-    return parseWithFallback<ProjectCodeFile>(
-      raw,
-      ProjectCodeFileSchema,
-      { path: data.path, ref: "", sha: "", content: data.content, binary: false, too_large: false },
-      { endpoint },
-    );
   }
 
   async deleteProjectResource(

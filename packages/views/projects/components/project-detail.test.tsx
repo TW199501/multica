@@ -383,30 +383,6 @@ describe("ProjectDetail in the docked chat layout", () => {
   });
 });
 
-describe("ProjectDetail with the project tree tab open", () => {
-  let aside: HTMLElement;
-
-  beforeEach(() => {
-    aside = document.createElement("div");
-    document.body.appendChild(aside);
-    useDockedLayoutStore.setState({ layoutActive: true, asideElement: aside });
-  });
-  afterEach(() => {
-    useDockedLayoutStore.setState({ layoutActive: false, asideElement: null });
-    aside.remove();
-  });
-
-  it("keeps the project in the middle and moves the properties to the right column", async () => {
-    renderProjectDetail();
-
-    const propertiesTab = await screen.findByRole("tab", { name: "Properties" });
-    expect(aside).toContainElement(propertiesTab);
-    expect(aside).toContainElement(screen.getByRole("tab", { name: "Code" }));
-    expect(screen.queryByRole("tab", { name: "Project" })).not.toBeInTheDocument();
-    expect(screen.getByRole("tabpanel", { name: "Properties" })).toHaveTextContent("Properties");
-  });
-});
-
 describe("ProjectDetail right sidebar shortcut in the docked chat layout", () => {
   beforeEach(() => useDockedLayoutStore.setState({ layoutActive: true }));
   afterEach(() => useDockedLayoutStore.setState({ layoutActive: false }));

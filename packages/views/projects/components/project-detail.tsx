@@ -38,9 +38,7 @@ import { IconButton } from "@multica/ui/components/common/icon-button";
 import { TooltipHint } from "@multica/ui/components/common/tooltip-hint";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@multica/ui/components/ui/resizable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@multica/ui/components/ui/tabs";
-import { createPortal } from "react-dom";
 import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
-import { ProjectDockedAside } from "./project-code-panel";
 import { Sheet, SheetContent } from "@multica/ui/components/ui/sheet";
 import { useIsMobile } from "@multica/ui/hooks/use-mobile";
 import {
@@ -197,9 +195,6 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
   // share this column with the project behind tabs.
   const docked = useDockedLayoutStore((s) => s.layoutActive) && !isMobile;
   const [dockedTab, setDockedTab] = useState<"project" | "properties">("project");
-  // With the project tree tab open, the properties get the right column.
-  const asideElement = useDockedLayoutStore((s) => s.asideElement);
-  const aside = docked ? asideElement : null;
   useEffect(() => {
     setDockedTab("project");
   }, [projectId]);
@@ -217,7 +212,7 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
       return;
     }
     if (docked) {
-      if (!aside) setDockedTab((tab) => (tab === "project" ? "properties" : "project"));
+      setDockedTab((tab) => (tab === "project" ? "properties" : "project"));
       return;
     }
 
@@ -229,7 +224,7 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
       if (nextOpen) panel.expand();
       else panel.collapse();
     });
-  }, [aside, beginDesktopSidebarToggle, docked, isMobile, sidebarRef]);
+  }, [beginDesktopSidebarToggle, docked, isMobile, sidebarRef]);
 
   useRightSidebarShortcut(rightSidebarShortcutTargetRef, handleToggleSidebar);
 
@@ -623,18 +618,16 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
         {/* The shortcut needs a target that stays visible on both tabs. */}
         <Tabs
           ref={rightSidebarShortcutTargetRef}
-          value={aside ? "project" : dockedTab}
+          value={dockedTab}
           onValueChange={(value) => setDockedTab(value as "project" | "properties")}
           className="flex min-h-0 flex-1 flex-col gap-0"
         >
-          {!aside && (
-            <div className="flex shrink-0 items-center border-b px-3 py-1.5">
-              <TabsList>
-                <TabsTrigger value="project">{tLayout(($) => $.tab.project)}</TabsTrigger>
-                <TabsTrigger value="properties">{t(($) => $.detail.section_properties)}</TabsTrigger>
-              </TabsList>
-            </div>
-          )}
+          <div className="flex shrink-0 items-center border-b px-3 py-1.5">
+            <TabsList>
+              <TabsTrigger value="project">{tLayout(($) => $.tab.project)}</TabsTrigger>
+              <TabsTrigger value="properties">{t(($) => $.detail.section_properties)}</TabsTrigger>
+            </TabsList>
+          </div>
           {/* Both stay mounted: leaving the project must not drop its filters
               or scroll position. */}
           <TabsContent keepMounted value="project" className="flex min-h-0 flex-col data-hidden:hidden">
@@ -645,11 +638,9 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
             value="properties"
             className="min-h-0 overflow-y-auto [scrollbar-gutter:stable] px-4 py-4 data-hidden:hidden"
           >
-            {!aside && sidebarContent}
+            {sidebarContent}
           </TabsContent>
         </Tabs>
-        {aside &&
-          createPortal(<ProjectDockedAside projectId={projectId} properties={sidebarContent} />, aside)}
         {deleteDialog}
       </>
     );

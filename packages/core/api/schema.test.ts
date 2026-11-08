@@ -24,42 +24,6 @@ afterEach(() => {
 // app in past incidents. The contract is: a malformed response degrades to
 // an empty/safe shape, never throws into React.
 describe("ApiClient schema fallback", () => {
-  describe("project code browser", () => {
-    it("falls back to an empty tree and a non-editable file when responses are malformed", async () => {
-      const client = new ApiClient("https://api.example.test");
-
-      stubFetchJson({ files: "not-an-array" });
-      await expect(client.getProjectCodeTree("p1", "r1")).resolves.toEqual({
-        ref: "",
-        truncated: false,
-        files: [],
-      });
-
-      stubFetchJson({ sha: 42 });
-      await expect(client.getProjectCodeFile("p1", "r1", "a.go")).resolves.toEqual({
-        path: "a.go",
-        ref: "",
-        sha: "",
-        content: "",
-        binary: true,
-        too_large: false,
-      });
-    });
-
-    it("defaults fields an older server omits", async () => {
-      const client = new ApiClient("https://api.example.test");
-      stubFetchJson({ path: "a.go", sha: "blob-1", content: "x" });
-      await expect(client.getProjectCodeFile("p1", "r1", "a.go")).resolves.toEqual({
-        path: "a.go",
-        ref: "",
-        sha: "blob-1",
-        content: "x",
-        binary: false,
-        too_large: false,
-      });
-    });
-  });
-
   describe("GitHub repository import", () => {
     it("falls back safely when installation or repository responses are malformed", async () => {
       stubFetchJson({ installations: "not-an-array", configured: true });

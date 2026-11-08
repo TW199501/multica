@@ -4,53 +4,13 @@ import { projectKeys } from "./queries";
 import type {
   CreateProjectResourceRequest,
   ListProjectResourcesResponse,
-  ProjectCodeFile,
-  SaveProjectCodeFileRequest,
   UpdateProjectResourceRequest,
 } from "../types";
 
 export const projectResourceKeys = {
   list: (wsId: string, projectId: string) =>
     [...projectKeys.detail(wsId, projectId), "resources"] as const,
-  codeTree: (wsId: string, projectId: string, resourceId: string) =>
-    [...projectKeys.detail(wsId, projectId), "resources", resourceId, "code", "tree"] as const,
-  codeFile: (wsId: string, projectId: string, resourceId: string, path: string) =>
-    [...projectKeys.detail(wsId, projectId), "resources", resourceId, "code", "file", path] as const,
 };
-
-export function projectCodeTreeOptions(wsId: string, projectId: string, resourceId: string) {
-  return queryOptions({
-    queryKey: projectResourceKeys.codeTree(wsId, projectId, resourceId),
-    queryFn: () => api.getProjectCodeTree(projectId, resourceId),
-    staleTime: 60_000,
-    retry: false,
-  });
-}
-
-export function projectCodeFileOptions(
-  wsId: string,
-  projectId: string,
-  resourceId: string,
-  path: string,
-) {
-  return queryOptions({
-    queryKey: projectResourceKeys.codeFile(wsId, projectId, resourceId, path),
-    queryFn: () => api.getProjectCodeFile(projectId, resourceId, path),
-    staleTime: 60_000,
-    retry: false,
-  });
-}
-
-export function useSaveProjectCodeFile(wsId: string, projectId: string, resourceId: string) {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (data: SaveProjectCodeFileRequest) =>
-      api.saveProjectCodeFile(projectId, resourceId, data),
-    onSuccess: (saved: ProjectCodeFile) => {
-      qc.setQueryData(projectResourceKeys.codeFile(wsId, projectId, resourceId, saved.path), saved);
-    },
-  });
-}
 
 export function projectResourcesOptions(wsId: string, projectId: string) {
   return queryOptions({

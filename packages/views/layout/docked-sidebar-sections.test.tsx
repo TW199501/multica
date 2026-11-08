@@ -8,13 +8,7 @@ import { NavigationProvider, type NavigationAdapter } from "../navigation";
 import enLayout from "../locales/en/layout.json";
 
 vi.mock("@multica/core/paths", () => ({
-  useWorkspacePaths: () => ({ settings: () => "/acme/settings", projects: () => "/acme/projects" }),
-}));
-
-vi.mock("../projects/components/project-code-explorer", () => ({
-  ProjectCodeExplorer: ({ projectId }: { projectId: string }) => (
-    <div data-testid="code-explorer">{projectId}</div>
-  ),
+  useWorkspacePaths: () => ({ settings: () => "/acme/settings" }),
 }));
 
 const { DockedSidebarTabs, dockedSectionBody, useDockedSidebarSection } = await import(
@@ -31,8 +25,9 @@ function Sections() {
   );
 }
 
-function navigationAt(pathname: string, push = vi.fn()): NavigationAdapter {
-  return {
+function renderAt(pathname: string) {
+  const push = vi.fn();
+  const navigation: NavigationAdapter = {
     push,
     replace: vi.fn(),
     back: vi.fn(),
@@ -41,11 +36,6 @@ function navigationAt(pathname: string, push = vi.fn()): NavigationAdapter {
     hash: "",
     getShareableUrl: (path) => path,
   };
-}
-
-function renderAt(pathname: string) {
-  const push = vi.fn();
-  const navigation = navigationAt(pathname, push);
   render(
     <I18nProvider locale="en" resources={{ en: { layout: enLayout } }}>
       <NavigationProvider value={navigation}>
@@ -80,7 +70,7 @@ describe("docked sidebar sections", () => {
 
     expect(screen.getByRole("region", { name: "Pinned" })).toHaveTextContent("Nothing pinned yet.");
     expect(screen.getByRole("region", { name: "File explorer" })).toHaveTextContent(
-      "Open a project to see its files.",
+      "No repository connected yet.",
     );
     expect(screen.queryByTestId("menu")).not.toBeInTheDocument();
   });
@@ -88,9 +78,7 @@ describe("docked sidebar sections", () => {
   it("shows pinned items above the file explorer", () => {
     render(
       <I18nProvider locale="en" resources={{ en: { layout: enLayout } }}>
-        <NavigationProvider value={navigationAt("/acme/issues")}>
-          {dockedSectionBody("projects", { pinned: <a href="/acme/projects/p1">Roadmap</a> })}
-        </NavigationProvider>
+        {dockedSectionBody("projects", { pinned: <a href="/acme/projects/p1">Roadmap</a> })}
       </I18nProvider>,
     );
 
@@ -98,16 +86,6 @@ describe("docked sidebar sections", () => {
     const explorer = screen.getByRole("region", { name: "File explorer" });
     expect(pinned).toHaveTextContent("Roadmap");
     expect(pinned.compareDocumentPosition(explorer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-  });
-
-  it("shows the open project's files in the explorer", () => {
-    render(
-      <I18nProvider locale="en" resources={{ en: { layout: enLayout } }}>
-        <NavigationProvider value={navigationAt("/acme/projects/p1")}>{dockedSectionBody("projects")}</NavigationProvider>
-      </I18nProvider>,
-    );
-
-    expect(screen.getByTestId("code-explorer")).toHaveTextContent("p1");
   });
 
   it("opens Settings from its tab and hosts the settings navigation there", () => {
@@ -133,7 +111,7 @@ describe("docked sidebar sections", () => {
     expect(screen.getByTestId("menu")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("tab", { name: "Projects" }));
-    expect(screen.getByText("Open a project to see its files.")).toBeInTheDocument();
+    expect(screen.getByText("No repository connected yet.")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("tab", { name: "Settings" }));
     expect(screen.getByRole("tab", { name: "Settings" })).toHaveAttribute("aria-selected", "true");

@@ -76,7 +76,7 @@
     "menu": "Menu",
     "projects": "Projects",
     "settings": "Settings",
-    "projects_empty": "Open a project to see its files.",
+    "projects_empty": "No repository connected yet.",
     "explorer": "File explorer",
     "pinned_empty": "Nothing pinned yet."
   }
