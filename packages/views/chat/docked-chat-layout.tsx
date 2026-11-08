@@ -32,7 +32,8 @@ export interface DockedChatLayoutProps {
  * in the middle and the current page moves to a resizable column on the right;
  * on Settings, Inbox, an open project, the AI team pages, Usage, `pageFirstPaths` and while the
  * project tree tab is open, the page stays in the middle and the conversation takes the right. With it on, on
- * the Chat tab and on small screens, the page renders as before.
+ * the Chat tab and on small screens, the page renders as before. An open project with the project tree tab open
+ * takes the right column for its properties and code, and the conversation stays hidden until the tab changes.
  */
 export function DockedChatLayout({ enabled = true, pageFirstPaths, children }: DockedChatLayoutProps) {
   if (!enabled) return <>{children}</>;
@@ -86,6 +87,8 @@ function DockedChatLayoutForWorkspace({
   const setLayoutActive = useDockedLayoutStore((s) => s.setLayoutActive);
   const setShellDocked = useDockedLayoutStore((s) => s.setShellDocked);
   const setPageElement = useDockedLayoutStore((s) => s.setPageElement);
+  const setAsideElement = useDockedLayoutStore((s) => s.setAsideElement);
+  const projectAside = sidebarSection === "projects" && pathname.startsWith(`${wsPaths.projects()}/`);
 
   useLayoutEffect(() => {
     setShellDocked(shellDocked);
@@ -109,7 +112,13 @@ function DockedChatLayoutForWorkspace({
       minSize="360px"
     >
       <div className={pageFirst ? "h-full border-l" : "h-full border-r"}>
-        <ChatWindow variant="docked" />
+        {projectAside && (
+          <div ref={setAsideElement} data-slot="docked-aside" className="flex h-full min-h-0 flex-col" />
+        )}
+        {/* Hidden, not unmounted: returning to the conversation keeps its scroll position. */}
+        <div hidden={projectAside} className="h-full">
+          <ChatWindow variant="docked" />
+        </div>
       </div>
     </ResizablePanel>
   );

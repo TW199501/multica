@@ -182,5 +182,24 @@
     "direction_desc": "Descending",
     "section_columns": "Columns",
     "view": "View"
+  },
+  "code": {
+    "tab": "Code",
+    "default_branch": "Default branch",
+    "no_repository": "No GitHub repository connected.",
+    "load_failed": "Could not read this repository. Private repositories need GITHUB_TOKEN set on the server.",
+    "truncated": "Too many files. Only part of the list is shown.",
+    "finish_editing": "Save or cancel your edit first.",
+    "select_file": "Choose a file in the explorer.",
+    "file_load_failed": "Could not read this file.",
+    "binary": "This file can't be displayed.",
+    "too_large": "This file is over 1 MB and can't be displayed.",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "Saved to the branch",
+    "save_conflict": "Not saved: the file changed on the branch, or the branch is protected.",
+    "save_denied": "Not saved: the server's GitHub token has no write access.",
+    "save_failed": "Could not save the file."
   }
 }

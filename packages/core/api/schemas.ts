@@ -342,6 +342,21 @@ export const EMPTY_PLUGIN_SURFACE_LAUNCH: PluginSurfaceLaunch = {
   digest: "",
 };
 
+export const ProjectCodeTreeSchema = z.object({
+  ref: z.string().default(""),
+  truncated: z.boolean().default(false),
+  files: z.array(z.string()).default([]),
+});
+
+export const ProjectCodeFileSchema = z.object({
+  path: z.string().default(""),
+  ref: z.string().default(""),
+  sha: z.string().default(""),
+  content: z.string().default(""),
+  binary: z.boolean().default(false),
+  too_large: z.boolean().default(false),
+});
+
 export const GitHubInstallationSchema = z.object({
   id: z.string(),
   workspace_id: z.string(),
