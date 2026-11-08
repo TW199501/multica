@@ -183,6 +183,7 @@ allowlist の正確な判定順序は[ログインとサインアップ](/auth-s
 | GitHub | `GITHUB_WEBHOOK_SECRET` | Webhook HMAC と接続 state の署名シークレット |
 | GitHub | `GITHUB_APP_ID` | PR カードの CI ステータス・マージ可否と「GitHub から選択」リポジトリに必要です |
 | GitHub | `GITHUB_APP_PRIVATE_KEY` | App ID と対になる完全な PEM 秘密鍵。用途は同上 |
+| GitHub | `GITHUB_TOKEN` | [プロジェクトのコード表示](/projects)でプライベートリポジトリの読み取りと保存を可能にします。保存には contents の書き込み権限が必要です。スキルインポートの GitHub API 上限も引き上げます。ワークスペースのメンバーは、自分で追加したリソースを含め、このトークンで届くリポジトリを読み書きできるため、必要なリポジトリだけに範囲を絞ってください |
 | Lark | `MULTICA_LARK_SECRET_KEY` | base64 エンコードされた 32 バイトの資格情報暗号化キー |
 | Slack | `MULTICA_SLACK_SECRET_KEY` | base64 エンコードされた 32 バイトの token 暗号化キー |
 | AI 設定 | `MULTICA_AI_SECRET_KEY` | ワークスペースの AI 設定の key を暗号化する、base64 エンコードされた 32 バイトのキー。未設定の場合、AI 設定ページは保存できず、メッセージの推敲も使えません。紛失・変更すると保存済みの AI key を復号できなくなるため、固定してください |

@@ -45,6 +45,14 @@ With [docked chat](/chat) enabled on a wider Web or Desktop screen, project deta
 
 Switching tabs keeps the issue view's filters and scroll position. Opening another project returns to **Project**. With floating chat enabled, properties remain in the right sidebar; on small screens they open in a side panel.
 
+## Browse a project's code
+
+With [docked chat](/chat), switch the left sidebar to **Projects** and open a project. The project stays in the middle column so you can follow its progress. The left sidebar lists the files of the project's first GitHub repository, on the branch set by the resource's `ref`, or the default branch if none is set. The right column shows **Properties** and **Code** tabs instead of the conversation; switch the sidebar back to **Menu** to return to the conversation.
+
+Choosing a file opens it read-only in **Code**. To change it, press the pen, edit the file, and choose **Save**.
+
+**Save** commits directly to that branch without a pull request, and the commit belongs to the owner of the server's [`GITHUB_TOKEN`](/environment-variables). Saving, and reading private repositories, require that token. A save is refused if the file changed on the branch after you opened it or the branch is protected. The editor converts CRLF line endings to LF, so saving a CRLF file changes every line. Files over 1 MB and binary files can't be displayed.
+
 ## Project description and execution context
 
 When an agent runs an issue inside a project, the project's name and description are added to that run's context. Put what every related run needs to know in the description — the goal, technical boundaries, delivery conventions — and keep requirements for a single issue in that issue.

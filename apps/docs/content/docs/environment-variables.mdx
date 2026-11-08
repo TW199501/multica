@@ -183,6 +183,7 @@ The auth rate limits require `REDIS_URL`; without it, the startup log notes that
 | GitHub | `GITHUB_WEBHOOK_SECRET` | Webhook HMAC and connect-state signing secret |
 | GitHub | `GITHUB_APP_ID` | Needed for CI status and mergeability on PR cards and the "pick from GitHub" repository picker |
 | GitHub | `GITHUB_APP_PRIVATE_KEY` | Full PEM private key paired with the App ID; same uses as above |
+| GitHub | `GITHUB_TOKEN` | Lets [project code browsing](/projects) read private repositories and save files, which needs contents write access. Also raises the GitHub API limit for skill imports. Every workspace member can read and write the repositories it reaches, including through resources they add, so scope it to the repositories you need |
 | Lark | `MULTICA_LARK_SECRET_KEY` | Base64-encoded 32-byte credential encryption key |
 | Slack | `MULTICA_SLACK_SECRET_KEY` | Base64-encoded 32-byte token encryption key |
 | AI settings | `MULTICA_AI_SECRET_KEY` | Base64-encoded 32-byte key that encrypts the workspace AI settings key; without it the AI settings page cannot save and message polish is unavailable. Keep it stable: losing or changing it makes stored AI keys unreadable |

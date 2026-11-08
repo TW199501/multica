@@ -183,6 +183,7 @@ MULTICA_PUBLIC_URL=https://api.multica.example.com
 | GitHub | `GITHUB_WEBHOOK_SECRET` | Webhook HMAC 與連線 state 簽名金鑰 |
 | GitHub | `GITHUB_APP_ID` | PR 卡片的 CI 狀態、可合併性和"從 GitHub 選擇"倉庫都需要它 |
 | GitHub | `GITHUB_APP_PRIVATE_KEY` | 與 App ID 配套的完整 PEM 私鑰，用途同上 |
+| GitHub | `GITHUB_TOKEN` | 讓[專案程式碼瀏覽](/projects)讀取私有倉庫並存檔，存檔需要內容寫入權限；也會提高技能匯入的 GitHub API 上限。工作區成員都能讀寫它碰得到的倉庫，包含透過自己新增的資源，因此權杖範圍請只開需要的倉庫 |
 | 飛書 | `MULTICA_LARK_SECRET_KEY` | base64 編碼的 32 位元組憑據加密金鑰 |
 | Slack | `MULTICA_SLACK_SECRET_KEY` | base64 編碼的 32 位元組 token 加密金鑰 |
 | AI 設定 | `MULTICA_AI_SECRET_KEY` | base64 編碼的 32 位元組金鑰，用來加密工作區 AI 設定中的 key；未設定時 AI 設定頁無法儲存，訊息潤飾不可用。請保持不變：遺失或更換後，已儲存的 AI key 將無法解密 |
