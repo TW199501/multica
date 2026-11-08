@@ -182,24 +182,5 @@
     "direction_desc": "Décroissant",
     "section_columns": "Colonnes",
     "view": "Vue"
-  },
-  "code": {
-    "tab": "Code",
-    "default_branch": "Branche par défaut",
-    "no_repository": "Aucun dépôt GitHub connecté.",
-    "load_failed": "Impossible de lire ce dépôt. Les dépôts privés nécessitent GITHUB_TOKEN sur le serveur.",
-    "truncated": "Trop de fichiers. Seule une partie de la liste est affichée.",
-    "finish_editing": "Enregistrez ou annulez d'abord votre modification.",
-    "select_file": "Choisissez un fichier dans l'explorateur.",
-    "file_load_failed": "Impossible de lire ce fichier.",
-    "binary": "Ce fichier ne peut pas être affiché.",
-    "too_large": "Ce fichier dépasse 1 Mo et ne peut pas être affiché.",
-    "edit": "Modifier",
-    "cancel": "Annuler",
-    "save": "Enregistrer",
-    "saved": "Enregistré sur la branche",
-    "save_conflict": "Non enregistré : le fichier a changé sur la branche, ou la branche est protégée.",
-    "save_denied": "Non enregistré : le jeton GitHub du serveur n'a pas l'accès en écriture.",
-    "save_failed": "Impossible d'enregistrer le fichier."
   }
 }

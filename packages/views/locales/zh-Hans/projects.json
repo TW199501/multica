@@ -180,24 +180,5 @@
     "direction_desc": "降序",
     "section_columns": "列",
     "view": "视图"
-  },
-  "code": {
-    "tab": "代码",
-    "default_branch": "默认分支",
-    "no_repository": "尚未连接 GitHub 仓库。",
-    "load_failed": "读取不到这个仓库。私有仓库需要在服务器上设置 GITHUB_TOKEN。",
-    "truncated": "文件太多，只显示部分列表。",
-    "finish_editing": "请先保存或取消编辑。",
-    "select_file": "请在文件管理器中选择文件。",
-    "file_load_failed": "读取不到这个文件。",
-    "binary": "无法显示这个文件。",
-    "too_large": "文件超过 1 MB，无法显示。",
-    "edit": "编辑",
-    "cancel": "取消",
-    "save": "保存",
-    "saved": "已保存到分支",
-    "save_conflict": "未保存：分支上的文件已更新，或分支受保护。",
-    "save_denied": "未保存：服务器的 GitHub 令牌没有写入权限。",
-    "save_failed": "无法保存。"
   }
 }
