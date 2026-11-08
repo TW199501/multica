@@ -180,5 +180,24 @@
     "direction_desc": "降序",
     "section_columns": "列",
     "view": "檢視"
+  },
+  "code": {
+    "tab": "代碼",
+    "default_branch": "預設分支",
+    "no_repository": "尚未連接 GitHub 程式庫。",
+    "load_failed": "讀不到這個程式庫。私有程式庫需要在伺服器設定 GITHUB_TOKEN。",
+    "truncated": "檔案太多，只顯示部分清單。",
+    "finish_editing": "請先存檔或取消編輯。",
+    "select_file": "請在檔案總管選擇檔案。",
+    "file_load_failed": "讀不到這個檔案。",
+    "binary": "無法顯示這個檔案。",
+    "too_large": "檔案超過 1 MB，無法顯示。",
+    "edit": "編輯",
+    "cancel": "取消",
+    "save": "存檔",
+    "saved": "已存到分支",
+    "save_conflict": "未存檔：分支上的檔案已更新，或分支受保護。",
+    "save_denied": "未存檔：伺服器的 GitHub 權杖沒有寫入權限。",
+    "save_failed": "無法存檔。"
   }
 }

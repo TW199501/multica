@@ -107,6 +107,29 @@ export interface LocalDirectoryResourceRef {
   execution_mode?: LocalDirectoryExecutionMode;
 }
 
+/** Files on a project repository's branch. Empty `ref` means the default branch. */
+export interface ProjectCodeTree {
+  ref: string;
+  truncated: boolean;
+  files: string[];
+}
+
+export interface ProjectCodeFile {
+  path: string;
+  ref: string;
+  sha: string;
+  content: string;
+  binary: boolean;
+  too_large: boolean;
+}
+
+export interface SaveProjectCodeFileRequest {
+  path: string;
+  /** The blob the edit started from; a newer commit on the branch is refused. */
+  sha: string;
+  content: string;
+}
+
 export type ProjectResourceRef =
   | GithubRepoResourceRef
   | LocalDirectoryResourceRef

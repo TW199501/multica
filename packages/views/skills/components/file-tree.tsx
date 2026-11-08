@@ -111,6 +111,7 @@ function TreeNodeItem({
   onSelect,
   allPaths,
   actions,
+  defaultExpanded,
   depth = 0,
 }: {
   node: FileTreeNode;
@@ -118,12 +119,13 @@ function TreeNodeItem({
   onSelect: (path: string) => void;
   allPaths: string[];
   actions?: FileTreeActions;
+  defaultExpanded: boolean;
   depth?: number;
 }) {
   const { t } = useT("skills");
   const [renaming, setRenaming] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement | null>(null);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const isSelected = node.path === selectedPath;
 
   if (node.isDirectory) {
@@ -152,6 +154,7 @@ function TreeNodeItem({
                 onSelect={onSelect}
                 allPaths={allPaths}
                 actions={actions}
+                defaultExpanded={defaultExpanded}
                 depth={depth + 1}
               />
             ))}
@@ -350,12 +353,15 @@ export function FileTree({
   selectedPath,
   onSelect,
   actions,
+  defaultExpanded = true,
 }: {
   filePaths: string[];
   selectedPath: string;
   onSelect: (path: string) => void;
   /** Omit to render a read-only tree. */
   actions?: FileTreeActions;
+  /** Pass false for a tree too large to render fully open. */
+  defaultExpanded?: boolean;
 }) {
   const { t } = useT("skills");
   const tree = buildTree(filePaths);
@@ -381,6 +387,7 @@ export function FileTree({
           onSelect={onSelect}
           allPaths={filePaths}
           actions={actions}
+          defaultExpanded={defaultExpanded}
         />
       ))}
     </div>

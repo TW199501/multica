@@ -5,6 +5,20 @@ import { create } from "zustand";
 /** Sections the sidebar switches between in the docked layout, in tab order. */
 export type DockedSidebarSection = "menu" | "projects" | "settings";
 
+/** The file the project tree last opened. A new object on every click. */
+export interface DockedCodeSelection {
+  projectId: string;
+  resourceId: string;
+  path: string;
+}
+
+/** Unsaved text of the file being edited; null while no file is in edit mode. */
+export interface DockedCodeDraft {
+  projectId: string;
+  path: string;
+  content: string;
+}
+
 interface DockedLayoutState {
   sidebarSection: DockedSidebarSection;
   setSidebarSection: (section: DockedSidebarSection) => void;
@@ -30,6 +44,16 @@ interface DockedLayoutState {
    */
   pageElement: HTMLElement | null;
   setPageElement: (element: HTMLElement | null) => void;
+  /**
+   * The right column an open project renders its properties and code into
+   * while the project tree tab is open. Null otherwise.
+   */
+  asideElement: HTMLElement | null;
+  setAsideElement: (element: HTMLElement | null) => void;
+  codeSelection: DockedCodeSelection | null;
+  setCodeSelection: (selection: DockedCodeSelection | null) => void;
+  codeDraft: DockedCodeDraft | null;
+  setCodeDraft: (draft: DockedCodeDraft | null) => void;
 }
 
 export const useDockedLayoutStore = create<DockedLayoutState>()((set) => ({
@@ -43,4 +67,10 @@ export const useDockedLayoutStore = create<DockedLayoutState>()((set) => ({
   setShellDocked: (shellDocked) => set({ shellDocked }),
   pageElement: null,
   setPageElement: (pageElement) => set({ pageElement }),
+  asideElement: null,
+  setAsideElement: (asideElement) => set({ asideElement }),
+  codeSelection: null,
+  setCodeSelection: (codeSelection) => set({ codeSelection }),
+  codeDraft: null,
+  setCodeDraft: (codeDraft) => set({ codeDraft }),
 }));
