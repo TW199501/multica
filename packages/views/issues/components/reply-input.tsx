@@ -50,6 +50,8 @@ interface ReplyInputProps {
   /** Whether a running turn takes this reply by default: true for the turn
    *  that belongs to this thread. Other recipients' turns can still be chosen. */
   steerByDefault?: (task: AgentTask) => boolean;
+  /** Each increase moves focus into the editor. */
+  focusRequest?: number;
 }
 
 const NEVER_STEER_BY_DEFAULT = () => false;
@@ -57,6 +59,7 @@ const NEVER_STEER_BY_DEFAULT = () => false;
 // ReplyInput
 
 function ReplyInput({
+  focusRequest = 0,
   issueId,
   parentId,
   placeholder,
@@ -140,6 +143,10 @@ function ReplyInput({
   const { isDragOver, dropZoneProps } = useFileDropZone({
     onDrop: lazy.uploadOrQueue,
   });
+  const activateEditor = lazy.activate;
+  useEffect(() => {
+    if (focusRequest > 0) activateEditor();
+  }, [focusRequest, activateEditor]);
 
   // Flush on tab close / mobile background — same rationale as CommentInput.
   useEffect(() => {
