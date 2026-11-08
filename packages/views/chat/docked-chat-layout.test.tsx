@@ -137,6 +137,16 @@ describe("DockedChatLayout", () => {
     expect(page.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
+  it("keeps an issue in the middle while the project tree tab is open", () => {
+    useDockedLayoutStore.setState({ sidebarSection: "projects" });
+    renderAt("/acme/issues/issue-1");
+
+    const chat = screen.getByTestId("chat-window");
+    const page = screen.getByTestId("route-page");
+    expect(page.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    useDockedLayoutStore.setState({ sidebarSection: "menu" });
+  });
+
   it("puts a page-first route such as the desktop browser in the middle", () => {
     renderAt("/acme/browser", undefined, ["/acme/browser"]);
 
