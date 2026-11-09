@@ -4724,6 +4724,17 @@ func (d *Daemon) handleModelList(ctx context.Context, rt Runtime, requestID stri
 			}
 		}
 	}
+	if rt.Provider == "qwen" && len(models) == 0 {
+		if home, homeErr := os.UserHomeDir(); homeErr == nil {
+			configuredModels, configErr := loadQwenConfiguredModels(home)
+			if configErr != nil {
+				d.logger.Warn("Qwen Code configured model discovery failed",
+					"runtime_id", rt.ID, "path", qwenUserSettingsPath(home), "error", configErr)
+			} else {
+				models = configuredModels
+			}
+		}
+	}
 
 	// Wire format matches handler.ModelEntry. Use a struct (not
 	// map[string]string) so the Default bool and the per-model

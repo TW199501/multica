@@ -68,6 +68,8 @@ Si vous ne choisissez pas de modèle, Multica utilise le modèle par défaut de 
 
 QwenPaw, MiniMax Code et ZeroClaw font exception : ils n'acceptent pas de modèle choisi depuis Multica, donc le sélecteur est inactif et affiche « Géré par le runtime ». Choisissez plutôt le modèle dans la configuration propre à l'outil. Pour ces outils, une liste de modèles vide est normale et n'indique pas que le runtime est hors ligne.
 
+Qwen Code n'a pas de catalogue de modèles propre. La liste affiche les modèles définis sous `modelProviders` dans `~/.qwen/settings.json` (ou `$QWEN_HOME/settings.json`) sur l'ordinateur du runtime ; si aucun n'est configuré, saisissez l'ID du modèle à la main.
+
 DeepSeek Harness publie son catalogue de modèles depuis le runtime lui-même (`dsh --profile multica --list-models`). Ses identifiants de modèle utilisent la forme `provider/model` (par exemple `deepseek-official/deepseek-chat`) ; sélectionnez donc l'identifiant complet dans la liste.
 
 <Callout type="info">

@@ -294,7 +294,10 @@ func ListModels(ctx context.Context, providerType string, runtimeCmd Command) (C
 	case "qwen":
 		// Qwen Code has no account-independent headless model catalog. An
 		// empty list keeps the runtime default and manual model entry available
-		// without advertising a Token-Plan-specific model to other accounts.
+		// without advertising a Token-Plan-specific model to other accounts. The
+		// daemon lists this machine's own configured models for the picker; they
+		// stay out of the catalog because they are not an exhaustive list, so a
+		// saved model must not be validated against them.
 		return Catalog{Models: []Model{}}, nil
 	case "qwenpaw":
 		// QwenPaw's model selection is unsupported (session/set_model
