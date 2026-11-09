@@ -411,47 +411,20 @@ describe("AI settings layout", () => {
     mocks.api.getAISettings.mockResolvedValue(settings({ model: "plain-text-model" }));
     renderUi(<AISettingsPage />);
     const model = await screen.findByLabelText("Model");
-    const params = screen.getByRole("button", { name: "Model parameters" });
-    await user.click(params);
-    expect(await screen.findByTestId("ai-model-type")).toHaveTextContent("Chat");
+    expect(screen.getByTestId("ai-model-type")).toHaveTextContent("Chat");
     expect(screen.queryByTestId("ai-model-vision")).not.toBeInTheDocument();
-    await user.keyboard("{Escape}");
 
     await user.clear(model);
     await user.type(model, "qwen/qwen3-embedding-8b");
-    await user.click(params);
-    expect(await screen.findByTestId("ai-model-type")).toHaveTextContent("Embedding");
+    await waitFor(() => expect(screen.getByTestId("ai-model-type")).toHaveTextContent("Embedding"));
   });
 
   it("shows vision and limits for a listed vision model", async () => {
-    const user = userEvent.setup();
     mocks.api.getAISettings.mockResolvedValue(settings({ model: "claude-fable-5-1" }));
     renderUi(<AISettingsPage />);
-    await screen.findByLabelText("Model");
-    await user.click(screen.getByRole("button", { name: "Model parameters" }));
 
     expect(await screen.findByTestId("ai-model-vision")).toHaveTextContent("Vision");
     expect(screen.getByTestId("ai-model-limits")).toHaveTextContent(/Context/);
-  });
-
-  it("says so when the catalog has no parameters for the model", async () => {
-    const user = userEvent.setup();
-    mocks.api.getAISettings.mockResolvedValue(settings({ model: "plain-text-model" }));
-    renderUi(<AISettingsPage />);
-    await screen.findByLabelText("Model");
-    await user.click(screen.getByRole("button", { name: "Model parameters" }));
-
-    expect(
-      await screen.findByText("No parameters on file for this model."),
-    ).toBeInTheDocument();
-  });
-
-  it("disables the parameters button until a model is entered", async () => {
-    mocks.api.getAISettings.mockResolvedValue(settings({ model: "" }));
-    renderUi(<AISettingsPage />);
-    await screen.findByLabelText("Model");
-
-    expect(screen.getByRole("button", { name: "Model parameters" })).toBeDisabled();
   });
 
   it("warns when the chat AI is given a model that cannot chat", async () => {
