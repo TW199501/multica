@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import { ApiClient, ApiError } from "./client";
 import { parseWithFallback } from "./schema";
+import { AISettingsModelsResultSchema, FAILED_AI_SETTINGS_MODELS_RESULT } from "./schemas";
 
 // Helper: stub fetch with a single JSON response. Status defaults to 200.
 function stubFetchJson(body: unknown, status = 200) {
@@ -1703,5 +1704,19 @@ describe("workspace subscription contract", () => {
         headers: expect.objectContaining({ "Idempotency-Key": "seat-request-1" }),
       }),
     );
+  });
+});
+
+describe("AI settings model list", () => {
+  const opts = { endpoint: "POST /api/workspaces/{id}/ai-settings/models" };
+  const parse = (raw: unknown) =>
+    parseWithFallback(raw, AISettingsModelsResultSchema, FAILED_AI_SETTINGS_MODELS_RESULT, opts);
+
+  it("defaults a missing model list to empty", () => {
+    expect(parse({ ok: true })).toEqual({ ok: true, models: [] });
+  });
+
+  it("falls back to a failed result on a malformed response", () => {
+    expect(parse({ ok: "yes", models: 3 })).toEqual(FAILED_AI_SETTINGS_MODELS_RESULT);
   });
 });

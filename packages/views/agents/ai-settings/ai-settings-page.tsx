@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
@@ -46,6 +46,7 @@ import {
   workspaceAISettingsOptions,
 } from "@multica/core/workspace/queries";
 import {
+  useListAISettingsModels,
   useTestAISettings,
   useUpdateAISettings,
 } from "@multica/core/workspace/mutations";
@@ -62,6 +63,7 @@ import {
   lookupModel,
   useModelCatalog,
 } from "./model-catalog";
+import { ModelCombobox } from "./model-combobox";
 import { KEYLESS_PROVIDERS, PROVIDER_PRESETS } from "./provider-presets";
 import { ProviderLogo } from "../../runtimes/components/provider-logo";
 
@@ -74,6 +76,8 @@ type ProviderKey =
   | "deepseek"
   | "qwen"
   | "kimi"
+  | "zhipu"
+  | "tencent"
   | "grok"
   | "openrouter"
   | "huggingface"
@@ -149,6 +153,7 @@ function AISettingsForm({
   const timeAgo = useTimeAgo();
   const update = useUpdateAISettings(wsId);
   const test = useTestAISettings(wsId);
+  const { mutateAsync: listModels } = useListAISettingsModels(wsId);
   const { data: skills = [] } = useQuery(skillListOptions(wsId));
 
   const [provider, setProvider] = useState(settings.provider);
@@ -175,16 +180,56 @@ function AISettingsForm({
   const targetChanged =
     provider !== settings.provider ||
     hostOf(baseUrl) !== hostOf(settings.base_url);
-  const keyRequired = !keyless && (!settings.api_key_set || targetChanged);
+  const storedKey = settings.api_key_set;
+  const keyRequired = !keyless && (!storedKey || targetChanged);
   const blocked = !settings.secret_key_available;
   const promptFromSkill = skillId !== null;
   const catalog = useModelCatalog();
   const modelType = detectModelType(model, catalog);
   const modelInfo = lookupModel(model, catalog);
+  // What the endpoint itself reports; null until it answers.
+  const [liveModels, setLiveModels] = useState<string[] | null>(null);
+  const [liveModelsFailed, setLiveModelsFailed] = useState(false);
+  const liveModelsRequest = useRef(0);
   const modelOptions = useMemo(
-    () => [...new Set([...(preset?.models ?? []), ...catalogModelsFor(provider, catalog)])],
-    [preset, provider, catalog],
+    () =>
+      liveModels?.length
+        ? liveModels
+        : [...new Set([...(preset?.models ?? []), ...catalogModelsFor(provider, catalog)])],
+    [liveModels, preset, provider, catalog],
   );
+
+  useEffect(() => {
+    const request = ++liveModelsRequest.current;
+    setLiveModels(null);
+    setLiveModelsFailed(false);
+    const base = baseUrl.trim();
+    const key = apiKey.trim();
+    if (blocked || !base || (keyRequired && !key)) return;
+    const timer = setTimeout(() => {
+      const input: AISettingsInput = {
+        provider,
+        base_url: base,
+        model: "",
+        disable_thinking: false,
+        prompt: "",
+        prompt_skill_id: null,
+      };
+      if (key) input.api_key = key;
+      else if (keyless && targetChanged && storedKey) input.clear_api_key = true;
+      listModels(input).then(
+        (result) => {
+          if (request !== liveModelsRequest.current) return;
+          if (result.ok) setLiveModels(result.models);
+          else setLiveModelsFailed(true);
+        },
+        () => {
+          if (request === liveModelsRequest.current) setLiveModelsFailed(true);
+        },
+      );
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [provider, baseUrl, apiKey, blocked, keyRequired, keyless, targetChanged, storedKey, listModels]);
   const compact = useMemo(() => new Intl.NumberFormat(undefined, { notation: "compact" }), []);
 
   const providerItems = useMemo(() => {
@@ -316,32 +361,34 @@ function AISettingsForm({
             <NextRoundBadge />
           </div>
 
-          <Field id="ai-provider" label={t(($) => $.ai_settings.provider)}>
-            <Select items={providerItems} value={provider} onValueChange={onProviderChange}>
-              <SelectTrigger id="ai-provider" className="w-full">
-                <SelectValue className="items-center gap-2">
-                  {provider ? (
-                    <>
-                      <ProviderLogo provider={provider} className="size-4 shrink-0" />
-                      {providerItems.find((item) => item.value === provider)?.label}
-                    </>
-                  ) : undefined}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {providerItems.map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
-                    <ProviderLogo provider={item.value} className="size-4 shrink-0" />
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
+          <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
+            <Field id="ai-provider" label={t(($) => $.ai_settings.provider)}>
+              <Select items={providerItems} value={provider} onValueChange={onProviderChange}>
+                <SelectTrigger id="ai-provider" className="w-full">
+                  <SelectValue className="items-center gap-2">
+                    {provider ? (
+                      <>
+                        <ProviderLogo provider={provider} className="size-4 shrink-0" />
+                        {providerItems.find((item) => item.value === provider)?.label}
+                      </>
+                    ) : undefined}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {providerItems.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      <ProviderLogo provider={item.value} className="size-4 shrink-0" />
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
 
-          <Field id="ai-endpoint" label={t(($) => $.ai_settings.endpoint)}>
-            <Input id="ai-endpoint" value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} />
-          </Field>
+            <Field id="ai-endpoint" label={t(($) => $.ai_settings.endpoint)}>
+              <Input id="ai-endpoint" value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} />
+            </Field>
+          </div>
 
           <div className="space-y-2">
             <div className="grid grid-cols-1 items-end gap-4 sm:grid-cols-2">
@@ -393,18 +440,13 @@ function AISettingsForm({
                   </Button>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Input
+                  <ModelCombobox
                     id="ai-model"
-                    list="ai-model-options"
                     placeholder={keyless ? t(($) => $.ai_settings.model_placeholder) : undefined}
                     value={model}
-                    onChange={(e) => setModel(e.target.value)}
+                    options={modelOptions}
+                    onChange={setModel}
                   />
-                  <datalist id="ai-model-options">
-                    {modelOptions.map((m) => (
-                      <option key={m} value={m} />
-                    ))}
-                  </datalist>
                   <Popover>
                     <PopoverTrigger
                       render={
@@ -423,12 +465,12 @@ function AISettingsForm({
                       <p className="truncate font-medium">{model.trim()}</p>
                       <div className="flex flex-wrap gap-2">
                         {modelType ? (
-                          <Badge variant="secondary" data-testid="ai-model-type">
+                          <Badge variant="outline" data-testid="ai-model-type">
                             {t(($) => $.ai_settings.model_types[modelType])}
                           </Badge>
                         ) : null}
                         {modelInfo?.vision ? (
-                          <Badge variant="secondary" data-testid="ai-model-vision">
+                          <Badge variant="outline" data-testid="ai-model-vision">
                             {t(($) => $.ai_settings.vision)}
                           </Badge>
                         ) : null}
@@ -450,6 +492,12 @@ function AISettingsForm({
                 </div>
               </div>
             </div>
+
+            {liveModelsFailed ? (
+              <p className="text-caption text-muted-foreground">
+                {t(($) => $.ai_settings.models_failed)}
+              </p>
+            ) : null}
 
             {modelType && modelType !== "chat" ? (
               <p role="alert" className="text-caption text-warning">

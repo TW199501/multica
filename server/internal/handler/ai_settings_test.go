@@ -59,6 +59,7 @@ func aiSettingsRouter(t *testing.T, withKey bool) http.Handler {
 			r.Get("/ai-settings", testHandler.GetAISettings)
 			r.Put("/ai-settings", testHandler.PutAISettings)
 			r.Post("/ai-settings/test", testHandler.CheckAISettings)
+			r.Post("/ai-settings/models", testHandler.ListAISettingsModels)
 		})
 	})
 	return router
@@ -387,5 +388,78 @@ func TestAISettingsTestDoesNotTouchLastCalledAt(t *testing.T) {
 	dbfx.QueryRow(t, `SELECT last_called_at FROM workspace_ai_settings WHERE workspace_id = $1`, testWorkspaceID).Scan(&last)
 	if last != nil {
 		t.Errorf("last_called_at = %v, want NULL", last)
+	}
+}
+
+func TestAISettingsModelsListsFromTheEndpoint(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	var auth, path string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		auth, path = r.Header.Get("Authorization"), r.URL.Path
+		_, _ = w.Write([]byte(`{"data":[{"id":"model-b"},{"id":"model-a"}]}`))
+	}))
+	t.Cleanup(srv.Close)
+	rec := aiCall(t, router, http.MethodPost, "/models", testUserID, map[string]any{
+		"provider": "custom", "base_url": srv.URL + "/v1", "api_key": "sk-test-1234",
+	})
+	if rec.Code != http.StatusOK {
+		t.Fatalf("code %d %s", rec.Code, rec.Body.String())
+	}
+	m := decodeAI(t, rec)
+	models, _ := m["models"].([]any)
+	if m["ok"] != true || len(models) != 2 || models[0] != "model-a" {
+		t.Errorf("body: %s", rec.Body.String())
+	}
+	if auth != "Bearer sk-test-1234" || path != "/v1/models" {
+		t.Errorf("auth %q path %q", auth, path)
+	}
+}
+
+func TestAISettingsModelsRedactsKeyInUpstreamError(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(`{"error":{"message":"bad key sk-test-1234"}}`))
+	}))
+	t.Cleanup(srv.Close)
+	rec := aiCall(t, router, http.MethodPost, "/models", testUserID, map[string]any{
+		"provider": "custom", "base_url": srv.URL, "api_key": "sk-test-1234",
+	})
+	m := decodeAI(t, rec)
+	if m["ok"] != false || m["status"] != float64(401) {
+		t.Fatalf("body: %s", rec.Body.String())
+	}
+	if msg, _ := m["message"].(string); strings.Contains(msg, "sk-test-1234") {
+		t.Errorf("message leaks the key: %q", msg)
+	}
+}
+
+func TestAISettingsModelsKeepsTheStoredKeyOnItsOwnHost(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	seed := map[string]any{"provider": "openai", "base_url": "https://api.openai.com/v1", "model": "m", "api_key": "sk-stored-1"}
+	if rec := aiCall(t, router, http.MethodPut, "", testUserID, seed); rec.Code != http.StatusOK {
+		t.Fatalf("seed: %d %s", rec.Code, rec.Body.String())
+	}
+	var hits int32
+	srv := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) { atomic.AddInt32(&hits, 1) }))
+	t.Cleanup(srv.Close)
+	rec := aiCall(t, router, http.MethodPost, "/models", testUserID, map[string]any{"provider": "openai", "base_url": srv.URL})
+	if rec.Code != http.StatusConflict || decodeAI(t, rec)["error"] != "api_key_required" {
+		t.Fatalf("want 409 api_key_required, got %d %s", rec.Code, rec.Body.String())
+	}
+	if got := atomic.LoadInt32(&hits); got != 0 {
+		t.Errorf("the stored key must not reach another host: %d requests", got)
+	}
+}
+
+func TestAISettingsModelsRequiresAdmin(t *testing.T) {
+	router := aiSettingsRouter(t, true)
+	member := dbfx.User(t, "AI Models Member", "ai-models-member@example.com")
+	dbfx.Member(t, testWorkspaceID, member, "member")
+	rec := aiCall(t, router, http.MethodPost, "/models", member, map[string]any{
+		"provider": "custom", "base_url": "https://example.com/v1", "api_key": "k",
+	})
+	if rec.Code != http.StatusForbidden {
+		t.Fatalf("code %d %s", rec.Code, rec.Body.String())
 	}
 }

@@ -2,6 +2,8 @@ import { useId } from "react";
 import { Monitor, Server, SlidersHorizontal } from "@multica/ui/icons";
 import codeartsLogo from "./codearts-logo.svg";
 import qwenLogo from "./qwen-logo.svg";
+import tencentLogo from "./tencent-logo.svg";
+import zhipuLogo from "./zhipu-logo.svg";
 import reasonixLogo from "./reasonix-logo.svg";
 import dimLogo from "./dim-logo.png";
 
@@ -455,6 +457,18 @@ function HuggingFaceLogo({ className }: { className: string }) {
   );
 }
 
+// Tencent Hunyuan and Zhipu marks come from Lobe Icons (@lobehub/icons-static-svg, MIT).
+const tencentLogoSrc = staticAssetSrc(tencentLogo);
+const zhipuLogoSrc = staticAssetSrc(zhipuLogo);
+
+function TencentLogo({ className }: { className: string }) {
+  return <img src={tencentLogoSrc} alt="" aria-hidden className={className} />;
+}
+
+function ZhipuLogo({ className }: { className: string }) {
+  return <img src={zhipuLogoSrc} alt="" aria-hidden className={className} />;
+}
+
 export function ProviderLogo({
   provider,
   className = "h-4 w-4",
@@ -465,6 +479,10 @@ export function ProviderLogo({
   switch (provider) {
     case "openai":
       return <CodexLogo className={className} />;
+    case "zhipu":
+      return <ZhipuLogo className={className} />;
+    case "tencent":
+      return <TencentLogo className={className} />;
     case "gemini":
       return <GeminiLogo className={className} />;
     case "deepseek":
