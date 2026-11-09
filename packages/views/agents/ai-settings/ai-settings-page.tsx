@@ -379,12 +379,12 @@ function AISettingsForm({
               </Field>
 
               <div className="min-w-0 space-y-1.5">
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex h-5 items-end justify-between gap-2">
                   <Label htmlFor="ai-model">{t(($) => $.ai_settings.model)}</Label>
                   <Button
                     type="button"
                     variant="outline"
-                    size="sm"
+                    size="xs"
                     disabled={blocked || test.isPending}
                     onClick={handleTest}
                   >
