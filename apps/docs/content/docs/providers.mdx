@@ -68,6 +68,8 @@ Devin reads `WINDSURF_API_KEY` when set, otherwise the login saved by `devin aut
 
 QwenPaw, MiniMax Code, and ZeroClaw are exceptions: they do not accept a model chosen from Multica, so the picker is inert and shows "Managed by runtime". Choose the model in the tool's own configuration instead. An empty model list for these tools is expected and does not mean the runtime is offline.
 
+Qwen Code has no model catalog of its own. The list shows the models under `modelProviders` in `~/.qwen/settings.json` (or `$QWEN_HOME/settings.json`) on the runtime's computer; if none are configured, type the model ID by hand.
+
 DeepSeek Harness advertises its model catalog from the runtime itself (`dsh --profile multica --list-models`). Its model ids use the `provider/model` form (for example `deepseek-official/deepseek-chat`), so select the full id from the list.
 
 <Callout type="info">
