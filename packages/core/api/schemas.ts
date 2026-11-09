@@ -95,6 +95,7 @@ import type {
   WorkspaceAISettings,
   WorkspaceMcpServer,
   AISettingsTestResult,
+  AISettingsModelsResult,
 } from "../types";
 import type { CloudRuntimeNode } from "../runtimes/cloud-runtime";
 import type { CreateFeedbackResponse } from "../feedback/types";
@@ -3683,6 +3684,21 @@ export const AISettingsTestResultSchema = z.discriminatedUnion("ok", [
     message: z.string().default(""),
   }),
 ]);
+
+export const AISettingsModelsResultSchema = z.discriminatedUnion("ok", [
+  z.object({ ok: z.literal(true), models: z.array(z.string()).default([]) }),
+  z.object({
+    ok: z.literal(false),
+    status: z.number().default(0),
+    message: z.string().default(""),
+  }),
+]);
+
+export const FAILED_AI_SETTINGS_MODELS_RESULT: AISettingsModelsResult = {
+  ok: false,
+  status: 0,
+  message: "",
+};
 
 export const FAILED_AI_SETTINGS_TEST_RESULT: AISettingsTestResult = {
   ok: false,

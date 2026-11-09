@@ -21,7 +21,8 @@ import (
 
 var aiSettingsProviders = map[string]struct{}{
 	"claude": {}, "openai": {}, "gemini": {}, "deepseek": {}, "qwen": {}, "kimi": {},
-	"grok": {}, "openrouter": {}, "huggingface": {}, "llamacpp": {}, "custom": {},
+	"zhipu": {}, "tencent": {}, "grok": {}, "openrouter": {}, "huggingface": {},
+	"llamacpp": {}, "custom": {},
 }
 
 type aiSettingsResponse struct {
@@ -204,32 +205,34 @@ func redactAndCap(msg, key string, max int) string {
 
 // CheckAISettings sends one tiny request with the unsaved values so the admin
 // can verify the endpoint before saving. It never stores anything.
-func (h *Handler) CheckAISettings(w http.ResponseWriter, r *http.Request) {
-	workspaceID, ok := parseUUIDOrBadRequest(w, chi.URLParam(r, "id"), "workspace id")
-	if !ok {
-		return
+// resolveAIProbe reads unsaved form values and the key they may use. It writes
+// the error response itself when ok is false.
+func (h *Handler) resolveAIProbe(w http.ResponseWriter, r *http.Request) (in aisettings.Input, key string, ok bool) {
+	workspaceID, valid := parseUUIDOrBadRequest(w, chi.URLParam(r, "id"), "workspace id")
+	if !valid {
+		return in, "", false
 	}
 	if !h.aiSettingsKeyAvailable() {
 		writeError(w, http.StatusServiceUnavailable, "secret_key_missing")
-		return
+		return in, "", false
 	}
 	var req aiSettingsRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		writeError(w, http.StatusBadRequest, "invalid request body")
-		return
+		return in, "", false
 	}
 	req.Provider = strings.TrimSpace(req.Provider)
 	req.BaseURL = strings.TrimSpace(req.BaseURL)
 	req.Model = strings.TrimSpace(req.Model)
 	if _, known := aiSettingsProviders[req.Provider]; !known {
 		writeError(w, http.StatusBadRequest, "unknown provider")
-		return
+		return in, "", false
 	}
 	if u, err := url.Parse(req.BaseURL); err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Hostname() == "" {
 		writeError(w, http.StatusBadRequest, "base_url must be an http(s) URL")
-		return
+		return in, "", false
 	}
-	in := aisettings.Input{
+	in = aisettings.Input{
 		Provider:        req.Provider,
 		BaseURL:         req.BaseURL,
 		Model:           req.Model,
@@ -237,17 +240,55 @@ func (h *Handler) CheckAISettings(w http.ResponseWriter, r *http.Request) {
 		APIKey:          req.APIKey,
 		ClearAPIKey:     req.ClearAPIKey,
 	}
-	key, err := h.AISettings.ResolveKey(r.Context(), workspaceID, in)
+	var err error
+	key, err = h.AISettings.ResolveKey(r.Context(), workspaceID, in)
 	switch {
 	case errors.Is(err, aisettings.ErrKeyRequired):
 		writeError(w, http.StatusConflict, "api_key_required")
-		return
+		return in, "", false
 	case errors.Is(err, aisettings.ErrSecretKeyMissing):
 		writeError(w, http.StatusServiceUnavailable, "secret_key_missing")
-		return
+		return in, "", false
 	case err != nil:
 		slog.Error("ai settings: resolve key failed", "error", err)
-		writeError(w, http.StatusInternalServerError, "failed to test AI settings")
+		writeError(w, http.StatusInternalServerError, "failed to resolve AI settings")
+		return in, "", false
+	}
+	return in, key, true
+}
+
+// ListAISettingsModels asks the endpoint in the form which models it serves. It
+// sends no prompt, so it costs no tokens.
+func (h *Handler) ListAISettingsModels(w http.ResponseWriter, r *http.Request) {
+	in, key, ok := h.resolveAIProbe(w, r)
+	if !ok {
+		return
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), aiSettingsTestTimeout)
+	defer cancel()
+	models, err := aisettings.ListModels(ctx, in.Provider, in.BaseURL, key)
+	if err != nil {
+		var listErr *aisettings.ModelListError
+		status, msg := 0, "could not reach the endpoint"
+		switch {
+		case errors.As(err, &listErr):
+			status, msg = listErr.Status, listErr.Message
+		case errors.Is(err, context.DeadlineExceeded):
+			msg = "the endpoint did not answer in time"
+		}
+		writeJSON(w, http.StatusOK, map[string]any{
+			"ok":      false,
+			"status":  status,
+			"message": redactAndCap(msg, key, aiSettingsTestMaxMessage),
+		})
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{"ok": true, "models": models})
+}
+
+func (h *Handler) CheckAISettings(w http.ResponseWriter, r *http.Request) {
+	in, key, ok := h.resolveAIProbe(w, r)
+	if !ok {
 		return
 	}
 

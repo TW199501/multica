@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
@@ -10,6 +10,7 @@ import {
   EyeOff,
   Loader2,
   Plus,
+  Settings2,
   Sparkles,
   Trash2,
 } from "@multica/ui/icons";
@@ -17,6 +18,11 @@ import { Badge } from "@multica/ui/components/ui/badge";
 import { Button } from "@multica/ui/components/ui/button";
 import { Input } from "@multica/ui/components/ui/input";
 import { Label } from "@multica/ui/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@multica/ui/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -40,6 +46,7 @@ import {
   workspaceAISettingsOptions,
 } from "@multica/core/workspace/queries";
 import {
+  useListAISettingsModels,
   useTestAISettings,
   useUpdateAISettings,
 } from "@multica/core/workspace/mutations";
@@ -56,6 +63,7 @@ import {
   lookupModel,
   useModelCatalog,
 } from "./model-catalog";
+import { ModelCombobox } from "./model-combobox";
 import { KEYLESS_PROVIDERS, PROVIDER_PRESETS } from "./provider-presets";
 import { ProviderLogo } from "../../runtimes/components/provider-logo";
 
@@ -68,6 +76,8 @@ type ProviderKey =
   | "deepseek"
   | "qwen"
   | "kimi"
+  | "zhipu"
+  | "tencent"
   | "grok"
   | "openrouter"
   | "huggingface"
@@ -143,6 +153,7 @@ function AISettingsForm({
   const timeAgo = useTimeAgo();
   const update = useUpdateAISettings(wsId);
   const test = useTestAISettings(wsId);
+  const { mutateAsync: listModels } = useListAISettingsModels(wsId);
   const { data: skills = [] } = useQuery(skillListOptions(wsId));
 
   const [provider, setProvider] = useState(settings.provider);
@@ -169,16 +180,56 @@ function AISettingsForm({
   const targetChanged =
     provider !== settings.provider ||
     hostOf(baseUrl) !== hostOf(settings.base_url);
-  const keyRequired = !keyless && (!settings.api_key_set || targetChanged);
+  const storedKey = settings.api_key_set;
+  const keyRequired = !keyless && (!storedKey || targetChanged);
   const blocked = !settings.secret_key_available;
   const promptFromSkill = skillId !== null;
   const catalog = useModelCatalog();
   const modelType = detectModelType(model, catalog);
   const modelInfo = lookupModel(model, catalog);
+  // What the endpoint itself reports; null until it answers.
+  const [liveModels, setLiveModels] = useState<string[] | null>(null);
+  const [liveModelsFailed, setLiveModelsFailed] = useState(false);
+  const liveModelsRequest = useRef(0);
   const modelOptions = useMemo(
-    () => [...new Set([...(preset?.models ?? []), ...catalogModelsFor(provider, catalog)])],
-    [preset, provider, catalog],
+    () =>
+      liveModels?.length
+        ? liveModels
+        : [...new Set([...(preset?.models ?? []), ...catalogModelsFor(provider, catalog)])],
+    [liveModels, preset, provider, catalog],
   );
+
+  useEffect(() => {
+    const request = ++liveModelsRequest.current;
+    setLiveModels(null);
+    setLiveModelsFailed(false);
+    const base = baseUrl.trim();
+    const key = apiKey.trim();
+    if (blocked || !base || (keyRequired && !key)) return;
+    const timer = setTimeout(() => {
+      const input: AISettingsInput = {
+        provider,
+        base_url: base,
+        model: "",
+        disable_thinking: false,
+        prompt: "",
+        prompt_skill_id: null,
+      };
+      if (key) input.api_key = key;
+      else if (keyless && targetChanged && storedKey) input.clear_api_key = true;
+      listModels(input).then(
+        (result) => {
+          if (request !== liveModelsRequest.current) return;
+          if (result.ok) setLiveModels(result.models);
+          else setLiveModelsFailed(true);
+        },
+        () => {
+          if (request === liveModelsRequest.current) setLiveModelsFailed(true);
+        },
+      );
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [provider, baseUrl, apiKey, blocked, keyRequired, keyless, targetChanged, storedKey, listModels]);
   const compact = useMemo(() => new Intl.NumberFormat(undefined, { notation: "compact" }), []);
 
   const providerItems = useMemo(() => {
@@ -310,65 +361,174 @@ function AISettingsForm({
             <NextRoundBadge />
           </div>
 
-          <Field id="ai-provider" label={t(($) => $.ai_settings.provider)}>
-            <Select items={providerItems} value={provider} onValueChange={onProviderChange}>
-              <SelectTrigger id="ai-provider" className="w-full">
-                <SelectValue className="items-center gap-2">
-                  {provider ? (
-                    <>
-                      <ProviderLogo provider={provider} className="size-4 shrink-0" />
-                      {providerItems.find((item) => item.value === provider)?.label}
-                    </>
-                  ) : undefined}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {providerItems.map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
-                    <ProviderLogo provider={item.value} className="size-4 shrink-0" />
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
+          <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
+            <Field id="ai-provider" label={t(($) => $.ai_settings.provider)}>
+              <Select items={providerItems} value={provider} onValueChange={onProviderChange}>
+                <SelectTrigger id="ai-provider" className="w-full">
+                  <SelectValue className="items-center gap-2">
+                    {provider ? (
+                      <>
+                        <ProviderLogo provider={provider} className="size-4 shrink-0" />
+                        {providerItems.find((item) => item.value === provider)?.label}
+                      </>
+                    ) : undefined}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {providerItems.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      <ProviderLogo provider={item.value} className="size-4 shrink-0" />
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
 
-          <Field id="ai-endpoint" label={t(($) => $.ai_settings.endpoint)}>
-            <Input id="ai-endpoint" value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} />
-          </Field>
+            <Field id="ai-endpoint" label={t(($) => $.ai_settings.endpoint)}>
+              <Input id="ai-endpoint" value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} />
+            </Field>
+          </div>
 
-          <Field
-            id="ai-api-key"
-            label={
-              keyRequired
-                ? t(($) => $.ai_settings.api_key_required)
-                : t(($) => $.ai_settings.api_key)
-            }
-          >
-            <div className="flex items-center gap-2">
-              <Input
+          <div className="space-y-2">
+            <div className="grid grid-cols-1 items-end gap-4 sm:grid-cols-2">
+              <Field
                 id="ai-api-key"
-                type={showKey ? "text" : "password"}
-                autoComplete="off"
-                value={apiKey}
-                placeholder={settings.api_key_set ? `••••${settings.api_key_last4}` : undefined}
-                aria-invalid={keyError || undefined}
-                aria-describedby={keyError ? "ai-api-key-error" : undefined}
-                onChange={(e) => setApiKey(e.target.value)}
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                aria-label={
-                  showKey ? t(($) => $.ai_settings.hide_key) : t(($) => $.ai_settings.show_key)
+                label={
+                  keyRequired
+                    ? t(($) => $.ai_settings.api_key_required)
+                    : t(($) => $.ai_settings.api_key)
                 }
-                onClick={() => setShowKey((shown) => !shown)}
               >
-                {showKey ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-              </Button>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="ai-api-key"
+                    type={showKey ? "text" : "password"}
+                    autoComplete="off"
+                    value={apiKey}
+                    placeholder={settings.api_key_set ? `••••${settings.api_key_last4}` : undefined}
+                    aria-invalid={keyError || undefined}
+                    aria-describedby={keyError ? "ai-api-key-error" : undefined}
+                    onChange={(e) => setApiKey(e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    aria-label={
+                      showKey ? t(($) => $.ai_settings.hide_key) : t(($) => $.ai_settings.show_key)
+                    }
+                    onClick={() => setShowKey((shown) => !shown)}
+                  >
+                    {showKey ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  </Button>
+                </div>
+              </Field>
+
+              <div className="min-w-0 space-y-1.5">
+                <div className="flex h-5 items-end justify-between gap-2">
+                  <Label htmlFor="ai-model">{t(($) => $.ai_settings.model)}</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="xs"
+                    disabled={blocked || test.isPending}
+                    onClick={handleTest}
+                  >
+                    {test.isPending ? <Loader2 className="size-3.5 animate-spin" /> : null}
+                    {t(($) => $.ai_settings.test)}
+                  </Button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ModelCombobox
+                    id="ai-model"
+                    placeholder={keyless ? t(($) => $.ai_settings.model_placeholder) : undefined}
+                    value={model}
+                    options={modelOptions}
+                    onChange={setModel}
+                  />
+                  <Popover>
+                    <PopoverTrigger
+                      render={
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          aria-label={t(($) => $.ai_settings.model_params)}
+                          disabled={!modelType}
+                        />
+                      }
+                    >
+                      <Settings2 className="size-4" />
+                    </PopoverTrigger>
+                    <PopoverContent align="end" className="w-64 space-y-2">
+                      <p className="truncate font-medium">{model.trim()}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {modelType ? (
+                          <Badge variant="outline" data-testid="ai-model-type">
+                            {t(($) => $.ai_settings.model_types[modelType])}
+                          </Badge>
+                        ) : null}
+                        {modelInfo?.vision ? (
+                          <Badge variant="outline" data-testid="ai-model-vision">
+                            {t(($) => $.ai_settings.vision)}
+                          </Badge>
+                        ) : null}
+                      </div>
+                      {modelInfo?.context ? (
+                        <p data-testid="ai-model-limits" className="text-caption text-muted-foreground">
+                          {t(($) => $.ai_settings.context_window, { value: compact.format(modelInfo.context) })}
+                          {modelInfo.output
+                            ? ` · ${t(($) => $.ai_settings.output_limit, { value: compact.format(modelInfo.output) })}`
+                            : null}
+                        </p>
+                      ) : (
+                        <p className="text-caption text-muted-foreground">
+                          {t(($) => $.ai_settings.model_params_unknown)}
+                        </p>
+                      )}
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
             </div>
-          </Field>
+
+            {liveModelsFailed ? (
+              <p className="text-caption text-muted-foreground">
+                {t(($) => $.ai_settings.models_failed)}
+              </p>
+            ) : null}
+
+            {modelType && modelType !== "chat" ? (
+              <p role="alert" className="text-caption text-warning">
+                {t(($) => $.ai_settings.needs_chat_model)}
+              </p>
+            ) : null}
+
+            {testResult ? (
+              <p
+                role="status"
+                className={
+                  testResult.ok ? "text-caption text-success" : "text-caption text-destructive"
+                }
+              >
+                {testResult.ok
+                  ? t(($) => $.ai_settings.test_ok)
+                  : t(($) => $.ai_settings.test_failed, {
+                      status: testResult.status,
+                      message: testResult.message,
+                    })}
+              </p>
+            ) : null}
+
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" size="sm" disabled>
+                <Plus className="size-3.5" />
+                {t(($) => $.ai_settings.add_model)}
+              </Button>
+              <NextRoundBadge />
+            </div>
+          </div>
 
           <div className="space-y-1.5">
             <p className="text-body font-medium">{t(($) => $.ai_settings.custom_headers)}</p>
@@ -376,91 +536,6 @@ function AISettingsForm({
               <Button type="button" variant="outline" disabled>
                 <Plus className="size-3.5" />
                 {t(($) => $.ai_settings.add_header)}
-              </Button>
-              <NextRoundBadge />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <p className="text-body font-medium">{t(($) => $.ai_settings.model_list)}</p>
-            <div className="space-y-3 rounded-lg border p-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="min-w-0 truncate font-medium">
-                  {model.trim() || t(($) => $.ai_settings.model_placeholder)}
-                </span>
-                {modelType ? (
-                  <Badge variant="secondary" data-testid="ai-model-type">
-                    {t(($) => $.ai_settings.model_types[modelType])}
-                  </Badge>
-                ) : null}
-                {modelInfo?.vision ? (
-                  <Badge variant="secondary" data-testid="ai-model-vision">
-                    {t(($) => $.ai_settings.vision)}
-                  </Badge>
-                ) : null}
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="ml-auto"
-                  disabled={blocked || test.isPending}
-                  onClick={handleTest}
-                >
-                  {test.isPending ? <Loader2 className="size-3.5 animate-spin" /> : null}
-                  {t(($) => $.ai_settings.test)}
-                </Button>
-              </div>
-
-              <Field id="ai-model" label={t(($) => $.ai_settings.model)}>
-                <Input
-                  id="ai-model"
-                  list="ai-model-options"
-                  placeholder={keyless ? t(($) => $.ai_settings.model_placeholder) : undefined}
-                  value={model}
-                  onChange={(e) => setModel(e.target.value)}
-                />
-                <datalist id="ai-model-options">
-                  {modelOptions.map((m) => (
-                    <option key={m} value={m} />
-                  ))}
-                </datalist>
-              </Field>
-
-              {modelInfo?.context ? (
-                <p data-testid="ai-model-limits" className="text-caption text-muted-foreground">
-                  {t(($) => $.ai_settings.context_window, { value: compact.format(modelInfo.context) })}
-                  {modelInfo.output
-                    ? ` · ${t(($) => $.ai_settings.output_limit, { value: compact.format(modelInfo.output) })}`
-                    : null}
-                </p>
-              ) : null}
-
-              {modelType && modelType !== "chat" ? (
-                <p role="alert" className="text-caption text-warning">
-                  {t(($) => $.ai_settings.needs_chat_model)}
-                </p>
-              ) : null}
-
-              {testResult ? (
-                <p
-                  role="status"
-                  className={
-                    testResult.ok ? "text-caption text-success" : "text-caption text-destructive"
-                  }
-                >
-                  {testResult.ok
-                    ? t(($) => $.ai_settings.test_ok)
-                    : t(($) => $.ai_settings.test_failed, {
-                        status: testResult.status,
-                        message: testResult.message,
-                      })}
-                </p>
-              ) : null}
-            </div>
-            <div className="flex items-center gap-2">
-              <Button type="button" variant="outline" size="sm" disabled>
-                <Plus className="size-3.5" />
-                {t(($) => $.ai_settings.add_model)}
               </Button>
               <NextRoundBadge />
             </div>

@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => ({
     getAISettings: vi.fn(),
     updateAISettings: vi.fn(),
     testAISettings: vi.fn(),
+    listAISettingsModels: vi.fn(),
     getAISettingsStatus: vi.fn(),
     listSkills: vi.fn(),
   },
@@ -114,6 +115,7 @@ describe("AISettingsPage", () => {
     mocks.api.listSkills.mockResolvedValue([]);
     mocks.api.updateAISettings.mockResolvedValue(settings());
     mocks.api.testAISettings.mockResolvedValue({ ok: true });
+    mocks.api.listAISettingsModels.mockResolvedValue({ ok: true, models: ["live-model-a", "live-model-b"] });
   });
 
   it("does not call the settings API for members", async () => {
@@ -265,6 +267,55 @@ describe("AISettingsPage", () => {
     });
     expect(input).not.toHaveProperty("api_key");
   });
+  it("lists the models the provider reports, without narrowing to the current value", async () => {
+    const user = userEvent.setup();
+    mocks.api.getAISettings.mockResolvedValue(settings({ model: "live-model-a" }));
+    renderUi(<AISettingsPage />);
+    await waitFor(() => expect(mocks.api.listAISettingsModels).toHaveBeenCalled());
+    await user.click(screen.getByLabelText("Model"));
+
+    expect(await screen.findByRole("option", { name: "live-model-a" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "live-model-b" })).toBeInTheDocument();
+    await user.click(screen.getByRole("option", { name: "live-model-b" }));
+    expect(screen.getByLabelText("Model")).toHaveValue("live-model-b");
+  });
+
+  it("narrows the model list once the person types", async () => {
+    const user = userEvent.setup();
+    renderUi(<AISettingsPage />);
+    await waitFor(() => expect(mocks.api.listAISettingsModels).toHaveBeenCalled());
+    const model = screen.getByLabelText("Model");
+    await user.clear(model);
+    await user.type(model, "model-b");
+
+    expect(await screen.findByRole("option", { name: "live-model-b" })).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: "live-model-a" })).not.toBeInTheDocument();
+  });
+
+  it("keeps the bundled suggestions and says so when the provider cannot list models", async () => {
+    mocks.api.listAISettingsModels.mockResolvedValue({ ok: false, status: 401, message: "bad key" });
+    renderUi(<AISettingsPage />);
+
+    expect(await screen.findByText(/Could not load this provider's model list/)).toBeInTheDocument();
+  });
+
+  it("does not ask for models until a required key is entered", async () => {
+    const user = userEvent.setup();
+    mocks.api.getAISettings.mockResolvedValue(settings({ api_key_set: false, api_key_last4: "" }));
+    renderUi(<AISettingsPage />);
+    const key = await screen.findByLabelText(/API key/);
+    await new Promise((resolve) => setTimeout(resolve, 700));
+    expect(mocks.api.listAISettingsModels).not.toHaveBeenCalled();
+
+    await user.type(key, "sk-new");
+    await waitFor(() =>
+      expect(mocks.api.listAISettingsModels).toHaveBeenCalledWith(
+        "ws-1",
+        expect.objectContaining({ api_key: "sk-new", model: "", prompt: "" }),
+      ),
+    );
+  });
+
   it("shows the provider logo in the trigger and in the list", async () => {
     const user = userEvent.setup();
     renderUi(<AISettingsPage />);
@@ -411,20 +462,47 @@ describe("AI settings layout", () => {
     mocks.api.getAISettings.mockResolvedValue(settings({ model: "plain-text-model" }));
     renderUi(<AISettingsPage />);
     const model = await screen.findByLabelText("Model");
-    expect(screen.getByTestId("ai-model-type")).toHaveTextContent("Chat");
+    const params = screen.getByRole("button", { name: "Model parameters" });
+    await user.click(params);
+    expect(await screen.findByTestId("ai-model-type")).toHaveTextContent("Chat");
     expect(screen.queryByTestId("ai-model-vision")).not.toBeInTheDocument();
+    await user.keyboard("{Escape}");
 
     await user.clear(model);
     await user.type(model, "qwen/qwen3-embedding-8b");
-    await waitFor(() => expect(screen.getByTestId("ai-model-type")).toHaveTextContent("Embedding"));
+    await user.click(params);
+    expect(await screen.findByTestId("ai-model-type")).toHaveTextContent("Embedding");
   });
 
   it("shows vision and limits for a listed vision model", async () => {
+    const user = userEvent.setup();
     mocks.api.getAISettings.mockResolvedValue(settings({ model: "claude-fable-5-1" }));
     renderUi(<AISettingsPage />);
+    await screen.findByLabelText("Model");
+    await user.click(screen.getByRole("button", { name: "Model parameters" }));
 
     expect(await screen.findByTestId("ai-model-vision")).toHaveTextContent("Vision");
     expect(screen.getByTestId("ai-model-limits")).toHaveTextContent(/Context/);
+  });
+
+  it("says so when the catalog has no parameters for the model", async () => {
+    const user = userEvent.setup();
+    mocks.api.getAISettings.mockResolvedValue(settings({ model: "plain-text-model" }));
+    renderUi(<AISettingsPage />);
+    await screen.findByLabelText("Model");
+    await user.click(screen.getByRole("button", { name: "Model parameters" }));
+
+    expect(
+      await screen.findByText("No parameters on file for this model."),
+    ).toBeInTheDocument();
+  });
+
+  it("disables the parameters button until a model is entered", async () => {
+    mocks.api.getAISettings.mockResolvedValue(settings({ model: "" }));
+    renderUi(<AISettingsPage />);
+    await screen.findByLabelText("Model");
+
+    expect(screen.getByRole("button", { name: "Model parameters" })).toBeDisabled();
   });
 
   it("warns when the chat AI is given a model that cannot chat", async () => {

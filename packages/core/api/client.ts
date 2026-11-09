@@ -67,6 +67,7 @@ import type {
   WorkspaceAISettings,
   AISettingsInput,
   AISettingsTestResult,
+  AISettingsModelsResult,
   PolishContext,
   MemberWithUser,
   User,
@@ -476,8 +477,10 @@ import {
   EMPTY_PLUGIN_INSTALLATION,
   EMPTY_WORKSPACE_MCP_SERVER,
   EMPTY_WORKSPACE_AI_SETTINGS,
+  FAILED_AI_SETTINGS_MODELS_RESULT,
   FAILED_AI_SETTINGS_TEST_RESULT,
   WorkspaceAISettingsSchema,
+  AISettingsModelsResultSchema,
   AISettingsTestResultSchema,
   AISettingsStatusSchema,
   PolishResultSchema,
@@ -3189,6 +3192,16 @@ export class ApiClient {
   }
 
   /** An upstream failure comes back as `{ ok: false }`; a missing key throws api_key_required. */
+  async listAISettingsModels(workspaceId: string, input: AISettingsInput): Promise<AISettingsModelsResult> {
+    const raw = await this.fetch<unknown>(`/api/workspaces/${workspaceId}/ai-settings/models`, {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+    return parseWithFallback(raw, AISettingsModelsResultSchema, FAILED_AI_SETTINGS_MODELS_RESULT, {
+      endpoint: "POST /api/workspaces/{id}/ai-settings/models",
+    });
+  }
+
   async testAISettings(workspaceId: string, input: AISettingsInput): Promise<AISettingsTestResult> {
     const raw = await this.fetch<unknown>(`/api/workspaces/${workspaceId}/ai-settings/test`, {
       method: "POST",

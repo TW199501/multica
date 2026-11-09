@@ -78,6 +78,10 @@ export type AISettingsTestResult =
   | { ok: true }
   | { ok: false; status: number; message: string };
 
+export type AISettingsModelsResult =
+  | { ok: true; models: string[] }
+  | { ok: false; status: number; message: string };
+
 export type PolishContext =
   | { kind: "chat"; chat_session_id: string }
   | { kind: "issue"; issue_id: string; thread_comment_id?: string }
