@@ -11,6 +11,7 @@ import {
   formatAvatarEmoji,
   parseAvatarEmoji,
 } from "@multica/ui/lib/avatar-emoji";
+import { AVATAR_PERSONAS, parseAvatarPersona } from "@multica/ui/lib/avatar-persona";
 import {
   Popover,
   PopoverContent,
@@ -157,7 +158,8 @@ export function AvatarUploadControl({
   const [emojiSearchOpen, setEmojiSearchOpen] = useState(false);
 
   const emoji = parseAvatarEmoji(value);
-  const resolved = value && !emoji ? resolvePublicFileUrl(value) : null;
+  const persona = parseAvatarPersona(value);
+  const resolved = persona ?? (value && !emoji ? resolvePublicFileUrl(value) : null);
   const hasImage = !!resolved && !previewError;
   const hasAvatar = !!emoji || hasImage;
   const emojiEnabled = !!onEmojiSelected;
@@ -216,18 +218,17 @@ export function AvatarUploadControl({
   // so the change is already visible.
   const changeLabel = ariaLabel ?? t(($) => $.avatar_upload.change);
 
-  const handleEmojiSelected = async (picked: string) => {
+  const handleChoiceSelected = async (picked: string) => {
     closePicker();
     setPreviewError(false);
     setBusy(true);
     try {
-      await persistedByCaller(() =>
-        onEmojiSelected?.(formatAvatarEmoji(picked)),
-      );
+      await persistedByCaller(() => onEmojiSelected?.(picked));
     } finally {
       setBusy(false);
     }
   };
+  const handleEmojiSelected = (picked: string) => handleChoiceSelected(formatAvatarEmoji(picked));
 
   const avatarButton = (
     <button
@@ -318,6 +319,31 @@ export function AvatarUploadControl({
                     <ImagePlus className="size-4 shrink-0 text-muted-foreground" />
                     {t(($) => $.avatar_upload.upload_image)}
                   </button>
+                </div>
+
+                <Separator />
+
+                <div className="p-1">
+                  <p className="px-1.5 py-1 text-caption font-medium text-muted-foreground">
+                    {t(($) => $.avatar_upload.person_label)}
+                  </p>
+                  <div className="grid grid-cols-8 gap-0.5">
+                    {AVATAR_PERSONAS.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        aria-label={option.value}
+                        aria-pressed={value === option.value}
+                        onClick={() => handleChoiceSelected(option.value)}
+                        className={cn(
+                          "flex h-8 w-8 items-center justify-center rounded-md hover:bg-accent",
+                          value === option.value && "bg-accent ring-1 ring-ring",
+                        )}
+                      >
+                        <img src={option.src} alt="" className="size-7 rounded-full bg-muted" />
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <Separator />

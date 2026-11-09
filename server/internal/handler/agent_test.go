@@ -815,10 +815,10 @@ func TestCreateAgent_AssignsAvatarDefault(t *testing.T) {
 		name       string
 		avatarURL  *string
 		wantAvatar string
-		wantEmoji  bool
+		wantPerson  bool
 	}{
-		{name: "omitted", wantEmoji: true},
-		{name: "empty", avatarURL: ptr(""), wantEmoji: true},
+		{name: "omitted", wantPerson: true},
+		{name: "empty", avatarURL: ptr(""), wantPerson: true},
 		{
 			name:       "explicit",
 			avatarURL:  ptr("https://cdn.example.com/avatars/agent.png"),
@@ -857,9 +857,9 @@ func TestCreateAgent_AssignsAvatarDefault(t *testing.T) {
 			if response.AvatarURL == nil {
 				t.Fatal("CreateAgent: avatar_url is nil")
 			}
-			if tt.wantEmoji {
-				if !strings.HasPrefix(*response.AvatarURL, "emoji:") {
-					t.Fatalf("CreateAgent: avatar_url = %q, want emoji avatar", *response.AvatarURL)
+			if tt.wantPerson {
+				if !strings.HasPrefix(*response.AvatarURL, agentPersonaAvatarPrefix) {
+					t.Fatalf("CreateAgent: avatar_url = %q, want a person avatar", *response.AvatarURL)
 				}
 				return
 			}

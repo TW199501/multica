@@ -2,6 +2,7 @@ package handler
 
 import (
 	"crypto/rand"
+	"fmt"
 	"math/big"
 	"net/http"
 	"strings"
@@ -9,20 +10,19 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const agentEmojiAvatarPrefix = "emoji:"
+const (
+	agentEmojiAvatarPrefix   = "emoji:"
+	agentPersonaAvatarPrefix = "persona:"
+	// agentPersonaAvatarCount is the number of images in packages/ui/assets/personas.
+	agentPersonaAvatarCount = 24
+)
 
-var agentEmojiAvatars = []string{
-	"🐙", "🦊", "🦉", "🐝", "🐼", "🐸", "🐯", "🦁",
-	"🐨", "🐵", "🐧", "🐳", "🦋", "🌞", "🌙", "⭐",
-	"🔥", "⚡", "🍀", "🌈", "🚀", "🤖", "👾", "🧠",
-}
-
-func randomAgentEmojiAvatar() string {
-	index, err := rand.Int(rand.Reader, big.NewInt(int64(len(agentEmojiAvatars))))
+func randomAgentAvatar() string {
+	index, err := rand.Int(rand.Reader, big.NewInt(agentPersonaAvatarCount))
 	if err != nil {
-		return agentEmojiAvatarPrefix + agentEmojiAvatars[0]
+		return agentPersonaAvatarPrefix + "01"
 	}
-	return agentEmojiAvatarPrefix + agentEmojiAvatars[index.Int64()]
+	return fmt.Sprintf("%s%02d", agentPersonaAvatarPrefix, index.Int64()+1)
 }
 
 // newAgentAvatar resolves the avatar to persist for a newly created agent. An
@@ -38,5 +38,5 @@ func (h *Handler) newAgentAvatar(w http.ResponseWriter, r *http.Request, avatarU
 		}
 		return pgtype.Text{String: accepted, Valid: true}, true
 	}
-	return pgtype.Text{String: randomAgentEmojiAvatar(), Valid: true}, true
+	return pgtype.Text{String: randomAgentAvatar(), Valid: true}, true
 }

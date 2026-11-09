@@ -12,6 +12,7 @@
     "updated": "头像已更新",
     "failed": "头像上传失败",
     "upload_image": "上传图片",
+    "person_label": "人物",
     "emoji_label": "表情",
     "more_emojis": "更多表情…",
     "emoji_loading": "加载中…"
