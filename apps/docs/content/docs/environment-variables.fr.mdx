@@ -183,6 +183,7 @@ Les limites de débit d'authentification nécessitent `REDIS_URL` ; sans cette v
 | GitHub | `GITHUB_WEBHOOK_SECRET` | Secret de signature HMAC des webhooks et de l'état de connexion |
 | GitHub | `GITHUB_APP_ID` | Nécessaire pour le statut CI et la possibilité de fusion sur les cartes de PR, ainsi que pour le sélecteur de dépôts « Choisir depuis GitHub » |
 | GitHub | `GITHUB_APP_PRIVATE_KEY` | Clé privée PEM complète associée à l'App ID ; mêmes usages que ci-dessus |
+| GitHub | `GITHUB_TOKEN` | Permet à la [navigation dans le code du projet](/projects) de lire les dépôts privés et d'enregistrer des fichiers, ce qui nécessite un accès en écriture au contenu. Relève aussi la limite de l'API GitHub pour l'import de compétences. Tout membre de l'espace de travail peut lire et écrire les dépôts accessibles par ce jeton, y compris via les ressources qu'il ajoute : limitez-le aux dépôts nécessaires |
 | Lark | `MULTICA_LARK_SECRET_KEY` | Clé de chiffrement des identifiants de 32 octets, encodée en Base64 |
 | Slack | `MULTICA_SLACK_SECRET_KEY` | Clé de chiffrement des jetons de 32 octets, encodée en Base64 |
 | Paramètres IA | `MULTICA_AI_SECRET_KEY` | Clé de 32 octets encodée en Base64 qui chiffre la clé des paramètres IA de l'espace de travail ; sans elle, la page des paramètres IA ne peut pas enregistrer et l'amélioration des messages est indisponible. Gardez-la stable : la perdre ou la changer rend illisibles les clés IA enregistrées |

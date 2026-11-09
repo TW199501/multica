@@ -45,6 +45,14 @@ Avec la [conversation ancrée](/chat) sur un écran large du Web ou de Desktop, 
 
 Le changement d'onglet conserve les filtres et la position de défilement de la vue des tâches. Ouvrir un autre projet ramène à l'onglet Projet. Avec la discussion flottante activée, les propriétés restent dans la barre latérale droite ; sur petit écran, elles s'ouvrent dans un panneau latéral.
 
+## Parcourir le code d'un projet
+
+Avec la [conversation ancrée](/chat), basculez la barre latérale gauche sur **Projets** et ouvrez un projet. Le projet reste dans la colonne centrale pour suivre sa progression. La barre latérale gauche liste les fichiers du premier dépôt GitHub du projet, sur la branche définie par le `ref` de la ressource, ou sur la branche par défaut si aucun n'est défini. La colonne de droite affiche les onglets **Propriétés** et **Code** à la place de la conversation ; rebasculez la barre latérale sur **Menu** pour revenir à la conversation.
+
+Choisir un fichier l'ouvre en lecture seule dans **Code**. Pour le modifier, appuyez sur le crayon, modifiez le fichier, puis choisissez **Enregistrer**.
+
+**Enregistrer** crée directement un commit sur cette branche, sans pull request, et ce commit appartient au propriétaire du [`GITHUB_TOKEN`](/environment-variables) du serveur. L'enregistrement et la lecture des dépôts privés nécessitent ce jeton. L'enregistrement est refusé si le fichier a changé sur la branche après son ouverture ou si la branche est protégée. L'éditeur convertit les fins de ligne CRLF en LF : enregistrer un fichier CRLF modifie donc toutes ses lignes. Les fichiers de plus de 1 Mo et les fichiers binaires ne peuvent pas être affichés.
+
 ## Description du projet et contexte d'exécution
 
 Lorsqu'un agent traite une tâche d'un projet, le nom et la description du projet sont ajoutés au contexte de cette exécution. Placez dans la description ce que toutes les exécutions liées doivent savoir : l'objectif, les limites techniques, les conventions de livraison. Une exigence propre à une seule tâche s'écrit dans cette tâche.
