@@ -10,6 +10,7 @@ import {
   EyeOff,
   Loader2,
   Plus,
+  Settings2,
   Sparkles,
   Trash2,
 } from "@multica/ui/icons";
@@ -17,6 +18,11 @@ import { Badge } from "@multica/ui/components/ui/badge";
 import { Button } from "@multica/ui/components/ui/button";
 import { Input } from "@multica/ui/components/ui/input";
 import { Label } from "@multica/ui/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@multica/ui/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -337,38 +343,144 @@ function AISettingsForm({
             <Input id="ai-endpoint" value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} />
           </Field>
 
-          <Field
-            id="ai-api-key"
-            label={
-              keyRequired
-                ? t(($) => $.ai_settings.api_key_required)
-                : t(($) => $.ai_settings.api_key)
-            }
-          >
-            <div className="flex items-center gap-2">
-              <Input
+          <div className="space-y-2">
+            <div className="grid grid-cols-1 items-end gap-4 sm:grid-cols-2">
+              <Field
                 id="ai-api-key"
-                type={showKey ? "text" : "password"}
-                autoComplete="off"
-                value={apiKey}
-                placeholder={settings.api_key_set ? `••••${settings.api_key_last4}` : undefined}
-                aria-invalid={keyError || undefined}
-                aria-describedby={keyError ? "ai-api-key-error" : undefined}
-                onChange={(e) => setApiKey(e.target.value)}
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                aria-label={
-                  showKey ? t(($) => $.ai_settings.hide_key) : t(($) => $.ai_settings.show_key)
+                label={
+                  keyRequired
+                    ? t(($) => $.ai_settings.api_key_required)
+                    : t(($) => $.ai_settings.api_key)
                 }
-                onClick={() => setShowKey((shown) => !shown)}
               >
-                {showKey ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-              </Button>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="ai-api-key"
+                    type={showKey ? "text" : "password"}
+                    autoComplete="off"
+                    value={apiKey}
+                    placeholder={settings.api_key_set ? `••••${settings.api_key_last4}` : undefined}
+                    aria-invalid={keyError || undefined}
+                    aria-describedby={keyError ? "ai-api-key-error" : undefined}
+                    onChange={(e) => setApiKey(e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    aria-label={
+                      showKey ? t(($) => $.ai_settings.hide_key) : t(($) => $.ai_settings.show_key)
+                    }
+                    onClick={() => setShowKey((shown) => !shown)}
+                  >
+                    {showKey ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  </Button>
+                </div>
+              </Field>
+
+              <div className="min-w-0 space-y-1.5">
+                <div className="flex items-center justify-between gap-2">
+                  <Label htmlFor="ai-model">{t(($) => $.ai_settings.model)}</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={blocked || test.isPending}
+                    onClick={handleTest}
+                  >
+                    {test.isPending ? <Loader2 className="size-3.5 animate-spin" /> : null}
+                    {t(($) => $.ai_settings.test)}
+                  </Button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="ai-model"
+                    list="ai-model-options"
+                    placeholder={keyless ? t(($) => $.ai_settings.model_placeholder) : undefined}
+                    value={model}
+                    onChange={(e) => setModel(e.target.value)}
+                  />
+                  <datalist id="ai-model-options">
+                    {modelOptions.map((m) => (
+                      <option key={m} value={m} />
+                    ))}
+                  </datalist>
+                  <Popover>
+                    <PopoverTrigger
+                      render={
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          aria-label={t(($) => $.ai_settings.model_params)}
+                          disabled={!modelType}
+                        />
+                      }
+                    >
+                      <Settings2 className="size-4" />
+                    </PopoverTrigger>
+                    <PopoverContent align="end" className="w-64 space-y-2">
+                      <p className="truncate font-medium">{model.trim()}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {modelType ? (
+                          <Badge variant="secondary" data-testid="ai-model-type">
+                            {t(($) => $.ai_settings.model_types[modelType])}
+                          </Badge>
+                        ) : null}
+                        {modelInfo?.vision ? (
+                          <Badge variant="secondary" data-testid="ai-model-vision">
+                            {t(($) => $.ai_settings.vision)}
+                          </Badge>
+                        ) : null}
+                      </div>
+                      {modelInfo?.context ? (
+                        <p data-testid="ai-model-limits" className="text-caption text-muted-foreground">
+                          {t(($) => $.ai_settings.context_window, { value: compact.format(modelInfo.context) })}
+                          {modelInfo.output
+                            ? ` · ${t(($) => $.ai_settings.output_limit, { value: compact.format(modelInfo.output) })}`
+                            : null}
+                        </p>
+                      ) : (
+                        <p className="text-caption text-muted-foreground">
+                          {t(($) => $.ai_settings.model_params_unknown)}
+                        </p>
+                      )}
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
             </div>
-          </Field>
+
+            {modelType && modelType !== "chat" ? (
+              <p role="alert" className="text-caption text-warning">
+                {t(($) => $.ai_settings.needs_chat_model)}
+              </p>
+            ) : null}
+
+            {testResult ? (
+              <p
+                role="status"
+                className={
+                  testResult.ok ? "text-caption text-success" : "text-caption text-destructive"
+                }
+              >
+                {testResult.ok
+                  ? t(($) => $.ai_settings.test_ok)
+                  : t(($) => $.ai_settings.test_failed, {
+                      status: testResult.status,
+                      message: testResult.message,
+                    })}
+              </p>
+            ) : null}
+
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" size="sm" disabled>
+                <Plus className="size-3.5" />
+                {t(($) => $.ai_settings.add_model)}
+              </Button>
+              <NextRoundBadge />
+            </div>
+          </div>
 
           <div className="space-y-1.5">
             <p className="text-body font-medium">{t(($) => $.ai_settings.custom_headers)}</p>
@@ -376,91 +488,6 @@ function AISettingsForm({
               <Button type="button" variant="outline" disabled>
                 <Plus className="size-3.5" />
                 {t(($) => $.ai_settings.add_header)}
-              </Button>
-              <NextRoundBadge />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <p className="text-body font-medium">{t(($) => $.ai_settings.model_list)}</p>
-            <div className="space-y-3 rounded-lg border p-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="min-w-0 truncate font-medium">
-                  {model.trim() || t(($) => $.ai_settings.model_placeholder)}
-                </span>
-                {modelType ? (
-                  <Badge variant="secondary" data-testid="ai-model-type">
-                    {t(($) => $.ai_settings.model_types[modelType])}
-                  </Badge>
-                ) : null}
-                {modelInfo?.vision ? (
-                  <Badge variant="secondary" data-testid="ai-model-vision">
-                    {t(($) => $.ai_settings.vision)}
-                  </Badge>
-                ) : null}
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="ml-auto"
-                  disabled={blocked || test.isPending}
-                  onClick={handleTest}
-                >
-                  {test.isPending ? <Loader2 className="size-3.5 animate-spin" /> : null}
-                  {t(($) => $.ai_settings.test)}
-                </Button>
-              </div>
-
-              <Field id="ai-model" label={t(($) => $.ai_settings.model)}>
-                <Input
-                  id="ai-model"
-                  list="ai-model-options"
-                  placeholder={keyless ? t(($) => $.ai_settings.model_placeholder) : undefined}
-                  value={model}
-                  onChange={(e) => setModel(e.target.value)}
-                />
-                <datalist id="ai-model-options">
-                  {modelOptions.map((m) => (
-                    <option key={m} value={m} />
-                  ))}
-                </datalist>
-              </Field>
-
-              {modelInfo?.context ? (
-                <p data-testid="ai-model-limits" className="text-caption text-muted-foreground">
-                  {t(($) => $.ai_settings.context_window, { value: compact.format(modelInfo.context) })}
-                  {modelInfo.output
-                    ? ` · ${t(($) => $.ai_settings.output_limit, { value: compact.format(modelInfo.output) })}`
-                    : null}
-                </p>
-              ) : null}
-
-              {modelType && modelType !== "chat" ? (
-                <p role="alert" className="text-caption text-warning">
-                  {t(($) => $.ai_settings.needs_chat_model)}
-                </p>
-              ) : null}
-
-              {testResult ? (
-                <p
-                  role="status"
-                  className={
-                    testResult.ok ? "text-caption text-success" : "text-caption text-destructive"
-                  }
-                >
-                  {testResult.ok
-                    ? t(($) => $.ai_settings.test_ok)
-                    : t(($) => $.ai_settings.test_failed, {
-                        status: testResult.status,
-                        message: testResult.message,
-                      })}
-                </p>
-              ) : null}
-            </div>
-            <div className="flex items-center gap-2">
-              <Button type="button" variant="outline" size="sm" disabled>
-                <Plus className="size-3.5" />
-                {t(($) => $.ai_settings.add_model)}
               </Button>
               <NextRoundBadge />
             </div>
