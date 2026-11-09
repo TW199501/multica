@@ -67,7 +67,7 @@ function ProjectCodeFileView({
 
   return (
     <>
-      <div className="flex h-10 shrink-0 items-center gap-2 border-b px-3">
+      <div className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
         <span className="min-w-0 flex-1 truncate font-mono text-caption text-muted-foreground" title={path}>
           {path}
         </span>
@@ -201,7 +201,7 @@ export function IssueDockedAside({
       {/* Stays mounted: closing a file must not reset the properties' open sections. */}
       <div
         hidden={!!selected}
-        className="h-full min-h-0 overflow-y-auto [scrollbar-gutter:stable] px-2 py-4"
+        className="h-full min-h-0 overflow-y-auto [scrollbar-gutter:stable] px-2 pt-2.5 pb-4"
       >
         {properties}
       </div>
