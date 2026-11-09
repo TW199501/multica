@@ -6,6 +6,7 @@ import { cn } from "@multica/ui/lib/utils";
 import { TooltipHint } from "@multica/ui/components/common/tooltip-hint";
 import type { WebhookEventFilter } from "@multica/core/types";
 import { useT } from "../../i18n";
+import { isTraditionalChinese } from "../../common/docs-locale";
 import { useDocsUrl } from "../../common/docs-url";
 
 interface WebhookEventFilterSectionProps {
@@ -21,11 +22,13 @@ export function WebhookEventFilterSection({
   const [newEvent, setNewEvent] = useState("");
   const [newActions, setNewActions] = useState("");
   const docsUrl = useDocsUrl();
-  const docsHref = i18n.language?.startsWith("zh")
-    ? `${docsUrl}/zh/autopilots#${encodeURIComponent("事件过滤")}`
-    : i18n.language?.startsWith("fr")
-      ? `${docsUrl}/fr/autopilots#${encodeURIComponent("filtres-dévénements")}`
-      : `${docsUrl}/autopilots#event-filters`;
+  const docsHref = isTraditionalChinese(i18n.language)
+    ? `${docsUrl}/zh-Hant/autopilots#${encodeURIComponent("事件過濾")}`
+    : i18n.language?.startsWith("zh")
+      ? `${docsUrl}/zh/autopilots#${encodeURIComponent("事件过滤")}`
+      : i18n.language?.startsWith("fr")
+        ? `${docsUrl}/fr/autopilots#${encodeURIComponent("filtres-dévénements")}`
+        : `${docsUrl}/autopilots#event-filters`;
 
   const addFilter = () => {
     const event = newEvent.trim();
