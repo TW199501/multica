@@ -195,6 +195,7 @@
     "binary": "This file can't be displayed.",
     "too_large": "This file is over 1 MB and can't be displayed.",
     "edit": "Edit",
+    "close": "Close file",
     "cancel": "Cancel",
     "save": "Save",
     "saved": "Saved to the branch",

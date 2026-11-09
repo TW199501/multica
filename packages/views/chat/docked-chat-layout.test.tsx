@@ -26,6 +26,7 @@ vi.mock("@multica/core/paths", () => ({
     usage: () => "/acme/usage",
     settings: () => "/acme/settings",
     projects: () => "/acme/projects",
+    issues: () => "/acme/issues",
   }),
 }));
 
@@ -137,13 +138,15 @@ describe("DockedChatLayout", () => {
     expect(page.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  it("keeps an issue in the middle while the project tree tab is open", () => {
+  it("gives an open issue the right column while the project tree tab is open", () => {
     useDockedLayoutStore.setState({ sidebarSection: "projects" });
     renderAt("/acme/issues/issue-1");
 
-    const chat = screen.getByTestId("chat-window");
+    const aside = useDockedLayoutStore.getState().asideElement;
+    expect(aside).toBeInstanceOf(HTMLElement);
     const page = screen.getByTestId("route-page");
-    expect(page.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(page.compareDocumentPosition(aside!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.getByTestId("chat-window")).not.toBeVisible();
     useDockedLayoutStore.setState({ sidebarSection: "menu" });
   });
 
@@ -159,9 +162,9 @@ describe("DockedChatLayout", () => {
     useDockedLayoutStore.setState({ sidebarSection: "menu" });
   });
 
-  it("keeps the conversation on pages with no project open", () => {
+  it("keeps the conversation on pages with no project or issue open", () => {
     useDockedLayoutStore.setState({ sidebarSection: "projects" });
-    renderAt("/acme/issues/issue-1");
+    renderAt("/acme/issues");
 
     expect(useDockedLayoutStore.getState().asideElement).toBeNull();
     expect(screen.getByTestId("chat-window")).toBeVisible();

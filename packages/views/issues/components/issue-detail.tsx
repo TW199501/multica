@@ -10,6 +10,7 @@ import { useStatusLabel } from "../utils/status-label";
 import { priorityLabel } from "../utils/priority-label";
 import { useIssueStatuses } from "@multica/core/issue-statuses/hooks";
 import { useState, useEffect, useCallback, useMemo, useRef, useId, Fragment, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import { useDefaultLayout, usePanelRef } from "react-resizable-panels";
 import { AppLink, useBackOrReplace } from "../../navigation";
@@ -98,6 +99,7 @@ import { LabelChip } from "../../labels/label-chip";
 import { IssueAgentActivityIndicator } from "./issue-agent-activity-indicator";
 import { SubIssuesAgentWorkingChip } from "./sub-issues-agent-working-chip";
 import { IssueProjectPicker } from "../../projects/components/issue-project-picker";
+import { IssueDockedAside } from "../../projects/components/project-code-panel";
 import { IssuePropertyPills } from "./issue-property-pills";
 import { LocalDirectoryHint } from "../../projects/components/local-directory-hint";
 import { useNewRunIds } from "./use-run-comment-motion";
@@ -1385,6 +1387,10 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   // share this column with the issue behind tabs.
   const docked = useDockedLayoutStore((s) => s.layoutActive) && !isPeek && !isMobile;
   const [dockedTab, setDockedTab] = useState<"issue" | "properties">("issue");
+  // The project tree tab gives the properties a column of their own, so the
+  // tabs are not needed there.
+  const asideElement = useDockedLayoutStore((s) => s.asideElement);
+  const aside = docked ? asideElement : null;
 
   useEffect(() => {
     if (isMobile) {
@@ -1395,7 +1401,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
     setDockedTab("issue");
   }, [id]);
   const sidebarOpen = docked
-    ? dockedTab === "properties"
+    ? !!aside || dockedTab === "properties"
     : isMobile
       ? mobileSidebarOpen
       : desktopSidebarOpen;
@@ -2780,7 +2786,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
 
   const handleToggleSidebar = useCallback(() => {
     if (docked) {
-      setDockedTab((tab) => (tab === "issue" ? "properties" : "issue"));
+      if (!aside) setDockedTab((tab) => (tab === "issue" ? "properties" : "issue"));
       return;
     }
     if (isMobile) {
@@ -2796,7 +2802,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       if (nextOpen) panel.expand();
       else panel.collapse();
     });
-  }, [beginDesktopSidebarToggle, docked, isMobile, sidebarRef]);
+  }, [aside, beginDesktopSidebarToggle, docked, isMobile, sidebarRef]);
 
   // The header's wakeup chip opens the sidebar and brings the Wakeups section
   // into view with focus on its heading.
@@ -4194,6 +4200,15 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
             {sidebarContent}
           </SheetContent>
         </Sheet>
+      </div>,
+    );
+  }
+
+  if (aside) {
+    return withPreview(
+      <div ref={rightSidebarShortcutTargetRef} className="flex min-h-0 flex-1">
+        {detailContent}
+        {createPortal(<IssueDockedAside projectId={issue.project_id} properties={sidebarContent} />, aside)}
       </div>,
     );
   }
