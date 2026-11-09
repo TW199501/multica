@@ -832,7 +832,7 @@ export function ChatWindow({ variant = "floating" }: ChatWindowProps = {}) {
     >
       {!isMobile && !docked && <ChatResizeHandles onDragStart={startDrag} />}
       {/* Header — ⊕ new + session dropdown | window tools */}
-      <div className="flex items-center justify-between border-b px-4 py-2.5 gap-2">
+      <div className={cn("flex items-center justify-between border-b px-4 gap-2", docked ? "h-12 shrink-0" : "py-2.5")}>
         <div className="flex items-center gap-1 min-w-0">
           <Tooltip>
             <TooltipTrigger

@@ -22,7 +22,7 @@ vi.mock("@multica/core/api", async (importOriginal) => ({
 vi.mock("@multica/core/hooks", () => ({ useWorkspaceId: () => "ws-1" }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: toastError } }));
 
-const { ProjectDockedAside } = await import("./project-code-panel");
+const { IssueDockedAside, ProjectDockedAside } = await import("./project-code-panel");
 const { ProjectCodeExplorer } = await import("./project-code-explorer");
 
 const GITHUB = {
@@ -162,5 +162,58 @@ describe("project code browser", () => {
     });
     expect(screen.getByRole("tab", { name: en.detail.section_properties }).getAttribute("aria-selected")).toBe("true");
     expect(api.getProjectCodeFile).not.toHaveBeenCalled();
+  });
+});
+
+describe("issue docked aside", () => {
+  function renderAside(projectId: string | null = "p1") {
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    return renderWithI18n(
+      <QueryClientProvider client={client}>
+        <IssueDockedAside projectId={projectId} properties={<div>issue properties</div>} />
+      </QueryClientProvider>,
+    );
+  }
+  const select = (projectId: string) =>
+    act(() => useDockedLayoutStore.getState().setCodeSelection({ projectId, resourceId: "res-1", path: "a.go" }));
+
+  it("shows the properties with no tabs until a file is chosen", () => {
+    renderAside();
+
+    expect(screen.getByText("issue properties")).toBeVisible();
+    expect(screen.queryByRole("tab")).not.toBeInTheDocument();
+  });
+
+  it("replaces the properties with the file and returns when it is closed", async () => {
+    renderAside();
+    select("p1");
+
+    expect(await screen.findByText("a.go")).toBeInTheDocument();
+    expect(screen.getByText("issue properties")).not.toBeVisible();
+
+    fireEvent.click(screen.getByRole("button", { name: en.code.close }));
+
+    expect(screen.getByText("issue properties")).toBeVisible();
+    expect(useDockedLayoutStore.getState().codeSelection).toBeNull();
+  });
+
+  it("hides the close button while a file is being edited", async () => {
+    renderAside();
+    select("p1");
+    await waitFor(() => expect(screen.getByRole("button", { name: en.code.edit })).toBeEnabled());
+    fireEvent.click(screen.getByRole("button", { name: en.code.edit }));
+
+    await screen.findByRole("button", { name: en.code.save });
+    expect(screen.queryByRole("button", { name: en.code.close })).not.toBeInTheDocument();
+  });
+
+  it("ignores a file from another project, and any file on an issue with no project", () => {
+    const { unmount } = renderAside();
+    select("p2");
+    expect(screen.getByText("issue properties")).toBeVisible();
+    unmount();
+
+    renderAside(null);
+    expect(screen.getByText("issue properties")).toBeVisible();
   });
 });

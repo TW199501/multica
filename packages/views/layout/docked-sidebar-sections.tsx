@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useDefaultLayout } from "react-resizable-panels";
 import { useDockedLayoutStore, type DockedSidebarSection } from "@multica/core/chat/docked-layout-store";
+import { useWorkspaceId } from "@multica/core/hooks";
+import { issueDetailOptions } from "@multica/core/issues/queries";
 import { useWorkspacePaths } from "@multica/core/paths";
 import {
   ResizableHandle,
@@ -97,10 +100,13 @@ export function DockedSidebarTabs({ active }: { active: DockedSidebarSection }) 
 export function DockedProjectTree({ pinned }: { pinned?: ReactNode }) {
   const { t } = useT("layout");
   const { pathname } = useNavigation();
-  const projectsPath = useWorkspacePaths().projects();
-  const projectId = pathname.startsWith(`${projectsPath}/`)
-    ? pathname.slice(projectsPath.length + 1).split("/")[0]
-    : "";
+  const wsId = useWorkspaceId();
+  const paths = useWorkspacePaths();
+  const segmentAfter = (base: string) =>
+    pathname.startsWith(`${base}/`) ? (pathname.slice(base.length + 1).split("/")[0] ?? "") : "";
+  const issueId = segmentAfter(paths.issues());
+  const issue = useQuery({ ...issueDetailOptions(wsId, issueId), enabled: !!issueId });
+  const projectId = segmentAfter(paths.projects()) || (issueId ? (issue.data?.project_id ?? "") : "");
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({ id: "multica_docked_projects_split" });
   return (
     <ResizablePanelGroup

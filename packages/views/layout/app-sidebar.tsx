@@ -664,7 +664,7 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
       <Sidebar variant="inset" className={shellDocked ? "h-[calc(100svh-24px)]" : undefined}>
         {topSlot}
         {/* Workspace Switcher */}
-        <SidebarHeader className={cn("py-3", headerClassName)} style={headerStyle}>
+        <SidebarHeader className={cn("pt-2 pb-3", headerClassName)} style={headerStyle}>
           <SidebarMenu>
             <SidebarMenuItem>
               <DropdownMenu>

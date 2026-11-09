@@ -612,7 +612,7 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
       >
         <div
           className={cn(
-            "mx-auto w-full px-4 py-6 sm:px-6 md:px-10 md:py-8",
+            "mx-auto w-full px-4 pt-2.5 pb-6 sm:px-6 md:px-10 md:pb-8",
             active.wide ? "max-w-5xl" : "max-w-4xl",
           )}
         >

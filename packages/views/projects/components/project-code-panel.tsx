@@ -10,7 +10,7 @@ import { projectCodeFileOptions, useSaveProjectCodeFile } from "@multica/core/pr
 import { IconButton } from "@multica/ui/components/common/icon-button";
 import { Button } from "@multica/ui/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@multica/ui/components/ui/tabs";
-import { Pencil } from "@multica/ui/icons";
+import { Pencil, X } from "@multica/ui/icons";
 import { CodeBlockStatic } from "../../editor/code-block-static";
 import { extensionToLanguage } from "../../editor/utils/preview";
 import { useT } from "../../i18n";
@@ -25,10 +25,12 @@ function ProjectCodeFileView({
   projectId,
   resourceId,
   path,
+  onClose,
 }: {
   projectId: string;
   resourceId: string;
   path: string;
+  onClose?: () => void;
 }) {
   const { t } = useT("projects");
   const wsId = useWorkspaceId();
@@ -65,7 +67,7 @@ function ProjectCodeFileView({
 
   return (
     <>
-      <div className="flex h-10 shrink-0 items-center gap-2 border-b px-3">
+      <div className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
         <span className="min-w-0 flex-1 truncate font-mono text-caption text-muted-foreground" title={path}>
           {path}
         </span>
@@ -84,15 +86,27 @@ function ProjectCodeFileView({
             </Button>
           </>
         ) : (
-          <IconButton
-            label={t(($) => $.code.edit)}
-            tooltipSide="bottom"
-            className="text-muted-foreground"
-            disabled={!editable}
-            onClick={() => data && setDraft({ projectId, path, content: data.content })}
-          >
-            <Pencil />
-          </IconButton>
+          <>
+            <IconButton
+              label={t(($) => $.code.edit)}
+              tooltipSide="bottom"
+              className="text-muted-foreground"
+              disabled={!editable}
+              onClick={() => data && setDraft({ projectId, path, content: data.content })}
+            >
+              <Pencil />
+            </IconButton>
+            {onClose ? (
+              <IconButton
+                label={t(($) => $.code.close)}
+                tooltipSide="bottom"
+                className="text-muted-foreground"
+                onClick={onClose}
+              >
+                <X />
+              </IconButton>
+            ) : null}
+          </>
         )}
       </div>
       <div className="min-h-0 flex-1 overflow-auto">
@@ -138,7 +152,7 @@ export function ProjectDockedAside({ projectId, properties }: { projectId: strin
       onValueChange={(value) => setTab(value as "properties" | "code")}
       className="flex h-full min-h-0 flex-col gap-0"
     >
-      <div className="flex shrink-0 items-center border-b px-3 py-1.5">
+      <div className="flex h-12 shrink-0 items-center border-b px-3">
         <TabsList>
           <TabsTrigger value="properties">{t(($) => $.detail.section_properties)}</TabsTrigger>
           <TabsTrigger value="code">{t(($) => $.code.tab)}</TabsTrigger>
@@ -164,5 +178,44 @@ export function ProjectDockedAside({ projectId, properties }: { projectId: strin
         )}
       </TabsContent>
     </Tabs>
+  );
+}
+
+/**
+ * Right column of an open issue while the project tree tab is open: its
+ * properties, replaced by the file chosen in the tree until that file is closed.
+ */
+export function IssueDockedAside({
+  projectId,
+  properties,
+}: {
+  projectId: string | null | undefined;
+  properties: ReactNode;
+}) {
+  const selection = useDockedLayoutStore((s) => s.codeSelection);
+  const setSelection = useDockedLayoutStore((s) => s.setCodeSelection);
+  const selected = projectId && selection?.projectId === projectId ? selection : null;
+
+  return (
+    <>
+      {/* Stays mounted: closing a file must not reset the properties' open sections. */}
+      <div
+        hidden={!!selected}
+        className="h-full min-h-0 overflow-y-auto [scrollbar-gutter:stable] px-2 pt-2.5 pb-4"
+      >
+        {properties}
+      </div>
+      {selected ? (
+        <div className="flex h-full min-h-0 flex-col">
+          <ProjectCodeFileView
+            key={`${selected.resourceId}:${selected.path}`}
+            projectId={selected.projectId}
+            resourceId={selected.resourceId}
+            path={selected.path}
+            onClose={() => setSelection(null)}
+          />
+        </div>
+      ) : null}
+    </>
   );
 }

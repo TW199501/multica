@@ -32,8 +32,9 @@ export interface DockedChatLayoutProps {
  * in the middle and the current page moves to a resizable column on the right;
  * on Settings, Inbox, an open project, the AI team pages, Usage, `pageFirstPaths` and while the
  * project tree tab is open, the page stays in the middle and the conversation takes the right. With it on, on
- * the Chat tab and on small screens, the page renders as before. An open project with the project tree tab open
- * takes the right column for its properties and code, and the conversation stays hidden until the tab changes.
+ * the Chat tab and on small screens, the page renders as before. An open project or issue with the project tree
+ * tab open takes the right column for its properties and code, and the conversation stays hidden until the tab
+ * changes.
  */
 export function DockedChatLayout({ enabled = true, pageFirstPaths, children }: DockedChatLayoutProps) {
   if (!enabled) return <>{children}</>;
@@ -88,7 +89,9 @@ function DockedChatLayoutForWorkspace({
   const setShellDocked = useDockedLayoutStore((s) => s.setShellDocked);
   const setPageElement = useDockedLayoutStore((s) => s.setPageElement);
   const setAsideElement = useDockedLayoutStore((s) => s.setAsideElement);
-  const projectAside = sidebarSection === "projects" && pathname.startsWith(`${wsPaths.projects()}/`);
+  const projectAside =
+    sidebarSection === "projects" &&
+    (pathname.startsWith(`${wsPaths.projects()}/`) || pathname.startsWith(`${wsPaths.issues()}/`));
 
   useLayoutEffect(() => {
     setShellDocked(shellDocked);

@@ -761,7 +761,18 @@ describe("IssueDetail (shared)", () => {
 
   describe("in the docked chat layout", () => {
     beforeEach(() => useDockedLayoutStore.setState({ layoutActive: true }));
-    afterEach(() => useDockedLayoutStore.setState({ layoutActive: false }));
+    afterEach(() => useDockedLayoutStore.setState({ layoutActive: false, asideElement: null }));
+
+    it("puts the properties in the right column with no tabs while the project tree tab is open", async () => {
+      const aside = document.createElement("div");
+      document.body.appendChild(aside);
+      useDockedLayoutStore.setState({ asideElement: aside });
+      renderIssueDetail();
+
+      await waitFor(() => expect(aside).toHaveTextContent("Status"));
+      expect(screen.queryByRole("tab", { name: "Properties" })).not.toBeInTheDocument();
+      aside.remove();
+    });
 
     it("switches between the issue and its properties with tabs, not a fourth column", async () => {
       renderIssueDetail();
