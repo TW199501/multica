@@ -1625,7 +1625,7 @@ func (h *Handler) CreateAgent(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	avatarURL, ok := h.newAgentAvatar(w, r, req.AvatarURL)
+	avatarURL, ok := h.newAgentAvatar(w, r, parseUUID(workspaceID), req.AvatarURL)
 	if !ok {
 		return
 	}
