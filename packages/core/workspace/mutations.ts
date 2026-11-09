@@ -179,6 +179,12 @@ export function useUpdateAISettings(wsId: string) {
   });
 }
 
+export function useListAISettingsModels(wsId: string) {
+  return useMutation({
+    mutationFn: (input: AISettingsInput) => api.listAISettingsModels(wsId, input),
+  });
+}
+
 export function useTestAISettings(wsId: string) {
   return useMutation({
     mutationFn: (input: AISettingsInput) => api.testAISettings(wsId, input),

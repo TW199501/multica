@@ -1884,6 +1884,7 @@ func NewRouterWithOptions(pool *pgxpool.Pool, hub *realtime.Hub, bus *events.Bus
 					r.Get("/ai-settings", h.GetAISettings)
 					r.Put("/ai-settings", h.PutAISettings)
 					r.Post("/ai-settings/test", h.CheckAISettings)
+					r.Post("/ai-settings/models", h.ListAISettingsModels)
 				})
 
 				// Slack integration (MUL-3666). Same admin/member split as

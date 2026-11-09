@@ -41,6 +41,17 @@ export const PROVIDER_PRESETS: ProviderPreset[] = [
     baseUrl: "https://api.moonshot.ai/v1",
     models: ["kimi-k3.1-pro", "kimi-k3.1-pro-highspeed"],
   },
+  // No suggestions: the live model list fills them in once a key is entered.
+  {
+    key: "zhipu",
+    baseUrl: "https://open.bigmodel.cn/api/paas/v4",
+    models: [],
+  },
+  {
+    key: "tencent",
+    baseUrl: "https://api.hunyuan.cloud.tencent.com/v1",
+    models: [],
+  },
   {
     key: "grok",
     baseUrl: "https://api.x.ai/v1",
