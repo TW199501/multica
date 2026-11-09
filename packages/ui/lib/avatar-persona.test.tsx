@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { render } from "@testing-library/react";
+import { ActorAvatar } from "../components/common/actor-avatar";
 import { AVATAR_PERSONAS, parseAvatarPersona } from "./avatar-persona";
 
 describe("avatar personas", () => {
@@ -19,4 +21,12 @@ describe("avatar personas", () => {
       expect(parseAvatarPersona(value)).toBeNull();
     },
   );
+});
+
+describe("ActorAvatar with a person avatar", () => {
+  it("shows the bundled image, not the raw marker", () => {
+    const { container } = render(<ActorAvatar name="解萬難" initials="解" isAgent avatarUrl="persona:03" />);
+
+    expect(container.querySelector("img")?.getAttribute("src")).toBe(parseAvatarPersona("persona:03"));
+  });
 });
