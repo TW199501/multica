@@ -281,6 +281,7 @@ export function DesktopShell() {
             {slug && (
               <AppSidebar
                 topSlot={<SidebarTopSpacer />}
+                headerClassName="pt-0"
                 personalNavExtra={<BrowserSidebarEntry />}
                 searchSlot={<SearchTrigger />}
               />

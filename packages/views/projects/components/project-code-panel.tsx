@@ -138,7 +138,7 @@ export function ProjectDockedAside({ projectId, properties }: { projectId: strin
       onValueChange={(value) => setTab(value as "properties" | "code")}
       className="flex h-full min-h-0 flex-col gap-0"
     >
-      <div className="flex shrink-0 items-center border-b px-3 py-1.5">
+      <div className="flex h-12 shrink-0 items-center border-b px-3">
         <TabsList>
           <TabsTrigger value="properties">{t(($) => $.detail.section_properties)}</TabsTrigger>
           <TabsTrigger value="code">{t(($) => $.code.tab)}</TabsTrigger>
