@@ -265,6 +265,18 @@ describe("AISettingsPage", () => {
     });
     expect(input).not.toHaveProperty("api_key");
   });
+  it("shows the provider logo in the trigger and in the list", async () => {
+    const user = userEvent.setup();
+    renderUi(<AISettingsPage />);
+    await screen.findByLabelText(/API key/);
+    const trigger = screen.getByRole("combobox", { name: "Provider" });
+    expect(trigger.querySelector("[data-slot='select-value'] svg")).not.toBeNull();
+    expect(trigger).toHaveTextContent("OpenAI");
+    await user.click(trigger);
+    const option = await screen.findByRole("option", { name: "Hugging Face" });
+    expect(option.querySelector("svg")).not.toBeNull();
+  });
+
   it("lists no blank provider for an unconfigured workspace", async () => {
     const user = userEvent.setup();
     mocks.api.getAISettings.mockResolvedValue(

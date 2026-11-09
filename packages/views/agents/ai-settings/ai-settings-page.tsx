@@ -57,6 +57,7 @@ import {
   useModelCatalog,
 } from "./model-catalog";
 import { KEYLESS_PROVIDERS, PROVIDER_PRESETS } from "./provider-presets";
+import { ProviderLogo } from "../../runtimes/components/provider-logo";
 
 const NO_SKILL = "__none__";
 
@@ -312,11 +313,19 @@ function AISettingsForm({
           <Field id="ai-provider" label={t(($) => $.ai_settings.provider)}>
             <Select items={providerItems} value={provider} onValueChange={onProviderChange}>
               <SelectTrigger id="ai-provider" className="w-full">
-                <SelectValue />
+                <SelectValue className="items-center gap-2">
+                  {provider ? (
+                    <>
+                      <ProviderLogo provider={provider} className="size-4 shrink-0" />
+                      {providerItems.find((item) => item.value === provider)?.label}
+                    </>
+                  ) : undefined}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {providerItems.map((item) => (
                   <SelectItem key={item.value} value={item.value}>
+                    <ProviderLogo provider={item.value} className="size-4 shrink-0" />
                     {item.label}
                   </SelectItem>
                 ))}
