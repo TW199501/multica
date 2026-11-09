@@ -444,15 +444,6 @@ describe("AI team nav", () => {
   });
 });
 
-describe("new issue entry", () => {
-  it("sits right above Issues in the work group", () => {
-    const { container } = render(<AppSidebar />);
-
-    const issues = container.querySelector('button[data-href="/acme/issues"]');
-    expect(issues?.previousElementSibling).toHaveTextContent(/new.?issue/i);
-  });
-});
-
 describe("docked layout", () => {
   afterEach(() => {
     chatStore.current = { activeSessionId: null, isOpen: false };

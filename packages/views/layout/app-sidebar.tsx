@@ -803,6 +803,21 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
                 {searchSlot}
               </SidebarMenuItem>
             )}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                className="text-muted-foreground"
+                onClick={() => openCreateIssueWithPreference()}
+              >
+                <span className="relative">
+                  <SquarePen />
+                  <DraftDot />
+                </span>
+                <span>{t(($) => $.sidebar.new_issue)}</span>
+                {createIssueShortcut ? (
+                  <ShortcutKeycaps shortcut={createIssueShortcut} decorative className="pointer-events-none ml-auto" />
+                ) : null}
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
           )}
         </SidebarHeader>
@@ -879,21 +894,6 @@ export function AppSidebar({ topSlot, personalNavExtra, searchSlot, headerClassN
             <SidebarGroupLabel>{t(($) => $.sidebar.work_group)}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="gap-0.5">
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    className={NAV_ITEM_CLASS_NAME}
-                    onClick={() => openCreateIssueWithPreference()}
-                  >
-                    <span className="relative">
-                      <SquarePen />
-                      <DraftDot />
-                    </span>
-                    <span>{t(($) => $.sidebar.new_issue)}</span>
-                    {createIssueShortcut ? (
-                      <ShortcutKeycaps shortcut={createIssueShortcut} decorative className="pointer-events-none ml-auto" />
-                    ) : null}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
                 {workNav.map((item) => {
                   const href = p[item.key]();
                   const Icon = routeIconForPath(href);
