@@ -701,7 +701,11 @@
     "wakeup_checkin_coalesced_many": "{{count}} тихих проверок · последняя: {{note}}",
     "environment_stopped": "остановил(а) окружение {{name}}",
     "environment_restarted": "перезапустил(а) окружение {{name}}",
-    "environment_started": "запустил(а) окружение {{name}}"
+    "environment_started": "запустил(а) окружение {{name}}",
+    "agent_comments_one": "{{count}} комментарий агента",
+    "agent_comments_few": "{{count}} комментария агентов",
+    "agent_comments_many": "{{count}} комментариев агентов",
+    "agent_comments_other": "{{count}} комментария агентов"
   },
   "comment": {
     "add_reaction": "Добавить реакцию",
@@ -853,7 +857,8 @@
       "note_placeholder": "Добавить комментарий…",
       "count_few": "{{count}} аннотации",
       "count_many": "{{count}} аннотаций"
-    }
+    },
+    "action": "Ответить"
   },
   "agent_activity": {
     "hover_header_one": "{{count}} агент работает",

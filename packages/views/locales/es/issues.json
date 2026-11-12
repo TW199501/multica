@@ -651,7 +651,9 @@
     "wakeup_created_scheduled": "añadió una activación para {{agent}}: {{condition}}",
     "environment_stopped": "detuvo el entorno {{name}}",
     "environment_restarted": "reinició el entorno {{name}}",
-    "environment_started": "inició el entorno {{name}}"
+    "environment_started": "inició el entorno {{name}}",
+    "agent_comments_one": "{{count}} comentario de agente",
+    "agent_comments_other": "{{count}} comentarios de agentes"
   },
   "comment": {
     "add_reaction": "Añadir reacción",
@@ -787,7 +789,8 @@
       "source_label": "Comentario de {{name}}",
       "edit": "Editar anotación {{number}}",
       "note_placeholder": "Añadir un comentario…"
-    }
+    },
+    "action": "Responder"
   },
   "agent_activity": {
     "hover_header_one": "{{count}} agente activo",

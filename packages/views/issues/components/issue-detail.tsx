@@ -3464,8 +3464,8 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   // a native `<a href="#comment-...">` anchor. A run that left no comment is
   // addressed by its task id, which the sidebar's unread link lands on.
   const renderItem = (i: number, item: TimelineItem): React.ReactElement => {
-    // Flat mode exists so find and deep links can reach every comment.
-    const fold = isFlatTimeline ? undefined : agentFolds.get(item.id);
+    // Find and deep links must reach every comment, so neither folds.
+    const fold = isFlatTimeline || highlightCommentId ? undefined : agentFolds.get(item.id);
     const open = !fold || expandedAgentFolds.has(fold.foldId);
     // The row keeps one position in this tree so that joining or leaving a fold
     // never remounts a comment and loses its open reply box.

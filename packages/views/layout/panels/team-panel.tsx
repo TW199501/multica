@@ -2,7 +2,7 @@
 
 import { useId, useMemo, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowUpRight, BarChart3, BookOpenText, Bot, MessageSquare, Monitor, Plus, User, UserPlus, Users } from "@multica/ui/icons";
+import { ArrowUpRight, BarChart3, BookOpenText, Bot, MessageSquare, Monitor, Plus, User, UserPlus, Users, Workflow } from "@multica/ui/icons";
 import { DropdownMenuItem } from "@multica/ui/components/ui/dropdown-menu";
 import { cn } from "@multica/ui/lib/utils";
 import { ActorAvatar } from "@multica/ui/components/common/actor-avatar";
@@ -441,6 +441,12 @@ export function TeamPanel() {
                   </span>
                 ) : undefined
               }
+            />
+            <PanelLink
+              href={p.workflows()}
+              icon={<Workflow />}
+              label={t(($) => $.nav.workflows)}
+              active={isPathWithin(pathname, p.workflows())}
             />
             <PanelLink
               href={p.usage()}

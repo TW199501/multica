@@ -182,5 +182,32 @@
     "clear_filter": "Borrar filtro",
     "no_matches": "Ninguna fila coincide",
     "close": "Cerrar"
+  },
+  "polish": {
+    "button": "Pulir mensaje",
+    "title": "Pulir mensaje",
+    "close": "Cerrar",
+    "before": "Antes",
+    "after": "Después",
+    "loading": "Puliendo…",
+    "regenerate": "Pulir",
+    "adopt": "Usar",
+    "send": "Enviar",
+    "disclaimer": "Los agentes de IA pueden cometer errores.",
+    "turn_off_hint": "Para decidir tú mismo si pulir, desactiva el pulido de mensajes en Preferencias → Comentarios.",
+    "error_lost_spans": "El texto pulido cambiaba menciones, enlaces o código, así que se conserva el original.",
+    "error_not_configured": "El pulido de mensajes no está configurado en este espacio de trabajo. Se conserva el original.",
+    "error_failed": "No se pudo pulir el mensaje. Se conserva el original."
+  },
+  "decision": {
+    "label": "Decisión",
+    "placeholder": "Por decidir",
+    "approve": "Aprobar e iniciar",
+    "discuss": "Seguir discutiendo",
+    "execution_label": "Ejecución con IA",
+    "single": "Un solo agente",
+    "multi": "Varios agentes",
+    "sent": "Decisión enviada: {{label}}",
+    "view": "Ver"
   }
 }

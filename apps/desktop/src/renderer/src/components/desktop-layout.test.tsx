@@ -43,6 +43,7 @@ vi.mock("@multica/core/paths", () => ({
   ),
   paths: { workspace: () => ({ inbox: () => "/acme/inbox" }) },
   useCurrentWorkspace: () => null,
+  useWorkspaceSlug: () => "acme",
 }));
 
 vi.mock("@multica/core/platform", () => ({
@@ -67,7 +68,9 @@ vi.mock("@multica/views/platform", () => ({
 
 vi.mock("@multica/views/layout", () => ({
   AppBottomBar: () => null,
-  AppRail: () => null,
+  AppRail: ({ extraItems }: { extraItems?: ReactNode }) => (
+    <div data-testid="app-rail">{extraItems}</div>
+  ),
   AppShellProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
   CompactNavSheet: () => null,
   GlobalShortcuts: () => null,
@@ -82,11 +85,22 @@ vi.mock("@multica/views/layout", () => ({
   ResourceLeadingVisual: () => null,
 }));
 
+vi.mock("@/browser-plugin", () => ({
+  BrowserLayer: () => null,
+  BrowserSidebarEntry: () => <div data-testid="browser-entry" />,
+  DesktopBrowserPluginProvider: ({ children }: { children: ReactNode }) => (
+    <>{children}</>
+  ),
+}));
+
 vi.mock("@multica/views/modals/registry", () => ({ ModalRegistry: () => null }));
 vi.mock("@multica/views/search", () => ({
   SearchCommand: () => null,
 }));
-vi.mock("@multica/views/chat", () => ({ FloatingChat: () => null }));
+vi.mock("@multica/views/chat", () => ({
+  FloatingChat: () => null,
+  DockedChatLayout: ({ children }: { children: ReactNode }) => <>{children}</>,
+}));
 vi.mock("@multica/views/star-prompt", () => ({ StarPrompt: () => null }));
 vi.mock("./tab-bar", () => ({ TabBar: () => null }));
 vi.mock("./window-overlay", () => ({ WindowOverlay: () => null }));
@@ -144,6 +158,13 @@ beforeEach(() => {
     value: 1280,
   });
   localStorage.clear();
+});
+
+describe("DesktopShell browser entry placement", () => {
+  it("puts the Browser entry on the app rail", () => {
+    const { getByTestId } = renderShell();
+    expect(getByTestId("app-rail")).toContainElement(getByTestId("browser-entry"));
+  });
 });
 
 describe("DesktopShell sidebar trigger", () => {

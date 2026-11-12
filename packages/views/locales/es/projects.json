@@ -223,5 +223,25 @@
     "publish_description": "Todos los miembros podrán ver este proyecto, sus tareas, comentarios y archivos adjuntos.",
     "done": "Listo",
     "retry": "Reintentar"
+  },
+  "code": {
+    "tab": "Código",
+    "default_branch": "Rama predeterminada",
+    "no_repository": "No hay ningún repositorio de GitHub conectado.",
+    "load_failed": "No se pudo leer este repositorio. Los repositorios privados requieren GITHUB_TOKEN en el servidor.",
+    "truncated": "Demasiados archivos. Solo se muestra parte de la lista.",
+    "finish_editing": "Primero guarda o cancela tu edición.",
+    "select_file": "Elige un archivo en el explorador.",
+    "file_load_failed": "No se pudo leer este archivo.",
+    "binary": "Este archivo no se puede mostrar.",
+    "too_large": "Este archivo supera 1 MB y no se puede mostrar.",
+    "edit": "Editar",
+    "close": "Cerrar archivo",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "saved": "Guardado en la rama",
+    "save_conflict": "No guardado: el archivo cambió en la rama o la rama está protegida.",
+    "save_denied": "No guardado: el token de GitHub del servidor no tiene acceso de escritura.",
+    "save_failed": "No se pudo guardar el archivo."
   }
 }

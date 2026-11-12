@@ -12,7 +12,8 @@
     "runtimes": "Runtimes",
     "skills": "Skills",
     "settings": "Ajustes",
-    "views": "Vistas"
+    "views": "Vistas",
+    "workflows": "Flujos de trabajo"
   },
   "tab": {
     "issue": "Tarea",
@@ -27,6 +28,7 @@
     "attachment": "Adjunto",
     "create_agent": "Crear agente",
     "unknown": "Página desconocida",
+    "browser": "Navegador",
     "my_agents": "Trabajo de mis agentes"
   },
   "help": {
@@ -254,5 +256,14 @@
     "copy_table": "Copiar tabla",
     "copied": "Copiado",
     "copy_failed": "No se pudo copiar"
+  },
+  "docked": {
+    "sections": "Secciones de la barra lateral",
+    "menu": "Menú",
+    "projects": "Proyectos",
+    "settings": "Ajustes",
+    "projects_empty": "Abre un proyecto para ver sus archivos.",
+    "explorer": "Explorador de archivos",
+    "pinned_empty": "Todavía no hay nada fijado."
   }
 }

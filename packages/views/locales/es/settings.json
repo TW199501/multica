@@ -183,6 +183,10 @@
       "quick": "Crear con agente",
       "unsupported": "No disponible al crear con un agente"
     },
+    "polish_on_send": {
+      "title": "Pulido de mensajes",
+      "hint": "Al enviar en el chat, los comentarios y las respuestas, primero se abre el diálogo de pulido."
+    },
     "issue_fields_title": "Campos al crear tareas",
     "region_title": "Idioma y región"
   },
@@ -1412,7 +1416,10 @@
       "pinned_name": "{{title}} (fijada)",
       "copy_link": "Copiar enlace",
       "link_copied": "Enlace copiado",
-      "close_right": "Cerrar las pestañas a la derecha"
+      "close_right": "Cerrar las pestañas a la derecha",
+      "limit_title": "{{count}} pestañas abiertas",
+      "limit_body": "¿Cerrar «{{title}}», la pestaña de más a la izquierda, para abrir una nueva?",
+      "limit_confirm": "Cerrar y abrir"
     },
     "updates": {
       "title": "Actualizaciones",

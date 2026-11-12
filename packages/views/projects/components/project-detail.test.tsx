@@ -177,6 +177,7 @@ vi.mock("./project-due-date-picker", () => ({
   ProjectDueDatePicker: () => null,
 }));
 
+vi.mock("../../skills/components/file-viewer", () => ({ FileViewer: () => null }));
 vi.mock("../../issues/surface/issue-surface", () => ({
   IssueSurface: ({
     renderHeader,

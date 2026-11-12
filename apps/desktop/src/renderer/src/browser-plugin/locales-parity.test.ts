@@ -9,6 +9,8 @@ import zhHant from "./locales/zh-Hant.json";
 import ja from "./locales/ja.json";
 import ko from "./locales/ko.json";
 import fr from "./locales/fr.json";
+import es from "./locales/es.json";
+import ru from "./locales/ru.json";
 
 const locales: Record<string, Record<string, string>> = {
   en,
@@ -17,6 +19,8 @@ const locales: Record<string, Record<string, string>> = {
   ja,
   ko,
   fr,
+  es,
+  ru,
 };
 
 function placeholders(value: string): string[] {
