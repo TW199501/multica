@@ -1,19 +1,22 @@
 {
   "page": {
     "title": "AI 代理",
-    "learn_more": "瞭解更多 →",
     "new_agent": "新建 AI 代理",
-    "search_placeholder": "搜尋 AI 代理...",
+    "search": "搜尋 AI 代理",
     "show_archived": "顯示已歸檔（{{count}}）→",
     "of_total": "{{visible}} / {{total}}",
     "list_load_failed": "無法載入 AI 代理列表",
     "list_load_failed_default": "獲取 AI 代理列表時出錯。",
-    "try_again": "重試"
+    "try_again": "重試",
+    "scope_title": {
+      "mine": "我的 AI 代理",
+      "all": "全部 AI 代理",
+      "archived": "已歸檔 AI 代理"
+    }
   },
   "scope": {
     "mine": "我的",
-    "all": "全部",
-    "archived": "已歸檔"
+    "all": "全部"
   },
   "sort": {
     "label_recent": "最近活躍",
@@ -42,26 +45,24 @@
     "title": "已歸檔 AI 代理"
   },
   "empty": {
-    "title": "還沒有 AI 代理",
-    "description": "建立 AI 代理後，即可把任務分配給它。"
+    "setup": {
+      "label": "設定步驟",
+      "runtime": "接入執行時",
+      "agent": "建立 AI 代理",
+      "issue": "指派一個任務給它",
+      "done": "（已完成）",
+      "connect_runtime": "去接入"
+    }
   },
   "no_matches": {
     "title": "無匹配項",
-    "search_archived": "沒有已歸檔 AI 代理匹配\"{{query}}\"。",
-    "no_archived": "還沒有已歸檔 AI 代理。",
     "search_active": "沒有 AI 代理匹配\"{{query}}\"。",
     "search_active_filtered": "在該篩選下沒有 AI 代理匹配\"{{query}}\"。",
+    "no_archived": "還沒有已歸檔 AI 代理。",
+    "search_archived": "沒有已歸檔 AI 代理匹配\"{{query}}\"。",
     "no_filter_match": "該篩選下沒有匹配的 AI 代理。",
     "search_runtime_filtered": "\"{{machine}}\"上沒有匹配\"{{query}}\"的 AI 代理。",
     "runtime_filtered": "\"{{machine}}\"上還沒有 AI 代理。"
-  },
-  "runtime_filter": {
-    "all": "全部執行時",
-    "section_local": "本地",
-    "section_remote": "遠端",
-    "section_cloud": "雲端",
-    "agent_count_other": "{{count}} 個 AI 代理",
-    "empty": "還沒有機器"
   },
   "columns": {
     "agent": "AI 代理",
@@ -127,7 +128,6 @@
     "archive_dialog_confirm": "歸檔"
   },
   "detail": {
-    "back_to_agents": "AI 代理",
     "back_to_agents_full": "返回 AI 代理列表",
     "not_found_title": "未找到該 AI 代理",
     "not_found_default": "該 AI 代理可能已被歸檔或刪除。",
@@ -156,7 +156,11 @@
     "runtime_required_toast": "請先繫結執行時，再執行該 AI 代理。",
     "assign_work": "分配工作",
     "more_actions_aria": "AI 代理操作",
-    "updated": "{{when}}更新"
+    "settings": "設定",
+    "copy_link": "複製連結",
+    "copy_id": "複製 AI 代理 ID",
+    "link_copied_toast": "連結已複製",
+    "id_copied_toast": "AI 代理 ID 已複製"
   },
   "inspector": {
     "section_profile": "資料",
@@ -166,7 +170,6 @@
     "section_properties": "屬性",
     "section_details": "詳情",
     "section_details_hint": "只讀的所有權和生命週期資訊。",
-    "section_skills": "Skills",
     "section_integrations": "整合",
     "prop_runtime": "執行時",
     "prop_model": "模型",
@@ -177,7 +180,6 @@
     "prop_owner": "所有者",
     "prop_created": "建立時間",
     "prop_updated": "更新時間",
-    "no_description_placeholder": "暫無描述",
     "avatar_label": "頭像",
     "name_label": "名稱",
     "description_label": "描述",
@@ -189,21 +191,29 @@
     "rename_required": "名稱必填",
     "edit_description_title": "編輯描述",
     "description_placeholder": "這個 AI 代理做什麼？",
-    "save": "儲存",
     "cancel": "取消"
   },
   "overview": {
-    "agent_context": "AI 代理",
-    "access": "訪問權限",
     "attention_title": "需要處理的執行",
     "attention_queued_other": "執行時不可用，當前有 {{count}} 次執行正在排隊。"
   },
-  "skill_attach": {
-    "trigger_aria": "附加工作區 skill",
-    "trigger_label": "附加"
+  "sections": {
+    "runs_count_other": "{{count}} 次執行",
+    "recent_this_week_other": "本週 {{count}} 次",
+    "view_all": "查看全部",
+    "open": "開啟",
+    "edit": "編輯",
+    "add": "新增",
+    "manage": "管理",
+    "instructions_empty": "還沒有指令。"
+  },
+  "panel": {
+    "status": "狀態",
+    "runs_7d": "執行（7 天）",
+    "edit_access_aria": "訪問權限：{{value}}。變更訪問權限",
+    "all_settings": "全部設定"
   },
   "pickers": {
-    "concurrency_tooltip": "併發 · 最多 {{value}} 次並行執行",
     "concurrency_range": "最大並行執行數（{{min}}–{{max}}）",
     "runtime_none": "無執行時",
     "runtime_tooltip": "執行時 · {{name}} · {{status}}",
@@ -251,13 +261,11 @@
     "clear_full": "清除選擇（使用提供方預設）"
   },
   "tabs": {
-    "overview": "概覽",
     "work": "工作",
     "capabilities": "能力",
     "settings": "設定",
     "general": "通用",
     "access": "訪問權限",
-    "page_navigation_aria": "AI 代理頁面",
     "section_navigation_aria": "AI 代理分區",
     "activity": "動態",
     "tasks": "執行",
@@ -266,7 +274,7 @@
     "environment": "環境變數",
     "custom_args": "自定義引數",
     "mcp_config": "MCP",
-    "composio_mcp": "MCP 應用",
+    "composio_mcp": "應用",
     "integrations": "整合",
     "runtime_config": "路由",
     "qoder_agent": "Qoder Cloud Agents",
@@ -279,16 +287,10 @@
     "title": "建立 AI 代理",
     "squad_title": "為小隊建立 AI 代理",
     "duplicate_title": "複製 {{name}}",
-    "back": "返回",
     "step_ai": "透過對話建立",
     "modes": {
-      "template": {
-        "title": "使用模板",
-        "description": "從整理好的指令和 skill 開始，再根據工作區需要修改每個細節。"
-      },
       "ai": {
-        "title": "透過 AI 建立",
-        "description": "透過對話生成可編輯的配置草稿。"
+        "title": "透過 AI 建立"
       }
     },
     "sections": {
@@ -316,10 +318,6 @@
       }
     },
     "builder": {
-      "setup_title": "為 AI 代理構建器選擇執行時",
-      "setup_description": "該執行時用於建立對話，並預設用於新 AI 代理。",
-      "start": "開始對話",
-      "connect_runtime": "連線執行時",
       "draft_parse_failed": "本次回覆未能填入表單。請讓 AI 代理重新生成草稿，或手動填寫。",
       "start_failed": "無法啟動 AI 代理構建器。",
       "send_failed": "無法傳送訊息。",
@@ -327,6 +325,7 @@
       "switch_runtime_failed": "切換執行時失敗，對話仍在原來的執行時上執行。",
       "switch_runtime_pending": "停止當前回覆後即可切換執行時。",
       "switch_runtime_success": "已切換執行時。配置草稿保留，後續對話將在新執行時上重新開始一段模型會話。",
+      "conversation_tab": "對話",
       "chat_title": "AI 代理構建器",
       "runtime_online": "執行時線上",
       "runtime_offline": "執行時離線",
@@ -363,7 +362,8 @@
       "runtime": "選擇執行時",
       "configure": "配置",
       "done": "完成",
-      "aria": "建立 AI 代理步驟"
+      "aria": "建立 AI 代理步驟",
+      "progress": "第 {{current}} 步，共 {{total}} 步"
     },
     "configure_title": "配置 AI 代理",
     "ask_ai": "讓 AI 幫我寫",
@@ -425,23 +425,17 @@
     }
   },
   "create_dialog": {
-    "title_create": "建立 AI 代理",
-    "title_duplicate": "複製 AI 代理",
-    "description_duplicate": "基於\"{{name}}\"建立一個新 AI 代理。指令、環境變數和 skill 會一併複製。",
     "name_label": "名稱",
     "name_placeholder": "例如：深度研究 AI 代理",
     "description_label": "描述",
     "description_placeholder": "這個 AI 代理做什麼？",
-    "visibility_label": "可見性",
     "access": {
-      "label": "訪問權限",
       "private_title": "私有",
       "private_desc": "只有你可以執行該 AI 代理",
       "public_title": "公開",
       "public_desc": "選擇誰可以執行該 AI 代理",
       "public_workspace_option": "工作區內所有人",
       "public_members_group": "指定成員",
-      "public_members_empty": "沒有可選擇的工作區成員",
       "public_targets_empty_hint": "至少勾選下方一項——否則該 AI 代理仍為私有。"
     },
     "runtime_label": "執行時",
@@ -456,17 +450,10 @@
     "runtime_no_results": "沒有匹配的機器",
     "runtime_group_online": "{{online}}/{{total}} 線上",
     "duplicate_copy_suffix": "（副本）",
-    "create": "建立",
-    "creating": "建立中...",
-    "cancel": "取消",
-    "create_failed_toast": "建立 AI 代理失敗",
     "skill_attach_failed_toast": "AI 代理已建立，但 skill 關聯失敗：{{error}}",
     "squad_join_failed_toast": "AI 代理\"{{name}}\"已建立，但加入小隊失敗：{{error}}。你可以在 Members 標籤裡手動新增。",
     "instructions": {
       "label": "指令",
-      "placeholder_blank": "點選撰寫指令…",
-      "placeholder_duplicate": "點選檢視或編輯複製的指令",
-      "collapse": "收起",
       "editor_placeholder": "寫下這個 AI 代理該做什麼、關注什麼、要避開什麼…"
     },
     "skills_section": {
@@ -543,6 +530,7 @@
       "bulk_placeholder": "API_KEY=值\nBASE_URL=https://example.com",
       "bulk_plaintext_notice": "批次編輯時，值以明文顯示。",
       "bulk_unsupported_toast": "\"{{key}}\" 的值無法用文字表示，請用逐條編輯修改",
+      "bulk_invalid_key_toast": "批次編輯只支援 API_KEY 這類變數名稱，請用逐條編輯修改 \"{{key}}\"",
       "parse_error_malformed": "第 {{line}} 行不是 KEY=value 格式",
       "parse_error_duplicate": "第 {{line}} 行的 key \"{{key}}\" 重複",
       "paste_invalid_toast": "無法解析貼上的環境變數",
@@ -680,21 +668,6 @@
       "redacted_hint": "只有 AI 代理 owner 或工作區 admin 可以檢視此配置。",
       "dialog_json_help": "以 JSON 編輯完整的伺服器配置。"
     },
-    "composio_mcp": {
-      "subtitle": "勾選 toolkit，只在你自己（這個 AI 代理的建立者）直接或透過下級 AI 代理鏈路觸發這個 AI 代理時，才把它掛載為 MCP server。",
-      "loading": "正在載入你的連線…",
-      "load_failed": "無法載入你已連線的應用，請稍後重試。",
-      "empty_title": "還沒有已連線的應用",
-      "empty_link_to_settings": "去 \"設定 → 整合\" 連一個",
-      "connected": "已連線",
-      "toggle_aria": "允許該 AI 代理使用 {{toolkit}}",
-      "saving": "正在儲存…",
-      "save_failed_toast": "儲存失敗，請重試",
-      "redacted_title": "已配置——對你隱藏",
-      "redacted_hint": "只有該 AI 代理的建立者才能檢視或修改它可使用的應用。",
-      "shared_warning": "該 AI 代理已共享。能夠執行該 AI 代理的人可以透過它使用你在此啟用的 Composio 應用。如果這些應用涉及敏感資料，請改用\"私有\"或縮小訪問範圍。",
-      "workspace_warning": "公開給工作區：工作區內任何成員都可以透過該 AI 代理使用這些 Composio 應用。"
-    },
     "runtime_config": {
       "mode_label": "路由模式",
       "mode_local": "Local",
@@ -760,7 +733,7 @@
       "add_failed_toast": "新增 skill 失敗"
     },
     "integrations": {
-      "members_note": "只有工作區的所有者和管理員可以管理此連線。你可以在\"設定 → 整合\"中檢視已連線的 Bot。"
+      "members_note": "在 AI 代理首頁查看和管理訊息管道。"
     },
     "activity": {
       "status": {
@@ -775,12 +748,6 @@
       "section_now": "當前",
       "section_last_30d": "近 30 天",
       "section_recent": "最近工作",
-      "subtitle_no_active": "無進行中的工作",
-      "subtitle_active_other": "{{count}} 次執行進行中",
-      "subtitle_performance": "表現",
-      "subtitle_no_recent": "還沒有完成的執行",
-      "subtitle_recent_progress": "顯示 {{shown}} / {{total}} 次執行",
-      "subtitle_recent_latest": "最近 {{count}} 次執行",
       "empty_now": "這個 AI 代理當前沒有在執行。",
       "empty_30d": "近 30 天沒有任何完成記錄。",
       "empty_recent": "這個 AI 代理還沒有完成過任何執行。",
@@ -791,9 +758,7 @@
       "success_hint": "成功率按已完成和失敗的執行計算，不包含已取消的執行。",
       "success_unavailable": "本期間沒有已完成或失敗的執行，無法計算成功率。",
       "cancelled_count": "{{count}} 次已取消",
-      "avg_duration": "平均 {{value}}",
       "avg_duration_label": "平均耗時",
-      "failed_count": "{{count}} 次失敗",
       "failed_label": "失敗",
       "source_issue": "任務",
       "source_chat": "聊天",
@@ -815,6 +780,27 @@
       "started_prefix": "{{when}}啟動",
       "dispatched_prefix": "{{when}}派發",
       "queued_prefix": "{{when}}排隊"
+    },
+    "connected_apps": {
+      "loading": "正在載入應用…",
+      "load_failed": "無法載入此 AI 代理的應用。",
+      "empty": "尚無已連線的應用程式。",
+      "level": "權限",
+      "team_connected": "團隊帳號已連線",
+      "team_missing": "團隊帳號未連線",
+      "personal_connected": "你的帳號已連線",
+      "personal_missing": "你還沒有連線這個應用",
+      "team_admin_only": "只有工作區管理員可以給 AI 代理團隊帳號。",
+      "team_shared_warning": "能執行這個 AI 代理的人，都能透過它使用該團隊帳號。",
+      "manage_link": "在 設定 → 已連線應用 中管理帳號",
+      "save_failed_toast": "儲存失敗，請重試",
+      "team_help": "工作區共用的帳號，由管理員連線。",
+      "personal_help": "每次執行使用觸發者自己已連線的帳號；尚未連線時須先連線。",
+      "available_accounts": "可用：{{accounts}}",
+      "enable": "啟用 {{app}}",
+      "account_for": "{{app}} 的帳號",
+      "connect_hint": "找不到需要的應用程式？前往設定連線帳號。",
+      "available_personal": "你的帳號"
     }
   },
   "char_counter": {
@@ -1017,24 +1003,36 @@
     "none": "30 天內無活動"
   },
   "toolbar": {
-    "result_count_title": "當前結果 / 範圍內全部",
-    "filter_label": "篩選",
-    "filter_active_count_other": "{{count}} 項篩選",
-    "clear_filters": "清除篩選",
     "section_availability": "可用性",
     "section_access": "訪問權限",
     "section_runtime": "執行時",
-    "display": "顯示",
-    "sort_by": "排序",
-    "direction_asc": "升序",
-    "direction_desc": "降序",
-    "section_columns": "列",
     "section_owner": "owner",
     "section_model": "模型"
   },
-  "actions": {
-    "selected_other": "已選 {{count}} 項",
-    "clear_selection": "清除選擇"
+  "actions": {},
+  "intro": {
+    "title": "招募第一位 AI 隊友",
+    "description": "AI 代理像團隊成員一樣接任務：在你的執行時上用 Claude Code、Codex 等工具動手做，做完在評論裡交付。",
+    "slides": {
+      "describe": {
+        "title": "一句話說清它做什麼",
+        "description": "描述職責，選好執行時和模型，就能建立。之後隨時改指令、加 skill。"
+      },
+      "assign": {
+        "title": "像同事一樣分配任務",
+        "description": "在任何任務的負責人裡選它。它會自己開工，不用盯著。"
+      },
+      "deliver": {
+        "title": "看它做事，在評論裡交付",
+        "description": "執行過程即時可見；完成後在任務評論裡交付結果和 PR。"
+      }
+    },
+    "art": {
+      "prompt": "審查前端 PR，重點看無障礙和效能，結論寫在 PR 評論裡。",
+      "issue_title": "定價頁行動版排版錯位",
+      "comment": "修好了：價格卡片在 375px 下改為單欄。已開 PR，測試通過。",
+      "step_read": "讀取 {{file}}"
+    }
   },
   "ai_settings": {
     "entry": "AI 設定",

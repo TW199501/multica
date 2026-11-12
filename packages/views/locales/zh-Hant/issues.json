@@ -1,4 +1,11 @@
 {
+  "web": {
+    "open_in_desktop": "在桌面版開啟"
+  },
+  "desktop": {
+    "link_other_instance": "桌面版連線的是另一個 Multica 執行個體。",
+    "link_workspace_unavailable": "此工作區在桌面版中無法使用。"
+  },
   "inline_run": {
     "label": "{{name}} 的執行",
     "stop": "停止",
@@ -38,10 +45,17 @@
   "working_filter_error": {
     "title": "無法載入 AI 代理正在處理的任務"
   },
+  "unread_filter_error": {
+    "title": "無法載入未讀任務"
+  },
   "status_catalog_error": {
     "title": "狀態列表載入失敗",
     "hint": "載入狀態後才能顯示任務。",
     "retry": "重試"
+  },
+  "relation_filter_error": {
+    "title": "「與我的關係」篩選載入失敗",
+    "hint": "載入訂閱和 AI 代理後才能顯示按「我訂閱的」或「我的 AI 代理在做」篩選的任務。"
   },
   "source_context": {
     "create_action": "從這條評論建立子任務",
@@ -117,6 +131,9 @@
     "breadcrumb_title": "任務",
     "breadcrumb_workspace_fallback": "工作區",
     "empty_title": "還沒有任務",
+    "empty_description": "任務是交給成員或 AI 代理的一件具體工作。指派給 AI 代理後，它會在你的執行時上自己開始。",
+    "break_down_with_chat": "用聊天拆解需求",
+    "break_down_prompt": "我想完成下面這件事。先問清楚你需要了解的，然後在這個工作區裡把它拆成任務：\n\n",
     "move_failed": "移動任務失敗"
   },
   "status": {
@@ -155,6 +172,7 @@
   },
   "filters": {
     "tooltip": "篩選",
+    "active_section": "已啟用",
     "placeholder": "篩選...",
     "search_status": "搜尋狀態...",
     "no_results": "無結果",
@@ -171,6 +189,20 @@
     "section_project": "專案",
     "section_project_status": "專案狀態",
     "section_label": "標籤",
+    "section_relation": "與我的關係",
+    "relation_assigned": "分配給我的",
+    "relation_created": "我建立的",
+    "relation_my_agents": "我的 AI 代理在做",
+    "relation_subscribed": "我訂閱的",
+    "section_agent_status": "AI 代理狀態",
+    "agent_status_running": "執行中",
+    "section_read_state": "閱讀狀態",
+    "read_state_unread": "未讀",
+    "operator_label": "關係",
+    "operator_is": "是",
+    "operator_is_not": "不是",
+    "modified_hint": "相對檢視有變更",
+    "unsaved_changes_other": "{{count}} 處未儲存的變更",
     "section_date": "日期",
     "date_field": "欄位",
     "date_field_created": "建立時間",
@@ -194,7 +226,53 @@
     "active_count_other": "{{count}} 個篩選",
     "in_view": "已包含在檢視中",
     "chip_edit": "編輯",
-    "chip_save_as": "另存"
+    "chip_save_as": "另存",
+    "section_due_date": "截止日期",
+    "due_overdue": "已逾期",
+    "due_today": "今天截止",
+    "due_this_week": "本週截止",
+    "due_next_7_days": "7 天內截止",
+    "due_none": "無截止日期",
+    "search_placeholder": "依欄位或值篩選…",
+    "search_fields": "欄位",
+    "search_values": "值",
+    "advanced_switch": "切換到進階篩選",
+    "advanced_title": "進階篩選",
+    "advanced_match_leading": "滿足",
+    "advanced_match_trailing": "條件",
+    "match_all": "全部",
+    "match_any": "任一",
+    "advanced_where": "當",
+    "advanced_and": "且",
+    "advanced_or": "或",
+    "advanced_add_condition": "新增條件",
+    "advanced_add_group": "新增條件組",
+    "advanced_unknown_property": "已刪除的屬性",
+    "advanced_values_placeholder": "選擇值…",
+    "advanced_field_label": "欄位",
+    "advanced_values_label": "值",
+    "advanced_actions": "條件操作",
+    "advanced_duplicate": "複製",
+    "advanced_delete": "刪除",
+    "advanced_delete_group": "刪除條件組",
+    "advanced_to_simple": "切回簡單篩選",
+    "advanced_to_simple_blocked": "含條件組、「任一」或重複欄位，簡單篩選無法表達",
+    "advanced_clear": "清除全部",
+    "advanced_empty": "還沒有條件，新增一條開始篩選。",
+    "advanced_conditions_other": "{{count}} 個條件",
+    "operator_has_any": "包含任一",
+    "operator_has_none": "都不包含",
+    "operator_contains": "包含",
+    "operator_not_contains": "不包含",
+    "operator_before": "早於",
+    "operator_after": "晚於",
+    "operator_empty": "為空",
+    "operator_not_empty": "不為空",
+    "advanced_group_match_leading": "滿足組內",
+    "advanced_group_match_trailing": "條件",
+    "advanced_group_hint": "組內條件之間用「{{word}}」連接",
+    "advanced_add_to_group": "新增到條件組",
+    "advanced_turn_into_group": "轉為條件組"
   },
   "display": {
     "tooltip": "顯示設定",
@@ -204,6 +282,7 @@
     "card_properties_section": "卡片屬性",
     "columns_section": "欄",
     "columns_locked_by_filter": "清除狀態篩選後才能顯示或隱藏欄。",
+    "columns_shown": "顯示 {{count}} 欄",
     "ascending_title": "升序",
     "descending_title": "降序",
     "newest_first": "最新優先",
@@ -236,7 +315,8 @@
     "card_project": "專案",
     "card_labels": "標籤",
     "card_child_progress": "子任務進度",
-    "show_sub_issues": "顯示子任務"
+    "show_sub_issues": "顯示子任務",
+    "layout_options": "{{layout}}選項"
   },
   "view": {
     "tooltip_board": "看板檢視",
@@ -346,7 +426,7 @@
       }
     },
     "search_placeholder": "搜尋任務...",
-    "search_empty": "沒有匹配的任務。"
+    "search_empty": "沒有匹配的任務"
   },
   "list": {
     "empty_status": "無任務",
@@ -386,6 +466,9 @@
     "metadata_description": "AI 代理和整合記錄的鍵值資料，用於銜接工作流程。",
     "section_load_failed_retry": "載入失敗，點選重試",
     "not_found": "這個任務不存在或已在該工作區被刪除。",
+    "load_failed": "無法載入任務。",
+    "load_retry": "重試",
+    "not_found_title": "未找到該任務",
     "breadcrumb_project_unknown": "未知專案",
     "back": "返回",
     "title_placeholder": "任務標題",
@@ -403,6 +486,17 @@
     "section_pull_requests": "Pull Request",
     "section_metadata": "後設資料",
     "section_details": "詳情",
+    "sidebar_settings": {
+      "open": "自訂側邊欄",
+      "title": "側邊欄",
+      "reset": "恢復預設",
+      "footer": "拖動調整順序。所有任務共用這套設定。",
+      "always_shown": "始終顯示",
+      "empty": "本任務暫無",
+      "customize": "自訂",
+      "drag_handle": "調整{{section}}的位置",
+      "hidden_count_other": "已隱藏 {{count}} 個區塊"
+    },
     "section_quick_actions": "快捷操作",
     "quick_actions_more": "顯示其餘 {{count}} 條",
     "quick_action_runs_as": "由 {{name}} 執行",
@@ -453,6 +547,8 @@
     "unsubscribe": "取消訂閱",
     "delegated_subscription_badge": "由 AI 代理代你關注",
     "delegated_subscription_hint": "你的 AI 代理代你建立了這個任務，因此你在關注它。待評審、完成或受阻時會通知你。",
+    "project_subscription_badge": "透過專案訂閱",
+    "project_subscription_hint": "你訂閱了這個專案的全部任務。在這裡取消訂閱只會停止這個任務的通知。",
     "unsubscribe_this": "取消訂閱此任務",
     "unsubscribe_subtree": "取消訂閱此任務及其子任務",
     "unsubscribe_subtree_failed": "取消訂閱子任務失敗，請重試。",
@@ -463,7 +559,6 @@
     "agents_group": "AI 代理",
     "mark_done_tooltip": "標記為已完成",
     "archive_tooltip": "歸檔",
-    "restore_to_inbox_tooltip": "恢復到收件箱",
     "pin_tooltip": "固定到側邊欄",
     "unpin_tooltip": "從側邊欄取消固定",
     "quick_jump_label": "快捷跳轉",
@@ -497,7 +592,8 @@
   },
   "timeline": {
     "loading": "載入中…",
-    "jump_to_latest": "跳到最新"
+    "jump_to_latest": "跳到最新",
+    "new_comments_other": "{{count}} 則新評論"
   },
   "activity": {
     "created": "建立了這個任務",
@@ -523,7 +619,6 @@
     "squad_leader_failed": "評估失敗",
     "squad_leader_failed_reason": "評估失敗：{{reason}}",
     "coalesced_badge": "×{{count}}",
-    "agent_comments_other": "{{count}} 則代理留言",
     "activity_count_other": "{{count}} 條動態",
     "show_more_activities_other": "展開更早 {{count}} 條動態",
     "duplicate_marked": "把這個任務標記為 {{identifier}} 的重複",
@@ -553,7 +648,11 @@
     "wakeup_checkin": "靜默檢查：{{note}}",
     "wakeup_checkin_coalesced_other": "靜默檢查 {{count}} 次 · 最近一次：{{note}}",
     "wakeup_chip_created_by": "{{name}} 建立",
-    "wakeup_chip_system": "系統規則"
+    "wakeup_chip_system": "系統規則",
+    "environment_stopped": "停止了環境 {{name}}",
+    "environment_restarted": "重新啟動了環境 {{name}}",
+    "environment_started": "啟動了環境 {{name}}",
+    "agent_comments_other": "{{count}} 則代理留言"
   },
   "comment": {
     "add_reaction": "新增表情回應",
@@ -650,14 +749,23 @@
     "recipient_count_other": "{{count}} 個 AI 代理會收到",
     "steer_attachment_notice": "插話只支援文字，帶附件的訊息會在本輪結束後處理。",
     "restart_send": "停止併傳送",
-    "restart_failed": "沒能停止當前執行，訊息還沒有傳送。"
+    "restart_failed": "沒能停止當前執行，訊息還沒有傳送。",
+    "reply_action": "回覆",
+    "actions_label": "評論操作",
+    "create_issue_from_selection": "用選取內容建立子任務"
   },
   "reply": {
-    "action": "回覆",
+    "recipients_changed": "回覆目標已變更。請重新確認收件者後再傳送。",
     "placeholder": "回覆...",
     "annotations": {
+      "send_all": "全部傳送",
+      "send_with_annotations_and_body": "將連同下方 {{count}} 條批註和正文一起傳送",
+      "send_with_annotations": "將連同下方 {{count}} 條批註一起傳送",
+      "send_with_body": "將連同下方正文一起傳送",
       "confirm_add": "新增批註",
       "save": "儲存批註",
+      "confirm_add_short": "新增",
+      "save_short": "儲存",
       "add_comment": "加入評論",
       "add": "加入回覆",
       "note_label": "批註",
@@ -672,7 +780,8 @@
       "source_label": "{{name}} 的評論",
       "edit": "編輯批註 {{number}}",
       "note_placeholder": "新增意見..."
-    }
+    },
+    "action": "回覆"
   },
   "agent_activity": {
     "hover_header_other": "{{count}} 個 AI 代理工作中",
@@ -680,6 +789,9 @@
     "hover_header_queued_other": "{{count}} 個 AI 代理排隊中",
     "status_running": "正在工作",
     "status_queued": "排隊中",
+    "unread_completed": "{{agent}} 已完成執行 · {{time}}",
+    "unread_failed": "{{agent}} 執行失敗 · {{time}}",
+    "unread_manual": "已標為未讀",
     "empty_hover": "當前沒有 AI 代理在工作",
     "unknown_hover": "工作中的 AI 代理：尚未載入",
     "filter_active_label": "正在檢視有 AI 代理在工作的任務",
@@ -690,6 +802,7 @@
   },
   "filtered_empty": {
     "title": "沒有符合篩選條件的任務",
+    "unread_title": "沒有未讀任務",
     "clear_button": "清除篩選"
   },
   "agent_live": {
@@ -705,6 +818,11 @@
     "cancel_failed": "取消執行失敗"
   },
   "execution_log": {
+    "latest": "最近",
+    "include_children": "包含子任務",
+    "loading": "正在載入執行記錄...",
+    "load_failed_retry": "無法載入執行記錄，點擊重試",
+    "empty": "此範圍內暫無執行記錄。",
     "section": "執行日誌",
     "cancel_task_tooltip": "取消執行",
     "cancel_task_aria": "取消執行",
@@ -804,6 +922,7 @@
     "col_tokens": "Token",
     "col_cost": "費用",
     "tokens_count": "{{tokens}} Token",
+    "credits_count": "{{credits}} {{provider}} 點數",
     "details_toggle": "執行詳情",
     "detail_breakdown": "費用明細",
     "detail_total": "合計",
@@ -822,6 +941,7 @@
     "confirm": "停止執行"
   },
   "batch": {
+    "delete_restricted": "你可以刪除本人或本人擁有的智慧體建立的任務。工作區 owner 和 admin 可以刪除任意任務。",
     "selected": "已選擇 {{count}} 個",
     "status": "狀態",
     "priority": "優先順序",
@@ -834,8 +954,10 @@
     "delete_failed": "刪除任務失敗",
     "delete_dialog_title_other": "刪除 {{count}} 個任務？",
     "delete_dialog_desc_other": "此操作無法撤銷，所選任務及其全部關聯資料都會被永久刪除。",
-    "delete_dialog_warning": "任何工作區成員都可以刪除任務。",
-    "cancel": "取消"
+    "cancel": "取消",
+    "copy_links": "複製連結",
+    "links_copied_other": "已複製 {{count}} 個連結",
+    "delete_count_other": "刪除 {{count}} 個任務"
   },
   "card": {
     "update_failed": "更新任務失敗",
@@ -859,18 +981,27 @@
     "unassigned": "未分配",
     "open_in_new_tab": "在新標籤頁開啟",
     "pin_to_sidebar": "固定到側邊欄",
+    "locate_in_sidebar": "在側邊欄中定位",
     "unpin_from_sidebar": "從側邊欄取消固定",
+    "restore_to_inbox": "恢復到收件箱",
+    "mark_read": "標為已讀",
+    "mark_unread": "標為未讀",
     "copy_link": "複製連結",
     "copy_workdir_path": "複製本地 workdir 路徑",
     "copy_project_directory_path": "複製專案目錄路徑",
+    "copy_identifier": "複製識別符號",
+    "identifier_copied": "已複製 {{identifier}}",
+    "stop_agent_run": "停止 {{name}} 的執行",
     "relations": "關係",
     "create_sub_issue": "建立子任務",
+    "quick_actions": "快捷操作",
     "set_parent_issue": "設定父任務...",
     "remove_parent_issue": "移除父任務",
     "remove_parent_issue_success": "已移除父任務",
     "add_sub_issue": "新增子任務...",
     "delete_issue": "刪除任務",
-    "mark_duplicate": "標記為重複..."
+    "mark_duplicate": "標記為重複...",
+    "open_in_new_window": "在新視窗中開啟"
   },
   "pickers": {
     "custom_property": {
@@ -958,38 +1089,6 @@
     "row_todo_hint": "啟動 AI 代理"
   },
   "save_view": {
-    "title": "儲存為檢視",
-    "hint_workspace": "基於工作區全部任務建立",
-    "hint_my_any": "基於「我的任務 · 全部」建立",
-    "hint_my_assigned": "基於「我的任務 · 分配給我」建立",
-    "hint_my_created": "基於「我的任務 · 我建立的」建立",
-    "hint_my_involved": "基於「我的任務 · 我參與的」建立",
-    "hint_project": "基於專案「{{title}}」建立，僅在該專案頁面可用",
-    "hint_project_agents": "基於專案「{{title}}」中 AI 代理負責的任務建立，僅在該專案頁面可用",
-    "hint_project_members": "基於專案「{{title}}」中成員負責的任務建立，僅在該專案頁面可用",
-    "my_private_note": "我的任務檢視僅自己可見",
-    "name_label": "名稱",
-    "visibility_label": "可見性",
-    "visibility_private": "僅自己可見",
-    "visibility_workspace": "工作區成員可見",
-    "filters_label": "篩選",
-    "custom_property": "自定義屬性",
-    "create": "建立檢視",
-    "layout_label": "佈局",
-    "display_defaults": "預設顯示",
-    "default_hint": "成員首次開啟此檢視時的顯示方式，之後各自可調",
-    "add_filter": "新增篩選",
-    "name_placeholder": "例如：需要 Review",
-    "cancel": "取消",
-    "name_required": "請輸入檢視名稱",
-    "toast_created": "檢視已建立",
-    "toast_failed": "建立檢視失敗",
-    "edit_title": "編輯檢視",
-    "update": "儲存修改",
-    "toast_updated": "檢視已更新",
-    "toast_conflict": "檢視已被他人修改，請重新開啟後再試",
-    "hint_workspace_members": "基於工作區中成員負責的任務建立",
-    "hint_workspace_agents": "基於工作區中 AI 代理負責的任務建立",
     "scope_label_workspace": "負責人型別",
     "scope_label_my": "與我的關係",
     "variant_all": "不限負責人",
@@ -998,37 +1097,7 @@
     "variant_my_any": "任何相關",
     "variant_my_assigned": "分配給我",
     "variant_my_created": "我建立的",
-    "variant_my_involved": "我參與的"
-  },
-  "view_selector": {
-    "trigger": "檢視",
-    "empty": "還沒有儲存的檢視",
-    "private_group": "私有",
-    "shared_group": "工作區共享",
-    "exit": "退出檢視",
-    "unavailable": "該檢視已不可用",
-    "edit": "編輯檢視"
-  },
-  "view_bar": {
-    "menu_label": "檢視",
-    "menu_new": "新增檢視",
-    "builtin_tag": "內建",
-    "drag_handle": "拖拽排序",
-    "delete": "刪除",
-    "delete_title": "刪除檢視？",
-    "delete_description": "「{{name}}」將對所有可見成員刪除",
-    "toast_deleted": "檢視已刪除",
-    "context_edit": "編輯檢視",
-    "context_pin": "固定到側欄",
-    "context_unpin": "從側欄取消固定",
-    "row_menu": "更多操作",
-    "row_hide": "在欄中隱藏",
-    "row_show": "在欄中顯示",
-    "menu_manage": "管理檢視",
-    "manage_title": "管理檢視",
-    "manage_hint": "排序與顯隱隻影響你自己",
-    "visible_toggle": "在檢視欄顯示",
-    "more_label": "更多檢視"
+    "variant_my_involved": "我的 AI 代理在做"
   },
   "plugins": {
     "panels": "Plugins",
@@ -1305,15 +1374,16 @@
       "enable": "在此任務上啟用",
       "toggle": "子任務結束時喚醒負責人",
       "save_error": "無法儲存系統規則。",
-      "default_on": "工作區預設開啟，可在「設定 → 喚醒」中修改預設值。",
-      "default_off": "工作區預設關閉，可在「設定 → 喚醒」中修改預設值。",
+      "default_on": "工作區預設開啟。",
+      "default_off": "工作區預設關閉。",
       "notify_member": "透過收件箱通知 {{name}}",
       "instruction": "喚醒後要做什麼",
       "instruction_edit": "編輯指令",
       "instruction_default": "此任務未設定，使用預設指令：",
       "instruction_placeholder": "留空則使用預設指令",
       "instruction_invalid": "指令最多 4,000 位元組。",
-      "paused": "已暫停：{{reason}}"
+      "paused": "已暫停：{{reason}}",
+      "default_change": "修改預設值"
     },
     "cond": {
       "status": "當狀態變為{{status}}時",
@@ -1429,6 +1499,9 @@
     "version_short": "v{{version}}",
     "locate_comment": "定位到評論",
     "locate_description": "定位到描述",
+    "copy_link": "複製最新版連結",
+    "not_found": "這個任務裡沒有名為「{{name}}」的產物",
+    "link_load_failed": "沒能載入這個任務的產物，打不開「{{name}}」。重新整理頁面再試一次。",
     "version_label": "第 {{version}} 版，共 {{total}} 版",
     "version_of": "v{{version}}（共 {{total}} 版）",
     "info_source": "來源",
@@ -1591,8 +1664,6 @@
       "picker_more": "在「設定 → 工作流」裡可以新建更多工作流。"
     },
     "picker": {
-      "header": "{{workflow}} · 跟隨專案「{{project}}」",
-      "header_no_project": "{{workflow}} 狀態 · 無專案",
       "footer": "只顯示這個任務所在工作流裡的狀態。右側是進入該狀態時的處理人。"
     },
     "confirm": {
@@ -1630,7 +1701,6 @@
       "brief_header": "這次執行收到的工作流說明"
     },
     "detail": {
-      "follows_project": "（跟隨專案）",
       "card_title": "「{{workflow}}」· 跟隨專案「{{project}}」"
     },
     "list_separator": "、",
@@ -1670,15 +1740,12 @@
       "name_placeholder": "狀態名稱",
       "add": "新增"
     },
-    "menu": {
-      "view_flow": "檢視完整流程",
-      "switch": "切換工作流"
-    },
     "flow": {
       "title": "「{{workflow}}」工作流",
       "scope_own": "只有這個專案使用這個工作流。",
       "no_handoff_here": "不交接",
-      "scope_shared_other": "{{count}} 個專案使用這個工作流，它的交接對這些專案都生效。"
+      "scope_shared_other": "{{count}} 個專案使用這個工作流，它的交接對這些專案都生效。",
+      "switch": "切換工作流"
     },
     "templates": {
       "delivery": {
@@ -1710,5 +1777,199 @@
   },
   "hover_card": {
     "created_updated": "建立於 {{created}} · 更新於 {{updated}}"
+  },
+  "views": {
+    "builtin": {
+      "my_issues": "我的任務",
+      "my_agents": "我的 AI 代理在做",
+      "all_issues": "全部任務",
+      "unread": "未讀"
+    },
+    "untitled": "未命名檢視",
+    "copy_name": "{{name}}（副本）",
+    "rename": "重新命名",
+    "duplicate": "建立副本",
+    "copy_link": "複製連結",
+    "link_copied": "連結已複製",
+    "visible_to": "可見範圍",
+    "only_me": "僅自己",
+    "workspace_members": "工作區成員",
+    "add_to_sidebar": "新增到側欄",
+    "remove_from_sidebar": "從側欄移除",
+    "back_to": "返回{{name}}",
+    "delete": "刪除檢視",
+    "delete_title": "刪除檢視？",
+    "delete_description": "「{{name}}」將被刪除，此操作無法復原。",
+    "delete_description_shared": "「{{name}}」已共享給工作區，刪除後所有人都將無法使用。",
+    "cancel": "取消",
+    "toast_deleted": "檢視已刪除",
+    "toast_delete_failed": "刪除檢視失敗",
+    "filter": "篩選",
+    "filter_count_other": "{{count}} 個篩選",
+    "reset": "重設",
+    "save": "儲存",
+    "save_options": "更多儲存選項",
+    "save_to": "儲存到「{{name}}」",
+    "save_to_hint_shared": "為工作區所有人更新此檢視",
+    "save_to_hint_private": "更新你的檢視",
+    "save_as_new": "另存為新檢視",
+    "save_as_new_hint": "「{{name}}」保持不變",
+    "save_as_view": "儲存為檢視",
+    "save_view": "儲存檢視",
+    "add_filter": "新增篩選",
+    "setup_hint": "這個檢視還沒有條件，目前顯示全部任務",
+    "set_by_view": "由此檢視設定",
+    "new_issue": "新增任務",
+    "unavailable": "此檢視已無法使用",
+    "toast_saved": "檢視已儲存",
+    "toast_conflict": "檢視已被他人修改，請重新整理後再試",
+    "toast_create_failed": "建立檢視失敗",
+    "toast_save_failed": "儲存檢視失敗",
+    "directory": {
+      "new_view": "新增檢視",
+      "scope_all": "全部檢視",
+      "scope_builtin": "內建",
+      "scope_mine": "我建立的",
+      "scope_shared": "已共享",
+      "col_name": "名稱",
+      "col_location": "位置",
+      "col_filters": "篩選",
+      "col_visibility": "可見範圍",
+      "col_owner": "擁有者",
+      "owner_builtin": "內建",
+      "location_project": "專案",
+      "star": "將{{name}}新增到側欄",
+      "unstar": "將{{name}}從側欄移除",
+      "row_actions": "{{name}} 的操作",
+      "empty_title": "還沒有儲存的檢視",
+      "empty_description": "在任務列表裡調好篩選和顯示方式，然後另存為檢視。"
+    }
+  },
+  "app_calls": {
+    "section_title": "應用",
+    "chips_label": "本次執行用到的應用",
+    "calls_count_other": "{{count}} 次呼叫",
+    "more": "還有 {{count}} 個",
+    "scope": {
+      "team": "團隊帳號",
+      "personal": "個人帳號"
+    },
+    "outcome": {
+      "ok": "已執行",
+      "error": "失敗",
+      "blocked": "已攔截",
+      "pending": "等待確認",
+      "approved": "已核准",
+      "rejected": "已拒絕",
+      "rate_limited": "已限流"
+    }
+  },
+  "environments": {
+    "section_title": "環境",
+    "running_count_other": "{{count}} 個執行中",
+    "this_machine": "本機",
+    "unknown_machine": "未知裝置",
+    "state": {
+      "starting": "啟動中",
+      "running": "執行中",
+      "exited": "已退出",
+      "stopped": "已停止",
+      "unreachable": "無回應",
+      "stopping": "停止中",
+      "preparing": "準備中"
+    },
+    "expires_in_minutes_other": "{{count}} 分鐘後到期",
+    "expires_in_hours_other": "{{count}} 小時後到期",
+    "expires_in_days_other": "{{count}} 天後到期",
+    "started_ago": "{{time}}啟動",
+    "ended_ago": "{{time}}結束",
+    "last_seen": "{{time}}最後回應",
+    "ended_count_other": "{{count}} 個已結束",
+    "detected_hint": "在這個任務某次執行的目錄中發現的服務",
+    "remote_hint": "執行於 {{machine}}，localhost 位址只能在那台機器上開啟。",
+    "localhost_hint": "localhost 位址只能在執行它的那台機器上開啟。",
+    "open": "開啟",
+    "copy_url": "複製位址",
+    "copied": "已複製位址",
+    "copy_failed": "無法複製位址",
+    "offline": "離線",
+    "machine_offline": "{{machine}} 已離線",
+    "more_actions": "更多操作",
+    "view_logs": "查看日誌",
+    "restart": "重新啟動",
+    "stop": "停止",
+    "stop_confirm_item": "停止…",
+    "run_first": "首次執行",
+    "run_nth_other": "第 {{count}} 次執行",
+    "someone": "有人",
+    "started_by": "由 {{name}} 啟動",
+    "restarted_by": "由 {{name}} 重新啟動",
+    "started_by_agent_in_run": "由 {{name}} 在「{{run}}」中啟動",
+    "stopped_by": "由 {{name}} 停止",
+    "stopped_on_expiry": "到期自動停止",
+    "exited_ago": "{{time}}退出",
+    "exit_code": "退出碼 {{code}}",
+    "detected_label": "自動識別的服務 · {{name}}",
+    "detected_no_logs": "這個服務不是按環境設定啟動的，所以看不到日誌，也不能重新啟動。",
+    "offline_hint": "這台機器重新上線後才能操作。",
+    "outdated_hint": "這台機器上的 Multica 更新後，才能在這裡操作。",
+    "no_permission_hint": "只有能使用這台機器的成員可以停止或重新啟動。",
+    "waiting_machine": "等待機器回應",
+    "waiting_ready": "等待服務就緒",
+    "no_response": "沒有回應",
+    "action_failed": {
+      "stop": "停止失敗",
+      "restart": "重新啟動失敗",
+      "start": "啟動失敗"
+    },
+    "stop_confirm_title": "停止 {{name}}？",
+    "stop_confirm_body": "這個服務（{{process}}）是自動識別的，不是按環境設定啟動的。停止後不能在這裡重新啟動，需要讓代理重新啟動它。",
+    "cancel": "取消",
+    "preparing_title": "{{name}} 正在準備環境",
+    "preparing_hint": "啟動後會顯示在這裡",
+    "start_menu": {
+      "trigger": "啟動環境",
+      "note": "按專案裡的環境設定啟動，使用這台機器上最近一次執行的程式碼。",
+      "no_permission": "只有能使用這台機器的成員可以在上面啟動環境。",
+      "nothing_to_start": "這個任務還沒執行過，或者之前執行的程式碼已被清理，沒有可以直接啟動的環境。",
+      "ask_agent": "讓 {{name}} 啟動",
+      "ask_any_agent": "讓代理啟動",
+      "new_run": "新建執行",
+      "preparing": "準備中",
+      "ask_agent_hint": "{{name}} 會準備好這個任務的程式碼，再啟動環境。專案裡沒有環境設定時，它會自己判斷怎麼啟動。",
+      "ask_any_agent_hint": "代理會準備好這個任務的程式碼，再啟動環境。專案裡沒有環境設定時，它會自己判斷怎麼啟動。",
+      "ask_failed": "沒能交給代理",
+      "agent_instruction": "啟動環境：先準備好這個任務的程式碼，再用 `multica env start` 啟動專案裡設定的環境；專案裡沒有環境設定時，自己判斷怎麼啟動。讓服務保持運行，並回覆存取網址。"
+    },
+    "log": {
+      "title": "{{name}} · 日誌",
+      "filter": "篩選日誌",
+      "wrap": "自動換行",
+      "follow": "跟隨最新",
+      "copy": "複製",
+      "copied": "已複製日誌",
+      "copy_failed": "無法複製日誌",
+      "refresh": "重新整理",
+      "footer_other": "顯示最近 {{count}} 行 · {{time}} 更新",
+      "loading": "正在讀取日誌…",
+      "empty": "還沒有輸出",
+      "no_match": "沒有符合的行",
+      "no_response": "機器沒有回應",
+      "failed": "沒能讀取日誌：{{error}}",
+      "offline_excerpt": "這台機器已離線，下面是它退出前最後輸出的內容。",
+      "offline_empty": "這台機器重新上線後才能查看日誌。",
+      "exit_divider": "{{time}} 退出",
+      "exit_divider_code": "{{time}} 退出 · 退出碼 {{code}}",
+      "stopped_divider": "{{time}} 停止"
+    },
+    "app_desktop_hint": "桌面 App。在執行它的那台機器上，用 Multica Desktop 切到它的視窗。",
+    "app_remote_hint": "在 {{machine}} 上執行。在那台機器上用 Multica Desktop 切到它的視窗。",
+    "focus": "切到視窗",
+    "focus_gone": "{{name}} 已不在執行",
+    "focus_unsupported": "這台機器的 daemon 暫時無法切換 App 視窗。更新 Multica 後再試。",
+    "focus_unavailable": "本機 daemon 沒有執行",
+    "focus_failed": "無法切到 {{name}}",
+    "retry": "重試",
+    "dismiss": "忽略"
   }
 }

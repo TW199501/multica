@@ -2,7 +2,10 @@ import { resolveReleaseRepository } from "@multica/core/config";
 import {
   hasCompleteAssetSet,
   parseReleaseAssets,
+  parseReleaseAssetSizes,
   type DownloadAssets,
+  type DownloadSizes,
+  type GitHubAsset,
 } from "./parse-release-assets";
 
 /**
@@ -21,7 +24,7 @@ import {
  * asset set is complete — every button on the page then resolves to a
  * real file.
  *
- * On any failure (network, rate limit, malformed payload) returns a
+ * On any failure (network, timeout, rate limit, malformed payload) returns a
  * `null`-shaped result and logs — the page degrades to a "version
  * unavailable" view rather than 500ing.
  */
@@ -33,6 +36,7 @@ export interface LatestRelease {
   /** The repository's release list, for the "all releases" links. */
   allReleasesUrl: string;
   assets: DownloadAssets;
+  sizes: DownloadSizes;
 }
 
 /**
@@ -54,13 +58,18 @@ function releasesApiUrl(repository: string): string {
 
 const REVALIDATE_SECONDS = 300;
 
+// The homepage hero awaits this on a cold cache, so a GitHub that accepts
+// the connection but never answers would hold the whole page. Past this,
+// the page renders with the empty release instead.
+export const RELEASE_TIMEOUT_MS = 3000;
+
 interface GitHubReleasePayload {
   tag_name?: string;
   published_at?: string;
   html_url?: string;
   prerelease?: boolean;
   draft?: boolean;
-  assets?: Array<{ name: string; browser_download_url: string }>;
+  assets?: GitHubAsset[];
 }
 
 export async function fetchLatestRelease(): Promise<LatestRelease> {
@@ -82,10 +91,16 @@ export async function fetchLatestRelease(): Promise<LatestRelease> {
   const repository = releaseRepository();
   const allReleasesUrl = `https://github.com/${repository}/releases`;
 
+  const controller = new AbortController();
+  const timer = setTimeout(
+    () => controller.abort(new Error(`GitHub API timed out after ${RELEASE_TIMEOUT_MS}ms`)),
+    RELEASE_TIMEOUT_MS,
+  );
   try {
     const res = await fetch(releasesApiUrl(repository), {
       next: { revalidate: REVALIDATE_SECONDS },
       headers,
+      signal: controller.signal,
     });
     if (!res.ok) {
       throw new Error(`GitHub API responded ${res.status}`);
@@ -108,10 +123,13 @@ export async function fetchLatestRelease(): Promise<LatestRelease> {
       htmlUrl: chosen.release.html_url ?? null,
       allReleasesUrl,
       assets: chosen.assets,
+      sizes: parseReleaseAssetSizes(chosen.release.assets ?? []),
     };
   } catch (err) {
     console.warn("[download] fetchLatestRelease failed:", err);
     return emptyRelease(allReleasesUrl);
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -156,5 +174,6 @@ function emptyRelease(allReleasesUrl: string): LatestRelease {
     htmlUrl: null,
     allReleasesUrl,
     assets: {},
+    sizes: {},
   };
 }

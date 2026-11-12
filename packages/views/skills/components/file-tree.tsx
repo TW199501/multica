@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
   ChevronRight,
   ChevronDown,
@@ -22,6 +22,7 @@ import {
 } from "@multica/ui/components/ui/dropdown-menu";
 import { cn } from "@multica/ui/lib/utils";
 import { useT } from "../../i18n";
+import { shouldOpenRowMenu, useRowMenu } from "../../common/point-menu";
 import { DeferredTooltip } from "@multica/ui/components/common/deferred-tooltip";
 
 /**
@@ -124,7 +125,7 @@ function TreeNodeItem({
 }) {
   const { t } = useT("skills");
   const [renaming, setRenaming] = useState(false);
-  const menuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const rowMenu = useRowMenu();
   const [expanded, setExpanded] = useState(defaultExpanded);
   const isSelected = node.path === selectedPath;
 
@@ -191,14 +192,11 @@ function TreeNodeItem({
           ? "bg-surface-selected"
           : "hover:bg-surface-hover",
       )}
-      // Right-click opens the same menu the trailing button does. The menu
-      // anchors to that button rather than the cursor, which keeps one menu
-      // per row instead of a context-menu root beside a dropdown root.
+      // Right-click opens the trailing button's menu at the cursor.
       onContextMenu={
         hasMenu
           ? (event) => {
-              event.preventDefault();
-              menuButtonRef.current?.click();
+              if (shouldOpenRowMenu(event)) rowMenu.openAtPointer(event);
             }
           : undefined
       }
@@ -211,7 +209,7 @@ function TreeNodeItem({
         className={cn(
           "flex h-8 min-w-0 flex-1 items-center gap-2 rounded-md pr-2.5 text-left text-caption transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           isSelected
-            ? "font-medium text-surface-selected-foreground"
+            ? "text-surface-selected-foreground"
             : "text-muted-foreground group-hover/row:text-foreground",
         )}
         style={{ paddingLeft: `${depth * 12 + 10}px` }}
@@ -220,14 +218,13 @@ function TreeNodeItem({
         <span className="truncate">{node.name}</span>
       </button>
       {actions && (
-        <DropdownMenu>
+        <DropdownMenu open={rowMenu.menu.open} onOpenChange={rowMenu.onOpenChange}>
           <DeferredTooltip
             content={t(($) => $.file_tree.actions.label, { path: node.path })}
             trigger={
               <DropdownMenuTrigger
                 render={
                   <button
-                    ref={menuButtonRef}
                     type="button"
                     aria-label={t(($) => $.file_tree.actions.label, {
                       path: node.path,
@@ -254,7 +251,11 @@ function TreeNodeItem({
               />
             }
           />
-          <DropdownMenuContent align="end" className="w-36">
+          <DropdownMenuContent
+            align={rowMenu.menu.point ? "start" : "end"}
+            anchor={rowMenu.anchor}
+            className="w-36"
+          >
             <DropdownMenuItem onClick={() => actions.onEdit(node.path)}>
               <PencilLine />
               {t(($) => $.file_tree.actions.edit)}

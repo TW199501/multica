@@ -10,6 +10,7 @@ describe("runtime docs links", () => {
   it.each([
     ["en", "https://multica.ai/docs/daemon-runtimes"],
     ["zh-Hans", "https://multica.ai/docs/zh/daemon-runtimes"],
+    ["zh-Hant", "https://multica.ai/docs/zh-Hant/daemon-runtimes"],
     ["ja", "https://multica.ai/docs/ja/daemon-runtimes"],
     ["ko", "https://multica.ai/docs/ko/daemon-runtimes"],
     ["fr", "https://multica.ai/docs/fr/daemon-runtimes"],
