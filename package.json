@@ -28,6 +28,7 @@
     "check:ui-exports": "node scripts/check-ui-wildcard-exports.mjs",
     "check:ui-radii": "node scripts/check-ui-radius-tokens.mjs",
     "check:deps-catalog": "node scripts/check-dependency-catalog.mjs",
+    "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm test:scripts && pnpm check:ui-exports && pnpm check:ui-radii && pnpm check:deps-catalog && pnpm knip && cd server && go vet -tags agentintegration ./...",
     "theme:check": "node scripts/theme-check.mjs",
     "theme:preview": "node scripts/theme-preview.mjs",
     "clean": "turbo clean && rm -rf node_modules",
