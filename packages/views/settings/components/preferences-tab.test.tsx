@@ -106,7 +106,6 @@ vi.mock("@multica/core/auth", async () => {
 });
 
 import { PreferencesTab } from "./preferences-tab";
-import { accentStore } from "@multica/core/appearance";
 import { useCommentComposerStore } from "@multica/core/issues/stores";
 import { useIssueOpeningStore } from "@multica/core/issues/stores/issue-opening-store";
 import {

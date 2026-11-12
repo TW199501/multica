@@ -185,12 +185,6 @@
       "manual": "Création manuelle",
       "unsupported": "Indisponible lors de la création avec un agent"
     },
-    "accent": {
-      "title": "Couleur d’accent",
-      "terracotta": "Terre cuite",
-      "ocean": "Océan",
-      "neutral": "Monochrome"
-    },
     "polish_on_send": {
       "title": "Amélioration des messages",
       "hint": "Envoyer dans le chat, les commentaires et les réponses ouvre d'abord la fenêtre d'amélioration."

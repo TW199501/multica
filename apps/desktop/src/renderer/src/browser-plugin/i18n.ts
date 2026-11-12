@@ -3,9 +3,11 @@ import type { BrowserRendererHost } from "@elf-express/orca-browser/renderer";
 import { SUPPORTED_LOCALES, type SupportedLocale } from "@multica/core/i18n";
 import { useLocale } from "@multica/views/i18n";
 import en from "./locales/en.json";
+import es from "./locales/es.json";
 import fr from "./locales/fr.json";
 import ja from "./locales/ja.json";
 import ko from "./locales/ko.json";
+import ru from "./locales/ru.json";
 import zhHans from "./locales/zh-Hans.json";
 import zhHant from "./locales/zh-Hant.json";
 
@@ -19,6 +21,8 @@ export const BROWSER_LOCALES: BrowserDictionaries = {
   ja,
   ko,
   fr,
+  es,
+  ru,
 };
 
 const PLACEHOLDER = /\{\{\s*(\w+)\s*\}\}/g;

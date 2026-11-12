@@ -760,7 +760,7 @@ export function ChatInput({
   return (
     <>
     {annotationSlot?.composer?.render(canSubmitNow ? {
-      submit, submitting, uploading: gate.uploading, restart: false,
+      submit: gatedSubmit, submitting, uploading: gate.uploading, restart: false,
       recipients: null, draftContent: inputDraft, annotations,
     } : undefined)}
     <div

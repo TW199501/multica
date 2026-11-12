@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SidebarProvider, useSidebar } from "@multica/ui/components/ui/sidebar";
 import { configStore } from "@multica/core/config";
-import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import {
   BILLING_WORKSPACE_SUBSCRIPTIONS_FLAG,
   PLUGINS_V1_FLAG,
@@ -137,7 +136,6 @@ beforeEach(() => {
   configStore.getState().setFeatureFlags({});
   replace.mockClear();
   push.mockClear();
-  useDockedLayoutStore.setState({ layoutActive: false, settingsNavTarget: null });
 });
 
 describe("SettingsPage nav trigger", () => {

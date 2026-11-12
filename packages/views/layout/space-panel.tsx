@@ -4,7 +4,9 @@ import { useEffect, useRef } from "react";
 import type { AppSpaceId } from "@multica/core/paths";
 import { cn } from "@multica/ui/lib/utils";
 import { useSidebar } from "@multica/ui/components/ui/sidebar";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import { useAppShell } from "./app-shell-context";
+import { DockedSidebarPanel } from "./docked-sidebar-sections";
 import { PanelResizeHandle } from "./panel-resize-handle";
 import { AutopilotsPanel } from "./panels/autopilots-panel";
 import { ChatPeek, InboxPeek } from "./panels/list-space-peeks";
@@ -45,6 +47,7 @@ export function SpacePanelContent({ space }: { space: AppSpaceId | null }) {
 export function SpacePanel() {
   const shell = useAppShell();
   const { open, isCompact } = useSidebar();
+  const docked = useDockedLayoutStore((s) => s.shellDocked);
   const panelRef = useRef<HTMLElement>(null);
   useEffect(() => {
     // Public state hook for themes (docs/theming.md).
@@ -55,7 +58,11 @@ export function SpacePanel() {
   if (!shell) return null;
   if (isCompact) return <KeptRowsRelease />;
 
-  const { space, hasPanel, peekSpace, navCollapsed } = shell;
+  const { space, peekSpace, navCollapsed } = shell;
+  // The docked layout keeps the panel on every space for its section tabs;
+  // spaces without a panel of their own show Work's under the menu tab.
+  const hasPanel = shell.hasPanel || docked;
+  const menuSpace = shell.hasPanel ? space : "work";
   // The current space's own list column floats itself (`ListColumn`).
   const Peek =
     navCollapsed && peekSpace && (hasPanel || peekSpace !== space) ? PEEKS[peekSpace] : undefined;
@@ -66,7 +73,7 @@ export function SpacePanel() {
       {hasPanel && (
         <aside
           // A new space mounts at its final width; only toggling animates.
-          key={space}
+          key={docked ? "docked" : space}
           ref={panelRef}
           data-slot="space-panel"
           data-mc="sidebar"
@@ -79,7 +86,11 @@ export function SpacePanel() {
           )}
         >
           <div className="flex h-full w-(--sidebar-width) shrink-0 flex-col overflow-hidden border-r">
-            <SpacePanelContent space={space} />
+            {docked ? (
+              <DockedSidebarPanel menu={<SpacePanelContent space={menuSpace} />} />
+            ) : (
+              <SpacePanelContent space={space} />
+            )}
           </div>
         </aside>
       )}

@@ -12,6 +12,7 @@ import { useStatusLabel } from "../utils/status-label";
 import { priorityLabel } from "../utils/priority-label";
 import { useIssueStatuses } from "@multica/core/issue-statuses/hooks";
 import { useState, useEffect, useCallback, useMemo, useRef, useId, Fragment, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import { useDefaultLayout, usePanelRef } from "react-resizable-panels";
 import { AppLink, useBackOrReplace } from "../../navigation";
@@ -46,6 +47,8 @@ import { Button } from "@multica/ui/components/ui/button";
 import { IconButton } from "@multica/ui/components/common/icon-button";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@multica/ui/components/ui/resizable";
 import { Sheet, SheetContent } from "@multica/ui/components/ui/sheet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@multica/ui/components/ui/tabs";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import { useIsMobile } from "@multica/ui/hooks/use-mobile";
 import { ContentEditor, type ContentEditorRef, TitleEditor, type TitleEditorRef, useFileDropZone, FileDropOverlay, useLazyEditor, useEditorUpload, PreviewSequenceProvider, collectPreviewSequence } from "../../editor";
 import {
@@ -101,11 +104,25 @@ import { LabelChip } from "../../labels/label-chip";
 import { IssueAgentActivityIndicator } from "./issue-agent-activity-indicator";
 import { SubIssuesAgentWorkingChip } from "./sub-issues-agent-working-chip";
 import { IssueProjectPicker } from "../../projects/components/issue-project-picker";
+import { IssueDockedAside } from "../../projects/components/project-code-panel";
 import { IssuePropertyPills } from "./issue-property-pills";
 import { LocalDirectoryHint } from "../../projects/components/local-directory-hint";
 import { useNewRunIds } from "./use-run-comment-motion";
+import {
+  hasPendingReply,
+  isAgentOnlyThread,
+  planAgentFolds,
+  type AgentFoldRow,
+} from "./agent-comment-fold";
 import { AgentRunComment, CommentCard } from "./comment-card";
-import { EMPTY_COMMENT_RUNS, buildCommentRunView, orderTimelineWithRuns, type CommentRun } from "./comment-runs";
+import {
+  EMPTY_COMMENT_RUNS,
+  buildCommentRunView,
+  isActiveCommentRun,
+  isRunFailureNotice,
+  orderTimelineWithRuns,
+  type CommentRun,
+} from "./comment-runs";
 import { issueTasksOptions } from "@multica/core/issues/queries";
 import { SourceContextBadge } from "./source-context-viewer";
 import { RevisionConflictCompare } from "./revision-conflict-compare";
@@ -164,6 +181,7 @@ import {
   selectExpandedResolved,
   useCommentCollapseStore,
   useCommentComposerStore,
+  useCommentDraftStore,
   useRecentIssuesStore,
   useResolvedExpandStore,
   useSubIssuesCollapseStore,
@@ -1467,6 +1485,7 @@ export function IssueDetailSkeleton({
 export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = true, layoutId = ISSUE_DETAIL_LAYOUT_ID, highlightCommentId: linkedCommentId, highlightRequestToken: linkedRequestToken, highlightAppRequestId, leadingAction, variant = "page", trailingActions, readsInbox = true, skipInitialRefetch = false, openDeliverable, onDeliverableLinkDone }: IssueDetailProps) {
   const isPeek = variant === "peek";
   const { t } = useT("issues");
+  const { t: tLayout } = useT("layout");
   const { t: tCommon } = useT("common");
   const locale = useLocale();
   const timeAgo = useTimeAgo();
@@ -1530,13 +1549,28 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
     handleResize: handleDesktopSidebarResize,
   } = useAnimatedRightSidebarState(desktopSidebarInitialOpen);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  // The docked chat layout allows three columns at most, so the properties
+  // share this column with the issue behind tabs.
+  const docked = useDockedLayoutStore((s) => s.layoutActive) && !isPeek && !isMobile;
+  const [dockedTab, setDockedTab] = useState<"issue" | "properties">("issue");
+  // The project tree tab gives the properties a column of their own, so the
+  // tabs are not needed there.
+  const asideElement = useDockedLayoutStore((s) => s.asideElement);
+  const aside = docked ? asideElement : null;
 
   useEffect(() => {
     if (isMobile) {
       setMobileSidebarOpen(false);
     }
   }, [isMobile]);
-  const sidebarOpen = isMobile ? mobileSidebarOpen : desktopSidebarOpen;
+  useEffect(() => {
+    setDockedTab("issue");
+  }, [id]);
+  const sidebarOpen = docked
+    ? !!aside || dockedTab === "properties"
+    : isMobile
+      ? mobileSidebarOpen
+      : desktopSidebarOpen;
   const [propertiesOpen, setPropertiesOpen] = useState(true);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [parentIssueOpen, setParentIssueOpen] = useState(true);
@@ -1608,12 +1642,13 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   const rightSidebarShortcutTargetRef = useRef<HTMLDivElement | null>(null);
   const attachScrollContainer = useCallback(
     (el: HTMLDivElement | null) => {
-      // The peek has no sidebar, so it must not claim the toggle shortcut.
-      rightSidebarShortcutTargetRef.current = isPeek ? null : el;
+      // The peek has no sidebar, so it must not claim the toggle shortcut. Docked,
+      // this column hides behind a tab, so the tabs hold the target instead.
+      if (!docked) rightSidebarShortcutTargetRef.current = isPeek ? null : el;
       setScrollContainerEl(el);
       restoreScrollRef(el);
     },
-    [isPeek, restoreScrollRef],
+    [docked, isPeek, restoreScrollRef],
   );
   const [pendingPostedCommentId, setPendingPostedCommentId] = useState<string | null>(null);
   const scrollToTimelineBottom = useCallback((commentId: string) => {
@@ -1959,6 +1994,85 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
     [timelineView.groups, expandedResolved],
   );
 
+  // A thread someone is replying in must not collapse under their cursor, and a
+  // saved draft must not disappear when the issue is reopened.
+  const draftedThreadIds = useCommentDraftStore((state) =>
+    items
+      .filter(
+        (item) =>
+          item.kind !== "activity-group" && hasPendingReply(state, `reply:${id}:${item.id}`),
+      )
+      .map((item) => item.id)
+      .join(" "),
+  );
+  const draftedThreads = useMemo(
+    () => new Set(draftedThreadIds ? draftedThreadIds.split(" ") : []),
+    [draftedThreadIds],
+  );
+  const [openReplyThreads, setOpenReplyThreads] = useState<ReadonlySet<string>>(() => new Set());
+  const handleReplyOpenChange = useCallback((threadId: string, replyOpen: boolean) => {
+    setOpenReplyThreads((prev) => {
+      if (prev.has(threadId) === replyOpen) return prev;
+      const next = new Set(prev);
+      if (replyOpen) next.add(threadId);
+      else next.delete(threadId);
+      return next;
+    });
+  }, []);
+
+  // Agent-to-agent threads collapse behind one row. Folded rows stay in `items`
+  // so every index-based jump keeps working; they only render as a placeholder.
+  const agentFolds = useMemo(() => {
+    const isSettled = (rootId: string) =>
+      !(commentRuns.get(rootId) ?? EMPTY_COMMENT_RUNS).some(
+        ({ task }) =>
+          isActiveCommentRun(task) || task.status === "failed" || task.status === "cancelled",
+      );
+    const rows = items.map((item): AgentFoldRow => {
+      if (item.kind === "activity-group") return { id: item.id, role: "transparent" };
+      const entry = item.entry;
+      if (!entry) return { id: item.id, role: "visible" };
+      const replies = timelineView.threadReplies.get(entry.id) ?? EMPTY_REPLIES;
+      const thread = [entry, ...replies];
+      const comment = {
+        count: thread.filter((reply) => !reply.deleted_at).length,
+        latestAt: thread.reduce(
+          (latest, reply) =>
+            Date.parse(reply.created_at) > Date.parse(latest) ? reply.created_at : latest,
+          entry.created_at,
+        ),
+      };
+      const settled =
+        isSettled(entry.id) &&
+        (item.kind !== "run" ||
+          (!isActiveCommentRun(item.run.task) && !isRunFailureNotice(entry, item.run.task)));
+      const foldable =
+        settled &&
+        !draftedThreads.has(entry.id) &&
+        !openReplyThreads.has(entry.id) &&
+        isAgentOnlyThread(entry, replies);
+      return { id: item.id, role: foldable ? "foldable" : "visible", comment };
+    });
+    return planAgentFolds(rows);
+  }, [items, commentRuns, timelineView.threadReplies, draftedThreads, openReplyThreads]);
+  const [expandedAgentFolds, setExpandedAgentFolds] = useState<ReadonlySet<string>>(() => new Set());
+  const toggleAgentFold = useCallback((foldId: string) => {
+    setExpandedAgentFolds((prev) => {
+      const next = new Set(prev);
+      if (!next.delete(foldId)) next.add(foldId);
+      return next;
+    });
+  }, []);
+  // A jump must never land on a collapsed row.
+  const revealAgentFold = useCallback(
+    (rowId: string | undefined) => {
+      const foldId = rowId ? agentFolds.get(rowId)?.foldId : undefined;
+      if (!foldId) return;
+      setExpandedAgentFolds((prev) => (prev.has(foldId) ? prev : new Set(prev).add(foldId)));
+    },
+    [agentFolds],
+  );
+
   // In-page find (Cmd/Ctrl+F). `items.length` is the content signal that
   // triggers a match recompute when comments are added/removed; text edits
   // are caught by the hook's own MutationObserver. Opening find forces the
@@ -2192,10 +2306,11 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       // index and let Virtuoso mount it. Offset leaves a small top gap.
       const index = items.findIndex((it) => it.id === threadId);
       if (index < 0) return;
+      revealAgentFold(threadId);
       virtuosoRef.current?.scrollToIndex({ index, align: "start", offset: -16 });
       flashJumpTarget(threadId);
     },
-    [isFlatTimeline, items, jumpToComment, flashJumpTarget],
+    [isFlatTimeline, items, jumpToComment, flashJumpTarget, revealAgentFold],
   );
   // Minimap jump to a reply. A reply's anchor exists only while its thread is
   // open, so first undo whatever hides it — the reader's own collapse, a root
@@ -2210,6 +2325,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       const rootItem = items[index];
       const root = rootItem && rootItem.kind !== "activity-group" ? rootItem.entry : undefined;
       if (!rootId || !root) return;
+      revealAgentFold(rootId);
       const collapse = useCommentCollapseStore.getState();
       if (collapse.isCollapsed(id, rootId)) collapse.toggle(id, rootId);
       if (!expandedResolved.has(rootId)) {
@@ -2221,7 +2337,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       if (!isFlatTimeline) virtuosoRef.current?.scrollToIndex({ index, align: "start", offset: -16 });
       setPendingReplyJump({ replyId, rootId });
     },
-    [id, items, replyToRoot, expandedResolved, timelineView.threadReplies, toggleResolvedExpand, isFlatTimeline],
+    [id, items, replyToRoot, expandedResolved, timelineView.threadReplies, toggleResolvedExpand, isFlatTimeline, revealAgentFold],
   );
   // Land the pending reply once its row is in the DOM. The expansion commits
   // on the next render and Virtuoso mounts the thread a frame or two later, so
@@ -2305,6 +2421,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       }
       const rootItem = items[index];
       if (!run || !rootItem) return;
+      revealAgentFold(rootItem.id);
       const root = rootItem.kind !== "activity-group" ? rootItem.entry : undefined;
       const headsThread = run.hasReply && run.commentId === rootItem.id;
       if (root && !headsThread) {
@@ -2320,7 +2437,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       if (!isFlatTimeline) virtuosoRef.current?.scrollToIndex({ index, align: "start", offset: -16 });
       setPendingRunJump({ taskId, rootId: rootItem.id, flashId: run.hasReply && run.commentId ? run.commentId : taskId });
     },
-    [id, items, commentRuns, expandedResolved, timelineView.threadReplies, toggleResolvedExpand, isFlatTimeline],
+    [id, items, commentRuns, expandedResolved, timelineView.threadReplies, toggleResolvedExpand, isFlatTimeline, revealAgentFold],
   );
   // Same frame-by-frame landing as a reply jump. A run that has replied may
   // only show as a log button in its comment's header, so align that comment.
@@ -2901,6 +3018,10 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   }, [autoOpenCustomProp]);
 
   const handleToggleSidebar = useCallback(() => {
+    if (docked) {
+      if (!aside) setDockedTab((tab) => (tab === "issue" ? "properties" : "issue"));
+      return;
+    }
     if (isMobile) {
       setMobileSidebarOpen((open) => !open);
       return;
@@ -2914,7 +3035,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       if (nextOpen) panel.expand();
       else panel.collapse();
     });
-  }, [beginDesktopSidebarToggle, isMobile, sidebarRef]);
+  }, [aside, beginDesktopSidebarToggle, docked, isMobile, sidebarRef]);
 
   // The header's wakeup chip opens the sidebar and brings the Wakeups section
   // into view with focus on its heading, showing it on this issue even when
@@ -3342,7 +3463,36 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   // The wrapper `id="comment-..."` is the deep-link target — equivalent to
   // a native `<a href="#comment-...">` anchor. A run that left no comment is
   // addressed by its task id, which the sidebar's unread link lands on.
-  const renderItem = (_i: number, item: TimelineItem): React.ReactElement => {
+  const renderItem = (i: number, item: TimelineItem): React.ReactElement => {
+    // Flat mode exists so find and deep links can reach every comment.
+    const fold = isFlatTimeline ? undefined : agentFolds.get(item.id);
+    const open = !fold || expandedAgentFolds.has(fold.foldId);
+    // The row keeps one position in this tree so that joining or leaving a fold
+    // never remounts a comment and loses its open reply box.
+    return (
+      <>
+        {fold?.isHead && (
+          <div className="flex items-center gap-3 pb-3 px-4 max-md:px-3">
+            <span aria-hidden="true" className="h-px flex-1 bg-border/60" />
+            <button
+              type="button"
+              aria-expanded={open}
+              onClick={() => toggleAgentFold(fold.foldId)}
+              className="flex shrink-0 items-center gap-1.5 text-label text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <span>{t(($) => $.activity.agent_comments, { count: fold.count })}</span>
+              {open ? <ChevronDown className="h-3 w-3 shrink-0" /> : <ChevronRight className="h-3 w-3 shrink-0" />}
+            </button>
+            <span aria-hidden="true" className="h-px flex-1 bg-border/60" />
+          </div>
+        )}
+        {open ? renderTimelineRow(i, item) : null}
+        {/* Virtuoso rejects zero-height rows, so a folded row keeps one pixel. */}
+        {!open && !fold?.isHead ? <div className="h-px" aria-hidden="true" /> : null}
+      </>
+    );
+  };
+  const renderTimelineRow = (_i: number, item: TimelineItem): React.ReactElement => {
     if (item.kind === "run") {
       const reply = item.entry;
       return <div className="pb-3" id={`comment-${item.id}`}>
@@ -3351,7 +3501,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
           onExpand={() => toggleResolvedExpand(reply.id, true)} /> : <AgentRunComment run={item.run} entering={enteringRunIds.has(item.run.task.id)} standalone
           highlightedId={highlightedId}
           commentProps={reply ? {
-            issueId: id, replyScrollParent: isFlatTimeline ? null : scrollContainerEl, entry: reply, replies: timelineView.threadReplies.get(reply.id) ?? EMPTY_REPLIES,
+            issueId: id, replyScrollParent: isFlatTimeline ? null : scrollContainerEl, onReplyOpenChange: handleReplyOpenChange, entry: reply, replies: timelineView.threadReplies.get(reply.id) ?? EMPTY_REPLIES,
             currentUserId: user?.id, canModerate: canModerateComments, onReply: submitReply,
             onReplyAccepted: scrollToTimelineBottom, onEdit: editComment, onDelete: deleteComment,
             onToggleReaction: handleToggleReaction, onCreateSubIssue: openCommentSubIssue,
@@ -3382,6 +3532,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
           <CommentCard
             issueId={id}
             replyScrollParent={isFlatTimeline ? null : scrollContainerEl}
+            onReplyOpenChange={handleReplyOpenChange}
             runs={commentRuns.get(item.id) ?? EMPTY_COMMENT_RUNS}
             enteringRunIds={enteringRunIds}
             entry={item.entry}
@@ -3545,7 +3696,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
             />
             {isPeek ? (
               trailingActions
-            ) : (
+            ) : docked ? null : (
               <IconButton
                 label={t(($) => $.detail.sidebar_tooltip)}
                 shortcut={<ActionShortcutKeycaps action="toggleRightSidebar" />}
@@ -4312,6 +4463,45 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
           </SheetContent>
         </Sheet>
       </div>,
+    );
+  }
+
+  if (aside) {
+    return withPreview(
+      <div ref={rightSidebarShortcutTargetRef} className="flex min-h-0 flex-1">
+        {detailContent}
+        {createPortal(<IssueDockedAside projectId={issue.project_id} properties={sidebarContent} />, aside)}
+      </div>,
+    );
+  }
+
+  if (docked) {
+    return withPreview(
+      <Tabs
+        ref={rightSidebarShortcutTargetRef}
+        value={dockedTab}
+        onValueChange={(value) => setDockedTab(value as "issue" | "properties")}
+        className="flex min-h-0 flex-1 flex-col gap-0"
+      >
+        <div className="flex h-12 shrink-0 items-center border-b px-3">
+          <TabsList>
+            <TabsTrigger value="issue">{tLayout(($) => $.tab.issue)}</TabsTrigger>
+            <TabsTrigger value="properties">{t(($) => $.detail.section_properties)}</TabsTrigger>
+          </TabsList>
+        </div>
+        {/* Both stay mounted: leaving the issue must not drop a comment draft
+            or its scroll position. */}
+        <TabsContent keepMounted value="issue" className="flex min-h-0 data-hidden:hidden">
+          {detailContent}
+        </TabsContent>
+        <TabsContent
+          keepMounted
+          value="properties"
+          className="min-h-0 overflow-y-auto [scrollbar-gutter:stable] px-2 py-4 data-hidden:hidden"
+        >
+          {sidebarContent}
+        </TabsContent>
+      </Tabs>,
     );
   }
 

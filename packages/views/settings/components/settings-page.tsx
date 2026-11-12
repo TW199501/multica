@@ -34,7 +34,6 @@ import {
   PLUGINS_V1_FLAG,
 } from "@multica/core/feature-flags";
 import { TooltipHint } from "@multica/ui/components/common/tooltip-hint";
-import { useSidebarSafe } from "@multica/ui/components/ui/sidebar";
 import { cn } from "@multica/ui/lib/utils";
 import { resolveSettingsLocation, settingsHref } from "./settings-navigation";
 import { AppLink, useNavigation } from "../../navigation";
@@ -133,6 +132,9 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
   const navigation = useNavigation();
   const paths = useWorkspacePaths();
   const listCollapsed = useListColumnCollapsed();
+  // In the docked layout the sidebar's settings section shows the navigation;
+  // the page then keeps only its content.
+  const settingsNavTarget = useDockedLayoutStore((s) => s.settingsNavTarget);
   const pluginsEnabled = useFeatureEnabled(PLUGINS_V1_FLAG, false);
   const billingEnabled = useFeatureEnabled(
     BILLING_WORKSPACE_SUBSCRIPTIONS_FLAG,
@@ -386,14 +388,13 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
         href={href(item.value)}
         aria-current={active.value === item.value ? "page" : undefined}
         className={cn(
-          "flex min-h-8 items-center text-body transition-colors focus-visible:outline-2 focus-visible:outline-ring",
-          inSidebar ? "gap-2 rounded-md p-2" : "gap-2.5 rounded-lg px-3 py-1.5",
+          "flex min-h-8 items-center gap-2.5 rounded-lg px-3 py-1.5 text-body transition-colors focus-visible:outline-2 focus-visible:outline-ring",
           active.value === item.value
             ? "bg-surface-selected text-surface-selected-foreground hover:bg-surface-selected"
             : "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
         )}
       >
-        <item.icon className={cn("shrink-0", inSidebar ? "size-4.5" : "size-4")} aria-hidden="true" />
+        <item.icon className="size-4 shrink-0" aria-hidden="true" />
         <span className="min-w-0 flex-1 truncate">{item.label}</span>
         {isMember && item.adminOnly ? (
           <Lock
@@ -453,134 +454,100 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
     </div>
   );
 
-  const searchBox = (
-    <div className={cn("relative mb-3 hidden shrink-0 md:block", inSidebar ? "mx-2" : "mx-3")}>
-      <Search
-        aria-hidden="true"
-        className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-      />
-      <input
-        type="search"
-        value={query}
-        onChange={(event) => {
-          setQuery(event.target.value);
-          setActiveResult(0);
-        }}
-        onKeyDown={(event) => {
-          if (event.nativeEvent.isComposing) return;
-          if (event.key === "ArrowDown") {
-            event.preventDefault();
-            setActiveResult((current) =>
-              Math.min(current + 1, Math.max(results.length - 1, 0)),
-            );
-          } else if (event.key === "ArrowUp") {
-            event.preventDefault();
-            setActiveResult((current) => Math.max(current - 1, 0));
-          } else if (event.key === "Enter") {
-            event.preventDefault();
-            openResult(activeResult);
-          } else if (event.key === "Escape" && query) {
-            event.preventDefault();
-            setQuery("");
-          }
-        }}
-        placeholder={t(($) => $.page.search)}
-        aria-label={t(($) => $.page.search)}
-        aria-controls={query ? "settings-search-results" : undefined}
-        className="h-8 w-full rounded-lg border border-input bg-transparent pl-8 pr-8 text-body outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30 [&::-webkit-search-cancel-button]:hidden"
-      />
-      {query ? (
-        <TooltipHint label={t(($) => $.page.search_clear)}>
-          <button
-            type="button"
-            onClick={() => setQuery("")}
-            aria-label={t(($) => $.page.search_clear)}
-            className="absolute right-1.5 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
-          >
-            <X className="size-3.5" aria-hidden="true" />
-          </button>
-        </TooltipHint>
-      ) : null}
-    </div>
-  );
-  const navList = (
-    <nav
-      aria-label={t(($) => $.page.title)}
-      className={cn("hidden min-h-0 overflow-y-auto pb-6 md:block", inSidebar ? "px-2" : "px-3")}
-    >
-      {query ? (
-        searchResults
-      ) : (
-        <div className="divide-y divide-surface-border">
-          {groups.map((group) => (
-            <section
-              key={group.key}
-              aria-labelledby={`settings-group-${group.key}`}
-              className="py-2.5 first:pt-0"
+  const navContent = (
+    <>
+      {/* Same insets as a nav row: the border on the row highlight's edge,
+          the glyph on the icon column, the text on the label column. */}
+      <div className="relative mx-2 mb-3 hidden shrink-0 md:block">
+        <Search
+          aria-hidden="true"
+          className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+        />
+        <input
+          type="search"
+          value={query}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setActiveResult(0);
+          }}
+          onKeyDown={(event) => {
+            if (event.nativeEvent.isComposing) return;
+            if (event.key === "ArrowDown") {
+              event.preventDefault();
+              setActiveResult((current) =>
+                Math.min(current + 1, Math.max(results.length - 1, 0)),
+              );
+            } else if (event.key === "ArrowUp") {
+              event.preventDefault();
+              setActiveResult((current) => Math.max(current - 1, 0));
+            } else if (event.key === "Enter") {
+              event.preventDefault();
+              openResult(activeResult);
+            } else if (event.key === "Escape" && query) {
+              event.preventDefault();
+              setQuery("");
+            }
+          }}
+          placeholder={t(($) => $.page.search)}
+          aria-label={t(($) => $.page.search)}
+          aria-controls={query ? "settings-search-results" : undefined}
+          className="h-8 w-full rounded-lg border border-input bg-transparent pl-[37px] pr-8 text-body outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30 [&::-webkit-search-cancel-button]:hidden"
+        />
+        {query ? (
+          <TooltipHint label={t(($) => $.page.search_clear)}>
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              aria-label={t(($) => $.page.search_clear)}
+              className="absolute right-1.5 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
             >
-              <h2
-                id={`settings-group-${group.key}`}
-                className={cn(
-                  "flex h-8 min-w-0 items-center",
-                  inSidebar
-                    ? "gap-2 px-2 text-caption font-medium text-muted-foreground"
-                    : "gap-2.5 px-3 text-label font-semibold text-foreground",
-                )}
-              >
-                <span className="flex size-4 shrink-0 items-center justify-center">
-                  {group.mark}
-                </span>
-                <span className="truncate">{group.label}</span>
-                {group.tag ? (
-                  <span className="ml-auto shrink-0 truncate text-micro font-medium text-muted-foreground">
-                    {group.tag}
-                  </span>
-                ) : null}
-              </h2>
-              {group.subgroups.map((subgroup) => (
-                <div
-                  key={subgroup.key}
-                  role={subgroup.label ? "group" : undefined}
-                  aria-labelledby={
-                    subgroup.label ? `settings-subgroup-${subgroup.key}` : undefined
-                  }
-                >
-                  {subgroup.label ? (
-                    <h3
-                      id={`settings-subgroup-${subgroup.key}`}
-                      className={cn(
-                        "pb-1 pt-3 text-caption font-medium text-muted-foreground",
-                        inSidebar ? "px-2" : "px-3",
-                      )}
-                    >
-                      {subgroup.label}
-                    </h3>
-                  ) : null}
+              <X className="size-3.5" aria-hidden="true" />
+            </button>
+          </TooltipHint>
+        ) : null}
+      </div>
+      <nav
+        aria-label={t(($) => $.page.title)}
+        className="hidden min-h-0 overflow-y-auto px-2 pb-6 md:block"
+      >
+        {query ? (
+          searchResults
+        ) : (
+          // One level of headings: each page names its own scope in a badge,
+          // so the nav only groups. Same section rhythm as the space panels.
+          groups.flatMap((group) =>
+            group.subgroups.map((subgroup) => {
+              const id = `settings-group-${group.key}-${subgroup.key}`;
+              return (
+                <section key={id} aria-labelledby={id} className="mt-5 first:mt-0">
+                  <h2
+                    id={id}
+                    className="flex h-7 min-w-0 items-center px-3 text-caption font-medium text-muted-foreground"
+                  >
+                    <span className="truncate">
+                      {subgroup.label ?? group.navLabel ?? group.label}
+                    </span>
+                  </h2>
                   <ul className="space-y-px">{subgroup.entries.map(navItem)}</ul>
-                </div>
-              ))}
-            </section>
-          ))}
-        </div>
-      )}
-    </nav>
+                </section>
+              );
+            }),
+          )
+        )}
+      </nav>
+    </>
   );
-
-  // The sidebar's settings section, which exists only in the docked layout,
-  // shows this navigation; the page then keeps only its content.
-  const dockedNav =
-    dockedNavTarget
-      ? createPortal(
-          <div className="flex min-h-0 flex-1 flex-col pt-1">
-            {searchBox}
-            {navList}
-          </div>,
-          dockedNavTarget,
-        )
-      : null;
+  const dockedNav = settingsNavTarget
+    ? createPortal(
+        <div className="flex min-h-0 flex-1 flex-col pt-1">{navContent}</div>,
+        settingsNavTarget,
+      )
+    : null;
 
   return (
     <div data-mc="settings-page" className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background md:flex-row">
+      {dockedNav}
+      {!dockedNav && (
       <ListColumn
         collapsed={listCollapsed}
         // Below md the navigation stacks above the content as a select.
@@ -614,86 +581,9 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
             )}
           </select>
         </div>
-        {/* Same insets as a nav row: the border on the row highlight's edge,
-            the glyph on the icon column, the text on the label column. */}
-        <div className="relative mx-2 mb-3 hidden shrink-0 md:block">
-          <Search
-            aria-hidden="true"
-            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-          />
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => {
-              setQuery(event.target.value);
-              setActiveResult(0);
-            }}
-            onKeyDown={(event) => {
-              if (event.nativeEvent.isComposing) return;
-              if (event.key === "ArrowDown") {
-                event.preventDefault();
-                setActiveResult((current) =>
-                  Math.min(current + 1, Math.max(results.length - 1, 0)),
-                );
-              } else if (event.key === "ArrowUp") {
-                event.preventDefault();
-                setActiveResult((current) => Math.max(current - 1, 0));
-              } else if (event.key === "Enter") {
-                event.preventDefault();
-                openResult(activeResult);
-              } else if (event.key === "Escape" && query) {
-                event.preventDefault();
-                setQuery("");
-              }
-            }}
-            placeholder={t(($) => $.page.search)}
-            aria-label={t(($) => $.page.search)}
-            aria-controls={query ? "settings-search-results" : undefined}
-            className="h-8 w-full rounded-lg border border-input bg-transparent pl-[37px] pr-8 text-body outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30 [&::-webkit-search-cancel-button]:hidden"
-          />
-          {query ? (
-            <TooltipHint label={t(($) => $.page.search_clear)}>
-              <button
-                type="button"
-                onClick={() => setQuery("")}
-                aria-label={t(($) => $.page.search_clear)}
-                className="absolute right-1.5 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-hover hover:text-foreground"
-              >
-                <X className="size-3.5" aria-hidden="true" />
-              </button>
-            </TooltipHint>
-          ) : null}
-        </div>
-        <nav
-          aria-label={t(($) => $.page.title)}
-          className="hidden min-h-0 overflow-y-auto px-2 pb-6 md:block"
-        >
-          {query ? (
-            searchResults
-          ) : (
-            // One level of headings: each page names its own scope in a badge,
-            // so the nav only groups. Same section rhythm as the space panels.
-            groups.flatMap((group) =>
-              group.subgroups.map((subgroup) => {
-                const id = `settings-group-${group.key}-${subgroup.key}`;
-                return (
-                  <section key={id} aria-labelledby={id} className="mt-5 first:mt-0">
-                    <h2
-                      id={id}
-                      className="flex h-7 min-w-0 items-center px-3 text-caption font-medium text-muted-foreground"
-                    >
-                      <span className="truncate">
-                        {subgroup.label ?? group.navLabel ?? group.label}
-                      </span>
-                    </h2>
-                    <ul className="space-y-px">{subgroup.entries.map(navItem)}</ul>
-                  </section>
-                );
-              }),
-            )
-          )}
-        </nav>
+        {navContent}
       </ListColumn>
+      )}
       <div
         className="flex min-h-0 min-w-0 flex-1 flex-col"
         style={{ "--settings-column": active.wide ? "64rem" : "56rem" } as React.CSSProperties}

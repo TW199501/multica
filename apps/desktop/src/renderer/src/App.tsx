@@ -27,7 +27,6 @@ import { createDesktopLocaleAdapter } from "./platform/i18n-adapter";
 import { captureEvent } from "@multica/core/analytics";
 import { AppearanceSync } from "@multica/views/common/appearance-sync";
 import { RESOURCES } from "@multica/views/locales";
-import { AccentSync } from "@multica/views/layout";
 import { DesktopClientUsageReporter } from "./platform/client-usage-reporter";
 import { DiagnosticRouteReporter } from "./platform/diagnostic-route-reporter";
 import { flushFreezeBreadcrumb } from "./freeze-flush";

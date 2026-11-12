@@ -60,6 +60,9 @@ describe("ApiClient schema fallback", () => {
         binary: false,
         too_large: false,
       });
+    });
+  });
+
   describe("workspace pin responses", () => {
     it("defaults missing or malformed pinned_at to null and falls back on malformed lists", async () => {
       const ws = { id: "ws-1", name: "One", slug: "one", description: null, context: null, settings: {}, repos: [], issue_prefix: "ONE", avatar_url: null, created_at: "2026-01-01", updated_at: "2026-01-01" };

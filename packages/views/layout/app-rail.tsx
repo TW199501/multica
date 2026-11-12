@@ -16,6 +16,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { CheckCheck, ExternalLink, Link2, RotateCcw, Settings, Users, type IconComponent } from "@multica/ui/icons";
 import { toast } from "sonner";
 import { useChatStore } from "@multica/core/chat";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import { chatSessionsOptions } from "@multica/core/chat/queries";
 import { countUnreadChatMessages } from "@multica/core/chat/unread";
 import { useInboxUnreadCount } from "@multica/core/inbox/queries";
@@ -81,9 +82,11 @@ function useRailBadges(): Partial<Record<RailSpaceId, RailBadge>> {
   // (MUL-4485), so the reply stays unread and must count.
   const activeChatSessionId = useChatStore((s) => s.activeSessionId);
   const floatingChatOpen = useChatStore((s) => s.isOpen);
+  // The docked layout keeps the conversation column on screen.
+  const dockedChatShown = useDockedLayoutStore((s) => s.layoutActive);
   const appForeground = useAppForeground();
   const viewedChatSessionId =
-    appForeground && (floatingChatOpen || isPathWithin(pathname, p.chat()))
+    appForeground && (floatingChatOpen || dockedChatShown || isPathWithin(pathname, p.chat()))
       ? activeChatSessionId
       : null;
   const chatUnread = useMemo(
@@ -295,10 +298,13 @@ const DRAG_MODIFIERS = [restrictToVerticalAxis, restrictToFirstScrollableAncesto
 export function AppRail({
   topSlot,
   globalActions = true,
+  extraItems,
   className,
 }: {
   topSlot?: React.ReactNode;
   globalActions?: boolean;
+  /** Platform entries under the spaces, e.g. the desktop browser. */
+  extraItems?: React.ReactNode;
   className?: string;
 }) {
   const { t } = useT("layout");
@@ -406,6 +412,7 @@ export function AppRail({
           </ul>
         </SortableContext>
       </DndContext>
+      {extraItems && <div className="mt-0.5 flex flex-col items-center gap-0.5">{extraItems}</div>}
       <div className="mt-auto flex flex-col items-center gap-1 pt-2">
         <HelpLauncher />
         <TooltipHint label={t(($) => $.nav.settings)} side="right">

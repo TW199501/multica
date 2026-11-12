@@ -184,12 +184,6 @@
       "manual": "수동 생성",
       "unsupported": "에이전트로 생성할 때는 사용할 수 없습니다"
     },
-    "accent": {
-      "title": "강조 색상",
-      "terracotta": "테라코타",
-      "ocean": "오션",
-      "neutral": "모노크롬"
-    },
     "polish_on_send": {
       "title": "메시지 다듬기",
       "hint": "채팅, 댓글, 답글에서 보내면 먼저 다듬기 창이 열립니다."

@@ -41,6 +41,10 @@ import { Skeleton } from "@multica/ui/components/ui/skeleton";
 import { Button, buttonVariants } from "@multica/ui/components/ui/button";
 import { TooltipHint } from "@multica/ui/components/common/tooltip-hint";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@multica/ui/components/ui/resizable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@multica/ui/components/ui/tabs";
+import { createPortal } from "react-dom";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
+import { ProjectDockedAside } from "./project-code-panel";
 import { Sheet, SheetContent } from "@multica/ui/components/ui/sheet";
 import { useIsMobile } from "@multica/ui/hooks/use-mobile";
 import {
@@ -117,6 +121,7 @@ function ProjectWorkflowPropRow({ project, onOpen }: { project: Project; onOpen:
 
 export function ProjectDetail({ projectId }: { projectId: string }) {
   const { t } = useT("projects");
+  const { t: tLayout } = useT("layout");
   const statusLabels = useProjectStatusLabels();
   const priorityLabels = useProjectPriorityLabels();
   const wsId = useWorkspaceId();
@@ -211,6 +216,16 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
     handleResize: handleDesktopSidebarResize,
   } = useAnimatedRightSidebarState(desktopSidebarInitialOpen);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  // The docked chat layout allows three columns at most, so the properties
+  // share this column with the project behind tabs.
+  const docked = useDockedLayoutStore((s) => s.layoutActive) && !isMobile;
+  const [dockedTab, setDockedTab] = useState<"project" | "properties">("project");
+  // With the project tree tab open, the properties get the right column.
+  const asideElement = useDockedLayoutStore((s) => s.asideElement);
+  const aside = docked ? asideElement : null;
+  useEffect(() => {
+    setDockedTab("project");
+  }, [projectId]);
   const sidebarOpen = isMobile ? mobileSidebarOpen : desktopSidebarOpen;
   const [workflowSheetOpen, setWorkflowSheetOpen] = useState(false);
   // The flow panel is its own modal sheet; it can't stack over the mobile sidebar sheet.
@@ -230,6 +245,10 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
       setMobileSidebarOpen((open) => !open);
       return;
     }
+    if (docked) {
+      if (!aside) setDockedTab((tab) => (tab === "project" ? "properties" : "project"));
+      return;
+    }
 
     const panel = sidebarRef.current;
     if (!panel) return;
@@ -239,7 +258,7 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
       if (nextOpen) panel.expand();
       else panel.collapse();
     });
-  }, [beginDesktopSidebarToggle, isMobile, sidebarRef]);
+  }, [aside, beginDesktopSidebarToggle, docked, isMobile, sidebarRef]);
 
   useRightSidebarShortcut(rightSidebarShortcutTargetRef, handleToggleSidebar);
 
@@ -547,123 +566,95 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
     </div>
   );
 
-  return (
-    <>
-    <ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0" defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged}>
-      <ResizablePanel id="content" minSize="50%">
-        <div ref={rightSidebarShortcutTargetRef} className="flex h-full flex-col">
-          <IssueSurface
-            scope={issueScope}
-            modes={["board", "list", "table", "swimlane", "gantt"]}
-            renderHeader={({ controller }) => (
-              <IssueViewHeader
-                controller={controller}
-                base={{ kind: "project", project }}
-                baseMenu={
+  const detailContent = (
+    <div ref={docked ? undefined : rightSidebarShortcutTargetRef} className="flex h-full flex-col">
+      <IssueSurface
+        scope={issueScope}
+        modes={["board", "list", "table", "swimlane", "gantt"]}
+        renderHeader={({ controller }) => (
+          <IssueViewHeader
+            controller={controller}
+            base={{ kind: "project", project }}
+            baseMenu={
+              <>
+                <DropdownMenuItem
+                  onClick={() =>
+                    useModalStore
+                      .getState()
+                      .open("project-rename", { projectId: project.id, title: project.title })
+                  }
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                  {t(($) => $.detail.rename_action)}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {
+                  void copyText(router.getShareableUrl(currentPath(router))).then((ok) => {
+                    if (ok) toast.success(t(($) => $.detail.toast_link_copied));
+                  });
+                }}>
+                  <Link2 className="h-3.5 w-3.5" />
+                  {t(($) => $.detail.copy_link)}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {
+                  if (isPinned) {
+                    deletePinMut.mutate({ itemType: "project", itemId: projectId });
+                  } else {
+                    createPin.mutate({ item_type: "project", item_id: projectId });
+                  }
+                }}>
+                  {isPinned ? <PinOff className="h-3.5 w-3.5" /> : <Pin className="h-3.5 w-3.5" />}
+                  {isPinned ? t(($) => $.detail.unpin_tooltip) : t(($) => $.detail.pin_tooltip)}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  disabled={setSubscription.isPending}
+                  onClick={handleToggleSubscription}
+                >
+                  {isSubscribed ? <BellOff className="h-3.5 w-3.5" /> : <BellRing className="h-3.5 w-3.5" />}
+                  {isSubscribed ? t(($) => $.detail.unsubscribe_action) : t(($) => $.detail.subscribe_action)}
+                </DropdownMenuItem>
+                <ProjectWorkflowMenuItem project={project} onOpen={() => setWorkflowSheetOpen(true)} />
+                {canDelete && (
                   <>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      onClick={() =>
-                        useModalStore
-                          .getState()
-                          .open("project-rename", { projectId: project.id, title: project.title })
-                      }
+                      variant="destructive"
+                      disabled={deleting}
+                      aria-busy={deleting}
+                      onClick={() => setDeleteDialogOpen(true)}
                     >
-                      <Pencil className="h-3.5 w-3.5" />
-                      {t(($) => $.detail.rename_action)}
+                      {deleting ? <Spinner className="size-3.5" aria-hidden="true" /> : <Trash2 className="h-3.5 w-3.5" />}
+                      {t(($) => $.detail.delete_action)}
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => {
-                      void copyText(router.getShareableUrl(currentPath(router))).then((ok) => {
-                        if (ok) toast.success(t(($) => $.detail.toast_link_copied));
-                      });
-                    }}>
-                      <Link2 className="h-3.5 w-3.5" />
-                      {t(($) => $.detail.copy_link)}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => {
-                      if (isPinned) {
-                        deletePinMut.mutate({ itemType: "project", itemId: projectId });
-                      } else {
-                        createPin.mutate({ item_type: "project", item_id: projectId });
-                      }
-                    }}>
-                      {isPinned ? <PinOff className="h-3.5 w-3.5" /> : <Pin className="h-3.5 w-3.5" />}
-                      {isPinned ? t(($) => $.detail.unpin_tooltip) : t(($) => $.detail.pin_tooltip)}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      disabled={setSubscription.isPending}
-                      onClick={handleToggleSubscription}
-                    >
-                      {isSubscribed ? <BellOff className="h-3.5 w-3.5" /> : <BellRing className="h-3.5 w-3.5" />}
-                      {isSubscribed ? t(($) => $.detail.unsubscribe_action) : t(($) => $.detail.subscribe_action)}
-                    </DropdownMenuItem>
-                    <ProjectWorkflowMenuItem project={project} onOpen={() => setWorkflowSheetOpen(true)} />
-                    {canDelete && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          variant="destructive"
-                          disabled={deleting}
-                          aria-busy={deleting}
-                          onClick={() => setDeleteDialogOpen(true)}
-                        >
-                          {deleting ? <Spinner className="size-3.5" aria-hidden="true" /> : <Trash2 className="h-3.5 w-3.5" />}
-                          {t(($) => $.detail.delete_action)}
-                        </DropdownMenuItem>
-                      </>
-                    )}
                   </>
-                }
-                trailing={
-                  <Tooltip>
-                    <TooltipTrigger
-                      render={
-                        <Button
-                          variant={sidebarOpen ? "secondary" : "ghost"}
-                          size="icon-sm"
-                          className={sidebarOpen ? "" : "text-muted-foreground"}
-                          aria-label={t(($) => $.detail.sidebar_tooltip)}
-                          onClick={handleToggleSidebar}
-                        >
-                          <PanelRight />
-                        </Button>
-                      }
-                    />
-                    <TooltipContent side="bottom">{t(($) => $.detail.sidebar_tooltip)}</TooltipContent>
-                  </Tooltip>
-                }
-              />
+                )}
+              </>
+            }
+            trailing={docked ? undefined : (
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant={sidebarOpen ? "secondary" : "ghost"}
+                      size="icon-sm"
+                      className={sidebarOpen ? "" : "text-muted-foreground"}
+                      aria-label={t(($) => $.detail.sidebar_tooltip)}
+                      onClick={handleToggleSidebar}
+                    >
+                      <PanelRight />
+                    </Button>
+                  }
+                />
+                <TooltipContent side="bottom">{t(($) => $.detail.sidebar_tooltip)}</TooltipContent>
+              </Tooltip>
             )}
           />
-          </div>
-        </ResizablePanel>
-        {!isMobile && <ResizableHandle />}
-        {!isMobile && (
-        <ResizablePanel
-          id="sidebar"
-          {...rightSidebarPanelMotionProps}
-          data-right-sidebar-motion={desktopSidebarMotionEnabled ? "enabled" : undefined}
-          defaultSize={desktopSidebarOpen ? 320 : 0}
-          minSize={260}
-          maxSize={420}
-          collapsible
-          groupResizeBehavior="preserve-pixel-size"
-          panelRef={sidebarRef}
-          onResize={handleDesktopSidebarResize}
-        >
-          <AnimatedRightSidebar open={desktopSidebarVisualOpen} motionEnabled={desktopSidebarMotionEnabled}>
-            {sidebarContent}
-          </AnimatedRightSidebar>
-        </ResizablePanel>
         )}
-        {isMobile && (
-          <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
-            <SheetContent side="right" showCloseButton={false} className="w-[320px] overflow-y-auto p-4">
-              {sidebarContent}
-            </SheetContent>
-          </Sheet>
-        )}
-      </ResizablePanelGroup>
+      />
+      </div>
+  );
 
+  const deleteDialog = (
+    <>
       <ProjectWorkflowSheet project={project} open={workflowSheetOpen} onOpenChange={setWorkflowSheetOpen} />
 
       {/* Delete confirmation */}
@@ -698,6 +689,82 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
           </AlertDialogContent>
         </AlertDialog>
       )}
+    </>
+  );
+
+  if (docked) {
+    return (
+      <>
+        {/* The shortcut needs a target that stays visible on both tabs. */}
+        <Tabs
+          ref={rightSidebarShortcutTargetRef}
+          value={aside ? "project" : dockedTab}
+          onValueChange={(value) => setDockedTab(value as "project" | "properties")}
+          className="flex min-h-0 flex-1 flex-col gap-0"
+        >
+          {!aside && (
+            <div className="flex shrink-0 items-center border-b px-3 py-1.5">
+              <TabsList>
+                <TabsTrigger value="project">{tLayout(($) => $.tab.project)}</TabsTrigger>
+                <TabsTrigger value="properties">{t(($) => $.detail.section_properties)}</TabsTrigger>
+              </TabsList>
+            </div>
+          )}
+          {/* Both stay mounted: leaving the project must not drop its filters
+              or scroll position. */}
+          <TabsContent keepMounted value="project" className="flex min-h-0 flex-col data-hidden:hidden">
+            {detailContent}
+          </TabsContent>
+          <TabsContent
+            keepMounted
+            value="properties"
+            className="min-h-0 overflow-y-auto [scrollbar-gutter:stable] px-4 py-4 data-hidden:hidden"
+          >
+            {!aside && sidebarContent}
+          </TabsContent>
+        </Tabs>
+        {aside &&
+          createPortal(<ProjectDockedAside projectId={projectId} properties={sidebarContent} />, aside)}
+        {deleteDialog}
+      </>
+    );
+  }
+
+  return (
+    <>
+    <ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0" defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged}>
+      <ResizablePanel id="content" minSize="50%">
+        {detailContent}
+        </ResizablePanel>
+        {!isMobile && <ResizableHandle />}
+        {!isMobile && (
+        <ResizablePanel
+          id="sidebar"
+          {...rightSidebarPanelMotionProps}
+          data-right-sidebar-motion={desktopSidebarMotionEnabled ? "enabled" : undefined}
+          defaultSize={desktopSidebarOpen ? 320 : 0}
+          minSize={260}
+          maxSize={420}
+          collapsible
+          groupResizeBehavior="preserve-pixel-size"
+          panelRef={sidebarRef}
+          onResize={handleDesktopSidebarResize}
+        >
+          <AnimatedRightSidebar open={desktopSidebarVisualOpen} motionEnabled={desktopSidebarMotionEnabled}>
+            {sidebarContent}
+          </AnimatedRightSidebar>
+        </ResizablePanel>
+        )}
+        {isMobile && (
+          <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
+            <SheetContent side="right" showCloseButton={false} className="w-[320px] overflow-y-auto p-4">
+              {sidebarContent}
+            </SheetContent>
+          </Sheet>
+        )}
+      </ResizablePanelGroup>
+
+      {deleteDialog}
     </>
   );
 }

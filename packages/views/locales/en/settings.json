@@ -185,12 +185,6 @@
       "manual": "Manual create",
       "unsupported": "Not available when creating with an agent"
     },
-    "accent": {
-      "title": "Accent color",
-      "terracotta": "Terracotta",
-      "ocean": "Ocean",
-      "neutral": "Monochrome"
-    },
     "polish_on_send": {
       "title": "Message polish",
       "hint": "Sending in chat, comments and replies opens the polish dialog first."

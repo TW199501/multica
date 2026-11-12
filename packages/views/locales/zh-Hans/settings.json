@@ -184,12 +184,6 @@
       "manual": "手动创建",
       "unsupported": "智能体创建时不支持此字段"
     },
-    "accent": {
-      "title": "主题色",
-      "terracotta": "陶土橙",
-      "ocean": "海蓝",
-      "neutral": "黑白"
-    },
     "polish_on_send": {
       "title": "对话优化",
       "hint": "在聊天、评论、回复中发送时，先打开优化窗口。"

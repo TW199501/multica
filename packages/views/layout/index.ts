@@ -1,4 +1,5 @@
 export { AppRail } from "./app-rail";
+export { RAIL_ICON_BUTTON_CLASS } from "./rail-styles";
 export { AppBottomBar } from "./bottom-bar";
 export { AppShellProvider, useAppShell } from "./app-shell-context";
 export { CompactNavSheet } from "./compact-nav-sheet";
@@ -34,11 +35,9 @@ export {
 export type { TabPresentationResult } from "./tab-presentation";
 export { DashboardGuard } from "./dashboard-guard";
 export { AppShellCard, DashboardLayout } from "./dashboard-layout";
-export { DockedStatusBar } from "./docked-status-bar";
 export { useDashboardGuard } from "./use-dashboard-guard";
 export { WorkspaceLoader } from "./workspace-loader";
 export { WorkspacePresencePrefetch } from "./workspace-presence-prefetch";
 export { GlobalShortcuts } from "./global-shortcuts";
 export { NewIssueButton, SearchButton } from "./global-actions";
 export { NavigationProgress } from "./navigation-progress";
-export { AccentSync } from "./accent-sync";

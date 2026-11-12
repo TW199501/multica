@@ -24,7 +24,7 @@ import {
   SpacePanel,
 } from "@multica/views/layout";
 import { SearchCommand } from "@multica/views/search";
-import { FloatingChat } from "@multica/views/chat";
+import { DockedChatLayout, FloatingChat } from "@multica/views/chat";
 import { StarPrompt } from "@multica/views/star-prompt";
 import { WorkspaceSlugProvider, paths, useCurrentWorkspace } from "@multica/core/paths";
 import { workspaceListOptions } from "@multica/core/workspace";
@@ -40,8 +40,14 @@ import {
   routeContentLinkPath,
 } from "@/platform/navigation";
 import { useRenderedRouteStore } from "@/stores/rendered-route-store";
+import {
+  BrowserLayer,
+  BrowserSidebarEntry,
+  DesktopBrowserPluginProvider,
+} from "@/browser-plugin";
 import { TabBar } from "./tab-bar";
 import { TabContent } from "./tab-content";
+import { TabLimitDialog } from "./tab-limit-dialog";
 import { WindowOverlay } from "./window-overlay";
 import { WindowToolbar, WINDOW_TOOLBAR_CLEARANCE } from "./window-toolbar";
 
@@ -302,6 +308,7 @@ export function DesktopShell() {
                   <AppRail
                     topSlot={<RailTopSpacer />}
                     globalActions={false}
+                    extraItems={<BrowserSidebarEntry />}
                     // The card starts right under the top bar; the 7px
                     // centres the workspace tile on its header band.
                     className="hidden pt-[7px] md:flex"
@@ -311,18 +318,26 @@ export function DesktopShell() {
                 {/* Right side: header + content card */}
                 <div className="flex flex-1 min-w-0 flex-col">
                   <MainTopBar railMounted={Boolean(slug)} />
-                  <MainCanvas railMounted={Boolean(slug)} showWorkspaceLoading={!slug}>
-                    {/* Same indicator, same anchor as web: DashboardLayout puts
-                        it at the top of the content column, and this is
-                        desktop's equivalent relative/overflow-hidden box.
-                        Desktop used to have no navigation feedback at all — a
-                        click just froze until the destination committed
-                        (MUL-6404). */}
-                    <NavigationProgress />
-                    <TabContent />
-                    {slug && <FloatingChat />}
-                    {slug && <StarPrompt />}
-                  </MainCanvas>
+                  <DesktopBrowserPluginProvider>
+                    <MainCanvas railMounted={Boolean(slug)} showWorkspaceLoading={!slug}>
+                      {/* Same indicator, same anchor as web: DashboardLayout puts
+                          it at the top of the content column, and this is
+                          desktop's equivalent relative/overflow-hidden box.
+                          Desktop used to have no navigation feedback at all — a
+                          click just froze until the destination committed
+                          (MUL-6404). */}
+                      <NavigationProgress />
+                      <DockedChatLayout
+                        enabled={Boolean(slug)}
+                        pageFirstPaths={slug ? [`/${slug}/browser`] : undefined}
+                      >
+                        <TabContent />
+                      </DockedChatLayout>
+                      <BrowserLayer />
+                      {slug && <FloatingChat />}
+                      {slug && <StarPrompt />}
+                    </MainCanvas>
+                  </DesktopBrowserPluginProvider>
                   {slug && <AppBottomBar />}
                 </div>
               </ShellRouteDataPrefetch>
@@ -330,6 +345,7 @@ export function DesktopShell() {
           </SidebarProvider>
         </div>
         {slug && <ModalRegistry />}
+        {slug && <TabLimitDialog />}
         {slug && <SearchCommand />}
         <WindowOverlay />
       </WorkspaceSlugProvider>

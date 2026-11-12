@@ -1,32 +1,31 @@
 import { Globe } from "@multica/ui/icons";
-import {
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@multica/ui/components/ui/sidebar";
+import { TooltipHint } from "@multica/ui/components/common/tooltip-hint";
 import { useWorkspaceSlug } from "@multica/core/paths";
-import { NAV_ITEM_CLASS_NAME } from "@multica/views/layout";
+import { RAIL_ICON_BUTTON_CLASS } from "@multica/views/layout";
 import { AppLink } from "@multica/views/navigation";
 import { useActiveTabUrl } from "@/stores/tab-store";
 import { browserPath, browserScopeForUrl } from "./browser-scope";
 import { useBrowserT } from "./i18n";
 
-// Rendered inside AppSidebar's personal nav menu, so it is a bare menu item.
+// Rendered in the app rail under the spaces.
 export function BrowserSidebarEntry() {
   const slug = useWorkspaceSlug();
   const t = useBrowserT();
   const activeScope = browserScopeForUrl(useActiveTabUrl());
   if (!slug) return null;
+  const label = t("multica.browser.sidebar.label", "Browser");
 
   return (
-    <SidebarMenuItem>
-      <SidebarMenuButton
-        isActive={activeScope === slug}
-        render={<AppLink href={browserPath(slug)} draggable={false} />}
-        className={NAV_ITEM_CLASS_NAME}
+    <TooltipHint label={label} side="right">
+      <AppLink
+        href={browserPath(slug)}
+        draggable={false}
+        aria-label={label}
+        aria-current={activeScope === slug ? "page" : undefined}
+        className={RAIL_ICON_BUTTON_CLASS}
       >
         <Globe />
-        <span>{t("multica.browser.sidebar.label", "Browser")}</span>
-      </SidebarMenuButton>
-    </SidebarMenuItem>
+      </AppLink>
+    </TooltipHint>
   );
 }

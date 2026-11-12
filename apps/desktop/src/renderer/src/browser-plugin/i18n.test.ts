@@ -24,6 +24,8 @@ describe("browser plugin i18n", () => {
       ja: "ブラウザ",
       ko: "브라우저",
       fr: "Navigateur",
+      es: "Navegador",
+      ru: "Браузер",
     };
     for (const locale of SUPPORTED_LOCALES) {
       expect(createBrowserT(locale)("multica.browser.sidebar.label", "Browser")).toBe(
