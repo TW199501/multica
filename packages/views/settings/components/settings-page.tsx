@@ -2,7 +2,6 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import {
   Bell,
   Blocks,
@@ -34,7 +33,6 @@ import {
   PLUGINS_V1_FLAG,
 } from "@multica/core/feature-flags";
 import { TooltipHint } from "@multica/ui/components/common/tooltip-hint";
-import { useSidebarSafe } from "@multica/ui/components/ui/sidebar";
 import { cn } from "@multica/ui/lib/utils";
 import { resolveSettingsLocation, settingsHref } from "./settings-navigation";
 import { AppLink, useNavigation } from "../../navigation";
@@ -66,14 +64,10 @@ import { HighlightText } from "../../search/highlight-text";
 import { useSettingsSearchIndex } from "./use-settings-search-index";
 import { wakeupsHref } from "../../autopilots/components/wakeups-tab";
 import { CollapsedNavTrigger, PageHeader } from "../../layout/page-header";
-import {
-  PANEL_ROW_CLASS,
-  PanelHeader,
-  panelRowAnchor,
-  panelRowStateClass,
-} from "../../layout/panel-nav";
+import { PanelHeader } from "../../layout/panel-nav";
 import { useListColumnCollapsed } from "../../layout/app-shell-context";
 import { ListColumn } from "../../layout/list-column";
+import { dockedSettingsRowProps, useDockedSettingsNav } from "../../layout/docked-settings-nav";
 import { useT } from "../../i18n";
 
 export interface ExtraSettingsTab {
@@ -138,18 +132,8 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
   const navigation = useNavigation();
   const paths = useWorkspacePaths();
   const listCollapsed = useListColumnCollapsed();
-  // In the docked layout the navigation lives in the sidebar only: its
-  // settings section shows it, and the page keeps only its content.
-  const dockedLayout = useDockedLayoutStore((s) => s.layoutActive);
-  const settingsNavTarget = useDockedLayoutStore((s) => s.settingsNavTarget);
-  // A collapsed or compact space panel is off screen, so the navigation falls
-  // back to the page.
-  const sidebar = useSidebarSafe();
-  const spacePanelHidden = !!sidebar && (!sidebar.open || sidebar.isCompact);
-  const dockedNavTarget = spacePanelHidden ? null : settingsNavTarget;
-  const navInSidebarOnly = dockedLayout && !spacePanelHidden;
-  // In the sidebar the rows match the space panels' menu rows.
-  const inSidebar = dockedNavTarget !== null;
+  const docked = useDockedSettingsNav();
+  const pageNavCollapsed = listCollapsed && !docked.keepPageNavOpen;
   const pluginsEnabled = useFeatureEnabled(PLUGINS_V1_FLAG, false);
   const billingEnabled = useFeatureEnabled(
     BILLING_WORKSPACE_SUBSCRIPTIONS_FLAG,
@@ -402,17 +386,13 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
       <AppLink
         href={href(item.value)}
         aria-current={active.value === item.value ? "page" : undefined}
-        {...(inSidebar ? panelRowAnchor(active.value === item.value) : {})}
-        className={
-          inSidebar
-            ? cn(PANEL_ROW_CLASS, panelRowStateClass(active.value === item.value))
-            : cn(
-                "flex min-h-8 items-center gap-2.5 rounded-lg px-3 py-1.5 text-body transition-colors focus-visible:outline-2 focus-visible:outline-ring",
-                active.value === item.value
-                  ? "bg-surface-selected text-surface-selected-foreground hover:bg-surface-selected"
-                  : "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
-              )
-        }
+        className={cn(
+          "flex min-h-8 items-center gap-2.5 rounded-lg px-3 py-1.5 text-body transition-colors focus-visible:outline-2 focus-visible:outline-ring",
+          active.value === item.value
+            ? "bg-surface-selected text-surface-selected-foreground hover:bg-surface-selected"
+            : "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
+        )}
+        {...(docked.target ? dockedSettingsRowProps(active.value === item.value) : {})}
       >
         <item.icon className="size-4 shrink-0" aria-hidden="true" />
         <span className="min-w-0 flex-1 truncate">{item.label}</span>
@@ -557,19 +537,19 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
       </nav>
     </>
   );
-  const dockedNav = dockedNavTarget
+  const dockedNav = docked.target
     ? createPortal(
         <div className="flex min-h-0 flex-1 flex-col pt-1">{navContent}</div>,
-        dockedNavTarget,
+        docked.target,
       )
     : null;
 
   return (
     <div data-mc="settings-page" className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background md:flex-row">
       {dockedNav}
-      {!dockedNav && !navInSidebarOnly && (
+      {!dockedNav && !docked.hidePageNav && (
       <ListColumn
-        collapsed={listCollapsed}
+        collapsed={pageNavCollapsed}
         // Below md the navigation stacks above the content as a select.
         className="max-md:h-auto max-md:w-full"
         innerClassName="border-surface-border max-md:h-auto max-md:w-full max-md:border-r-0 max-md:border-b"
@@ -610,7 +590,7 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
       >
         <PageHeader
           className="group/settings-header"
-          leading={listCollapsed ? <CollapsedNavTrigger /> : false}
+          leading={pageNavCollapsed ? <CollapsedNavTrigger /> : false}
         >
           <div className={SETTINGS_HEADER_RAIL}>
             <div className="flex min-w-0 flex-1 items-center gap-2">
