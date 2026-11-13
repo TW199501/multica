@@ -70,7 +70,6 @@ export function PolishButton({ wsId, editorRef, context, onAdopted, disabled, ga
             <Button
               variant="ghost"
               size="icon-sm"
-              className="rounded-full"
               aria-label={label}
               disabled={disabled}
               onClick={openDialog}

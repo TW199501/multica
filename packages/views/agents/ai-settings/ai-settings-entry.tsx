@@ -1,10 +1,10 @@
 "use client";
 
+import { IconButton } from "@multica/ui/components/common/icon-button";
 import { Sparkles } from "@multica/ui/icons";
 import { useWorkspaceId } from "@multica/core/hooks";
 import { useWorkspacePaths } from "@multica/core/paths";
 import { useCurrentMember } from "@multica/core/permissions";
-import { CollectionPageHeaderAction } from "../../layout/collection-page";
 import { useNavigation } from "../../navigation";
 import { useT } from "../../i18n";
 
@@ -17,10 +17,13 @@ export function AISettingsEntryButton() {
   const { role } = useCurrentMember(wsId);
   if (role !== "owner" && role !== "admin") return null;
   return (
-    <CollectionPageHeaderAction
-      icon={Sparkles}
+    <IconButton
+      tooltipSide="bottom"
       label={t(($) => $.ai_settings.entry)}
+      className="shrink-0 text-muted-foreground"
       onClick={() => navigation.push(paths.agentAISettings())}
-    />
+    >
+      <Sparkles />
+    </IconButton>
   );
 }

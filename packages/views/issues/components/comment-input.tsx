@@ -15,10 +15,11 @@ import { useShortcut } from "@multica/core/shortcuts";
 import { ShortcutKeycaps } from "../../common/shortcut-keycaps";
 import { useCommentDraftStore } from "@multica/core/issues/stores";
 import { composeAnnotatedReply, hasReplyIntent } from "@multica/core/drafts/reply-annotation";
+import { annotationsWithPending, type AnnotationComposerSlot } from "./annotation-composer";
 import { ReplyAnnotations } from "./reply-annotations";
 import { useT } from "../../i18n";
 import { CommentTriggerChips } from "./comment-trigger-chips";
-import { useCommentTriggerPreview } from "../hooks/use-comment-trigger-preview";
+import { commentTriggerPreviewSignature, useCommentTriggerPreview } from "../hooks/use-comment-trigger-preview";
 import { useRecipientActions } from "../hooks/use-recipient-actions";
 import { SteerAttachmentNotice } from "./steer-attachment-notice";
 import { useStopRunsBeforeSend } from "./use-stop-runs-before-send";
@@ -35,6 +36,7 @@ interface CommentInputProps {
   /** Called after the server accepts the comment and the composer is cleared. */
   onAccepted?: (commentId: string) => void;
   onEditAnnotation?: (id: string) => boolean;
+  annotationComposer?: AnnotationComposerSlot;
 }
 
 // A top-level comment belongs to no thread, so it takes a running turn by
@@ -43,7 +45,7 @@ function steerTopLevelByDefault(task: AgentTask): boolean {
   return !task.trigger_comment_id;
 }
 
-function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: CommentInputProps) {
+function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation, annotationComposer }: CommentInputProps) {
   const { t } = useT("issues");
   const { t: tEditor } = useT("editor");
   const sendShortcut = useShortcut("send");
@@ -53,9 +55,9 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
   const uploadGate = useUploadGate(editorRef);
   // Subscribe to the persisted draft so text written into it from outside
   // this composer shows up even while it is mounted.
-  // Quick actions in the `/` menu: picking one inserts the server-rendered
+  // Quick actions in the `/` menu: picking one inserts the cached
   // body so the user can edit before sending, instead of firing immediately.
-  const quickActionMenu = useQuickActionMenu(issueId);
+  const quickActionMenu = useQuickActionMenu();
   const draftKey = `new:${issueId}` as const;
   const [initialDraft] = useState(() =>
     useCommentDraftStore.getState().getDraft(draftKey),
@@ -64,7 +66,8 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
   const [content, setContent] = useState(initialDraft ?? "");
   const [isEmpty, setIsEmpty] = useState(() => !initialDraft?.trim());
   const annotations = useCommentDraftStore((s) => s.getAnnotations(draftKey));
-  const composedContent = useMemo(() => composeAnnotatedReply(content, annotations), [content, annotations]);
+  const previewAnnotations = useMemo(() => annotationsWithPending(annotations, annotationComposer?.pending), [annotations, annotationComposer?.pending]);
+  const composedContent = useMemo(() => composeAnnotatedReply(content, previewAnnotations), [content, previewAnnotations]);
   const canSendText = annotations.length ? hasReplyIntent(content, annotations) : !isEmpty;
   const { decision, setDecision, executionMode, withDecision, settleSent } = useComposerDecision();
   // A decision alone is a complete message.
@@ -73,7 +76,7 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
   // shows (and routes) its recipients.
   const previewContent = decision
     ? appendDecision(canSendText ? composedContent : "", decision, executionMode)
-    : canSendText ? composedContent : "";
+    : canSendText || annotationComposer?.pending.note.trim() ? composedContent : "";
   const triggerPreview = useCommentTriggerPreview({ issueId, content: previewContent });
   // Uploads for this composer session (MUL-5181). Owned by the module-level
   // coordinator and persisted in the draft store, so closing/scrolling the
@@ -180,14 +183,15 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
     },
     // A top-level comment ends a turn: the caret is dropped rather than kept,
     // so the composer stops reading as "still writing" once the comment is
-    // posted above it. Thread replies are the opposite — see ReplyInput.
+    // posted above it. Thread replies do the same — see ReplyInput.
     afterAccepted: () => (editorScrubbedRef.current ? "blur" : "none"),
     onSubmit: async (content) => {
       editorScrubbedRef.current = false;
       const { suppressAgentIds, steerTaskIds } = routing;
       // A preview still catching up with an edited @mention can name a
       // recipient this comment no longer addresses: never stop a run on it.
-      const restartTaskIds = triggerPreview.isCurrent ? routing.restartTaskIds : [];
+      const previewMatches = triggerPreview.isCurrent && commentTriggerPreviewSignature(content) === commentTriggerPreviewSignature(composedContent);
+      const restartTaskIds = previewMatches ? routing.restartTaskIds : [];
       if (!(await stopRunsBeforeSend(restartTaskIds))) return false;
       // Flush the editor's pending debounce before snapshotting — a late flush
       // of pre-submit typing must not read as an edit made during the request.
@@ -257,8 +261,15 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
   });
   const { gatedSubmit, dialog: polishGateDialog } = polishGate;
 
-  return (
+  return (<>
+    {annotationComposer?.render({
+      submit: gatedSubmit, submitting, uploading: gate.uploading, restart: routing.restartTaskIds.length > 0,
+      draftContent: content, annotations,
+      recipients: <CommentTriggerChips recipients={recipients} blocked={triggerPreview.blocked}
+        hasAllMembersMention={triggerPreview.hasAllMembersMention} draftContent={composedContent} onActionChange={setAction} />,
+    })}
     <div
+      data-mc="comment-composer"
       {...dropZoneProps}
       className="relative flex flex-col rounded-lg bg-card pb-8 ring-1 ring-border"
     >
@@ -366,6 +377,7 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
             <Button
               size="sm"
               variant="destructive"
+              // eslint-disable-next-line no-restricted-syntax -- composer send button, the one round button
               className="rounded-full"
               onClick={gatedSubmit}
               disabled={!canSend || submitting || gate.uploading}
@@ -399,7 +411,7 @@ function CommentInput({ issueId, onSubmit, onAccepted, onEditAnnotation }: Comme
       {polishGateDialog}
       {isDragOver && <FileDropOverlay />}
     </div>
-  );
+  </>);
 }
 
 export { CommentInput };

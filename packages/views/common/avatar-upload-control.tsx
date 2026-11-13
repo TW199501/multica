@@ -150,6 +150,7 @@ export function AvatarUploadControl({
   const { t } = useT("common");
   const { upload } = useFileUpload(api);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadPendingRef = useRef(false);
   const [pickedFile, setPickedFile] = useState<File | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -190,6 +191,8 @@ export function AvatarUploadControl({
   };
 
   const handleCropped = async (cropped: File) => {
+    // Block dismissal during the cropper handoff, before busy has committed.
+    uploadPendingRef.current = true;
     setBusy(true);
     try {
       const result = await upload(cropped);
@@ -204,6 +207,7 @@ export function AvatarUploadControl({
         err instanceof Error ? err.message : t(($) => $.avatar_upload.failed),
       );
     } finally {
+      uploadPendingRef.current = false;
       setBusy(false);
     }
   };
@@ -244,6 +248,7 @@ export function AvatarUploadControl({
         "flex items-center justify-center",
         "focus-visible:ring-2 focus-visible:ring-ring",
         "disabled:cursor-not-allowed disabled:opacity-60",
+        // eslint-disable-next-line no-restricted-syntax -- avatar: the control is the avatar itself
         "rounded-full",
         className,
       )}
@@ -393,6 +398,7 @@ export function AvatarUploadControl({
               setPreviewError(false);
               onClear();
             }}
+            // eslint-disable-next-line no-restricted-syntax -- avatar: remove badge pinned to the avatar's corner
             className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full border bg-background text-muted-foreground shadow-sm transition-colors hover:bg-muted hover:text-foreground"
             aria-label={t(($) => $.avatar_upload.remove)}
           >
@@ -414,7 +420,7 @@ export function AvatarUploadControl({
         open={dialogOpen}
         busy={busy}
         onOpenChange={(next) => {
-          if (busy) return;
+          if (busy || uploadPendingRef.current) return;
           setDialogOpen(next);
           if (!next) setPickedFile(null);
         }}

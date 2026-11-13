@@ -8,12 +8,12 @@ import { RESOURCES } from "@multica/views/locales";
 
 // The shell resolves the mocked `getCurrentSlug()` against the workspace list
 // before mounting workspace-scoped chrome, so the list has to contain it or
-// the sidebar under test never renders. Gating behaviour itself is covered by
+// the rail under test never renders. Gating behaviour itself is covered by
 // desktop-layout.workspace-gate.test.tsx.
 const WORKSPACES = [{ id: "ws-1", slug: "acme" }];
 
 // The shell is the only thing under test here, so everything it mounts around
-// the sidebar is stubbed out. What survives is the pair that has to agree:
+// the rail is stubbed out. What survives is the pair that has to agree:
 // `WindowToolbar`'s own trigger, and the `hasExternalTrigger` the provider
 // publishes to every page header inside the canvas.
 vi.mock("@/hooks/use-tab-history", () => ({
@@ -67,21 +67,22 @@ vi.mock("@multica/views/platform", () => ({
 }));
 
 vi.mock("@multica/views/layout", () => ({
-  AppSidebar: ({
-    topSlot,
-    personalNavExtra,
-  }: {
-    topSlot?: ReactNode;
-    personalNavExtra?: ReactNode;
-  }) => (
-    <div data-testid="app-sidebar">
-      <div data-testid="sidebar-top-slot">{topSlot}</div>
-      <div data-testid="sidebar-personal-extra">{personalNavExtra}</div>
-    </div>
+  AppBottomBar: () => null,
+  AppRail: ({ extraItems }: { extraItems?: ReactNode }) => (
+    <div data-testid="app-rail">{extraItems}</div>
   ),
-  DockedStatusBar: () => <footer data-testid="docked-status-bar" />,
+  AppShellProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+  CompactNavSheet: () => null,
   GlobalShortcuts: () => null,
   NavigationProgress: () => null,
+  NewIssueButton: () => null,
+  SearchButton: () => null,
+  ShellRouteDataPrefetch: ({ children }: { children: ReactNode }) => <>{children}</>,
+  SpacePanel: () => null,
+  // In a panel space the shell's toggleNav is the sidebar toggle.
+  useAppShell: () => ({ toggleNav: useSidebar().toggleSidebar }),
+  useTabPresentation: () => ({ visual: { kind: "icon", icon: "Inbox" }, title: "" }),
+  ResourceLeadingVisual: () => null,
 }));
 
 vi.mock("@/browser-plugin", () => ({
@@ -95,12 +96,12 @@ vi.mock("@/browser-plugin", () => ({
 vi.mock("@multica/views/modals/registry", () => ({ ModalRegistry: () => null }));
 vi.mock("@multica/views/search", () => ({
   SearchCommand: () => null,
-  SearchTrigger: () => null,
 }));
 vi.mock("@multica/views/chat", () => ({
   FloatingChat: () => null,
   DockedChatLayout: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
+vi.mock("@multica/views/star-prompt", () => ({ StarPrompt: () => null }));
 vi.mock("./tab-bar", () => ({ TabBar: () => null }));
 vi.mock("./window-overlay", () => ({ WindowOverlay: () => null }));
 
@@ -160,33 +161,17 @@ beforeEach(() => {
 });
 
 describe("DesktopShell browser entry placement", () => {
-  it("passes the Browser entry as a personal nav item, not in the top slot", () => {
+  it("puts the Browser entry on the app rail", () => {
     const { getByTestId } = renderShell();
-    expect(getByTestId("sidebar-personal-extra")).toContainElement(
-      getByTestId("browser-entry"),
-    );
-    expect(getByTestId("sidebar-top-slot")).not.toContainElement(
-      getByTestId("browser-entry"),
-    );
-  });
-});
-
-describe("DesktopShell status bar", () => {
-  it("puts the docked status bar under the sidebar and main area", () => {
-    const { container, getByTestId } = renderShell();
-
-    const wrapper = container.querySelector("[data-slot='sidebar-wrapper']");
-    expect(wrapper).toHaveClass("min-h-0", "flex-1");
-    expect(wrapper?.nextElementSibling).toBe(getByTestId("docked-status-bar"));
-    expect(wrapper?.parentElement).toHaveClass("h-screen", "flex-col");
+    expect(getByTestId("app-rail")).toContainElement(getByTestId("browser-entry"));
   });
 });
 
 describe("DesktopShell sidebar trigger", () => {
   // The window toolbar parks a trigger beside the traffic lights that never
   // scrolls away, so nothing inside the canvas may add a second one. Desktop
-  // windows sit below `xl`, exactly the band where `PageHeader`'s fallback
-  // trigger renders, so every page used to stack an identical icon 50px under
+  // windows often sit in the band where `PageHeader`'s fallback trigger
+  // renders, so every page used to stack an identical icon 50px under
   // this one — and a third when a list/detail surface brought its own header
   // along (MUL-6218).
   it("keeps exactly one trigger and tells page headers not to add another", () => {
@@ -197,18 +182,19 @@ describe("DesktopShell sidebar trigger", () => {
       "data-external-trigger",
       "true",
     );
+    // The toolbar floats over the 56px rail; the tabs start past the rest
+    // of it whether or not the panel inside the card is open.
     const mainTopBar = container.querySelector('[data-slot="main-top-bar"]');
-    expect(mainTopBar).toHaveAttribute("data-sidebar-resize-consumer");
-    expect(mainTopBar).toHaveClass("transition-[padding-left]");
-    expect(mainTopBar).toHaveStyle({
-      paddingLeft:
-        "max(0px, calc(200px - var(--sidebar-live-width, var(--sidebar-width))))",
-    });
+    expect(mainTopBar).toHaveStyle({ paddingLeft: "144px" });
 
     fireEvent.click(
       container.querySelector('[data-slot="sidebar-trigger"]')!,
     );
-    expect(mainTopBar).toHaveStyle({ paddingLeft: "200px" });
+    expect(getByTestId("page-content")).toHaveAttribute(
+      "data-sidebar-state",
+      "collapsed",
+    );
+    expect(mainTopBar).toHaveStyle({ paddingLeft: "144px" });
     expect(queryByRole("status", { name: /loading workspace/i })).toBeNull();
   });
 

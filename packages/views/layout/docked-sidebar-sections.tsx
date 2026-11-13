@@ -4,9 +4,10 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useDefaultLayout } from "react-resizable-panels";
 import { useDockedLayoutStore, type DockedSidebarSection } from "@multica/core/chat/docked-layout-store";
+import { useAuthStore } from "@multica/core/auth";
 import { useWorkspaceId } from "@multica/core/hooks";
 import { issueDetailOptions } from "@multica/core/issues/queries";
-import { useWorkspacePaths } from "@multica/core/paths";
+import { useCurrentWorkspace, useWorkspacePaths } from "@multica/core/paths";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -16,6 +17,7 @@ import { cn } from "@multica/ui/lib/utils";
 import { ProjectCodeExplorer } from "../projects/components/project-code-explorer";
 import { useNavigation } from "../navigation";
 import { useT } from "../i18n";
+import { PinnedSection, usePanelPins } from "./panels/pinned-section";
 
 const SECTIONS: DockedSidebarSection[] = ["menu", "projects", "settings"];
 
@@ -117,10 +119,7 @@ export function DockedProjectTree({ pinned }: { pinned?: ReactNode }) {
     >
       <ResizablePanel id="pinned" defaultSize="25%" minSize="10%">
         <section aria-label={t(($) => $.sidebar.pinned_label)} className="flex h-full min-h-0 flex-col">
-          <h2 className="px-4 pb-1 pt-2 text-caption font-medium text-muted-foreground">
-            {t(($) => $.sidebar.pinned_label)}
-          </h2>
-          <div className="min-h-0 flex-1 overflow-y-auto px-2">
+          <div className="min-h-0 flex-1 overflow-y-auto px-2 pt-2">
             {pinned ?? (
               <p className="px-2 py-1 text-caption text-muted-foreground">{t(($) => $.docked.pinned_empty)}</p>
             )}
@@ -161,4 +160,35 @@ export function dockedSectionBody(
   { pinned }: { pinned?: ReactNode } = {},
 ): ReactNode {
   return active === "projects" ? <DockedProjectTree pinned={pinned} /> : <DockedSettingsNavHost />;
+}
+
+/** The workspace's pinned items, as the Work panel lists them. */
+function DockedPinned() {
+  const wsId = useCurrentWorkspace()?.id;
+  const userId = useAuthStore((s) => s.user?.id);
+  const { pathname } = useNavigation();
+  const pins = usePanelPins(wsId, userId, pathname, null);
+  if (!wsId || pins.visible.length === 0) return null;
+  return <PinnedSection pins={pins} wsId={wsId} />;
+}
+
+/**
+ * The space panel's content in the docked layout: the section tabs on top,
+ * then the current space's panel (`menu`), the project tree, or the settings
+ * navigation.
+ */
+export function DockedSidebarPanel({ menu }: { menu: ReactNode }) {
+  const section = useDockedSidebarSection();
+  return (
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="shrink-0 px-2 pt-2 pb-1">
+        <DockedSidebarTabs active={section} />
+      </div>
+      {section === "menu" ? (
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{menu}</div>
+      ) : (
+        dockedSectionBody(section, { pinned: <DockedPinned /> })
+      )}
+    </div>
+  );
 }
