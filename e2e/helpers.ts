@@ -58,6 +58,17 @@ export async function loginAsDefault(page: Page): Promise<string> {
 }
 
 /**
+ * Opens the page's later navigations with the floating chat preference on, the
+ * layout where an issue shows its properties in a right sidebar beside it.
+ * Call before the first navigation.
+ */
+export async function preferFloatingChat(page: Page) {
+  await page.addInitScript(() => {
+    localStorage.setItem("multica:chat:floatingChatEnabled", "true");
+  });
+}
+
+/**
  * Create a TestApiClient logged in as the default E2E user.
  * Call api.cleanup() in afterEach to remove test data created during the test.
  */

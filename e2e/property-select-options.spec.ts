@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { TestApiClient } from "./fixtures";
+import { preferFloatingChat } from "./helpers";
 
 for (const type of ["select", "multi_select"] as const) {
   test(`edits and selects from 200 ${type} options`, async ({ page }) => {
@@ -20,6 +21,8 @@ for (const type of ["select", "multi_select"] as const) {
       });
       const token = api.getToken();
       if (!token) throw new Error("Owner login did not return a token");
+      // The right sidebar this spec drives exists in the floating chat layout.
+      await preferFloatingChat(page);
       await page.addInitScript((value) => {
         localStorage.setItem("multica_token", value);
         localStorage.setItem("multica:chat:isOpen", "false");

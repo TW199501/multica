@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { createTestApi, loginAsDefault, waitForPageText } from "./helpers";
+import { createTestApi, loginAsDefault, preferFloatingChat, waitForPageText } from "./helpers";
 import type { TestApiClient } from "./fixtures";
 
 // MUL-8100: absolutely positioned content inside the issue's right sidebar
@@ -24,6 +24,8 @@ test.describe("Issue detail sidebar containment", () => {
     await page.setViewportSize({ width: 1440, height: 520 });
     const title = "E2E sidebar containment " + Date.now();
     const issue = await api.createIssue(title);
+    // The right sidebar this spec drives exists in the floating chat layout.
+    await preferFloatingChat(page);
     const slug = await loginAsDefault(page);
     await page.goto(`/${slug}/issues/${issue.id}`, { waitUntil: "domcontentloaded" });
     await waitForPageText(page, title);
