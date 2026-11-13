@@ -54,7 +54,7 @@ Web 和 Desktop 都有的邏輯，**必須**抽到共享包。"小段重複"也�
 - 關聯欄位：`<table>_id`
 - 布林：`is_<state>` 或者 `<state>_at`（狀態變化優先用時間戳形式）
 - 遷移檔案：`NNN_descriptive_name.up.sql` + `.down.sql`，**永遠寫雙向**
-- 不建立資料庫 foreign key，也不使用級聯刪除或級聯更新；關係檢查碼清理由應用層完成
+- 不建立資料庫 foreign key，也不使用級聯刪除或級聯更新；關係驗證和清理由應用層完成
 - 所有索引都使用 `CREATE INDEX CONCURRENTLY` 或 `CREATE UNIQUE INDEX CONCURRENTLY`，每條 concurrent index 單獨佔一個 migration 檔案
 
 ### Go
@@ -160,7 +160,7 @@ Multica 的產品名詞分兩類：
 | Settings | **設定** |
 | Onboarding | **上手引導** |
 
-Agent 在簡體中文（`zh-Hans`）中譯為**AI 代理**，在繁體中文（`zh-Hant`）中譯為 **AI 代理**。AI 與相鄰中文之間保留一個空格，例如**新增 AI 代理**。原文已有 AI 時只保留一次，例如**讓 AI 代理幫我寫程式碼**。
+Agent 在簡體中文（`zh-Hans`）中譯為**智能体**，在繁體中文（`zh-Hant`）中譯為 **AI 代理**。AI 與相鄰中文之間保留一個空格，例如**新增 AI 代理**。原文已有 AI 時只保留一次，例如**讓 AI 代理幫我寫程式碼**。
 
 ### 不翻 —— 品牌名 + 通用縮寫
 
