@@ -36,7 +36,6 @@
     "download_desktop": "Приложение для рабочего стола",
     "docs": "Документация",
     "changelog": "История изменений",
-    "discord": "Discord",
     "star_on_github": "Поставить звезду на GitHub",
     "feedback": "Обратная связь",
     "server_version": "Версия сервера {{version}}"

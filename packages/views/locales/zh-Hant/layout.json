@@ -36,7 +36,6 @@
     "download_desktop": "桌面端",
     "docs": "文件",
     "changelog": "更新記錄",
-    "discord": "Discord",
     "star_on_github": "在 GitHub 上 Star",
     "feedback": "意見回饋",
     "server_version": "伺服器版本 {{version}}"

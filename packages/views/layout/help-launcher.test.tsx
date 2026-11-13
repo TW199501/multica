@@ -190,6 +190,21 @@ describe("HelpLauncher", () => {
     expect(markStarPromptStarred).toHaveBeenCalledTimes(1);
   });
 
+  it("has no Discord entry", () => {
+    render(<HelpLauncher />);
+    expect(screen.queryByRole("link", { name: /Discord/ })).not.toBeInTheDocument();
+    expect(document.querySelector('a[href*="discord"]')).toBeNull();
+  });
+
+  it("points the GitHub link at the deployment's own repository", () => {
+    configStore.getState().setReleaseRepository("TW199501/multica");
+    render(<HelpLauncher />);
+    expect(screen.getByRole("link", { name: /Star on GitHub/ })).toHaveAttribute(
+      "href",
+      "https://github.com/TW199501/multica",
+    );
+  });
+
   it("shows the star count once it is known", () => {
     qc.setQueryData(githubStarsOptions().queryKey, 37_612);
     render(<HelpLauncher />);

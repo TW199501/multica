@@ -119,3 +119,13 @@ describe("AccountMenu theme submenu", () => {
     );
   });
 });
+
+describe("AccountMenu help links", () => {
+  it("lists Docs and no Discord entry", async () => {
+    renderWithI18n(<AccountMenu />);
+    fireEvent.click(screen.getByRole("button", { name: "Account" }));
+
+    expect(await screen.findByRole("menuitem", { name: /Docs/ })).toBeInTheDocument();
+    expect(screen.queryByRole("menuitem", { name: /Discord/ })).not.toBeInTheDocument();
+  });
+});
