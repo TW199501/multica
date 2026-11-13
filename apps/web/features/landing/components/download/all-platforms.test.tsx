@@ -13,13 +13,15 @@ const ASSETS = {
   macX64Zip: "https://downloads.test/mac-x64.zip",
 };
 
+const RELEASES_URL = "https://github.com/TW199501/multica/releases";
+
 function row(arch: string) {
   return screen.getByText(arch).closest("li")!;
 }
 
 describe("AllPlatforms", () => {
   it("lists Intel macOS downloads separately from Apple Silicon", () => {
-    render(<AllPlatforms assets={ASSETS} />);
+    render(<AllPlatforms assets={ASSETS} allReleasesUrl={RELEASES_URL} />);
 
     const intel = within(row("Intel"));
     expect(intel.getByRole("link", { name: ".dmg" })).toHaveAttribute("href", ASSETS.macX64Dmg);
@@ -27,11 +29,19 @@ describe("AllPlatforms", () => {
   });
 
   it("marks the visitor's platform and disables formats the release lacks", () => {
-    render(<AllPlatforms assets={ASSETS} current="macArm64Dmg" />);
+    render(<AllPlatforms assets={ASSETS} allReleasesUrl={RELEASES_URL} current="macArm64Dmg" />);
 
     expect(within(row("Apple Silicon")).getByText("This computer")).toBeInTheDocument();
     expect(within(row("Intel")).queryByText("This computer")).toBeNull();
     const windows = screen.getAllByText("Windows")[0]!.closest("li")!;
     expect(within(windows).queryByRole("link")).toBeNull();
+  });
+
+  it("points the all-releases link at the release repository", () => {
+    render(<AllPlatforms assets={ASSETS} allReleasesUrl={RELEASES_URL} />);
+
+    const link = screen.getByRole("link", { name: createEnDict().download.allPlatforms.allReleases });
+    expect(link).toHaveAttribute("href", RELEASES_URL);
+    expect(link.getAttribute("href")).not.toContain("multica-ai");
   });
 });

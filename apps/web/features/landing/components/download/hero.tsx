@@ -6,7 +6,7 @@ import { alternateKey, formatSize, osOf, resolvePrimary } from "../../utils/down
 import type { LatestRelease } from "../../utils/github-release";
 import type { DetectResult } from "../../utils/os-detect";
 import type { DownloadKey } from "../../utils/parse-release-assets";
-import { ALL_RELEASES_URL, AllPlatforms } from "./all-platforms";
+import { AllPlatforms } from "./all-platforms";
 import { DownloadLink } from "./download-link";
 import { OSIcon } from "./os-icons";
 
@@ -73,7 +73,7 @@ export function DownloadHero({
               {release.publishedAt ? <Dot>{d.released.replace("{date}", formatDate(release.publishedAt, locale))}</Dot> : null}
               <Dot>
                 <SiteTextLink
-                  href={release.htmlUrl ?? ALL_RELEASES_URL}
+                  href={release.htmlUrl ?? release.allReleasesUrl}
                   external
                   className="text-site-ink underline decoration-site-line-strong underline-offset-4"
                 >
@@ -86,7 +86,7 @@ export function DownloadHero({
           )}
         </p>
       </div>
-      <AllPlatforms assets={release.assets} current={primary?.key} onStart={onStart} />
+      <AllPlatforms assets={release.assets} allReleasesUrl={release.allReleasesUrl} current={primary?.key} onStart={onStart} />
     </Container>
   );
 }
