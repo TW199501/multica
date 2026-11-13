@@ -77,7 +77,8 @@ test("reply stays with the thread agent and hides unused historical fallbacks", 
     await expect(page.locator(`[data-run-id="${controlId}"]`)).toBeVisible();
     for (const id of hiddenIds) await expect(page.locator(`[data-run-id="${id}"]`)).toHaveCount(0);
 
-    await page.getByTestId("reply-composer-shell").first().click();
+    // A thread's reply box stays closed until its Reply action opens it.
+    await page.getByRole("button", { name: "Reply", exact: true }).first().click();
     const editor = page.locator('.ProseMirror[data-placeholder="Leave a reply..."], .ProseMirror:has([data-placeholder="Leave a reply..."])').first();
     await editor.fill("Please continue, Agent B. The issue remains assigned to Agent A.");
     const posted = page.waitForResponse((response) => response.request().method() === "POST" && response.url().endsWith(`/api/issues/${issue.id}/comments`));
