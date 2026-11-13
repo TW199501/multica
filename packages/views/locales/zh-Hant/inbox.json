@@ -39,7 +39,7 @@
     "mark_unread": "標為未讀",
     "archive": "歸檔",
     "unarchive": "取消歸檔",
-    "open_in_new_tab": "在新標籤頁開啟"
+    "open_in_new_tab": "在新分頁開啟"
   },
   "list": {
     "loading_selection": "正在載入通知…",
@@ -66,7 +66,7 @@
     "original_input": "原始輸入",
     "retry_with_context": "保留上下文重試",
     "edit_advanced": "在完整表單中編輯",
-    "autopilot_quota_exceeded_body": "當前週期的 {{limit}} 次自動化執行額度已用完。在 {{resetAt}} 重置前，後續自動化執行將不會啟動。",
+    "autopilot_quota_exceeded_body": "目前週期的 {{limit}} 次自動化執行額度已用完。在 {{resetAt}} 重置前，後續自動化執行將不會啟動。",
     "autopilot_quota_upgrade": "檢視升級方案",
     "archive": "歸檔",
     "unarchive": "取消歸檔"

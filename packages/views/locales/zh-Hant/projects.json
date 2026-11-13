@@ -1,7 +1,7 @@
 {
   "page": {
     "title": "專案",
-    "new_project": "新建專案",
+    "new_project": "新增專案",
     "scope_all": "全部專案",
     "scope_active": "進行中的專案",
     "scope_closed": "已結束的專案",
@@ -55,7 +55,7 @@
   },
   "detail": {
     "not_found": "未找到該專案",
-    "not_found_description": "它可能已被刪除，或你沒有訪問權限。",
+    "not_found_description": "它可能已被刪除，或你沒有存取權限。",
     "back_to_list": "全部專案",
     "breadcrumb_fallback": "專案",
     "title_placeholder": "專案標題",
@@ -81,7 +81,7 @@
     "description_hint": "會作為專案上下文提供給 AI 代理，應用於該專案下的每次執行。",
     "empty_issues_title": "這個專案還沒有任務",
     "empty_issues_hint": "新增一個，或把既有任務移進來。",
-    "empty_issues_new_button": "新建任務",
+    "empty_issues_new_button": "新增任務",
     "empty_issues_add_existing": "加入既有任務",
     "no_issues_yet": "目前還沒有任務",
     "toast_link_copied": "已複製連結",
@@ -90,28 +90,28 @@
   },
   "resources": {
     "section_header": "資源",
-    "repos_group": "倉庫",
-    "repos_add": "新增倉庫",
-    "repos_empty": "還沒有倉庫。",
+    "repos_group": "儲存庫",
+    "repos_add": "新增儲存庫",
+    "repos_empty": "還沒有儲存庫。",
     "repos_input_placeholder": "搜尋或貼上 GitHub 連結...",
     "repos_add_url": "新增 {{repo}}",
-    "repos_search_empty": "沒有匹配的倉庫。",
+    "repos_search_empty": "沒有匹配的儲存庫。",
     "attached_badge": "已新增",
     "remove_tooltip": "移除",
-    "toast_attached": "已新增倉庫",
+    "toast_attached": "已新增儲存庫",
     "toast_attach_failed": "新增失敗",
     "toast_removed": "已移除",
     "toast_remove_failed": "移除失敗",
-    "local_group": "本地資料夾",
+    "local_group": "本機資料夾",
     "local_group_hint": "每台電腦一個，只在那台電腦上生效。",
     "local_this_computer": "本機",
     "local_unknown_computer": "另一台電腦",
     "local_offline": "離線",
-    "local_slot_description": "在本機執行時直接使用你的資料夾，不再檢出倉庫。",
+    "local_slot_description": "在本機執行時直接使用你的資料夾，不再檢出儲存庫。",
     "local_pick": "選擇資料夾...",
-    "local_daemon_offline_hint": "啟動本地守護程序後才能選擇資料夾。",
+    "local_daemon_offline_hint": "啟動本機守護程式後才能選擇資料夾。",
     "chat_hint_prefix": "AI 代理將直接在以下目錄中工作：",
-    "chat_hint_worktree_prefix": "AI 代理將在以下倉庫的獨立 worktree 中工作：",
+    "chat_hint_worktree_prefix": "AI 代理將在以下儲存庫的獨立 worktree 中工作：",
     "chat_hint_worktree_note": "不會改動你的工作副本，每次執行的結果以 agent/… 分支交回。",
     "toast_local_attached": "已新增資料夾",
     "toast_local_pick_failed": "選擇資料夾失敗",
@@ -125,8 +125,8 @@
     "mode_in_place_description": "一次一個執行，改動直接寫進這個資料夾。",
     "mode_worktree_title": "並行執行",
     "mode_worktree_description": "多個執行同時進行，不改動你的工作區。每次執行交回一個 agent/… 分支，由你審查後合併。",
-    "mode_worktree_needs_git": "這個資料夾不是 git 倉庫，無法並行執行。",
-    "mode_worktree_needs_server_upgrade": "Multica 服務端版本過舊，並行執行會退回到直接修改這個資料夾。請先升級服務端。",
+    "mode_worktree_needs_git": "這個資料夾不是 git 儲存庫，無法並行執行。",
+    "mode_worktree_needs_server_upgrade": "Multica 伺服器端版本過舊，並行執行會退回到直接修改這個資料夾。請先升級伺服器端。",
     "mode_cancel": "取消",
     "mode_add": "新增資料夾",
     "mode_edit_tooltip": "修改執行方式",
@@ -174,7 +174,7 @@
   },
   "intro": {
     "title": "把一件大事拆成專案來推進",
-    "description": "專案把相關任務收在一起，統一看進度。專案描述和關聯的倉庫會作為上下文，自動帶進每一次 AI 代理執行。",
+    "description": "專案把相關任務收在一起，統一看進度。專案描述和關聯的儲存庫會作為上下文，自動帶進每一次 AI 代理執行。",
     "slides": {
       "progress": {
         "title": "進度一眼看清",
@@ -182,7 +182,7 @@
       },
       "context": {
         "title": "上下文自動帶給 AI 代理",
-        "description": "寫一次專案描述、關聯一次倉庫，專案裡每個任務的執行都會帶上。"
+        "description": "寫一次專案描述、關聯一次儲存庫，專案裡每個任務的執行都會帶上。"
       },
       "sidebar": {
         "title": "釘在側欄，隨手進入",
@@ -196,7 +196,7 @@
       "context_label": "專案描述",
       "context_body": "新版官網，Next.js + Tailwind。文案以 docs/brand 為準，所有頁面都要支援深色模式。",
       "run_started": "開始執行",
-      "context_loaded": "已載入專案上下文和 2 個倉庫",
+      "context_loaded": "已載入專案上下文和 2 個儲存庫",
       "issue_count": "{{done}} / {{total}} 個任務",
       "issue_hero": "首頁 Hero 動效",
       "issue_pricing": "定價頁對比表",
@@ -225,7 +225,7 @@
     "retry": "重試"
   },
   "code": {
-    "tab": "代碼",
+    "tab": "程式碼",
     "default_branch": "預設分支",
     "no_repository": "尚未連接 GitHub 程式庫。",
     "load_failed": "讀不到這個程式庫。私有程式庫需要在伺服器設定 GITHUB_TOKEN。",

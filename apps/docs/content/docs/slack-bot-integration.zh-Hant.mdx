@@ -6,7 +6,7 @@ description: 為 AI 代理建立一個 Slack Bot，在私聊、頻道以及 /iss
 import { Callout } from "fumadocs-ui/components/callout";
 import { Step, Steps } from "fumadocs-ui/components/steps";
 
-Multica 使用你自己的 Slack app。連線後，團隊成員可以私聊 Bot、在頻道里 @ 它，也可以用 `/issue` 建立任務、`/new` 新建 Multica Chat、`/clear` 重置當前 Chat 的 AI 代理上下文。
+Multica 使用你自己的 Slack app。連線後，團隊成員可以私聊 Bot、在頻道裡 @ 它，也可以用 `/issue` 建立任務、`/new` 新增 Multica Chat、`/clear` 重置目前 Chat 的 AI 代理上下文。
 
 一個 Slack app 對應一個 Multica AI 代理。需要接入多個 AI 代理時，為每個 AI 代理分別建立 app。
 
@@ -85,12 +85,12 @@ Slack slash command 名稱在整個 workspace 中共享。如果其他已安裝 
 如果這個 Slack app 是在附件支援上線前安裝的，請新增 `files:read` Bot scope，並將 app 重新安裝到 workspace。在重新安裝 app 前，新增 scope 不會應用到現有 Bot token。
 </Callout>
 
-Bot 使用 Socket Mode 主動連線 Slack，不需要配置公網 Request URL 或 OAuth Redirect URL。
+Bot 使用 Socket Mode 主動連線 Slack，不需要設定公開網路 Request URL 或 OAuth Redirect URL。
 
 </Step>
 <Step>
 
-### 獲取兩個 token [#2-獲取兩個-token]
+### 取得兩個 token [#2-取得兩個-token]
 
 #### Bot token
 
@@ -118,7 +118,7 @@ Bot 使用 Socket Mode 主動連線 Slack，不需要配置公網 Request URL �
 Multica 會驗證兩個 token 是否來自同一個 app。連線成功後，頁面會顯示 **已連線到 Slack**。
 
 <Callout type="warning">
-兩個 token 會加密儲存在 Multica 伺服器上。Token 即憑據，不要寫進任務、評論或程式碼倉庫。已連線到其他 AI 代理或工作區的 app 不能直接重複使用，需先斷開原連線。
+兩個 token 會加密儲存在 Multica 伺服器上。Token 即憑據，不要寫進任務、評論或程式碼儲存庫。已連線到其他 AI 代理或工作區的 app 不能直接重複使用，需先斷開原連線。
 </Callout>
 
 </Step>
@@ -130,7 +130,7 @@ Multica 會驗證兩個 token 是否來自同一個 app。連線成功後，頁�
 
 連結只能使用一次，並會在 15 分鐘後過期。過期後再給 Bot 發一條訊息即可獲得新連結。同一 Multica 工作區中的多個 Bot 如果來自同一個 Slack workspace，通常可以重複使用已有繫結。
 
-只有當前 Multica 工作區的成員可以使用 Bot。
+只有目前 Multica 工作區的成員可以使用 Bot。
 
 ## 在 Slack 中交代工作
 
@@ -142,7 +142,7 @@ Multica 會驗證兩個 token 是否來自同一個 app。連線成功後，頁�
 
 先執行 `/invite @your-bot` 把 Bot 加入頻道，再傳送 `@your-bot 你的要求`。每個 thread 會形成獨立會話；追問時繼續在原 thread 中 @ Bot。
 
-Bot 只會響應明確 @ 它的頻道訊息。執行時，它會在權限允許的範圍內讀取該 thread 的近期上下文。
+Bot 只會回應明確 @ 它的頻道訊息。執行時，它會在權限允許的範圍內讀取該 thread 的近期上下文。
 
 ### 傳送檔案
 
@@ -158,9 +158,9 @@ Bot 只會響應明確 @ 它的頻道訊息。執行時，它會在權限允許�
 /issue Safari 登入成功後仍然停留在登入頁
 ```
 
-這條命令不需要 @ Bot。Multica 會把描述交給當前 Bot 對應的 AI 代理，由它整理標題和正文並建立任務。Slack 會先顯示一條僅你可見的接收提示；建立完成後，你會在 Multica 收件箱中收到通知。
+這條命令不需要 @ Bot。Multica 會把描述交給目前 Bot 對應的 AI 代理，由它整理標題和正文並建立任務。Slack 會先顯示一條僅你可見的接收提示；建立完成後，你會在 Multica 收件箱中收到通知。
 
-### 用 `/new` 新建 Chat
+### 用 `/new` 新增 Chat
 
 在與 Bot 的私聊中，傳送 `/new` 會立即建立一個空的、可見的新 Chat；傳送 `/new <訊息>` 會把訊息作為新 Chat 的第一輪。裸 `/new` 建立的 Chat 在收到第一條有效訊息前顯示為"新對話"，之後按首條訊息生成標題。
 
@@ -168,9 +168,9 @@ Bot 只會響應明確 @ 它的頻道訊息。執行時，它會在權限允許�
 
 在頻道或 thread 中，Slack 原生 slash command 的 payload 不包含目標 thread。請在目標 thread 裡傳送 `@Multica /new [訊息]`。
 
-### 用 `/clear` 清空當前 Chat 上下文
+### 用 `/clear` 清空目前 Chat 上下文
 
-在與 Bot 的私聊中，`/clear` 會保留當前 Multica Chat，只重置 AI 代理可見的上下文。完整 Chat 歷史仍儲存在 Multica 中。`/clear <訊息>` 會把訊息作為新上下文的第一輪；裸 `/clear` 會把邊界應用到下一條真實訊息。
+在與 Bot 的私聊中，`/clear` 會保留目前 Multica Chat，只重置 AI 代理可見的上下文。完整 Chat 歷史仍儲存在 Multica 中。`/clear <訊息>` 會把訊息作為新上下文的第一輪；裸 `/clear` 會把邊界應用到下一條真實訊息。
 
 在頻道或 thread 中，請在目標 thread 裡傳送 `@Multica /clear [訊息]`，讓 Multica 把邊界應用到正確的會話。
 
@@ -178,11 +178,11 @@ Bot 只會響應明確 @ 它的頻道訊息。執行時，它會在權限允許�
 
 開啟 **設定 → 訊息渠道 → Slack** 可以檢視所有已連線的 Slack Bot。工作區 owner 和 admin 可以斷開連線。
 
-斷開後，Socket Mode 連線會停止，Bot 不再接收新訊息。已有的對話和審計記錄不會隨之刪除。
+斷開後，Socket Mode 連線會停止，Bot 不再接收新訊息。已有的對話和稽核記錄不會隨之刪除。
 
-## 自託管配置
+## 自託管設定
 
-Multica Cloud 無需額外配置。自託管部署需要先設定一個用於加密 Slack token 的金鑰：
+Multica Cloud 無需額外設定。自託管部署需要先準備一個用於加密 Slack token 的金鑰：
 
 ```dotenv
 MULTICA_SLACK_SECRET_KEY=<base64 編碼的 32 位元組金鑰>
@@ -196,20 +196,20 @@ openssl rand -base64 32
 
 重啟 API 服務後，再連線 Slack app。該金鑰需要長期儲存：更換或丟失後，已有 token 無法解密，需要重新連線。
 
-帳號繫結連結使用 `MULTICA_APP_URL`，未設定時回退到 `FRONTEND_ORIGIN`；它需要指向成員可以訪問的 Multica 地址。
+帳號繫結連結使用 `MULTICA_APP_URL`，未設定時回退到 `FRONTEND_ORIGIN`；它需要指向成員可以存取的 Multica 位址。
 
 ## 常見問題
 
 - **連線時提示 token 無效**：檢查字首，並確認兩個 token 來自同一個 app。
 - **無法驗證 app**：確認 manifest 包含 `users:read`，更新權限後重新安裝 app。
 - **私聊沒有入口**：確認 `app_home.messages_tab_enabled` 為 `true`。
-- **頻道里沒有回覆**：確認 Bot 已被邀請進頻道，並在訊息中 @ 了它。
+- **頻道裡沒有回覆**：確認 Bot 已被邀請進頻道，並在訊息中 @ 了它。
 - **`/issue`、`/new` 或 `/clear` 不存在**：確認 manifest 包含這三個 slash command 和 `commands` scope，隨後重新安裝 app。如果 Slack 提示 `/new` 或 `/clear` 已被佔用，請改用 `@Multica` 訊息形式，或先解決 workspace 級命令衝突。
 - **檔案沒有送達 AI 代理**：確認 manifest 裡包含 `files:read`，並且在新增該權限後重新安裝過應用，同時確認檔案不超過 20 MiB。
 - **Bot 不執行**：檢查 AI 代理是否已歸檔，以及它使用的[執行時](/daemon-runtimes)是否線上。
 
 ## 接下來
 
-- [聊天整合](/channels) — 平臺對比、會話隔離和帳號繫結機制。
+- [聊天整合](/channels) — 平台對比、會話隔離和帳號繫結機制。
 - [與 AI 代理對話](/chat) — Bot 背後的對話與執行模型。
 - [任務](/issues) — `/issue` 建立的工作單位。

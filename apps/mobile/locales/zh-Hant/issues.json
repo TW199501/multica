@@ -68,7 +68,7 @@
     "no_runs": "暫無執行"
   },
   "new": {
-    "title": "新建任務",
+    "title": "新增任務",
     "title_placeholder": "任務標題",
     "create": "建立任務",
     "creating": "建立中...",
@@ -115,7 +115,7 @@
     "load_failed": "任務載入失敗：{{message}}"
   },
   "empty": {
-    "filtered": "沒有符合當前篩選條件的任務。",
+    "filtered": "沒有符合目前篩選條件的任務。",
     "assigned": "沒有分配給你的任務。",
     "created": "你還沒有建立任務。",
     "agents": "沒有分配給 AI 代理或小隊的任務。",
@@ -147,7 +147,7 @@
   },
   "cancel": {
     "title": "取消執行？",
-    "message": "AI 代理會在當前步驟結束後停止。",
+    "message": "AI 代理會在目前步驟結束後停止。",
     "keep_running": "繼續執行",
     "cancel_task": "取消執行",
     "waiting_for_connection": "等待網路連線...",
@@ -225,13 +225,13 @@
     "discard_a11y": "放棄失敗的評論"
   },
   "resources": {
-    "title": "新增倉庫",
-    "url": "倉庫 URL",
+    "title": "新增儲存庫",
+    "url": "儲存庫 URL",
     "branch": "起始分支（可選）",
     "label": "標籤（可選）",
     "attach": "新增",
     "attaching": "新增中...",
-    "branch_hint": "執行會從這個分支開始，並針對它建立 Pull Request。留空則使用倉庫預設分支。",
+    "branch_hint": "執行會從這個分支開始，並針對它建立 Pull Request。留空則使用儲存庫預設分支。",
     "commit": "這是提交 ID，不是分支。執行會回傳到起始分支。如需一次性修訂，請給 multica repo checkout 傳入 --ref。",
     "too_long": "最多使用 255 個字元。",
     "invalid_characters": "分支名不能包含空格或 ~ ^ : ? * [ \\",
@@ -267,7 +267,7 @@
       "deferred": "已延後",
       "dispatched": "已交給 AI 代理",
       "running": "執行中",
-      "waiting_local_directory": "等待本地目錄可用",
+      "waiting_local_directory": "等待本機目錄可用",
       "completed": "執行成功",
       "failed": "執行失敗",
       "cancelled": "已取消"
@@ -290,6 +290,6 @@
   "cancel.cancel_task": "取消執行",
   "picker.create_label": "建立 \"{{name}}\"",
   "comments.composer_pill": "新增評論，輸入 @ 提及...",
-  "resources.branch_hint": "執行會從這個分支開始，並針對它建立 Pull Request。留空則使用倉庫預設分支。",
+  "resources.branch_hint": "執行會從這個分支開始，並針對它建立 Pull Request。留空則使用儲存庫預設分支。",
   "resources.commit": "這是提交 ID，不是分支。執行會回傳到起始分支。如需一次性修訂，請給 multica repo checkout 傳入 --ref。"
 }

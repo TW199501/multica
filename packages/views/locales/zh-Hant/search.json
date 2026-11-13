@@ -18,7 +18,7 @@
     "cancelled": "已取消",
     "recent": "最近",
     "workspaces": "工作區",
-    "new": "新建",
+    "new": "新增",
     "best_match": "最佳符合",
     "actions": "操作"
   },
@@ -32,11 +32,11 @@
     "current_chat": "目前對話"
   },
   "commands": {
-    "current_theme_aria": "當前主題",
-    "current_mode_aria": "當前模式",
-    "new_issue": "新建任務",
-    "new_project": "新建專案",
-    "new_autopilot": "新建自動化",
+    "current_theme_aria": "目前主題",
+    "current_mode_aria": "目前模式",
+    "new_issue": "新增任務",
+    "new_project": "新增專案",
+    "new_autopilot": "新增自動化",
     "chat_with_agent": "和 AI 代理對話",
     "change_theme": "切換主題...",
     "send_feedback": "傳送意見回饋",
@@ -48,7 +48,7 @@
   "issue": {
     "change_status": "變更狀態...",
     "assign_to": "指派給...",
-    "set_priority": "設定優先級...",
+    "set_priority": "設定優先順序...",
     "run_quick_action": "執行快捷操作...",
     "quick_actions_available_other": "{{count}} 條可用",
     "add_label": "新增標籤...",
@@ -57,7 +57,7 @@
     "set_parent": "設定父任務...",
     "cancel_run": "取消目前執行",
     "retry_run": "重試上次執行",
-    "create_sub_issue": "新建子任務",
+    "create_sub_issue": "新增子任務",
     "subscribe": "訂閱",
     "unsubscribe": "取消訂閱",
     "delete": "刪除任務",
@@ -65,7 +65,7 @@
   },
   "project": {
     "change_status": "變更專案狀態...",
-    "new_issue": "在此專案下新建任務",
+    "new_issue": "在此專案下新增任務",
     "pin": "固定到側邊欄",
     "unpin": "從側邊欄取消固定",
     "copy_link": "複製專案連結"
@@ -73,7 +73,7 @@
   "agent": {
     "chat": "和 {{name}} 對話",
     "assign_issue": "把任務指派給 {{name}}...",
-    "new_issue": "新建任務給 {{name}}",
+    "new_issue": "新增任務給 {{name}}",
     "pin_in_chat": "在聊天裡固定",
     "unpin_in_chat": "從聊天裡取消固定",
     "settings": "開啟 AI 代理設定"
@@ -97,7 +97,7 @@
   },
   "pages": {
     "status": "狀態",
-    "priority": "優先級",
+    "priority": "優先順序",
     "assignee": "負責人",
     "labels": "標籤",
     "due_date": "截止日期",
@@ -129,8 +129,8 @@
   "empty": {
     "no_results": "未找到結果。",
     "no_labels": "沒有標籤",
-    "type_to_find_issue": "輸入關鍵詞查找任務",
-    "type_to_find_people": "輸入關鍵詞查找成員和 AI 代理"
+    "type_to_find_issue": "輸入關鍵字搜尋任務",
+    "type_to_find_people": "輸入關鍵字搜尋成員和 AI 代理"
   },
   "delegate": {
     "row": "交給 AI 代理：「{{prompt}}」",
@@ -139,7 +139,7 @@
   "best": {
     "assign": "把 {{subject}} 指派給 {{name}}",
     "chat": "和 {{name}} 對話",
-    "new_issue_in": "在 {{name}} 下新建任務"
+    "new_issue_in": "在 {{name}} 下新增任務"
   },
   "types": {
     "issue": "任務",

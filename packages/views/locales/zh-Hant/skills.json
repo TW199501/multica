@@ -2,7 +2,7 @@
   "page": {
     "search": "搜尋 skill",
     "title": "Skills",
-    "new_skill": "新建 skill",
+    "new_skill": "新增 skill",
     "scopes": {
       "all": {
         "label": "全部 skill",
@@ -24,9 +24,9 @@
     "no_matches": {
       "title": "無匹配",
       "with_query": "沒有 skill 匹配 \"{{query}}\"{{filterSuffix}}。",
-      "with_query_filter_suffix": "（在當前篩選下）",
-      "filter_only": "當前篩選下沒有匹配的 skill。",
-      "try_different": " 換個關鍵詞試試。"
+      "with_query_filter_suffix": "（在目前篩選下）",
+      "filter_only": "目前篩選下沒有匹配的 skill。",
+      "try_different": " 換個關鍵字試試。"
     },
     "list_error": {
       "title": "無法載入 skill",
@@ -66,9 +66,9 @@
     "added_toast": "已新增到 {{name}}",
     "add_failed_toast": "新增 skill 失敗",
     "delete": "刪除",
-    "delete_no_permission": "選中項包含僅建立者或管理員可刪除的 skill",
+    "delete_no_permission": "選取項包含僅建立者或管理員可刪除的 skill",
     "delete_dialog_title_other": "刪除 {{count}} 個 skill？",
-    "delete_dialog_desc_other": "將永久刪除選中的 {{count}} 個 skill，並從所有 AI 代理上移除。",
+    "delete_dialog_desc_other": "將永久刪除選取的 {{count}} 個 skill，並從所有 AI 代理上移除。",
     "deleted_toast_other": "已刪除 {{count}} 個 skill",
     "delete_failed_toast": "刪除 skill 失敗",
     "update": "更新",
@@ -99,9 +99,9 @@
     "name_placeholder": "skill-name",
     "description_placeholder": "用一句話描述 AI 代理什麼時候應該使用這個 skill...",
     "subline": {
-      "origin_runtime_named": "本地執行時 · {{name}}",
-      "origin_runtime_provider": "本地執行時 · {{provider}}",
-      "origin_runtime_unknown": "本地執行時",
+      "origin_runtime_named": "本機執行時 · {{name}}",
+      "origin_runtime_provider": "本機執行時 · {{provider}}",
+      "origin_runtime_unknown": "本機執行時",
       "origin_clawhub": "匯入自 · ClawHub",
       "origin_skills_sh": "匯入自 · Skills.sh",
       "origin_github": "匯入自 · GitHub",
@@ -120,7 +120,7 @@
     },
     "not_found": {
       "title": "未找到該 skill",
-      "fallback": "這個 skill 可能已被刪除，或你沒有訪問權限。",
+      "fallback": "這個 skill 可能已被刪除，或你沒有存取權限。",
       "back": "返回 Skills"
     },
     "toast_saved": "已儲存 skill",
@@ -138,7 +138,7 @@
       "dialog": {
         "title": "從來源更新這個 skill？",
         "description": "將從 {{source}} 重新下載\"{{name}}\"，並用最新版本替換它的名稱、描述、SKILL.md 和檔案。",
-        "warning": "對這個 skill 的本地修改將被覆蓋。AI 代理分配、標籤和建立者保持不變。",
+        "warning": "對這個 skill 的本機修改將被覆蓋。AI 代理分配、標籤和建立者保持不變。",
         "cancel": "取消",
         "confirm": "更新",
         "refreshing": "更新中..."
@@ -146,7 +146,7 @@
     },
     "delete_dialog": {
       "title": "刪除這個 skill？",
-      "description_with_agents_other": "將永久刪除\"{{name}}\"，並從當前正在使用它的 {{count}} 個 AI 代理上移除。",
+      "description_with_agents_other": "將永久刪除\"{{name}}\"，並從目前正在使用它的 {{count}} 個 AI 代理上移除。",
       "description_no_agents": "將永久刪除\"{{name}}\"，並從所有 AI 代理上移除。",
       "warning": "此操作不可撤銷。",
       "cancel": "取消",
@@ -176,7 +176,7 @@
       "description": "描述",
       "description_hint": "AI 代理據此決定何時載入 skill。",
       "labels": "標籤",
-      "used_by_empty": "還未分配給任何 AI 代理。開啟某個 AI 代理的 Skills 標籤頁進行分配。",
+      "used_by_empty": "還未分配給任何 AI 代理。開啟某個 AI 代理的 Skills 分頁進行分配。",
       "permissions_owner": "你可以編輯和刪除該技能。改動將在 AI 代理下次執行時生效。",
       "permissions_locked_creator": "只有建立者（{{name}}）或工作區管理員可以編輯該技能。",
       "permissions_locked": "只有建立者或工作區管理員可以編輯該技能。",
@@ -187,7 +187,7 @@
       "main": "主檔案",
       "supporting_other": "附屬檔案 {{count}}",
       "supporting_empty": "暫無附屬檔案。",
-      "add_file": "新建檔案",
+      "add_file": "新增檔案",
       "mode_aria": "檔案檢視",
       "mode_preview": "預覽",
       "mode_edit": "編輯",
@@ -249,7 +249,7 @@
         "desc": "從空白 SKILL.md 開始寫。"
       },
       "local": {
-        "title": "從本地匯入",
+        "title": "從本機匯入",
         "desc": "選擇包含 SKILL.md 的資料夾，或 .skill / .zip 壓縮包。"
       },
       "url": {
@@ -258,7 +258,7 @@
       },
       "runtime": {
         "title": "從執行時複製",
-        "desc": "把本地執行時裡已裝好的 skill 提升到工作區。"
+        "desc": "把本機執行時裡已裝好的 skill 提升到工作區。"
       }
     },
     "manual": {
@@ -319,16 +319,16 @@
   },
   "runtime_import": {
     "runtime_label": "執行時",
-    "runtime_placeholder": "選擇一個本地執行時",
-    "no_local_runtimes_title": "暫無可用的本地執行時",
-    "no_local_runtimes_hint": "連線一個本地執行時，才能瀏覽並匯入其本地 skill。",
+    "runtime_placeholder": "選擇一個本機執行時",
+    "no_local_runtimes_title": "暫無可用的本機執行時",
+    "no_local_runtimes_hint": "連線一個本機執行時，才能瀏覽並匯入其本機 skill。",
     "choose_runtime": "請選擇一個執行時繼續",
-    "must_be_online": "執行時必須線上才能瀏覽本地 skill。",
-    "load_failed": "載入本地 skill 失敗",
-    "not_supported": "這個 provider 暫不支援本地 skill 列表。",
-    "no_skills_title": "未找到本地 skill",
-    "search_placeholder": "搜尋本地 skill",
-    "no_search_results_hint": "沒有本地 skill 匹配 \"{{query}}\"。",
+    "must_be_online": "執行時必須線上才能瀏覽本機 skill。",
+    "load_failed": "載入本機 skill 失敗",
+    "not_supported": "這個 provider 暫不支援本機 skill 列表。",
+    "no_skills_title": "未找到本機 skill",
+    "search_placeholder": "搜尋本機 skill",
+    "no_search_results_hint": "沒有本機 skill 匹配 \"{{query}}\"。",
     "ignored_files_hint": "匯入時會忽略軟鏈、不可讀檔案、超大檔案以及超大目錄。",
     "ready": "準備匯入",
     "into_workspace": "到工作區。",
@@ -357,8 +357,8 @@
     "conflict_single_title": "工作區裡已存在同名 skill",
     "conflict_bulk_title": "{{count}} 個 skill 需要處理衝突",
     "conflict_hint": "選擇覆蓋現有工作區 skill、改名匯入，或跳過。",
-    "conflict_locked_creator": "該 skill 由 {{creator}} 建立，只能由建立者透過本地匯入覆蓋；如需修改請到 Skill 詳情頁編輯。",
-    "conflict_locked": "該 skill 只能由建立者透過本地匯入覆蓋；如需修改請到 Skill 詳情頁編輯。",
+    "conflict_locked_creator": "該 skill 由 {{creator}} 建立，只能由建立者透過本機匯入覆蓋；如需修改請到 Skill 詳情頁編輯。",
+    "conflict_locked": "該 skill 只能由建立者透過本機匯入覆蓋；如需修改請到 Skill 詳情頁編輯。",
     "conflict_overwrite": "覆蓋",
     "conflict_rename": "重新命名",
     "conflict_skip": "跳過",
@@ -392,7 +392,7 @@
     "slides": {
       "methods": {
         "title": "四種方式新增",
-        "description": "從空白的 SKILL.md 寫起，或從本地資料夾、URL、執行時匯入已有的 skill。"
+        "description": "從空白的 SKILL.md 寫起，或從本機資料夾、URL、執行時匯入已有的 skill。"
       },
       "assign": {
         "title": "分配給 AI 代理",
@@ -400,13 +400,13 @@
       },
       "share": {
         "title": "在工作區內共享",
-        "description": "本地執行時裡的 skill 在你複製過來之前是私有的，複製後所有 AI 代理都能使用。"
+        "description": "本機執行時裡的 skill 在你複製過來之前是私有的，複製後所有 AI 代理都能使用。"
       }
     },
     "art": {
       "skill_summary": "先跑測試，再看無障礙和效能。",
       "add_to_agent": "分配給 AI 代理",
-      "local_skills": "本地 skill",
+      "local_skills": "本機 skill",
       "private": "私有",
       "workspace_shared": "工作區",
       "all_agents": "所有 AI 代理可用",

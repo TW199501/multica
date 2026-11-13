@@ -83,8 +83,8 @@
     "app_action_result": "應用操作結果"
   },
   "body": {
-    "autopilot_title_limit": "自動化 \"{{title}}\" 未啟動，因為該工作區已達到當前週期 {{limit}} 次執行的上限。額度將在 {{resetAt}} 重置。",
-    "autopilot_limit": "該工作區已達到當前週期 {{limit}} 次自動化執行的上限。此執行未啟動。額度將在 {{resetAt}} 重置。"
+    "autopilot_title_limit": "自動化 \"{{title}}\" 未啟動，因為該工作區已達到目前週期 {{limit}} 次執行的上限。額度將在 {{resetAt}} 重置。",
+    "autopilot_limit": "該工作區已達到目前週期 {{limit}} 次自動化執行的上限。此執行未啟動。額度將在 {{resetAt}} 重置。"
   },
   "actions.archive_completed": "歸檔已完成項",
   "detail.status_todo": "todo",
@@ -93,5 +93,5 @@
   "type.task_completed": "執行完成",
   "type.task_failed": "執行失敗",
   "type.run_limit_blocked": "已達到上限，本次執行被阻止",
-  "body.autopilot_title_limit": "自動化 \"{{title}}\" 未啟動，因為該工作區已達到當前週期 {{limit}} 次執行的上限。額度將在 {{resetAt}} 重置。"
+  "body.autopilot_title_limit": "自動化 \"{{title}}\" 未啟動，因為該工作區已達到目前週期 {{limit}} 次執行的上限。額度將在 {{resetAt}} 重置。"
 }
