@@ -64,8 +64,8 @@ export function HelpLauncher() {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const whatsNew = useWhatsNewMenuPanel();
   const [open, setOpen] = useState(false);
-  // Asked only once the menu opens, so closed sessions never call GitHub. The
-  // star count is upstream's, so it is skipped for a deployment's own repository.
+  // Asked only once the menu opens, so closed sessions never call GitHub.
+  // Skipped for a deployment's own release repository.
   const { data: stars } = useQuery({ ...githubStarsOptions(), enabled: open && !ownReleases });
   return (
     <>
