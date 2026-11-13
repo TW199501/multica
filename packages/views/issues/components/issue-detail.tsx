@@ -4489,13 +4489,12 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
             <TabsTrigger value="properties">{t(($) => $.detail.section_properties)}</TabsTrigger>
           </TabsList>
         </div>
-        {/* Both stay mounted: leaving the issue must not drop a comment draft
-            or its scroll position. */}
+        {/* The issue stays mounted so a comment draft and its scroll position
+            survive; the properties mount only while their tab is showing. */}
         <TabsContent keepMounted value="issue" className="flex min-h-0 data-hidden:hidden">
           {detailContent}
         </TabsContent>
         <TabsContent
-          keepMounted
           value="properties"
           className="min-h-0 overflow-y-auto [scrollbar-gutter:stable] px-2 py-4 data-hidden:hidden"
         >
