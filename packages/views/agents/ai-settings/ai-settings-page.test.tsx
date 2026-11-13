@@ -44,6 +44,7 @@ vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 import { AISettingsPage } from "./ai-settings-page";
 import { AISettingsEntryButton } from "./ai-settings-entry";
+import { COLLECTION_ACTION_YIELDS_TO_SEARCH } from "../../layout/collection-page";
 import { ApiError } from "@multica/core/api";
 
 function settings(over: Record<string, unknown> = {}) {
@@ -104,6 +105,15 @@ describe("AI settings entry", () => {
     renderUi(<AISettingsEntryButton />, nav);
     await userEvent.click(screen.getByRole("button", { name: "AI settings" }));
     expect(nav.push).toHaveBeenCalledWith("/acme/agents/ai-settings");
+  });
+
+  it("steps aside for an open search in a narrow list header", () => {
+    mocks.role = "owner";
+    renderUi(<AISettingsEntryButton />);
+    const button = screen.getByRole("button", { name: "AI settings" });
+    for (const name of COLLECTION_ACTION_YIELDS_TO_SEARCH.split(" ")) {
+      expect(button).toHaveClass(name);
+    }
   });
 });
 

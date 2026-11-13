@@ -7,6 +7,8 @@ import { useWorkspacePaths } from "@multica/core/paths";
 import { useCurrentMember } from "@multica/core/permissions";
 import { useNavigation } from "../../navigation";
 import { useT } from "../../i18n";
+import { COLLECTION_ACTION_YIELDS_TO_SEARCH } from "../../layout/collection-page";
+import { cn } from "@multica/ui/lib/utils";
 
 /** Agents-list header button; only owners and admins can manage AI settings. */
 export function AISettingsEntryButton() {
@@ -20,7 +22,7 @@ export function AISettingsEntryButton() {
     <IconButton
       tooltipSide="bottom"
       label={t(($) => $.ai_settings.entry)}
-      className="shrink-0 text-muted-foreground"
+      className={cn("shrink-0 text-muted-foreground", COLLECTION_ACTION_YIELDS_TO_SEARCH)}
       onClick={() => navigation.push(paths.agentAISettings())}
     >
       <Sparkles />
