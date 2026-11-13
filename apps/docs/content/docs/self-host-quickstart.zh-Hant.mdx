@@ -13,11 +13,11 @@ import { Accordion, Accordions } from "fumadocs-ui/components/accordion";
 | 部分 | 執行什麼 | 放在哪裡 |
 |---|---|---|
 | **Multica 服務** | Web、API 和 PostgreSQL | 一臺安裝了 Docker 的機器 |
-| **執行電腦** | Multica 守護程序和 AI 程式設計工具 | 開發者實際工作的電腦 |
+| **執行電腦** | Multica 守護程式和 AI 程式設計工具 | 開發者實際工作的電腦 |
 
 它們可以是同一臺機器，也可以分開。自託管替換的只是 Multica Cloud 部分。
 
-這篇文件使用 Docker Compose。Kubernetes 部署見倉庫中的 [Self-hosting guide](https://github.com/multica-ai/multica/blob/main/SELF_HOSTING.md#kubernetes-deployment-alternative)。
+這篇文件使用 Docker Compose。Kubernetes 部署見儲存庫中的 [Self-hosting guide](https://github.com/multica-ai/multica/blob/main/SELF_HOSTING.md#kubernetes-deployment-alternative)。
 
 ## 開始前
 
@@ -60,15 +60,15 @@ make selfhost
 2. 隨機生成 `JWT_SECRET`、PostgreSQL 密碼和 `MULTICA_VCS_SECRET_KEY`（自託管 Git 整合的加密金鑰）
 3. 拉取 PostgreSQL、Multica backend 和 Multica frontend 映象
 4. 建立持久化資料卷並啟動三個容器
-5. 等待 backend 開始響應健康檢查
+5. 等待 backend 開始回應健康檢查
 
 </Accordion>
 </Accordions>
 
 <Callout type="info">
-`make selfhost` 拉取已釋出的映象，不會編譯當前 checkout 中的程式碼。需要測試本地原始碼時，使用 `make selfhost-build`。
+`make selfhost` 拉取已釋出的映象，不會編譯目前 checkout 中的程式碼。需要測試本機原始碼時，使用 `make selfhost-build`。
 
-已釋出的映象跟隨最新的 **release tag**，而直接 `git clone` 檢出的是 `main`，通常領先於發版。如果你要在這個 checkout 上構建任何東西（CLI，或透過 `make selfhost-build` 構建映象），先切換到與映象對應的 release tag，讓構建產物和執行中的容器保持同一版本：
+已釋出的映象跟隨最新的 **release tag**，而直接 `git clone` 檢出的是 `main`，通常領先於發版。如果你要在這個 checkout 上建置任何東西（CLI，或透過 `make selfhost-build` 建置映象），先切換到與映象對應的 release tag，讓建置產物和執行中的容器保持同一版本：
 
 ```bash
 git fetch --tags --depth 1
@@ -93,7 +93,7 @@ docker compose -f docker-compose.selfhost.yml ps
 curl -fsS http://localhost:8080/readyz
 ```
 
-正常響應是：
+正常回應是：
 
 ```json
 {"status":"ok","checks":{"db":"ok","migrations":"ok"}}
@@ -104,24 +104,24 @@ Backend 容器每次啟動時都會先執行資料庫 migration，再啟動服�
 </Step>
 <Step>
 
-## 選擇訪問方式 [#3-選擇訪問方式]
+## 選擇存取方式 [#3-選擇存取方式]
 
-<Tabs items={["本機訪問", "遠端訪問"]}>
-<Tab value="本機訪問">
+<Tabs items={["本機存取", "遠端存取"]}>
+<Tab value="本機存取">
 
 直接開啟 [http://localhost:3000](http://localhost:3000)。後面執行 `multica setup self-host` 時也不需要傳 URL。
 
 </Tab>
-<Tab value="遠端訪問" id="remote-access">
+<Tab value="遠端存取" id="remote-access">
 
-Docker Compose 預設只把 `3000` 和 `8080` 繫結到 `127.0.0.1`。不要直接改成 `0.0.0.0` 暴露到公網，請使用帶 HTTPS 的反向代理。
+Docker Compose 預設只把 `3000` 和 `8080` 繫結到 `127.0.0.1`。不要直接改成 `0.0.0.0` 暴露到公開網路，請使用帶 HTTPS 的反向代理。
 
 下面以兩個網域為例：
 
 - `app.example.com`：Multica Web
-- `api.example.com`：API、健康檢查和守護程序連線
+- `api.example.com`：API、健康檢查和守護程式連線
 
-先在 `.env` 中設定公開地址：
+先在 `.env` 中設定公開位址：
 
 ```bash
 FRONTEND_ORIGIN=https://app.example.com
@@ -129,9 +129,9 @@ MULTICA_APP_URL=https://app.example.com
 MULTICA_PUBLIC_URL=https://api.example.com
 ```
 
-按這份配置，瀏覽器流量全部走 app 域，cookie 不跨域，因此不需要配置 `COOKIE_DOMAIN`。如果改為讓瀏覽器直接訪問 api 域，則必須配置它，見[環境變數](/environment-variables)。
+按這份設定，瀏覽器流量全部走 app 域，cookie 不跨域，因此不需要設定 `COOKIE_DOMAIN`。如果改為讓瀏覽器直接存取 api 域，則必須設定它，見[環境變數](/environment-variables)。
 
-然後配置 DNS，並用 Caddy 代理本機埠。Caddy 會申請 TLS 憑證並轉發 WebSocket。
+然後設定 DNS，並用 Caddy 代理本機埠。Caddy 會申請 TLS 憑證並轉發 WebSocket。
 
 <Tabs items={["兩個網域", "單一 origin"]}>
 <Tab value="兩個網域">
@@ -195,9 +195,9 @@ multica.example.com {
 </Tab>
 </Tabs>
 
-**單一 origin**（一個網域，或一臺主機一個埠，小伺服器上常見）把守護程序依賴的路徑顯式轉給 backend，其餘交給 frontend。這種模式下兩個 URL 都指向它：`.env` 裡的 `FRONTEND_ORIGIN` 和 `MULTICA_APP_URL`，以及 `multica setup self-host` 的 `--server-url` 和 `--app-url`。
+**單一 origin**（一個網域，或一臺主機一個埠，小伺服器上常見）把守護程式依賴的路徑顯式轉給 backend，其餘交給 frontend。這種模式下兩個 URL 都指向它：`.env` 裡的 `FRONTEND_ORIGIN` 和 `MULTICA_APP_URL`，以及 `multica setup self-host` 的 `--server-url` 和 `--app-url`。
 
-修改 `.env` 後，用 `up -d` 重新建立容器，讓新配置生效：
+修改 `.env` 後，用 `up -d` 重新增立容器，讓新設定生效：
 
 ```bash
 docker compose -f docker-compose.selfhost.yml up -d
@@ -205,18 +205,18 @@ curl -fsS https://api.example.com/readyz
 curl -fsS https://app.example.com/api/config | grep -o '"daemon_server_url":"[^"]*"'
 ```
 
-最後一條命令輸出 `daemon_server_url`，也就是 daemon 連線 API 用的地址。如果輸出的是 `localhost`，說明 `.env` 裡還是本地預設值：不要依賴從 `.env.example` 複製來的 `${FRONTEND_PORT}` 引用，把 `FRONTEND_ORIGIN` 和 `MULTICA_APP_URL` 顯式設定為公網地址，然後重建容器。
+最後一條命令輸出 `daemon_server_url`，也就是 daemon 連線 API 用的位址。如果輸出的是 `localhost`，說明 `.env` 裡還是本機預設值：不要依賴從 `.env.example` 複製來的 `${FRONTEND_PORT}` 引用，把 `FRONTEND_ORIGIN` 和 `MULTICA_APP_URL` 顯式設定為公開網路位址，然後重建容器。
 
 <Accordions>
 <Accordion title="daemon_server_url 怎麼確定" id="how-daemon-server-url-is-resolved">
 
-設了 `MULTICA_DAEMON_SERVER_URL` 時用它，其次是 `MULTICA_PUBLIC_URL`，否則用 app URL（`MULTICA_APP_URL`，未設定時回退到 `FRONTEND_ORIGIN`）。當 `MULTICA_APP_URL` 和 `FRONTEND_ORIGIN` 都沒設時，這個欄位會整個從響應裡省略（上面的 grep 無輸出），即使設了 `MULTICA_DAEMON_SERVER_URL` 或 `MULTICA_PUBLIC_URL` 也是如此。
+設了 `MULTICA_DAEMON_SERVER_URL` 時用它，其次是 `MULTICA_PUBLIC_URL`，否則用 app URL（`MULTICA_APP_URL`，未設定時回退到 `FRONTEND_ORIGIN`）。當 `MULTICA_APP_URL` 和 `FRONTEND_ORIGIN` 都沒設時，這個欄位會整個從回應裡省略（上面的 grep 無輸出），即使設了 `MULTICA_DAEMON_SERVER_URL` 或 `MULTICA_PUBLIC_URL` 也是如此。
 
 </Accordion>
 </Accordions>
 
 <Callout type="warning">
-`docker compose restart` 只重啟現有容器，不會重新讀取 `.env`。修改配置後，重新讀取 `.env` 需要執行 `docker compose -f docker-compose.selfhost.yml up -d`。
+`docker compose restart` 只重啟現有容器，不會重新讀取 `.env`。修改設定後，重新讀取 `.env` 需要執行 `docker compose -f docker-compose.selfhost.yml up -d`。
 </Callout>
 
 </Tab>
@@ -227,25 +227,25 @@ curl -fsS https://app.example.com/api/config | grep -o '"daemon_server_url":"[^"
 
 ## 登入並建立工作區 [#4-登入並建立工作區]
 
-開啟本機的 `http://localhost:3000`，或剛才配置的 `https://app.example.com`，輸入信箱獲取驗證碼。
+開啟本機的 `http://localhost:3000`，或剛才設定的 `https://app.example.com`，輸入信箱取得驗證碼。
 
-預設沒有配置郵件服務。請求驗證碼後，可以從 backend 日誌中讀取：
+預設沒有設定郵件服務。請求驗證碼後，可以從 backend 記錄中讀取：
 
 ```bash
 docker compose -f docker-compose.selfhost.yml logs backend \
   | grep "Verification code"
 ```
 
-日誌中會出現類似內容：
+記錄中會出現類似內容：
 
 ```text
 [DEV] Verification code for you@example.com: 123456
 ```
 
-輸入驗證碼並建立第一個工作區。配置 Resend 或 SMTP 後，驗證碼透過郵件傳送，成員無需讀取容器日誌，具體見[登入與註冊配置](/auth-setup)。
+輸入驗證碼並建立第一個工作區。設定 Resend 或 SMTP 後，驗證碼透過郵件傳送，成員無需讀取容器記錄，具體見[登入與註冊設定](/auth-setup)。
 
 <Callout type="warning">
-自託管部署預設使用 `APP_ENV=production`，不會啟用固定驗證碼。不要在公網例項上設定 `MULTICA_DEV_VERIFICATION_CODE`。
+自託管部署預設使用 `APP_ENV=production`，不會啟用固定驗證碼。不要在公開網路執行個體上設定 `MULTICA_DEV_VERIFICATION_CODE`。
 </Callout>
 
 </Step>
@@ -256,7 +256,7 @@ docker compose -f docker-compose.selfhost.yml logs backend \
 下面的命令在**執行 AI 程式設計工具的電腦**上執行，不一定是執行 Docker 的伺服器。
 
 <Callout type="warning">
-每次執行都擁有守護程序所屬使用者的全部權限，該使用者能讀寫的一切，執行都能讀寫。請用專用 Unix 使用者、容器或虛擬機器來執行守護程序，而不是你的個人帳號。詳見[安全模型](/security-model)。
+每次執行都擁有守護程式所屬使用者的全部權限，該使用者能讀寫的一切，執行都能讀寫。請用專用 Unix 使用者、容器或虛擬機器來執行守護程式，而不是你的個人帳號。詳見[安全模型](/security-model)。
 </Callout>
 
 先安裝 Multica CLI：
@@ -299,7 +299,7 @@ multica setup self-host \
 </Tab>
 </Tabs>
 
-服務在另一臺機器上時，傳入的是剛才配置的兩個地址。這條命令會先檢查 `<server-url>/health`，再開啟瀏覽器完成登入。登入完成後，它會儲存本機憑據並啟動守護程序。這一步報 `Server not reachable`，說明 `/health` 沒有透過探測拿到 200，可能的原因有三種：代理把所有流量轉給了不轉發該路徑的舊版 frontend；代理根本沒把 `/health` 路由到 backend；更底層的問題（DNS、TLS、防火牆、超時、backend 返回 5xx）。見[故障排查](/troubleshooting#multica-setup-reports-the-server-is-not-reachable)。
+服務在另一臺機器上時，傳入的是剛才設定的兩個位址。這條命令會先檢查 `<server-url>/health`，再開啟瀏覽器完成登入。登入完成後，它會儲存本機憑據並啟動守護程式。這一步報 `Server not reachable`，說明 `/health` 沒有透過探測拿到 200，可能的原因有三種：代理把所有流量轉給了不轉發該路徑的舊版 frontend；代理根本沒把 `/health` 路由到 backend；更底層的問題（DNS、TLS、防火牆、超時、backend 返回 5xx）。見[故障排查](/troubleshooting#multica-setup-reports-the-server-is-not-reachable)。
 
 確認連線狀態：
 
@@ -320,20 +320,20 @@ multica daemon status
 
 回到 Multica。執行時列表中出現線上的執行時後，建立一個 AI 代理，並把第一個任務分配給它。
 
-執行日誌變為"已完成"、時間線中出現 AI 代理的回覆，說明自託管服務、執行電腦和 AI 程式設計工具已經連通。詳細步驟見[快速上手](/cloud-quickstart)第 3-5 步。
+執行記錄變為"已完成"、時間線中出現 AI 代理的回覆，說明自託管服務、執行電腦和 AI 程式設計工具已經連通。詳細步驟見[快速上手](/cloud-quickstart)第 3-5 步。
 
 </Step>
 </Steps>
 
 ## 常用管理命令
 
-以下命令都在 `multica` 倉庫目錄中執行：
+以下命令都在 `multica` 儲存庫目錄中執行：
 
 ```bash
 # 檢視狀態
 docker compose -f docker-compose.selfhost.yml ps
 
-# 檢視 backend 日誌
+# 檢視 backend 記錄
 docker compose -f docker-compose.selfhost.yml logs -f backend
 
 # 應用 .env 變化
@@ -344,7 +344,7 @@ docker compose -f docker-compose.selfhost.yml down
 ```
 
 <Callout type="warning">
-`docker compose down` 會保留 `pgdata` 和 `backend_uploads`。加上 `-v` 會刪除這些資料卷，包括資料庫；除非確定要清空例項，否則不要執行 `docker compose down -v`。
+`docker compose down` 會保留 `pgdata` 和 `backend_uploads`。加上 `-v` 會刪除這些資料卷，包括資料庫；除非確定要清空執行個體，否則不要執行 `docker compose down -v`。
 </Callout>
 
 ## 升級
@@ -362,7 +362,7 @@ grep MULTICA_IMAGE_TAG .env
 ```
 
 <Callout type="warning">
-**如果你在 `.env` 裡釘死了 `MULTICA_IMAGE_TAG`，下面的升級命令都升不上去。** `pull` 只是把同一個 tag 重拉一遍，版本原地不動，不報錯，也沒有任何警告。
+**如果你在 `.env` 裡釘死了 `MULTICA_IMAGE_TAG`，下面的升級命令都升不上去。** `pull` 只是把同一個 tag 重拉一遍，版本原地不動，不會出錯，也沒有任何警告。
 </Callout>
 
 </Step>
@@ -380,7 +380,7 @@ docker compose -f docker-compose.selfhost.yml exec -T postgres \
 如果你改過 `POSTGRES_USER` / `POSTGRES_DB`，把 `multica` 換成 `.env` 裡的實際值。資料存在名為 `multica_pgdata` 的 volume 裡，`docker compose down` 不會刪它，但 `down -v` 會。
 
 <Callout type="warning">
-**不要把 `pg_dump` 直接管道接給 `gzip`。** shell 取的是管道里**最後一條**命令的退出碼，所以 `pg_dump ... | gzip > backup.sql.gz` 在匯出失敗時照樣返回 `0`，留下一個格式完全合法、但裡面什麼都沒有的 20 位元組壓縮包。先重定向到檔案，`pg_dump` 自己的退出碼才算數，`&&` 也只會壓縮真正成功的那份匯出。
+**不要把 `pg_dump` 直接管道接給 `gzip`。** shell 取的是管道裡**最後一條**命令的退出碼，所以 `pg_dump ... | gzip > backup.sql.gz` 在匯出失敗時照樣返回 `0`，留下一個格式完全合法、但裡面什麼都沒有的 20 位元組壓縮包。先重定向到檔案，`pg_dump` 自己的退出碼才算數，`&&` 也只會壓縮真正成功的那份匯出。
 </Callout>
 
 </Step>
@@ -430,9 +430,9 @@ curl -s localhost:8080/readyz
 # {"status":"ok","checks":{"db":"ok","migrations":"ok"}}
 ```
 
-只要不是 HTTP 200 且兩項都是 `ok`，就說明新版本沒把 migration 跑完，先去看 backend 日誌，別急著放流量進來。
+只要不是 HTTP 200 且兩項都是 `ok`，就說明新版本沒把 migration 跑完，先去看 backend 記錄，別急著放流量進來。
 
-`/health` 是 **liveness** 探針，只要程序還活著就返回 `{"status":"ok"}`，migration 失敗了它照樣是 ok。`/readyz`（`server/cmd/server/router.go` 中註冊的 `readyHandler`，`/healthz` 是它的別名）會檢查資料庫和已應用的 migration 集合，升級出問題能被它攔下來。
+`/health` 是 **liveness** 探針，只要行程還活著就返回 `{"status":"ok"}`，migration 失敗了它照樣是 ok。`/readyz`（`server/cmd/server/router.go` 中註冊的 `readyHandler`，`/healthz` 是它的別名）會檢查資料庫和已應用的 migration 集合，升級出問題能被它攔下來。
 
 </Step>
 </Steps>
@@ -442,19 +442,19 @@ curl -s localhost:8080/readyz
 
 `git pull` 更新的是 **`docker-compose.selfhost.yml` 本身**：新增的環境變數、新增的服務、改過的 healthcheck。拉新版本 Multica 靠的**不是**它。
 
-真正決定你跑哪個版本的是 `docker compose pull`：它去 GHCR 查這個 tag 當前指向哪個映象。所以一個幾個月沒更新的 checkout 照樣能拉到今天的 `latest` 映象；反過來，只跑 `git pull` 而不拉映象、不重建容器，什麼都不會變。
+真正決定你跑哪個版本的是 `docker compose pull`：它去 GHCR 查這個 tag 目前指向哪個映象。所以一個幾個月沒更新的 checkout 照樣能拉到今天的 `latest` 映象；反過來，只跑 `git pull` 而不拉映象、不重建容器，什麼都不會變。
 
 </Accordion>
 <Accordion title=".env 不會被覆蓋" id="your-env-is-not-overwritten">
 
-`make selfhost` 只在 `.env` **不存在**的時候才生成它。在已有部署上重複跑，你的 `JWT_SECRET`、Postgres 密碼、郵件配置、`FRONTEND_ORIGIN` 都原樣保留。
+`make selfhost` 只在 `.env` **不存在**的時候才生成它。在已有部署上重複跑，你的 `JWT_SECRET`、Postgres 密碼、郵件設定、`FRONTEND_ORIGIN` 都原樣保留。
 
 </Accordion>
 <Accordion title="在 Kubernetes 上升級" id="kubernetes">
 
 Helm 有自己的升級路徑：在 values 檔案裡把 `images.backend.tag` / `images.frontend.tag` 設成你要的版本，然後 `helm upgrade`。改 tag 就改了 pod spec，Kubernetes 會拉新映象並捲動更新，這是可靠的做法。
 
-`kubectl -n multica rollout restart` 本身**不是**升級。chart 預設 `pullPolicy: IfNotPresent`（`deploy/helm/multica/values.yaml`），節點上已經快取過這個 tag 的話，restart 只會用回舊映象，什麼都沒變，和釘死 `MULTICA_IMAGE_TAG` 是同一類坑。真要靠浮動 tag 走這條路，得先把 `images.backend.pullPolicy` / `images.frontend.pullPolicy` 設成 `Always`。詳見倉庫的 [Self-hosting guide](https://github.com/multica-ai/multica/blob/main/SELF_HOSTING.md#kubernetes-deployment-alternative)。
+`kubectl -n multica rollout restart` 本身**不是**升級。chart 預設 `pullPolicy: IfNotPresent`（`deploy/helm/multica/values.yaml`），節點上已經快取過這個 tag 的話，restart 只會用回舊映象，什麼都沒變，和釘死 `MULTICA_IMAGE_TAG` 是同一類坑。真要靠浮動 tag 走這條路，得先把 `images.backend.pullPolicy` / `images.frontend.pullPolicy` 設成 `Always`。詳見儲存庫的 [Self-hosting guide](https://github.com/multica-ai/multica/blob/main/SELF_HOSTING.md#kubernetes-deployment-alternative)。
 
 </Accordion>
 </Accordions>
@@ -464,16 +464,16 @@ Helm 有自己的升級路徑：在 values 檔案裡把 `images.backend.tag` / `
 | 現象 | 先檢查什麼 |
 |---|---|
 | `/readyz` 沒有返回 `ok` | 執行 `docker compose -f docker-compose.selfhost.yml logs backend postgres`。 |
-| 收不到驗證碼 | 請求一次驗證碼，再從 backend 日誌中查詢 `Verification code`。 |
+| 收不到驗證碼 | 請求一次驗證碼，再從 backend 記錄中查詢 `Verification code`。 |
 | `setup self-host` 提示 server 不可達 | 在執行電腦上請求 `https://api.example.com/health`，確認 DNS、TLS 和反向代理都可達。返回 404 說明代理把 `/health` 轉給了不轉發該路徑的舊版 frontend，改為直通 backend（見[故障排查](/troubleshooting#multica-setup-reports-the-server-is-not-reachable)）。 |
-| 守護程序沒有列出 `Agents` | 確認 AI 程式設計工具在 `PATH` 中並已登入，然後執行 `multica daemon restart`。 |
-| 任務一直排隊 | 執行 `multica daemon status`，確認守護程序正在執行並連線了工作區。 |
+| 守護程式沒有列出 `Agents` | 確認 AI 程式設計工具在 `PATH` 中並已登入，然後執行 `multica daemon restart`。 |
+| 任務一直排隊 | 執行 `multica daemon status`，確認守護程式正在執行並連線了工作區。 |
 
 更多情況見[故障排查](/troubleshooting)。
 
 ## 接下來
 
-- [登入與註冊配置](/auth-setup) — 配置郵件、Google 登入和註冊範圍。
-- [環境變數](/environment-variables) — 檢視完整的服務端配置。
+- [登入與註冊設定](/auth-setup) — 設定郵件、Google 登入和註冊範圍。
+- [環境變數](/environment-variables) — 檢視完整的伺服器端設定。
 - [Self-hosting guide](https://github.com/multica-ai/multica/blob/main/SELF_HOSTING.md) — Kubernetes、升級和手動部署。
 - [桌面應用](/desktop-app) — 讓 Desktop 連線自託管服務。

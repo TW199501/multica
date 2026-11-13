@@ -1,6 +1,6 @@
 {
   "page": {
-    "new_autopilot": "新建自動化",
+    "new_autopilot": "新增自動化",
     "table": {
       "name": "名稱",
       "agent": "AI 代理",
@@ -51,7 +51,7 @@
       "summary": "彙總團隊本週進展"
     },
     "dependency_audit": {
-      "title": "依賴審計",
+      "title": "依賴稽核",
       "summary": "掃描安全漏洞和過時的依賴包"
     },
     "documentation_check": {
@@ -61,7 +61,7 @@
   },
   "detail": {
     "not_found": "未找到該自動化",
-    "not_found_description": "它可能已被刪除，或你沒有訪問權限。",
+    "not_found_description": "它可能已被刪除，或你沒有存取權限。",
     "back_to_list": "全部自動化",
     "pause_aria": "暫停自動化",
     "activate_aria": "啟用自動化",
@@ -104,7 +104,7 @@
       "with_trigger": "{{trigger}} · {{action}}"
     },
     "add_trigger": "新增觸發器",
-    "no_triggers": "未配置觸發器。新增一個時間表讓它自動執行。",
+    "no_triggers": "未設定觸發器。新增一個時間表讓它自動執行。",
     "no_runs": "暫無執行記錄。點選\"立即執行\"手動觸發。",
     "delete_button": "刪除自動化",
     "toast_deleted": "已刪除自動化",
@@ -118,18 +118,18 @@
     }
   },
   "access": {
-    "title": "管理訪問",
+    "title": "管理存取",
     "description": "你新增的成員可以編輯、執行並管理這個自動化的觸發器和 webhook。",
     "current_label": "已授權",
     "add": "新增成員",
     "search_placeholder": "搜尋成員…",
     "no_results": "未找到成員",
-    "remove_tooltip": "移除訪問權限",
+    "remove_tooltip": "移除存取權限",
     "empty": "還沒有授權任何人。",
-    "toast_granted": "已授予訪問權限",
-    "toast_revoked": "已移除訪問權限",
-    "toast_failed": "更新訪問權限失敗",
-    "owner_note": "建立者和工作區管理員始終擁有訪問權限。"
+    "toast_granted": "已授予存取權限",
+    "toast_revoked": "已移除存取權限",
+    "toast_failed": "更新存取權限失敗",
+    "owner_note": "建立者和工作區管理員始終擁有存取權限。"
   },
   "run_status": {
     "issue_created": "已建立任務",
@@ -146,7 +146,7 @@
   },
   "run": {
     "issue_linked": "已關聯任務",
-    "view_log": "檢視執行日誌",
+    "view_log": "檢視執行記錄",
     "stop": "停止執行",
     "stop_failed": "無法停止執行。",
     "skipped_group": {
@@ -163,7 +163,7 @@
     "copied": "已複製 Webhook payload",
     "copied_short": "已複製",
     "copy_failed": "複製失敗",
-    "truncated_marker": "[已截斷——點選\"複製\"獲取完整 payload]"
+    "truncated_marker": "[已截斷——點選\"複製\"取得完整 payload]"
   },
   "trigger_kind": {
     "schedule": "時間表",
@@ -171,7 +171,7 @@
     "api": "API"
   },
   "trigger_row": {
-    "disabled_badge": "已禁用",
+    "disabled_badge": "已停用",
     "deprecated_badge": "已棄用",
     "next_label": "下次：{{date}}",
     "webhook_url_label": "Webhook URL",
@@ -184,7 +184,7 @@
     "edit_schedule": "編輯時間表",
     "rotate_url": "重新生成 URL",
     "rotate_confirm_title": "重新生成 Webhook URL",
-    "rotate_confirm_description": "當前 URL 將立即失效。所有呼叫它的外部系統都需要更新為新 URL。繼續嗎？",
+    "rotate_confirm_description": "目前 URL 將立即失效。所有呼叫它的外部系統都需要更新為新 URL。繼續嗎？",
     "rotate_confirm_cancel": "取消",
     "rotate_confirm_action": "重新生成",
     "rotate_in_progress": "生成中...",
@@ -227,7 +227,7 @@
       "attempt_count": "嘗試次數",
       "dispatch_attempts": "分發嘗試次數",
       "available_at": "下次分發時間",
-      "response_status": "響應狀態碼",
+      "response_status": "回應狀態碼",
       "dedupe_key": "去重 Key",
       "dedupe_source": "去重來源",
       "content_type": "Content-Type",
@@ -235,14 +235,14 @@
       "error_label": "錯誤資訊",
       "raw_body": "原始 Body",
       "selected_headers": "保留的請求頭",
-      "response_body": "響應 Body"
+      "response_body": "回應 Body"
     },
     "replay": {
       "action": "重放",
       "in_progress": "重放中...",
       "toast_success": "已重放該投遞",
       "toast_failed": "重放失敗",
-      "disabled_invalid_signature": "無法重放——簽名校驗失敗",
+      "disabled_invalid_signature": "無法重放——簽名驗證失敗",
       "disabled_rejected": "無法重放已拒絕的投遞",
       "disabled_queued": "投遞仍在排隊，處理完成後再重放"
     }
@@ -272,9 +272,9 @@
     "toast_update_failed": "更新時間表失敗"
   },
   "dialog": {
-    "sr_create": "新建自動化",
+    "sr_create": "新增自動化",
     "sr_edit": "編輯自動化",
-    "header_create": "新建自動化",
+    "header_create": "新增自動化",
     "header_edit": "編輯自動化",
     "subtitle": "週期性的 AI 工作",
     "expand": "展開",
@@ -303,7 +303,7 @@
     "select_agent": "選擇 AI 代理",
     "select_assignee": "選擇 AI 代理或小隊",
     "section_project": "關聯專案",
-    "project_hint": "同時決定執行時的執行環境 —— 該專案的倉庫或本地目錄",
+    "project_hint": "同時決定執行時的執行環境 —— 該專案的儲存庫或本機目錄",
     "no_project": "不關聯專案",
     "section_output_mode": "輸出模式",
     "section_subscribers": "訂閱者",
@@ -331,7 +331,7 @@
     "event_filter_add": "新增",
     "event_filter_remove_label": "移除過濾條件",
     "event_filter_hint": "只處理匹配這些事件的 webhook。留空則接受所有事件。",
-    "schedule_multiple_notice": "該自動化有 {{count}} 條時間表。關閉此彈窗，在下方「觸發器」中逐條編輯。",
+    "schedule_multiple_notice": "該自動化有 {{count}} 條時間表。關閉此對話框，在下方「觸發器」中逐條編輯。",
     "schedule_empty": "還沒有時間表——這個自動化只在手動觸發時執行。",
     "schedule_add": "新增時間表",
     "error_title_required": "請填寫自動化名稱。",
@@ -373,13 +373,13 @@
     "cron_click_to_edit": "點選編輯",
     "cron_hint": "標準 5 欄位 cron（分 時 日 月 星期）",
     "cron_invalid": "該 cron 表示式無效。",
-    "timezone_invalid": "服務端無法識別該時區。",
+    "timezone_invalid": "伺服器端無法識別該時區。",
     "advanced_hint": "該表示式包含視覺化編輯器暫不支援的特性。可直接編輯 cron 文字，或簡化表示式以恢復視覺化編輯。",
-    "advanced_unverified": "暫時無法連線伺服器校驗該表示式，視覺化控制元件保持停用。儲存前請確認 cron 文字無誤。",
-    "advanced_checking": "正在向伺服器校驗該表示式，結果返回前視覺化控制元件保持停用。",
+    "advanced_unverified": "暫時無法連線伺服器驗證該表示式，視覺化控制元件保持停用。儲存前請確認 cron 文字無誤。",
+    "advanced_checking": "正在向伺服器驗證該表示式，結果返回前視覺化控制元件保持停用。",
     "next_runs_label": "接下來",
     "next_in": "{{countdown}}後",
-    "preview_unavailable": "暫時無法獲取下次執行時間。",
+    "preview_unavailable": "暫時無法取得下次執行時間。",
     "no_upcoming_runs": "該表示式沒有即將到來的執行。",
     "describe": {
       "days_every": "每天",
@@ -485,7 +485,7 @@
     "loading": "正在載入喚醒…",
     "disable_selected": "關閉所選",
     "confirm_title": "關閉 {{count}} 個喚醒？",
-    "confirm_body": "關閉後將停止後續喚醒，並撤回仍在排隊、尚未交給 AI 代理的執行。已交給 AI 代理的執行會繼續，可在執行日誌中停止。",
+    "confirm_body": "關閉後將停止後續喚醒，並撤回仍在排隊、尚未交給 AI 代理的執行。已交給 AI 代理的執行會繼續，可在執行記錄中停止。",
     "cancel": "取消",
     "confirm": "關閉",
     "disabling": "正在關閉…",
@@ -500,7 +500,7 @@
     "target_agent": "喚醒物件",
     "empty_filtered": "沒有匹配的喚醒",
     "batch_success": "已關閉 {{count}} 條喚醒",
-    "batch_partial": "已關閉 {{succeeded}} 條，{{failed}} 條失敗；失敗項仍保留選中，可重試。",
+    "batch_partial": "已關閉 {{succeeded}} 條，{{failed}} 條失敗；失敗項仍保留選取，可重試。",
     "source": "來源",
     "sources": {
       "all": "全部來源",
@@ -516,7 +516,7 @@
     "no_target": "沒有 AI 代理負責人",
     "banner_other": "{{count}} 條喚醒已自動暫停：{{issue}}「{{condition}}」——{{reason}}",
     "banner_view": "檢視",
-    "create": "新建喚醒",
+    "create": "新增喚醒",
     "create_pick_issue": "選擇要新增喚醒的任務",
     "create_pick_issue_description": "喚醒屬於該任務，並隨任務結束而停止。",
     "intro": {
@@ -525,7 +525,7 @@
       "slides": {
         "event": {
           "title": "等事件發生",
-          "description": "不用讓 AI 代理空轉等待。條件滿足時，平臺自動把它叫回來。"
+          "description": "不用讓 AI 代理空轉等待。條件滿足時，平台自動把它叫回來。"
         },
         "time": {
           "title": "或者定個時間",
@@ -567,7 +567,7 @@
   "intro": {
     "label": "自動化",
     "title": "讓 AI 代理按時自己開工",
-    "description": "設好排程或 Webhook，每次觸發都會自動建立任務交給 AI 代理，也可以直接執行。挑一個模板，改一改就能用。",
-    "templates": "從模板開始"
+    "description": "設好排程或 Webhook，每次觸發都會自動建立任務交給 AI 代理，也可以直接執行。挑一個範本，改一改就能用。",
+    "templates": "從範本開始"
   }
 }

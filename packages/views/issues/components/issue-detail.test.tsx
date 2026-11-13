@@ -956,6 +956,31 @@ describe("IssueDetail (shared)", () => {
       rects.mockRestore();
     });
 
+    it("renders the properties only while their tab is showing", async () => {
+      renderIssueDetail();
+      const propertiesTab = await screen.findByRole("tab", { name: "Properties" });
+
+      expect(screen.getAllByText("Properties")).toEqual([propertiesTab]);
+
+      fireEvent.click(propertiesTab);
+      expect(screen.getByRole("tabpanel", { name: "Properties" })).toHaveTextContent("Status");
+
+      fireEvent.click(screen.getByRole("tab", { name: "Issue" }));
+      expect(screen.getAllByText("Properties")).toEqual([propertiesTab]);
+    });
+
+    it("opens the properties tab and focuses the Wakeups heading from the header chip", async () => {
+      renderIssueDetail();
+      fireEvent.click(await screen.findByRole("button", { name: "Review open wakeups" }));
+
+      expect(screen.getByRole("tab", { name: "Properties" })).toHaveAttribute("aria-selected", "true");
+      await waitFor(() => {
+        const heading = document.getElementById("issue-wakeups-issue-1");
+        expect(heading).not.toBeNull();
+        expect(document.activeElement).toBe(heading);
+      });
+    });
+
     it("keeps the issue mounted while the properties tab is showing", async () => {
       renderIssueDetail();
       fireEvent.click(await screen.findByRole("tab", { name: "Properties" }));

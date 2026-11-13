@@ -1,18 +1,18 @@
 ---
 title: 完整教程
-description: 從空工作區開始，用一個個人網站專案走完 Multica 的全部核心流程：建立 AI 代理、用任務交付、組建小隊、沉澱 skill、配置自動化。
+description: 從空工作區開始，用一個個人網站專案走完 Multica 的全部核心流程：建立 AI 代理、用任務交付、組建小隊、沉澱 skill、設定自動化。
 ---
 
 import { Step, Steps } from "fumadocs-ui/components/steps";
 
-Multica 是人和 AI 代理一起工作的平臺。這篇教程從零開始，帶你：
+Multica 是人和 AI 代理一起工作的平台。這篇教程從零開始，帶你：
 
 - 搭建一個自己的工作區
 - 實現人與 AI 代理的協作，以及 AI 代理之間的自動協作
 - 把重複的工作交給自動化
 - 把有效的做法沉澱為 skill，持續迭代你的 AI 代理
 
-教程以一個個人網站為示例專案，把 Multica 的整體流程和核心功能完整過一遍。
+教程以一個個人網站為範例專案，把 Multica 的整體流程和核心功能完整過一遍。
 
 **開始前準備：**
 
@@ -23,7 +23,7 @@ Multica 是人和 AI 代理一起工作的平臺。這篇教程從零開始，�
 
 工作區是團隊工作的地方：任務、專案、AI 代理都屬於某個工作區。註冊後的引導會帶你建立第一個工作區；如果你是被邀請加入團隊，登入後會直接進入團隊的工作區。
 
-這篇教程新建一個工作區來演示。
+這篇教程新增一個工作區來演示。
 
 <Steps>
 <Step>
@@ -38,7 +38,7 @@ Multica 是人和 AI 代理一起工作的平臺。這篇教程從零開始，�
 填兩項：
 
 - **名稱**：展示給成員，之後可以修改。
-- **工作區 URL**：地址中的 slug，例如 `multica.ai/my-team` 裡的 `my-team`，建立後不可修改。
+- **工作區 URL**：位址中的 slug，例如 `multica.ai/my-team` 裡的 `my-team`，建立後不可修改。
 
 ![建立工作區頁面](/images/docs/tutorial-create-workspace-form.webp)
 
@@ -64,13 +64,13 @@ AI 代理在你連線的電腦上執行工作，用的就是這臺電腦上安�
 
 ![執行時詳情，檢測出的 AI 程式設計工具](/images/docs/tutorial-runtime-detail.webp)
 
-不用 Desktop 也可以：在執行時頁面點 **新增**，選擇 **其他機器或伺服器**，按提示用命令列安裝，守護程序會常駐後臺執行；詳見[守護程序與執行時](/daemon-runtimes)。
+不用 Desktop 也可以：在執行時頁面點 **新增**，選擇 **其他機器或伺服器**，按提示用命令列安裝，守護程式會常駐背景執行；詳見[守護程式與執行時](/daemon-runtimes)。
 
 ## 建立第一個 AI 代理
 
 AI 代理是工作區的正式成員：可以被分配任務、發表評論、和你對話。第一個 AI 代理我們建立一名 helper，負責工作區裡的日常事務，之後教程裡的不少操作都會交給它。
 
-開啟側邊欄 **AI 團隊** 下的 **AI 代理**，點 **新建 AI 代理**。先選擇執行時：上一步連線的電腦上的一款 AI 程式設計工具，教程用 Claude。然後在配置頁填三項：
+開啟側邊欄 **AI 團隊** 下的 **AI 代理**，點 **新增 AI 代理**。先選擇執行時：上一步連線的電腦上的一款 AI 程式設計工具，教程用 Claude。然後在設定頁填三項：
 
 - **名稱**：`Multica helper`。
 - **模型**：從該工具支援的模型裡選一個。教程用 Sonnet。
@@ -102,36 +102,36 @@ request is ambiguous, ask before acting.
 
 ![聊天中讓 helper 建立 Engineer](/images/docs/tutorial-chat-create-engineer.webp)
 
-開啟**AI 代理 → Engineer** 確認結果：模型是 Opus，指令由 Multica helper 生成——職責範圍、取用倉庫程式碼的方式、提交改動的要求，之後隨時可以修改。
+開啟**AI 代理 → Engineer** 確認結果：模型是 Opus，指令由 Multica helper 生成——職責範圍、取用儲存庫程式碼的方式、提交改動的要求，之後隨時可以修改。
 
 ![Engineer 的指令](/images/docs/tutorial-engineer-instructions.webp)
 
-## 準備網站倉庫
+## 準備網站儲存庫
 
-網站的程式碼放在 GitHub 倉庫裡。倉庫的建立和繫結同樣交給 AI 代理，前提是這臺電腦安裝並登入了 [GitHub CLI](https://cli.github.com)。
+網站的程式碼放在 GitHub 儲存庫裡。儲存庫的建立和繫結同樣交給 AI 代理，前提是這臺電腦安裝並登入了 [GitHub CLI](https://cli.github.com)。
 
-在**聊天**中選擇 Engineer，告訴它：在我的 GitHub 帳號下建立一個名為 `personal-website` 的空倉庫（這臺電腦上有 GitHub CLI），然後用 `multica repo add` 註冊進這個工作區。Engineer 會在本地建立倉庫、把它註冊進工作區，並回復倉庫地址。訊息裡沒有指定可見性，它會按預設建立並在回覆裡說明；公開或私有都不影響後續步驟。
+在**聊天**中選擇 Engineer，告訴它：在我的 GitHub 帳號下建立一個名為 `personal-website` 的空儲存庫（這臺電腦上有 GitHub CLI），然後用 `multica repo add` 註冊進這個工作區。Engineer 會在本機建立儲存庫、把它註冊進工作區，並回復儲存庫位址。訊息裡沒有指定可見性，它會按預設建立並在回覆裡說明；公開或私有都不影響後續步驟。
 
-![聊天，Engineer 回覆倉庫已建立並註冊](/images/docs/tutorial-chat-create-repo.webp)
+![聊天，Engineer 回覆儲存庫已建立並註冊](/images/docs/tutorial-chat-create-repo.webp)
 
-開啟**設定 → 程式碼** 確認：`personal-website` 已經在列表中。之後 AI 代理執行時，從這裡選擇倉庫。
+開啟**設定 → 程式碼** 確認：`personal-website` 已經在列表中。之後 AI 代理執行時，從這裡選擇儲存庫。
 
-![設定中的程式碼倉庫列表](/images/docs/tutorial-repo-settings.webp)
+![設定中的程式碼儲存庫列表](/images/docs/tutorial-repo-settings.webp)
 
-不用 GitHub CLI 的話，也可以自己在 GitHub 建立倉庫，在同一頁面手動新增，效果相同。
+不用 GitHub CLI 的話，也可以自己在 GitHub 建立儲存庫，在同一頁面手動新增，效果相同。
 
-最後在同一頁面點**連線 GitHub**，按提示授權這個倉庫。連線後，引用了任務編號的 pull request 會自動關聯到對應任務，PR 狀態和 CI 結果直接顯示在任務裡。
+最後在同一頁面點**連線 GitHub**，按提示授權這個儲存庫。連線後，引用了任務編號的 pull request 會自動關聯到對應任務，PR 狀態和 CI 結果直接顯示在任務裡。
 
 ## 第一條任務：建站
 
-配置到此全部完成。從這裡開始是 Multica 的日常工作方式：需求寫成任務，交給 AI 代理執行。
+設定到此全部完成。從這裡開始是 Multica 的日常工作方式：需求寫成任務，交給 AI 代理執行。
 
-網站從 shadcn 的官方模板起步：模板已經帶好技術棧和基礎配置，Engineer 在它之上做內容和設計。
+網站從 shadcn 的官方範本起步：範本已經帶好技術棧和基礎設定，Engineer 在它之上做內容和設計。
 
 <Steps>
 <Step>
 
-點側邊欄頂部的**新建任務**（快捷鍵 `C`）。預設的 AI 代理模式下不用填標題：在**建立者**中選擇 Engineer，把需求直接寫進描述，標題在建立時自動生成；也可以切換到手動模式，自行填寫標題和內容。描述：
+點側邊欄頂部的**新增任務**（快捷鍵 `C`）。預設的 AI 代理模式下不用填標題：在**建立者**中選擇 Engineer，把需求直接寫進描述，標題在建立時自動生成；也可以切換到手動模式，自行填寫標題和內容。描述：
 
 ```text
 Work in the personal-website repository registered in this workspace.
@@ -162,16 +162,16 @@ Design:
 Open a pull request when it is ready.
 ```
 
-這條描述裡有三類資訊：約束（從指定模板開始）、內容要求（逐條列出）、留白（風格交給 Engineer 分析）。要求寫意圖和邊界，實現方式留給 AI 代理。
+這條描述裡有三類資訊：約束（從指定範本開始）、內容要求（逐條列出）、留白（風格交給 Engineer 分析）。要求寫意圖和邊界，實現方式留給 AI 代理。
 
-![新建任務的 AI 代理模式，建立者已選 Engineer](/images/docs/tutorial-new-issue-agent-mode.webp)
+![新增任務的 AI 代理模式，建立者已選 Engineer](/images/docs/tutorial-new-issue-agent-mode.webp)
 
 </Step>
 <Step>
 
 提交後，Multica 建立任務（編號 `MUL-1`，標題自動生成），把 Engineer 設為負責人；Engineer 隨即開始執行，狀態轉為"進行中"。任務右側是它的全部動態：狀態、負責人、關聯的 pull request 和執行記錄。
 
-執行需要幾分鐘，進展有兩個入口：標題旁的工作狀態徽章，和右側的**執行日誌**。點開當前這次執行：
+執行需要幾分鐘，進展有兩個入口：標題旁的工作狀態徽章，和右側的**執行記錄**。點開目前這次執行：
 
 ![檢視進展的兩個入口](/images/docs/tutorial-issue-engineer-working.webp)
 
@@ -191,7 +191,7 @@ Open a pull request when it is ready.
 
 ![Engineer 的完成評論，附頁面截圖](/images/docs/tutorial-issue-review-comment.webp)
 
-截圖能看出大概，驗收還是要在瀏覽器裡點開。網站在你的電腦上構建，讓 Engineer 啟動本地服務就能訪問。另外，右側的 **Pull Request** 區域還是空的；任務裡明確要求了提交 PR，這件事也直接問它。
+截圖能看出大概，驗收還是要在瀏覽器裡點開。網站在你的電腦上建置，讓 Engineer 啟動本機服務就能造訪。另外，右側的 **Pull Request** 區域還是空的；任務裡明確要求了提交 PR，這件事也直接問它。
 
 這次不用評論區，改用聊天：
 
@@ -205,39 +205,39 @@ Open a pull request when it is ready.
 </Step>
 <Step>
 
-點開後選擇 Engineer，輸入 `@` 引用當前任務，對話會帶上這條任務的上下文。把上面兩件事發給它：
+點開後選擇 Engineer，輸入 `@` 引用目前任務，對話會帶上這條任務的上下文。把上面兩件事發給它：
 
 ![在聊天中引用任務提問](/images/docs/tutorial-chat-ask-in-issue.webp)
 
 </Step>
 <Step>
 
-Engineer 的回覆分兩部分：本地服務已經啟動，給出訪問地址；PR 其實已經提交了，只是標題、分支名和正文裡都沒有 `MUL-1`，自動關聯匹配不上，它隨後把編號補進了 PR 標題。
+Engineer 的回覆分兩部分：本機服務已經啟動，給出造訪網址；PR 其實已經提交了，只是標題、分支名和正文裡都沒有 `MUL-1`，自動關聯匹配不上，它隨後把編號補進了 PR 標題。
 
-![Engineer 的回覆：本地地址和 PR 未關聯的原因](/images/docs/tutorial-chat-engineer-reply.webp)
-
-</Step>
-<Step>
-
-在瀏覽器開啟它給的地址，看到網站：
-
-![本地執行的網站首頁](/images/docs/tutorial-site-localhost.webp)
+![Engineer 的回覆：本機位址和 PR 未關聯的原因](/images/docs/tutorial-chat-engineer-reply.webp)
 
 </Step>
 <Step>
 
-回到任務，右側的 **Pull Request** 區域也出現了 PR 卡片，顯示狀態和改動規模，點選直接開啟 GitHub 上的 PR；配置了 CI 的倉庫還會顯示 check 結果：
+在瀏覽器開啟它給的位址，看到網站：
+
+![本機執行的網站首頁](/images/docs/tutorial-site-localhost.webp)
+
+</Step>
+<Step>
+
+回到任務，右側的 **Pull Request** 區域也出現了 PR 卡片，顯示狀態和改動規模，點選直接開啟 GitHub 上的 PR；設定了 CI 的儲存庫還會顯示 check 結果：
 
 ![任務右側出現 PR 卡片](/images/docs/tutorial-issue-pr-linked.webp)
 
 </Step>
 </Steps>
 
-## 把反饋寫進指令
+## 把回饋寫進指令
 
 這輪驗收暴露了 Engineer 的兩個工作習慣：完成後靠反覆截圖自查，佔掉不少執行時間；提交 PR 時不帶任務編號，關聯不上。這兩個都是它每次都會重複的做法，所以要改的是它的指令，這條任務本身不用動。
 
-指令不用你自己動手改，AI 代理可以用 multica CLI 更新自己的配置。繼續在剛才的對話裡告訴 Engineer 兩條規則：完成後不用截圖自查，驗收在瀏覽器裡進行；PR 的分支名或標題裡必須帶任務編號。再讓它把規則寫進自己的指令：
+指令不用你自己動手改，AI 代理可以用 multica CLI 更新自己的設定。繼續在剛才的對話裡告訴 Engineer 兩條規則：完成後不用截圖自查，驗收在瀏覽器裡進行；PR 的分支名或標題裡必須帶任務編號。再讓它把規則寫進自己的指令：
 
 ![讓 Engineer 把規則寫進自己的指令](/images/docs/tutorial-chat-update-instructions.webp)
 
@@ -258,7 +258,7 @@ Engineer 交付了第一版，但有些問題它自己意識不到。審查交�
 
 建立還是交給 Multica helper：一名叫 Reviewer 的 AI 代理，這次選 Codex 和 GPT-5.6 Sol 模型，和 Engineer 用的工具、模型都不同；只審查、不改程式碼，結論寫成任務評論。指令依然由 helper 生成——讀取 PR 的真實狀態再審查、發現寫成帶檔案位置的評論、絕不修改程式碼：
 
-![Reviewer 的配置](/images/docs/tutorial-reviewer-detail.webp)
+![Reviewer 的設定](/images/docs/tutorial-reviewer-detail.webp)
 
 </Step>
 <Step>
@@ -309,16 +309,16 @@ MUL-1 的迴圈跑通了，但每一次銜接都由你發起：驗收後提及 R
 
 小隊就是已有的分工加一名隊長：
 
-- **Lead**（新建）：隊長，負責管理：分配執行、推進任務狀態、向你彙報交付產物，自己不動手；
+- **Lead**（新增）：隊長，負責管理：分配執行、推進任務狀態、向你彙報交付產物，自己不動手；
 - **Engineer**（已有）：開發；
 - **Reviewer**（已有）：審查每個 PR；
 - **你**：最終驗收。
 
 成員不限於 AI 代理；每個成員都帶一句角色描述，隊長派活時會參考。
 
-這套配置描述給 Multica helper 就夠了：建立小隊和隊長，成員各司其職，Lead 和 Engineer 各繫結一個 skill（下一節展開），小隊指令寫明工作流——開發派給 Engineer，PR 審查透過才交付，你驗收後由 Engineer 合併。helper 用 CLI 一次完成全部配置：
+這套設定描述給 Multica helper 就夠了：建立小隊和隊長，成員各司其職，Lead 和 Engineer 各繫結一個 skill（下一節展開），小隊指令寫明工作流——開發派給 Engineer，PR 審查透過才交付，你驗收後由 Engineer 合併。helper 用 CLI 一次完成全部設定：
 
-![helper 一次完成小隊的全部配置](/images/docs/tutorial-helper-create-squad.webp)
+![helper 一次完成小隊的全部設定](/images/docs/tutorial-helper-create-squad.webp)
 
 開啟側邊欄的**小隊 → Website Team** 檢查結果：隊長、成員和角色描述都在。小隊也可以在這個頁面用表單建立；完整機制見[小隊文件](/squads)：
 
@@ -326,7 +326,7 @@ MUL-1 的迴圈跑通了，但每一次銜接都由你發起：驗收後提及 R
 
 ## Skill：可重複使用的方法
 
-前面把反饋寫進指令，只解決了一個 AI 代理的問題，因為指令只屬於它自己。要讓一套方法被多個 AI 代理共享，或者直接借用別人已經寫好的方法，用 **skill**。
+前面把回饋寫進指令，只解決了一個 AI 代理的問題，因為指令只屬於它自己。要讓一套方法被多個 AI 代理共享，或者直接借用別人已經寫好的方法，用 **skill**。
 
 Skill 是給 AI 代理的知識包：一個 `SKILL.md` 加上可選的支援檔案，告訴 AI 代理遇到某類執行該怎麼想、怎麼做。Multica 採用 Anthropic Agent Skills 開放標準，符合規範的 skill 都能直接匯入；掛到 AI 代理後，執行時自動同步到執行時。開啟 **Skills** 頁面，剛才匯入的兩個都在，右側是各自掛載的 AI 代理：
 
@@ -341,17 +341,17 @@ Skill 是給 AI 代理的知識包：一個 `SKILL.md` 加上可選的支援檔�
 - **tdd** 掛給 Engineer，是工程方法：先寫失敗的測試，再寫恰好讓它透過的實現；
 - **i-have-adhd** 掛給 Lead，是彙報風格：第一行永遠是可執行的下一步，多步驟編號，進度可見。隊長的產出全是發給你的彙報，這個 skill 決定你讀到的樣子。
 
-團隊的工作方式沉澱成 skill，新 AI 代理掛上就能繼承。匯入也不是唯一來源，**新建 skill** 提供四種方式——手動新建、從本地匯入、從 URL 匯入、從本機執行時複製——這裡不展開，見 [Skills 文件](/skills)：
+團隊的工作方式沉澱成 skill，新 AI 代理掛上就能繼承。匯入也不是唯一來源，**新增 skill** 提供四種方式——手動新增、從本機匯入、從 URL 匯入、從本機執行時複製——這裡不展開，見 [Skills 文件](/skills)：
 
-![新建 skill 的四種方式](/images/docs/tutorial-skill-new-modal.webp)
+![新增 skill 的四種方式](/images/docs/tutorial-skill-new-modal.webp)
 
 匯入第三方 skill 前，先讀一遍它的檔案：Multica 不做沙盒隔離，skill 的內容會原樣交給 AI 程式設計工具。
 
 ## 第二條任務：交給小隊
 
-給小隊一件完整的工作：把網站改成通用模板——真實姓名換成佔位的攝影師名字，真實信箱換成 `hello@example.com`，佈局和內容結構不動。這次任務不用自己寫：在聊天裡把需求說給 Lead，用**透過 AI 代理建立**直接建立，負責人是小隊。小隊和 AI 代理、成員一樣，可以出現在任何負責人位置：
+給小隊一件完整的工作：把網站改成通用範本——真實姓名換成佔位的攝影師名字，真實信箱換成 `hello@example.com`，佈局和內容結構不動。這次任務不用自己寫：在聊天裡把需求說給 Lead，用**透過 AI 代理建立**直接建立，負責人是小隊。小隊和 AI 代理、成員一樣，可以出現在任何負責人位置：
 
-![在聊天中用"透過 AI 代理建立"新建任務](/images/docs/tutorial-create-with-agent.webp)
+![在聊天中用"透過 AI 代理建立"新增任務](/images/docs/tutorial-create-with-agent.webp)
 
 生成的任務裡，需求已經被整理成結構化描述；標題旁的徽章顯示隊長已經接手：
 
@@ -365,7 +365,7 @@ Skill 是給 AI 代理的知識包：一個 `SKILL.md` 加上可選的支援檔�
 
 ![Lead 的交付彙報](/images/docs/tutorial-squad-delivery.webp)
 
-從整理需求、確認方案、開發、審查到交付彙報，這條任務沒有一步需要你銜接。驗收方式和 MUL-1 相同，也可以讓它啟動本地服務在瀏覽器裡看，這裡不再展開。"已完成"仍然留給你：回覆合併，或手動改狀態。
+從整理需求、確認方案、開發、審查到交付彙報，這條任務沒有一步需要你銜接。驗收方式和 MUL-1 相同，也可以讓它啟動本機服務在瀏覽器裡看，這裡不再展開。"已完成"仍然留給你：回覆合併，或手動改狀態。
 
 ## 自動化
 
@@ -374,14 +374,14 @@ Skill 是給 AI 代理的知識包：一個 `SKILL.md` 加上可選的支援檔�
 <Steps>
 <Step>
 
-配置只要一句話：告訴 Multica helper，每週一早上九點，讓 Reviewer 對網站程式碼庫做一次全面檢查——冗餘和死程式碼、不合理的結構、可以更規範的地方，發現寫進任務評論，不改程式碼：
+設定只要一句話：告訴 Multica helper，每週一早上九點，讓 Reviewer 對網站程式碼庫做一次全面檢查——冗餘和死程式碼、不合理的結構、可以更規範的地方，發現寫進任務評論，不改程式碼：
 
 ![helper 建立自動化](/images/docs/tutorial-autopilot-create.webp)
 
 </Step>
 <Step>
 
-開啟**自動化**頁面，執行者、提示詞和排程（cron + 時區）都已配置好。執行模式有兩種：
+開啟**自動化**頁面，執行者、提示詞和排程（cron + 時區）都已設定好。執行模式有兩種：
 
 - **建立任務**（預設）：每次觸發先建一條任務，工作落在看板上，歷史、評論和普通任務完全一致；
 - **僅執行**：不建任務直接執行，只在自動化的執行歷史裡留記錄；這次沒發現問題的話，看板上不會留下任何東西。
@@ -421,4 +421,4 @@ Multica 還在快速迭代，更多能力見[文件](/)。
 - [核心概念](/concepts) — 三分鐘認識 Multica 的全部核心物件。
 - [小隊](/squads) — 隊長如何路由工作、什麼時候用小隊而不是單個 AI 代理。
 - [Skills](/skills) — 匯入、編寫和共享 AI 代理的方法。
-- [自動化](/autopilots) — 定時和 webhook 兩類觸發器的完整配置。
+- [自動化](/autopilots) — 定時和 webhook 兩類觸發器的完整設定。

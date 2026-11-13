@@ -28,7 +28,6 @@ import { formatStarCount, githubStarsOptions, MULTICA_GITHUB_URL } from "@multic
 import { createLogger } from "@multica/core/logger";
 import { markStarPromptStarred } from "@multica/core/star-prompt";
 import { isDesktopShell } from "../platform/local-directory";
-import { DISCORD_URL, DiscordIcon } from "./discord";
 import { GitHubIcon } from "../onboarding/components/brand-icons";
 import { useT } from "../i18n";
 import { docsLocalePrefix } from "../common/docs-locale";
@@ -51,6 +50,7 @@ export function HelpLauncher() {
   const changelogUrl = ownReleases
     ? `https://github.com/${releaseRepository}/releases`
     : CHANGELOG_URL;
+  const githubUrl = ownReleases ? `https://github.com/${releaseRepository}` : MULTICA_GITHUB_URL;
   // Web-only: offering "download the desktop app" inside the desktop app is
   // nonsense, and this rail is shared — apps/desktop renders the same app
   // shell as the web dashboard, so the entry has to be gated here.
@@ -65,7 +65,8 @@ export function HelpLauncher() {
   const whatsNew = useWhatsNewMenuPanel();
   const [open, setOpen] = useState(false);
   // Asked only once the menu opens, so closed sessions never call GitHub.
-  const { data: stars } = useQuery({ ...githubStarsOptions(), enabled: open });
+  // Skipped for a deployment's own release repository.
+  const { data: stars } = useQuery({ ...githubStarsOptions(), enabled: open && !ownReleases });
   return (
     <>
       <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -144,16 +145,7 @@ export function HelpLauncher() {
           </DropdownMenuItem>
           <DropdownMenuItem
             render={
-              <a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" />
-            }
-          >
-            <DiscordIcon className="h-3.5 w-3.5" />
-            {t(($) => $.help.discord)}
-            <ArrowUpRight className="size-3 translate-y-px text-faint-foreground" />
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            render={
-              <a href={MULTICA_GITHUB_URL} target="_blank" rel="noopener noreferrer" />
+              <a href={githubUrl} target="_blank" rel="noopener noreferrer" />
             }
             onClick={() => {
               markStarPromptStarred().catch((err) => logger.warn("failed to record star click", err));

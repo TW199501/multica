@@ -36,7 +36,6 @@
     "download_desktop": "데스크톱 앱",
     "docs": "문서",
     "changelog": "변경 로그",
-    "discord": "Discord",
     "star_on_github": "GitHub에서 Star 하기",
     "feedback": "피드백",
     "server_version": "서버 버전 {{version}}"

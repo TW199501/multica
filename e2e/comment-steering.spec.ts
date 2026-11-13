@@ -2,7 +2,7 @@ import "./env";
 
 import { expect, test } from "@playwright/test";
 import pg from "pg";
-import { createTestApi } from "./helpers";
+import { createTestApi, preferFloatingChat } from "./helpers";
 
 // Steering matrices live in the Go handler and composer tests. This browser
 // regression covers the real path: a reply in a running agent's thread goes
@@ -48,6 +48,8 @@ test("a reply steers the thread agent's running turn and shows its receipt", asy
       [turnId, workspace.id, issue.id],
     );
 
+    // "Send" below is the reply's; the floating chat layout has no chat column with its own.
+    await preferFloatingChat(page);
     await page.addInitScript((token) => {
       localStorage.setItem("multica_token", token!);
       localStorage.setItem("multica:chat:isOpen", "false");
@@ -56,11 +58,10 @@ test("a reply steers the thread agent's running turn and shows its receipt", asy
     await page.goto(`/${workspace.slug}/issues/${issue.id}`, { waitUntil: "domcontentloaded" });
     await expect(page.locator(`[data-run-id="${turnId}"]`)).toBeVisible({ timeout: 45_000 });
 
-    const shell = page.getByTestId("reply-composer-shell").first();
+    // A thread's reply box stays closed until its Reply action opens it.
+    await page.getByRole("button", { name: "Reply", exact: true }).first().click();
     // The empty box makes no claim about who a reply goes to; the chip says
     // so once there is text and the recipient is known.
-    await expect(shell).toHaveText("Leave a reply...");
-    await shell.click();
     const placeholder = "Leave a reply...";
     const editor = page.locator(`.ProseMirror[data-placeholder="${placeholder}"], .ProseMirror:has([data-placeholder="${placeholder}"])`).first();
     await editor.fill("This PR only fixes web; leave the desktop login page alone.");

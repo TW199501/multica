@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { loginAsDefault, createTestApi } from "./helpers";
+import { loginAsDefault, createTestApi, preferFloatingChat } from "./helpers";
 import type { TestApiClient } from "./fixtures";
 
 // Mark as duplicate (MUL-7349): the status picker's action cancels an issue
@@ -10,6 +10,8 @@ test.describe("Mark as duplicate", () => {
 
   test.beforeEach(async ({ page }) => {
     api = await createTestApi();
+    // The right sidebar this spec drives exists in the floating chat layout.
+    await preferFloatingChat(page);
     slug = await loginAsDefault(page);
   });
 

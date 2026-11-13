@@ -36,7 +36,6 @@
     "download_desktop": "Desktop app",
     "docs": "Docs",
     "changelog": "Change log",
-    "discord": "Discord",
     "star_on_github": "Star on GitHub",
     "feedback": "Feedback",
     "server_version": "Server version {{version}}"

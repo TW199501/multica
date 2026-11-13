@@ -34,7 +34,7 @@ Multica 主題是一個資料夾，包含 `manifest.json`、`theme.css`，以及
 
 ### 檢查
 
-分享之前，在 [Multica 倉庫](https://github.com/multica-ai/multica)的本地副本里執行檢查（見[檢查與預覽](#檢查與預覽)）。
+分享之前，在 [Multica 儲存庫](https://github.com/multica-ai/multica)的本機副本裡執行檢查（見[檢查與預覽](#檢查與預覽)）。
 
 </Step>
 </Steps>
@@ -137,7 +137,7 @@ paper/
 | `slider` | 同 `number`，`min` 和 `max` 必填 | 同 `number`。 |
 | `text` | `default`：一個 CSS 值 | `--<id>`：使用者輸入的值，前提是它安全。 |
 | `font` | `default`：字型棧 | `--<id>`：字型棧。 |
-| `variable-select` | `choices`：`[{ "value", "label" }]`，值為 CSS 值，`default` | `--<id>`：選中的值。 |
+| `variable-select` | `choices`：`[{ "value", "label" }]`，值為 CSS 值，`default` | `--<id>`：選取的值。 |
 
 選項 id 為 1–48 個字元，只能是 `a-z`、`0-9` 和 `-`，以字母開頭。`label`、`description` 和選項標籤可以是字串，也可以是以語言為鍵的物件（`en`、`zh-Hans`、`zh-Hant`、`ja`、`ko`、`es`、`fr`），英文為回退。
 
@@ -182,7 +182,7 @@ paper/
 
 ## 檢查與預覽
 
-在 [Multica 倉庫](https://github.com/multica-ai/multica)的本地副本里執行：
+在 [Multica 儲存庫](https://github.com/multica-ai/multica)的本機副本裡執行：
 
 ```bash
 pnpm theme:check path/to/paper          # 資料夾
@@ -194,18 +194,18 @@ pnpm theme:preview path/to/paper --out preview   # preview/light.png 和 preview
 
 `theme:preview` 渲染主題商店展示的截圖：任務列表旁邊開啟一個任務，用應用自己的樣式搭建，主題選項取預設值。
 
-開發過程中如果主題隱藏或弄亂了介面，在地址後加 `?theme=default` 開啟應用，或者載入後立刻按住 **Shift**；見[主題出問題時](/themes#主題出問題時)。
+開發過程中如果主題隱藏或弄亂了介面，在位址後加 `?theme=default` 開啟應用，或者載入後立刻按住 **Shift**；見[主題出問題時](/themes#主題出問題時)。
 
 ## 釋出到主題商店
 
-主題商店列出 [multica-ai/multica-themes](https://github.com/multica-ai/multica-themes) 倉庫裡的主題。詳細說明見它的[貢獻指南](https://github.com/multica-ai/multica-themes/blob/main/CONTRIBUTING.md)，簡單來說：
+主題商店列出 [multica-ai/multica-themes](https://github.com/multica-ai/multica-themes) 儲存庫裡的主題。詳細說明見它的[貢獻指南](https://github.com/multica-ai/multica-themes/blob/main/CONTRIBUTING.md)，簡單來說：
 
 <Steps>
 <Step>
 
-### 給主題一個獨立倉庫
+### 給主題一個獨立儲存庫
 
-把主題放在一個公開的 GitHub 倉庫裡。[multica-ai/multica-theme-sample](https://github.com/multica-ai/multica-theme-sample) 是一個帶釋出工作流的模板。
+把主題放在一個公開的 GitHub 儲存庫裡。[multica-ai/multica-theme-sample](https://github.com/multica-ai/multica-theme-sample) 是一個帶釋出工作流的範本。
 
 </Step>
 <Step>
@@ -217,9 +217,9 @@ pnpm theme:preview path/to/paper --out preview   # preview/light.png 和 preview
 </Step>
 <Step>
 
-### 加入倉庫
+### 加入儲存庫
 
-提一個 pull request，在倉庫裡新增檔案 `themes/<id>.json`，檔名就是 manifest 的 `id`。每個主題一個檔案，不同主題的 pull request 不會衝突。pull request 會對這個 release 執行 `theme:check` 和 `theme:preview`，並在評論裡貼出結果；通過後由維護者合併。
+提一個 pull request，在儲存庫裡新增檔案 `themes/<id>.json`，檔名就是 manifest 的 `id`。每個主題一個檔案，不同主題的 pull request 不會衝突。pull request 會對這個 release 執行 `theme:check` 和 `theme:preview`，並在評論裡貼出結果；通過後由維護者合併。
 
 </Step>
 </Steps>

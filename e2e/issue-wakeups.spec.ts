@@ -2,7 +2,7 @@ import "./env";
 
 import { expect, test } from "@playwright/test";
 import pg from "pg";
-import { createTestApi } from "./helpers";
+import { createTestApi, preferFloatingChat } from "./helpers";
 
 // Rule semantics live in the Go service and handler tests. This browser test
 // covers the sidebar a member uses: the platform's child-done rule is visible
@@ -37,6 +37,8 @@ test("members see the child-done system rule and create a wakeup", async ({ page
     await api.createIssue("Measure attachment sizes", { parent_issue_id: parent.id, stage: 1, status: "in_progress" });
     await api.createIssue("Server-side multipart upload", { parent_issue_id: parent.id, stage: 2, status: "backlog" });
 
+    // The right sidebar this spec drives exists in the floating chat layout.
+    await preferFloatingChat(page);
     await page.addInitScript((token) => {
       localStorage.setItem("multica_token", token!);
       localStorage.setItem("multica:chat:isOpen", "false");
@@ -112,6 +114,8 @@ test("a member waits for a condition the platform checks", async ({ page }) => {
     const issue = await api.createIssue("Review the upload design", { status: "in_progress" });
     await db.query(`UPDATE issue SET assignee_type = 'agent', assignee_id = $1 WHERE id = $2`, [agentId, issue.id]);
 
+    // The right sidebar this spec drives exists in the floating chat layout.
+    await preferFloatingChat(page);
     await page.addInitScript((token) => {
       localStorage.setItem("multica_token", token!);
       localStorage.setItem("multica:chat:isOpen", "false");

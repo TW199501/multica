@@ -36,7 +36,6 @@
     "download_desktop": "Application de bureau",
     "docs": "Documentation",
     "changelog": "Journal des modifications",
-    "discord": "Discord",
     "star_on_github": "Mettre une étoile sur GitHub",
     "feedback": "Faire un retour",
     "server_version": "Version du serveur {{version}}"

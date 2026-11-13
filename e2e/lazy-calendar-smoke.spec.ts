@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { createTestApi, loginAsDefault } from "./helpers";
+import { createTestApi, loginAsDefault, preferFloatingChat } from "./helpers";
 import { mkdirSync } from "node:fs";
 
 test("calendar lazy loading in issue details, custom properties and date-range filters", async ({ page }) => {
@@ -8,6 +8,8 @@ test("calendar lazy loading in issue details, custom properties and date-range f
   try {
     await api.createProperty("Review date", "date");
     const issue = await api.createIssue("Calendar loading verification", { due_date: "2026-11-05" });
+    // The right sidebar this spec drives exists in the floating chat layout.
+    await preferFloatingChat(page);
     const slug = await loginAsDefault(page);
     await page.goto(`/${slug}/issues/${issue.id}`);
     const sidebar = page.locator("[data-right-sidebar-panel]");

@@ -8,8 +8,6 @@ import type { DownloadAssets, DownloadKey } from "../../utils/parse-release-asse
 import { DownloadLink } from "./download-link";
 import { OSIcon } from "./os-icons";
 
-export const ALL_RELEASES_URL = "https://github.com/multica-ai/multica/releases";
-
 type FormatLabel = "formatDmg" | "formatZip" | "formatExe" | "formatAppImage" | "formatDeb" | "formatRpm";
 
 const ROWS: { platform: PlatformKey; formats: [DownloadKey, FormatLabel][] }[] = [
@@ -36,10 +34,13 @@ const FORMAT_CHIP =
  */
 export function AllPlatforms({
   assets,
+  allReleasesUrl,
   current,
   onStart,
 }: {
   assets: DownloadAssets;
+  /** The release repository's "all releases" page. */
+  allReleasesUrl: string;
   /** The installer offered as this visitor's main download. */
   current?: DownloadKey;
   onStart?: (key: DownloadKey) => void;
@@ -58,7 +59,7 @@ export function AllPlatforms({
         <h2 id="all-platforms-title" className="text-site-small text-site-ink">
           {d.title}
         </h2>
-        <SiteTextLink href={ALL_RELEASES_URL} external className="text-site-small text-site-muted hover:text-site-ink">
+        <SiteTextLink href={allReleasesUrl} external className="text-site-small text-site-muted hover:text-site-ink">
           {d.allReleases}
         </SiteTextLink>
       </div>

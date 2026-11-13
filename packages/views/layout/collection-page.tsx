@@ -71,6 +71,14 @@ const TITLE_YIELDS_TO_SEARCH =
   "@max-[22rem]/collection-tools:group-has-[[data-collection-search=open]]/collection-tools:hidden";
 
 /**
+ * For an extra header action a page adds beside the standard ones: it steps
+ * aside while the search is open in a header narrower than 40rem, so the field
+ * keeps the room the standard header leaves it.
+ */
+export const COLLECTION_ACTION_YIELDS_TO_SEARCH =
+  "@max-[40rem]/collection-header:group-has-[[data-collection-search=open]]/collection-header:hidden";
+
+/**
  * The one header row of a list page, laid out like the issues header: the
  * title names the scope and opens the scope menu, filter and search follow
  * it, and the right side holds icon controls whose names live in tooltips.
@@ -91,7 +99,7 @@ export function CollectionPageHeader({
     </>
   );
   return (
-    <PageHeader className={className}>
+    <PageHeader className={cn("group/collection-header @container/collection-header", className)}>
       <div className="group/collection-tools @container/collection-tools flex min-w-0 flex-1 items-center gap-1">
         {menu ? (
           <DropdownMenu>

@@ -16,6 +16,7 @@ import {
 } from "@multica/ui/components/ui/dropdown-menu";
 
 import { docsLocalePrefix } from "../../common/docs-locale";
+import { useDocsUrl } from "../../common/docs-url";
 import { ObjectSection, ObjectSectionAction } from "../../layout/object-page";
 import { useT, useTimeAgo } from "../../i18n";
 import { openExternal } from "../../platform";
@@ -187,6 +188,7 @@ function AgentChannelRow({
   canForget: boolean;
 }) {
   const { t, i18n } = useT("settings");
+  const docsUrl = useDocsUrl();
   const timeAgo = useTimeAgo();
   const { channel, installation } = connection;
   const [confirm, setConfirm] = useState(false);
@@ -305,7 +307,7 @@ function AgentChannelRow({
                   <DropdownMenuItem
                     onClick={() =>
                       openExternal(
-                        `https://multica.ai/docs${docsLocalePrefix(i18n.language)}/lark-bot-integration`,
+                        `${docsUrl}${docsLocalePrefix(i18n.language)}/lark-bot-integration`,
                       )
                     }
                   >

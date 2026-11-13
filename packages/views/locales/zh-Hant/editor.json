@@ -28,7 +28,7 @@
       "task_list": "待辦列表"
     },
     "sub_issue": {
-      "tooltip": "用選中內容建立子任務",
+      "tooltip": "用選取內容建立子任務",
       "created": "已建立 {{identifier}}",
       "create_failed": "建立子任務失敗"
     }
@@ -53,14 +53,14 @@
     "zoom_actual": "實際大小"
   },
   "attachment": {
-    "download_failed": "下載連結獲取失敗，請稍後重試。",
+    "download_failed": "下載連結取得失敗，請稍後重試。",
     "preview": "預覽",
     "preview_loading": "載入預覽中…",
     "preview_failed": "預覽載入失敗",
     "preview_too_large": "檔案太大，無法線上預覽，請下載檢視。",
     "preview_unsupported": "該檔案型別暫不支援預覽。",
     "close": "關閉",
-    "open_in_new_tab": "在新標籤頁開啟",
+    "open_in_new_tab": "在新分頁開啟",
     "remove": "移除附件",
     "previous": "上一個",
     "next": "下一個",
@@ -85,7 +85,7 @@
     "table_empty": "沒有資料行",
     "table_rows_other": "{{count}} 行",
     "table_columns_other": "{{count}} 列",
-    "address": "地址",
+    "address": "位址",
     "address_hint": "?引數",
     "reload": "重新整理"
   },
@@ -103,13 +103,13 @@
     "squad_badge": "小隊",
     "searching": "搜尋中...",
     "no_results": "無結果",
-    "group_current": "當前頁面",
+    "group_current": "目前頁面",
     "group_recent": "最近瀏覽",
     "group_search": "搜尋結果",
     "group_cancelled": "已取消"
   },
   "slash_command": {
-    "no_skills_configured": "暫無配置的技能",
+    "no_skills_configured": "暫無設定的技能",
     "no_results": "沒有匹配的技能",
     "commands": {
       "note": "新增備註——不觸發任何 AI 代理"

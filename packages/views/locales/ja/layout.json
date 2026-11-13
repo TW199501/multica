@@ -36,7 +36,6 @@
     "download_desktop": "デスクトップ版",
     "docs": "ドキュメント",
     "changelog": "変更ログ",
-    "discord": "Discord",
     "star_on_github": "GitHub でスターする",
     "feedback": "フィードバック",
     "server_version": "サーバーバージョン {{version}}"

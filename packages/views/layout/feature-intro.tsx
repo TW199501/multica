@@ -15,6 +15,7 @@ import {
 import { Button, buttonVariants } from "@multica/ui/components/ui/button";
 import { cn } from "@multica/ui/lib/utils";
 import { docsLocalePrefix } from "../common/docs-locale";
+import { useDocsUrl } from "../common/docs-url";
 import { useLocale, useT } from "../i18n";
 
 export type FeatureDocsSlug =
@@ -26,8 +27,8 @@ export type FeatureDocsSlug =
   | "daemon-runtimes"
   | "issue-wakeups";
 
-export function featureDocsHref(slug: FeatureDocsSlug, language?: string): string {
-  return `https://multica.ai/docs${docsLocalePrefix(language)}/${slug}`;
+export function featureDocsHref(docsUrl: string, slug: FeatureDocsSlug, language?: string): string {
+  return `${docsUrl}${docsLocalePrefix(language)}/${slug}`;
 }
 
 interface FeatureIntroProps {
@@ -69,6 +70,7 @@ export function FeatureIntro({
 }: FeatureIntroProps) {
   const { t } = useT("layout");
   const locale = useLocale();
+  const docsUrl = useDocsUrl();
   const titleId = useId();
 
   return (
@@ -104,7 +106,7 @@ export function FeatureIntro({
               {action}
               {secondaryAction ?? (
                 <a
-                  href={featureDocsHref(docs, locale)}
+                  href={featureDocsHref(docsUrl, docs, locale)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={buttonVariants({ variant: "outline" })}

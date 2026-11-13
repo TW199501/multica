@@ -22,6 +22,9 @@ describe("runtime docs links", () => {
     expect(customRuntimeDocsHref(UPSTREAM_DOCS_URL, "zh-Hans")).toBe(
       `https://multica.ai/docs/zh/daemon-runtimes#${encodeURIComponent("自定义运行时配置")}`,
     );
+    expect(customRuntimeDocsHref(UPSTREAM_DOCS_URL, "zh-Hant")).toBe(
+      `https://multica.ai/docs/zh-Hant/daemon-runtimes#${encodeURIComponent("自訂執行時設定")}`,
+    );
     expect(customRuntimeDocsHref(UPSTREAM_DOCS_URL, "fr")).toBe(
       `https://multica.ai/docs/fr/daemon-runtimes#${encodeURIComponent("profils-de-runtime-personnalisés")}`,
     );

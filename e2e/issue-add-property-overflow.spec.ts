@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { createTestApi, loginAsDefault, waitForPageText } from "./helpers";
+import { createTestApi, loginAsDefault, preferFloatingChat, waitForPageText } from "./helpers";
 import type { TestApiClient } from "./fixtures";
 
 // The server caps a workspace at 20 active properties; together with the
@@ -33,6 +33,8 @@ test.describe("Issue sidebar add property", () => {
     }
     const title = `E2E add property overflow ${suffix}`;
     const issue = await api.createIssue(title);
+    // The right sidebar this spec drives exists in the floating chat layout.
+    await preferFloatingChat(page);
     const slug = await loginAsDefault(page);
     await page.goto(`/${slug}/issues/${issue.id}`, { waitUntil: "domcontentloaded" });
     await waitForPageText(page, title);

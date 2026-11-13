@@ -303,3 +303,15 @@ describe("TeamPanel runtime badge", () => {
     expect(screen.queryByText(/online|offline/)).not.toBeInTheDocument();
   });
 });
+
+describe("TeamPanel resources", () => {
+  it("links to the Workflows page", () => {
+    renderPanel([]);
+
+    const resources = within(screen.getByRole("region", { name: "Resources" }));
+    expect(resources.getByRole("link", { name: "Workflows" })).toHaveAttribute(
+      "href",
+      "/acme/workflows",
+    );
+  });
+});

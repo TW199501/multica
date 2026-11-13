@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { configStore } from "@multica/core/config";
 import { DEFAULT_APPEARANCE, useAppearanceStore, useInstalledThemesStore } from "@multica/core/appearance";
 import { renderWithI18n } from "../test/i18n";
 import { AccountMenu } from "./account-menu";
@@ -117,5 +118,31 @@ describe("AccountMenu theme submenu", () => {
       "href",
       "/acme/settings?tab=appearance",
     );
+  });
+});
+
+describe("AccountMenu help links", () => {
+  it("lists Docs and no Discord entry", async () => {
+    renderWithI18n(<AccountMenu />);
+    fireEvent.click(screen.getByRole("button", { name: "Account" }));
+
+    expect(await screen.findByRole("menuitem", { name: /Docs/ })).toBeInTheDocument();
+    expect(screen.queryByRole("menuitem", { name: /Discord/ })).not.toBeInTheDocument();
+  });
+
+  it("links Docs to the deployment's own docs site", async () => {
+    configStore.getState().setReleaseRepository("TW199501/multica");
+    configStore.getState().setDaemonConfig({ daemonAppUrl: "http://192.168.25.100:13300" });
+    try {
+      renderWithI18n(<AccountMenu />);
+      fireEvent.click(screen.getByRole("button", { name: "Account" }));
+      expect(await screen.findByRole("menuitem", { name: /Docs/ })).toHaveAttribute(
+        "href",
+        "http://192.168.25.100:13300/docs",
+      );
+    } finally {
+      configStore.getState().setReleaseRepository("");
+      configStore.setState({ daemonAppUrl: "" });
+    }
   });
 });

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import pg from "pg";
-import { createTestApi } from "./helpers";
+import { createTestApi, preferFloatingChat } from "./helpers";
 
 test("issue loads compact runs until Runs requests full own or subtree history", async ({ page }) => {
   const api = await createTestApi();
@@ -35,6 +35,8 @@ test("issue loads compact runs until Runs requests full own or subtree history",
     }
 
     await page.setViewportSize({ width: 1440, height: 900 });
+    // The right sidebar this spec drives exists in the floating chat layout.
+    await preferFloatingChat(page);
     await page.addInitScript((token) => {
       localStorage.setItem("multica_token", token!);
       localStorage.setItem("multica:chat:isOpen", "false");

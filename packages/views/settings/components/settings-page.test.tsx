@@ -3,11 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SidebarProvider, useSidebar } from "@multica/ui/components/ui/sidebar";
 import { configStore } from "@multica/core/config";
+import { useDockedLayoutStore } from "@multica/core/chat/docked-layout-store";
 import {
   BILLING_WORKSPACE_SUBSCRIPTIONS_FLAG,
   PLUGINS_V1_FLAG,
 } from "@multica/core/feature-flags";
 import { renderWithI18n } from "../../test/i18n";
+import { AppShellProvider, useAppShell } from "../../layout/app-shell-context";
 
 // This file tests the settings SHELL — the chrome around the tabs — so every
 // tab panel is stubbed out. Their contents have their own test files. Profile
@@ -71,6 +73,7 @@ vi.mock("./connected-apps-tab", () => ({
 }));
 
 vi.mock("@multica/core/paths", () => ({
+  spaceForPath: () => "settings",
   useCurrentWorkspace: () => ({ id: "ws-1", name: "Acme" }),
   useWorkspacePaths: () => ({ autopilots: () => "/acme/autopilots" }),
 }));
@@ -136,6 +139,7 @@ beforeEach(() => {
   configStore.getState().setFeatureFlags({});
   replace.mockClear();
   push.mockClear();
+  useDockedLayoutStore.setState({ layoutActive: false, settingsNavTarget: null });
 });
 
 describe("SettingsPage nav trigger", () => {
@@ -224,6 +228,137 @@ describe("SettingsPage header", () => {
     expect(back.getAttribute("href")).not.toContain("integration");
     expect(header.getByText("Acme workspace")).toBeInTheDocument();
     expect(screen.queryByText("Messaging", { selector: "nav" })).toBeNull();
+  });
+});
+
+describe("SettingsPage in the docked layout", () => {
+  let host: HTMLDivElement;
+
+  function CollapseNav() {
+    const shell = useAppShell();
+    return (
+      <button type="button" onClick={() => shell?.toggleNav()}>
+        Collapse nav
+      </button>
+    );
+  }
+
+  beforeEach(() => {
+    layout.compact = false;
+    host = document.createElement("div");
+    document.body.appendChild(host);
+  });
+
+  afterEach(() => {
+    host.remove();
+  });
+
+  it("keeps its navigation out of the page when the sidebar is not showing settings", () => {
+    useDockedLayoutStore.setState({ layoutActive: true, settingsNavTarget: null });
+    renderWithI18n(<SettingsPage />);
+
+    expect(screen.queryByRole("navigation", { name: "Settings" })).not.toBeInTheDocument();
+  });
+
+  it("renders its navigation into the sidebar host", () => {
+    useDockedLayoutStore.setState({ layoutActive: true, settingsNavTarget: host });
+    renderWithI18n(<SettingsPage />);
+
+    const sidebarNav = within(host).getByRole("navigation", { name: "Settings" });
+    expect(screen.getAllByRole("navigation", { name: "Settings" })).toHaveLength(1);
+    // Rows match the space panels' menu rows.
+    const active = within(sidebarNav).getByRole("link", { name: "Profile" });
+    expect(active).toHaveAttribute("data-mc", "nav-item");
+    expect(active).toHaveAttribute("data-active", "true");
+    expect(active).toHaveClass("rounded-nav-item", "bg-nav-item-active");
+    const idle = within(sidebarNav).getByRole("link", { name: "Preferences" });
+    expect(idle).toHaveAttribute("data-active", "false");
+    expect(idle).toHaveClass("text-nav-item");
+  });
+
+  it("shows its navigation in the page while the docked sidebar is collapsed", () => {
+    useDockedLayoutStore.setState({ layoutActive: true, settingsNavTarget: host });
+    renderWithI18n(
+      <SidebarProvider defaultOpen={false}>
+        <SettingsPage />
+      </SidebarProvider>,
+    );
+
+    expect(within(host).queryByRole("navigation", { name: "Settings" })).toBeNull();
+    expect(host.contains(nav())).toBe(false);
+  });
+
+  it("shows its navigation in the page after the user collapses the docked sidebar", () => {
+    useDockedLayoutStore.setState({ layoutActive: true, settingsNavTarget: host });
+    renderWithI18n(
+      <SidebarProvider defaultOpen>
+        <AppShellProvider>
+          <CollapseNav />
+          <SettingsPage />
+        </AppShellProvider>
+      </SidebarProvider>,
+    );
+    expect(within(host).getByRole("navigation", { name: "Settings" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Collapse nav" }));
+
+    expect(within(host).queryByRole("navigation", { name: "Settings" })).toBeNull();
+    const column = document.querySelector('[data-slot="list-column"]');
+    expect(column).toHaveAttribute("data-state", "expanded");
+    expect(column).not.toHaveAttribute("inert");
+    expect(column?.contains(nav())).toBe(true);
+
+    fireEvent.click(within(column as HTMLElement).getByRole("button", { name: "Toggle left sidebar" }));
+
+    expect(within(host).getByRole("navigation", { name: "Settings" })).toBeInTheDocument();
+    expect(screen.getAllByRole("navigation", { name: "Settings" })).toHaveLength(1);
+  });
+
+  it("keeps the page navigation collapsible outside the docked layout", () => {
+    renderWithI18n(
+      <SidebarProvider defaultOpen>
+        <AppShellProvider>
+          <CollapseNav />
+          <SettingsPage />
+        </AppShellProvider>
+      </SidebarProvider>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Collapse nav" }));
+
+    const column = document.querySelector('[data-slot="list-column"]');
+    expect(column).toHaveAttribute("data-state", "collapsed");
+  });
+
+  it("shows its navigation in the page at compact widths", () => {
+    layout.compact = true;
+    useDockedLayoutStore.setState({ layoutActive: true, settingsNavTarget: host });
+    renderWithI18n(
+      <SidebarProvider defaultOpen>
+        <SettingsPage />
+      </SidebarProvider>,
+    );
+
+    expect(within(host).queryByRole("navigation", { name: "Settings" })).toBeNull();
+    expect(host.contains(nav())).toBe(false);
+  });
+
+  it("moves the navigation back to the sidebar once it expands", () => {
+    useDockedLayoutStore.setState({ layoutActive: true, settingsNavTarget: host });
+    renderWithI18n(
+      <SidebarProvider defaultOpen>
+        <SettingsPage />
+      </SidebarProvider>,
+    );
+
+    expect(within(host).getByRole("navigation", { name: "Settings" })).toBeInTheDocument();
+    expect(screen.getAllByRole("navigation", { name: "Settings" })).toHaveLength(1);
+  });
+
+  it("keeps its navigation in the page outside the docked layout", () => {
+    renderWithI18n(<SettingsPage />);
+
+    expect(host.contains(nav())).toBe(false);
   });
 });
 
