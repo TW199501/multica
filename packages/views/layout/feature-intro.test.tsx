@@ -1,6 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { configStore } from "@multica/core/config";
 import { Users } from "@multica/ui/icons";
 import { renderWithI18n } from "../test/i18n";
 import { FeatureIntro, FeatureIntroCarousel } from "./feature-intro";
@@ -33,6 +34,11 @@ function slide(name: string) {
 }
 
 describe("FeatureIntro", () => {
+  afterEach(() => {
+    configStore.getState().setReleaseRepository("");
+    configStore.setState({ daemonAppUrl: "" });
+  });
+
   it("names the section by its headline and offers create plus docs", () => {
     renderIntro();
 
@@ -49,6 +55,16 @@ describe("FeatureIntro", () => {
     expect(screen.getByRole("link", { name: "阅读文档" })).toHaveAttribute(
       "href",
       "https://multica.ai/docs/zh/squads",
+    );
+  });
+
+  it("links to the deployment's own docs site when it ships its own builds", () => {
+    configStore.getState().setReleaseRepository("TW199501/multica");
+    configStore.getState().setDaemonConfig({ daemonAppUrl: "http://192.168.25.100:13300" });
+    renderIntro();
+    expect(screen.getByRole("link", { name: "Read the docs" })).toHaveAttribute(
+      "href",
+      "http://192.168.25.100:13300/docs/squads",
     );
   });
 

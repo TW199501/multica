@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Agent } from "@multica/core/types";
 import { renderWithI18n } from "../../test/i18n";
 import { api, ApiError } from "@multica/core/api";
+import { configStore } from "@multica/core/config";
 import {
   AgentChannelsSection,
   AgentChannelLinks,
@@ -113,6 +114,8 @@ function show(ui: React.ReactElement) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  configStore.getState().setReleaseRepository("");
+  configStore.setState({ daemonAppUrl: "" });
   state.role = "admin";
   state.member = true;
   state.search = "tab=channels";
@@ -165,6 +168,21 @@ describe("agent messaging channels", () => {
       );
     },
   );
+
+  it("opens the troubleshooting guide on the deployment's own docs site", async () => {
+    configStore.getState().setReleaseRepository("TW199501/multica");
+    configStore.getState().setDaemonConfig({ daemonAppUrl: "http://192.168.25.100:13300" });
+    vi.mocked(api.listLarkInstallations).mockResolvedValue({
+      ...listing([active]),
+      install_supported: false,
+    } as never);
+    show(<AgentChannelsSection agent={agent} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Manage Lark" }));
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Troubleshooting" }));
+    expect(state.open).toHaveBeenCalledWith(
+      "http://192.168.25.100:13300/docs/lark-bot-integration",
+    );
+  });
 
   it("shows actionable DingTalk permission help instead of a healthy status", async () => {
     vi.mocked(api.listDingTalkInstallations).mockResolvedValue(

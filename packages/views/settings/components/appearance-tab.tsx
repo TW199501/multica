@@ -100,6 +100,7 @@ import { useConfigStore } from "@multica/core/config";
 import { useLocale, useT } from "../../i18n";
 import { SegmentedToggle } from "../../common/segmented-toggle";
 import { docsLocalePrefix } from "../../common/docs-locale";
+import { useDocsUrl } from "../../common/docs-url";
 import { openExternal } from "../../platform/open-external";
 import { themeFolderAPI } from "../../platform/theme-folder";
 import { ThemesButton, useStoreThemeInstall } from "./themes-dialog";
@@ -446,8 +447,8 @@ function useThemeImport(): ThemeImport {
   return { chooseZip: () => zipRef.current?.click(), chooseFolder: () => folderRef.current?.click(), element };
 }
 
-function themeGuideUrl(language: string): string {
-  return `https://multica.ai/docs${docsLocalePrefix(language)}/developers/themes`;
+function themeGuideUrl(docsUrl: string, language: string): string {
+  return `${docsUrl}${docsLocalePrefix(language)}/developers/themes`;
 }
 
 function downloadFile(data: Uint8Array<ArrayBuffer>, name: string, type: string) {
@@ -524,6 +525,7 @@ function StoreThemesRow() {
  * and import.
  */
 function OwnThemeRow({ theme }: { theme: Theme }) {
+  const docsUrl = useDocsUrl();
   const { t } = useT("settings");
   const locale = useLocale();
   const themeLabelFor = useThemeLabel();
@@ -578,7 +580,7 @@ function OwnThemeRow({ theme }: { theme: Theme }) {
           variant="ghost"
           size="icon-sm"
           className="text-muted-foreground"
-          onClick={() => openExternal(themeGuideUrl(locale))}
+          onClick={() => openExternal(themeGuideUrl(docsUrl, locale))}
           aria-label={t(($) => $.appearance.tools.guide)}
           title={t(($) => $.appearance.tools.guide)}
         >

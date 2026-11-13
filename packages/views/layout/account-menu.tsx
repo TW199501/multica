@@ -40,12 +40,13 @@ import {
 import { cn } from "@multica/ui/lib/utils";
 import { useLogout } from "../auth";
 import { docsLocalePrefix } from "../common/docs-locale";
+import { useDocsUrl } from "../common/docs-url";
 import { useLanguageSwitch } from "../common/use-language-switch";
 import { useT } from "../i18n";
 import { AppLink } from "../navigation";
 import { isDesktopShell } from "../platform/local-directory";
 import { ThemeSwatch, useAppliedMode, useColorThemes, useThemeLabel } from "../settings/components/theme-swatch";
-import { CHANGELOG_URL, DOCS_URL, DOWNLOAD_URL } from "./help-links";
+import { CHANGELOG_URL, DOWNLOAD_URL } from "./help-links";
 import { RAIL_ICON_BUTTON_CLASS } from "./rail-styles";
 
 const THEMES = [
@@ -80,6 +81,7 @@ function ExternalItem({ href, icon, label }: { href: string; icon: React.ReactNo
 /** The signed-in user's menu at the foot of the rail. */
 export function AccountMenu() {
   const { t, i18n } = useT("layout");
+  const docsUrl = useDocsUrl();
   const user = useAuthStore((s) => s.user);
   const p = useWorkspacePaths();
   const logout = useLogout();
@@ -203,7 +205,7 @@ export function AccountMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <ExternalItem
-            href={`${DOCS_URL}${docsLocalePrefix(i18n.language)}`}
+            href={`${docsUrl}${docsLocalePrefix(i18n.language)}`}
             icon={<BookOpen />}
             label={t(($) => $.help.docs)}
           />

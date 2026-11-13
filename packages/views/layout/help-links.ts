@@ -1,4 +1,3 @@
-export const DOCS_URL = "https://multica.ai/docs";
 export const CHANGELOG_URL = "https://multica.ai/changelog";
 // Absolute, including on self-hosted deployments: the installers we ship are
 // the same binaries either way, and the desktop client can point at a

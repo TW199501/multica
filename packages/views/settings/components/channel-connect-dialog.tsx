@@ -18,6 +18,7 @@ import { Input } from "@multica/ui/components/ui/input";
 import { Label } from "@multica/ui/components/ui/label";
 import { useT } from "../../i18n";
 import { docsLocalePrefix } from "../../common/docs-locale";
+import { useDocsUrl } from "../../common/docs-url";
 import { openExternal } from "../../platform";
 import { IntegrationChannelIcon } from "./integration-channel-icon";
 import {
@@ -82,6 +83,7 @@ function ChannelConnectSteps({
   onBusyChange: (busy: boolean) => void;
 }) {
   const { t, i18n } = useT("settings");
+  const docsUrl = useDocsUrl();
   const { wsId, queries, connections, isAdmin, canManage, available } =
     useMessagingChannels();
   const [agentId, setAgentId] = useState(initialAgent?.id ?? "");
@@ -229,7 +231,7 @@ function ChannelConnectSteps({
             className="w-fit p-0"
             onClick={() =>
               openExternal(
-                `https://multica.ai/docs${docsLocalePrefix(i18n.language)}/${channel === "lark" ? "lark" : channel}-bot-integration`,
+                `${docsUrl}${docsLocalePrefix(i18n.language)}/${channel === "lark" ? "lark" : channel}-bot-integration`,
               )
             }
           >
