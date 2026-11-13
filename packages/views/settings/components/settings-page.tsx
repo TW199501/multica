@@ -34,6 +34,7 @@ import {
   PLUGINS_V1_FLAG,
 } from "@multica/core/feature-flags";
 import { TooltipHint } from "@multica/ui/components/common/tooltip-hint";
+import { useSidebarSafe } from "@multica/ui/components/ui/sidebar";
 import { cn } from "@multica/ui/lib/utils";
 import { resolveSettingsLocation, settingsHref } from "./settings-navigation";
 import { AppLink, useNavigation } from "../../navigation";
@@ -65,7 +66,12 @@ import { HighlightText } from "../../search/highlight-text";
 import { useSettingsSearchIndex } from "./use-settings-search-index";
 import { wakeupsHref } from "../../autopilots/components/wakeups-tab";
 import { CollapsedNavTrigger, PageHeader } from "../../layout/page-header";
-import { PanelHeader } from "../../layout/panel-nav";
+import {
+  PANEL_ROW_CLASS,
+  PanelHeader,
+  panelRowAnchor,
+  panelRowStateClass,
+} from "../../layout/panel-nav";
 import { useListColumnCollapsed } from "../../layout/app-shell-context";
 import { ListColumn } from "../../layout/list-column";
 import { useT } from "../../i18n";
@@ -132,9 +138,18 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
   const navigation = useNavigation();
   const paths = useWorkspacePaths();
   const listCollapsed = useListColumnCollapsed();
-  // In the docked layout the sidebar's settings section shows the navigation;
-  // the page then keeps only its content.
+  // In the docked layout the navigation lives in the sidebar only: its
+  // settings section shows it, and the page keeps only its content.
+  const dockedLayout = useDockedLayoutStore((s) => s.layoutActive);
   const settingsNavTarget = useDockedLayoutStore((s) => s.settingsNavTarget);
+  // A collapsed or compact space panel is off screen, so the navigation falls
+  // back to the page.
+  const sidebar = useSidebarSafe();
+  const spacePanelHidden = !!sidebar && (!sidebar.open || sidebar.isCompact);
+  const dockedNavTarget = spacePanelHidden ? null : settingsNavTarget;
+  const navInSidebarOnly = dockedLayout && !spacePanelHidden;
+  // In the sidebar the rows match the space panels' menu rows.
+  const inSidebar = dockedNavTarget !== null;
   const pluginsEnabled = useFeatureEnabled(PLUGINS_V1_FLAG, false);
   const billingEnabled = useFeatureEnabled(
     BILLING_WORKSPACE_SUBSCRIPTIONS_FLAG,
@@ -387,12 +402,17 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
       <AppLink
         href={href(item.value)}
         aria-current={active.value === item.value ? "page" : undefined}
-        className={cn(
-          "flex min-h-8 items-center gap-2.5 rounded-lg px-3 py-1.5 text-body transition-colors focus-visible:outline-2 focus-visible:outline-ring",
-          active.value === item.value
-            ? "bg-surface-selected text-surface-selected-foreground hover:bg-surface-selected"
-            : "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
-        )}
+        {...(inSidebar ? panelRowAnchor(active.value === item.value) : {})}
+        className={
+          inSidebar
+            ? cn(PANEL_ROW_CLASS, panelRowStateClass(active.value === item.value))
+            : cn(
+                "flex min-h-8 items-center gap-2.5 rounded-lg px-3 py-1.5 text-body transition-colors focus-visible:outline-2 focus-visible:outline-ring",
+                active.value === item.value
+                  ? "bg-surface-selected text-surface-selected-foreground hover:bg-surface-selected"
+                  : "text-muted-foreground hover:bg-surface-hover hover:text-foreground",
+              )
+        }
       >
         <item.icon className="size-4 shrink-0" aria-hidden="true" />
         <span className="min-w-0 flex-1 truncate">{item.label}</span>
@@ -537,17 +557,17 @@ export function SettingsPage({ extraDeviceTabs = [] }: SettingsPageProps = {}) {
       </nav>
     </>
   );
-  const dockedNav = settingsNavTarget
+  const dockedNav = dockedNavTarget
     ? createPortal(
         <div className="flex min-h-0 flex-1 flex-col pt-1">{navContent}</div>,
-        settingsNavTarget,
+        dockedNavTarget,
       )
     : null;
 
   return (
     <div data-mc="settings-page" className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background md:flex-row">
       {dockedNav}
-      {!dockedNav && (
+      {!dockedNav && !navInSidebarOnly && (
       <ListColumn
         collapsed={listCollapsed}
         // Below md the navigation stacks above the content as a select.
